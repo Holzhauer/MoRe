@@ -5,12 +5,12 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Repast S"/>
 	<classpathentry kind="var" path="ECLIPSE_HOME"/>
 	<classpathentry kind="lib" path="C:/Program Files/eclipse/plugins/repast.simphony.bin_and_src_1.2.0/repast.simphony.bin_and_src.jar"/>
-	<classpathentry kind="lib" path="C:/Sascha/General/Software/JavaLibraries/JUNG_alpha3/sources/jung-swt-visualization-2.0-alpha3-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Sascha/General/Software/JavaLibraries/JUNG_alpha3/sources/jung-algorithms-2.0-alpha3-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Sascha/General/Software/JavaLibraries/JUNG_alpha3/sources/jung-api-2.0-alpha3-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Sascha/General/Software/JavaLibraries/JUNG_alpha3/sources/jung-graph-impl-2.0-alpha3-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Sascha/General/Software/JavaLibraries/JUNG_alpha3/sources/jung-io-2.0-alpha3-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Sascha/General/Software/JavaLibraries/JUNG_alpha3/sources/jung-swt-rendering-2.0-alpha3-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Sascha/General/Software/JavaLibraries/JUNG_alpha3/sources/jung-swt-samples-2.0-alpha3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/jung-algorithms-2.0-alpha3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/jung-api-2.0-alpha3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/jung-graph-impl-2.0-alpha3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/jung-io-2.0-alpha3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/jung-swt-rendering-2.0-alpha3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/jung-swt-samples-2.0-alpha3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/jung-swt-visualization-2.0-alpha3-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
