@@ -6,15 +6,20 @@
  */
 package de.cesr.more.networks;
 
+import edu.uci.ics.jung.graph.Graph;
+
 
 /**
  * Specifies demands on network implementations that shall integrate into LARA's decision making modelling.
  * 
  * @author Sascha Holzhauer
  * @param <AgentType> the common type (of agents) that is contained as nodes in the network
+ * @param <EdgeType> the edge type
  * @date 07.01.2010
  */
-public interface MoreNetwork<AgentType> {
+public interface MoreNetwork<AgentType, EdgeType> {
+	
+	public void addNode(AgentType node);
 
 	/**
 	 * If there is already a connection object between these nodes it is removed and the given one added.
@@ -131,9 +136,24 @@ public interface MoreNetwork<AgentType> {
 	 * @return Created by Sascha Holzhauer on 15.01.2010
 	 */
 	public int numEdges();
+	
+	/**
+	 * @param source
+	 * @param target
+	 * @return
+	 * Created by Sascha Holzhauer on 07.10.2010
+	 */
+	public EdgeType getEdge(AgentType source, AgentType target);
 
 	/**
 	 * @return Created by Sascha Holzhauer on 15.01.2010
 	 */
 	public int numNodes();
+	
+	/**
+	 * Return a JUNG Graph object of this network.
+	 * @return a JUNG Graph object of this network
+	 * Created by Sascha Holzhauer on 05.10.2010
+	 */
+	public Graph getGraph();
 }

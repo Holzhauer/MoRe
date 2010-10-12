@@ -14,22 +14,28 @@ import java.util.Comparator;
 
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.random.RandomHelper;
+import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.RepastEdge;
 import de.cesr.more.networks.MoreNetwork;
+import edu.uci.ics.jung.graph.Graph;
 
 
 
 /**
  * Network Adapter for Repast Simphony models
  * 
+ * TODO handle edge objects to deal with weights etc... and allow more complex edge objects.
+ * TODO error handling for missing nodes
+ * 
  * @author Sascha Holzhauer
  * @param <AgentT>
  * @date 03.02.2010
  * 
  */
-public final class DefaultLRsNetwork<AgentT> implements MoreNetwork<AgentT> {
+public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> implements MoreNetwork<AgentT, EdgeT> {
 
 	private ContextJungNetwork<AgentT>	network;
+	private EdgeCreator<? extends RepastEdge, AgentT> edgeCreator = null;
 
 	/**
 	 * @param network
@@ -44,7 +50,12 @@ public final class DefaultLRsNetwork<AgentT> implements MoreNetwork<AgentT> {
 	 */
 	@Override
 	public void connect(AgentT source, AgentT target) {
-		network.addEdge(source, target);
+		if (edgeCreator != null) {
+			network.addEdge(edgeCreator.createEdge(source, target, network.isDirected(), 0.0));
+		}
+		else {
+			network.addEdge(source, target);
+		}
 	}
 
 	/**
@@ -214,6 +225,25 @@ public final class DefaultLRsNetwork<AgentT> implements MoreNetwork<AgentT> {
 	
 	public ContextJungNetwork<AgentT> getNetwork() {
 		return network;
+	}
+	
+	public void setEdgeFactory(EdgeCreator<? extends RepastEdge, AgentT> edgeCreator) {
+		this.edgeCreator = edgeCreator;
+	}
+
+	@Override
+	public void addNode(AgentT node) {
+		network.addVertex(node);
+	}
+
+	@Override
+	public Graph getGraph() {
+		return network.getGraph();
+	}
+
+	@Override
+	public EdgeT getEdge(AgentT source, AgentT target) {
+		return (EdgeT) network.getEdge(source, target);
 	}
 
 }

@@ -18,13 +18,13 @@ import de.cesr.more.networks.MoreNetwork;
  * @date 22.07.2010 
  *
  */
-public interface MoreNetworkBuilder<AgentType> {
+public interface MoreNetworkBuilder<AgentType, EdgeType> {
 	
 	/**
 	 * @param agents
 	 * @return
 	 * Created by Sascha Holzhauer on 22.07.2010
 	 */
-	public MoreNetwork<AgentType> buildNetwork(Collection<AgentType> agents);
+	public MoreNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents);
 
 }

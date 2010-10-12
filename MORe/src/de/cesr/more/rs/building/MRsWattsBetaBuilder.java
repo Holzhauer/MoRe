@@ -13,6 +13,7 @@ import java.util.Collection;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.context.space.graph.WattsBetaSmallWorldGenerator;
+import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.building.MoreNetworkBuilder;
 import de.cesr.more.networks.MoreNetwork;
@@ -26,7 +27,7 @@ import de.cesr.more.networks.MoreNetwork;
  * @date 22.07.2010
  * 
  */
-public class MRsWattsBetaBuilder<AgentType> implements MoreNetworkBuilder<AgentType> {
+public class MRsWattsBetaBuilder<AgentType> implements MoreNetworkBuilder<AgentType, RepastEdge<AgentType>> {
 
 	private Context	context;
 
