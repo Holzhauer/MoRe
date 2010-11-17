@@ -13,9 +13,11 @@ import java.util.Collection;
 import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.LaraAgentComponent;
 import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.LaraSimpleAgent;
 import de.cesr.more.lara.LaraAgentNetworkComp;
 import de.cesr.more.lara.LaraNetworkAgent;
 import de.cesr.more.networks.MoreNetwork;
+import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter.EdgeType;
 
 
 
@@ -27,7 +29,8 @@ import de.cesr.more.networks.MoreNetwork;
  * @param <AgentT> the common type (of agents) that is contained as nodes in the networks this agent refers to
  * @date 19.01.2010
  */
-public interface LaraNetworkAgent<AgentT, EdgeType> extends LaraAgent, LaraAgentNetworkComp<AgentT, EdgeType> {
+public interface LaraNetworkAgent<AgentT extends LaraSimpleAgent, EdgeType, BoType extends LaraBehaviouralOption<?>> 
+	extends LaraAgent<AgentT, BoType>, LaraAgentNetworkComp<AgentT, EdgeType> {
 
 	/**
 	 * @return Set of LaraNetworks
@@ -37,6 +40,6 @@ public interface LaraNetworkAgent<AgentT, EdgeType> extends LaraAgent, LaraAgent
 	/**
 	 * @return LARA Network Component
 			 */
-	public abstract LaraBehaviouralOption<LaraNetworkAgent<AgentT, EdgeType>> getLNetworkComp();
+	public abstract LaraAgentNetworkComp<LaraNetworkAgent<AgentT, EdgeType, BoType>, EdgeType> getLNetworkComp();
 
 }

@@ -8,10 +8,16 @@ package de.cesr.more.lara;
 
 
 
+import repast.simphony.context.space.graph.ContextJungNetwork;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraEnvironment;
 import de.cesr.lara.components.LaraSimpleAgent;
 import de.cesr.lara.components.impl.AbstractLaraAgent;
+import de.cesr.more.measures.MMeasureDescription;
+import de.cesr.more.measures.node.MoreNodeMeasureSupport;
+import de.cesr.more.measures.util.MNodeMeasures;
+import de.cesr.more.networks.MoreNetwork;
+
 
 
 /**
@@ -24,10 +30,11 @@ import de.cesr.lara.components.impl.AbstractLaraAgent;
  * 
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractLaraNetworkAgent<AgentT extends LaraSimpleAgent, EdgeType, BOType extends LaraBehaviouralOption> 
-	extends AbstractLaraAgent<AgentT, BOType> implements LaraSimpleNetworkAgent<AgentT, EdgeType> {
+public abstract class AbstractLaraNetworkAgent<AgentT extends LaraSimpleAgent, EdgeType, BoType extends LaraBehaviouralOption> 
+	extends AbstractLaraAgent<AgentT, BoType> implements LaraSimpleNetworkAgent<AgentT, EdgeType>, MoreNodeMeasureSupport {
 
 	LaraAgentNetworkComp<AgentT, EdgeType>	netComp;
+	MNodeMeasures measures = new MNodeMeasures();
 
 	/**
 	 * constructor
@@ -62,5 +69,31 @@ public abstract class AbstractLaraNetworkAgent<AgentT extends LaraSimpleAgent, E
 	 */
 	public void setLaraNetworkComp(LaraAgentNetworkComp<AgentT, EdgeType> component) {
 		this.netComp = component;
+	}
+	
+
+	/**********************************************************
+	 *** Network Measure Support ***
+	 **********************************************************/
+
+	/**
+	 * @see edu.uos.sh.soneta.measures.NetworkMeasureSupport#getNetworkMeasureObject(repast.simphony.space.graph.JungNetwork,
+	 *      edu.uos.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescription)
+	 */
+	public Object getNetworkMeasureObject(
+			MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+			MMeasureDescription key) {
+		return measures.getNetworkMeasureObject(network, key);
+	}
+
+	/**
+	 * @see edu.uos.sh.soneta.measures.NetworkMeasureSupport#setNetworkMeasureObject(repast.simphony.space.graph.JungNetwork,
+	 *      edu.uos.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescription,
+	 *      java.lang.Object)
+	 */
+	public void setNetworkMeasureObject(
+			MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+			MMeasureDescription key, Object value) {
+		measures.setNetworkMeasureObject(network, key, value);
 	}
 }

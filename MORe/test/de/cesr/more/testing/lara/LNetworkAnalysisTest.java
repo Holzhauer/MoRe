@@ -14,10 +14,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
+import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraDecisionBuilder;
 import de.cesr.lara.components.LaraEnvironment;
@@ -29,9 +31,9 @@ import de.cesr.more.lara.AbstractLaraNetworkAgent;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.lara.LNetworkEnvironment;
 import de.cesr.more.lara.LaraSimpleNetworkAgent;
-import de.cesr.more.lara.adapter.snrs.DefaultLRsNetwork;
 import de.cesr.more.lara.util.LNetworkAnalysis;
 import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.rs.adapter.DefaultLRsNetwork;
 
 
 
@@ -80,8 +82,9 @@ public class LNetworkAnalysisTest {
 		//LModel.getNewModel();
 
 		env = new LNetworkEnvironment();
+		Context context = new DefaultContext<TestAgent>();
 		network = new DefaultLRsNetwork<TestAgent,RepastEdge<TestAgent>>(new ContextJungNetwork<TestAgent>(
-				new UndirectedJungNetwork<TestAgent>("network"), new DefaultContext<TestAgent>()));
+				new UndirectedJungNetwork<TestAgent>("network"), context), context);
 
 		// build network (star of max diameter 5):
 		center = new TestAgent(env, 1000.0f, "center");

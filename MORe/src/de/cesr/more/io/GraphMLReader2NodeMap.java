@@ -47,9 +47,9 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
 	protected BidiMap<V, String> nodeMap;
 	
 	/**
-	 * An {@link MEdgeFactory} that is used to create edge objects
+	 * An {@link MoreEdgeFactory} that is used to create edge objects
 	 */
-	protected MEdgeFactory<V, E> edgeFactory;
+	protected MoreEdgeFactory<V, E> edgeFactory;
 	
 	/**
 	 * @param vertex_factory
@@ -59,7 +59,7 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
 	 * @throws SAXException
 	 */
 	public GraphMLReader2NodeMap(Factory<V> vertex_factory,
-			MEdgeFactory<V, E> edge_factory, BidiMap<V, String> nodeMap)
+			MoreEdgeFactory<V, E> edge_factory, BidiMap<V, String> nodeMap)
         throws ParserConfigurationException, SAXException {
 		super(vertex_factory, null);
 		this.nodeMap = nodeMap;
@@ -74,7 +74,7 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	public GraphMLReader2NodeMap(MEdgeFactory<V, E> edge_factory, BidiMap<V, String> nodeMap) throws ParserConfigurationException, SAXException {
+	public GraphMLReader2NodeMap(MoreEdgeFactory<V, E> edge_factory, BidiMap<V, String> nodeMap) throws ParserConfigurationException, SAXException {
 		this( new Factory<V>() {
 			@Override
 			public V create() {

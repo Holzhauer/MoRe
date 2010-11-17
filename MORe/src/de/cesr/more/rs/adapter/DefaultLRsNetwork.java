@@ -12,12 +12,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.random.RandomHelper;
+import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.RepastEdge;
+import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.networks.MoreNetwork;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 
 
@@ -35,14 +40,16 @@ import edu.uci.ics.jung.graph.Graph;
 public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> implements MoreNetwork<AgentT, EdgeT> {
 
 	private ContextJungNetwork<AgentT>	network;
+	private Context						context;
 	private EdgeCreator<? extends RepastEdge, AgentT> edgeCreator = null;
 
 	/**
 	 * @param network
 	 *            the network that is going to be wrapped
 	 */
-	public DefaultLRsNetwork(ContextJungNetwork<AgentT> network) {
+	public DefaultLRsNetwork(ContextJungNetwork<AgentT> network, Context context) {
 		this.network = network;
+		this.context = context;
 	}
 
 	/**
@@ -246,4 +253,14 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 		return (EdgeT) network.getEdge(source, target);
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#getEmptyInstance()
+	 */
+	@Override
+	public MoreNetwork<AgentT, EdgeT> getInstanceWithNewGraph(Graph<AgentT, EdgeT> graph) {
+		ContextJungNetwork<AgentT> jnetwork = new ContextJungNetwork<AgentT>((network.isDirected() ? new DirectedJungNetwork<AgentT>(getName()):
+			new UndirectedJungNetwork<AgentT>(getName())), context);
+		jnetwork.setGraph(((Graph<AgentT, RepastEdge<AgentT>>) graph));
+		return new DefaultLRsNetwork<AgentT, EdgeT>(jnetwork, context);
+	}
 }

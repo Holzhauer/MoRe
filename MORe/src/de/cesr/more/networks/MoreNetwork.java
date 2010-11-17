@@ -22,6 +22,13 @@ public interface MoreNetwork<AgentType, EdgeType> {
 	public void addNode(AgentType node);
 
 	/**
+	 * MAke sure that the given graph is of corresponding directedness!
+	 * @return
+	 * Created by Sascha Holzhauer on 16.11.2010
+	 */
+	public MoreNetwork<AgentType, EdgeType> getInstanceWithNewGraph(Graph<AgentType, EdgeType> graph);
+	
+	/**
 	 * If there is already a connection object between these nodes it is removed and the given one added.
 	 * @param source
 	 * @param target

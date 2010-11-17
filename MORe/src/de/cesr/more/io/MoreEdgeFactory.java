@@ -13,7 +13,7 @@ package de.cesr.more.io;
  * @date 05.10.2010 
  *
  */
-public interface MEdgeFactory<V,E> {
+public interface MoreEdgeFactory<V,E> {
 	
 	public E createEdge(V soruce, V target, boolean directed);
 
