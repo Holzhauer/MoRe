@@ -23,6 +23,7 @@
  */
 package de.cesr.more.measures.measures;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import de.cesr.more.measures.MMeasureDescription;
@@ -72,7 +73,7 @@ public abstract class MAbstractNetworkMeasure implements MoreMeasure{
 		 * @see MAbstractNetworkMeasure#MNetworkMeasure(MMeasureDescription, Class, Map)
 		 */
 		public MAbstractNetworkMeasure(MMeasureDescription description, Class<?> measureType) {
-			this(description, measureType, null);
+			this(description, measureType, new HashMap<String, Object>());
 		}
 		
 		/**

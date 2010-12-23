@@ -25,6 +25,7 @@ import de.cesr.more.measures.MMeasureSelectorListener;
 import de.cesr.more.measures.MoreMeasureManagerListener;
 import de.cesr.more.measures.measures.MAbstractNodeMeasure;
 import de.cesr.more.measures.measures.MoreMeasure;
+import de.cesr.more.measures.network.MNetworkMeasureManager.ParameterKeys;
 import de.cesr.more.measures.node.supply.MBasicNodeMeasureSupplier;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
@@ -69,18 +70,18 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	}
 
 	/**
-	 * The Type that specifies the nodes of a <code>ContextContextContextJungNetwork</code> needs to extend
-	 * {@link NetworkMeasureSupport} since the <code>NetworkMeasureUtilitites</code> needs to access methods to get and
-	 * set measures at the node.
+	 * The Type of nodes in the given <code>MoreNetwork</code> needs to extend 
+	 * {@link MoreNodeMeasureSupport} since the <code>MNodeMeasureManager</code> requires
+	 * access to methods that get and set measures at the node.
 	 * 
-	 * @date 24.05.2008
-	 * 
-	 *       Support for canceling parameter input added
 	 * @date 26.11.2008
 	 * 
-	 * @param <T> Parameter of <code>ContextContextContextJungNetwork</code> (type of nodes)
-	 * @param network
-	 * @param params
+	 * @param <T> Type of nodes)
+	 * @param <E> Edge type
+	 * @param network the network to add the measure for
+	 * @param measureDesc the measure description of the measure to add
+	 * @param params parameter map of options for calculation
+	 * @return true if adding the measure calculation was successful
 	 */
 	public <T extends MoreNodeMeasureSupport, E> boolean addMeasureCalculation(MoreNetwork<T, E> network,
 			MMeasureDescription measureDesc, Map<String, Object> params) {
@@ -146,10 +147,23 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 				measureActions.put(network, new HashMap<MMeasureDescription, MoreAction>());
 			}
 			measureActions.get(network).put(measure.getMeasureDescription(), action);
+			
 			Double interval = null;
-			if (params != null) {
-				interval = (Double) params.get("INTERVAL");
+			if (params != null & params.containsKey(ParameterKeys.INTERVAL.name())) {
+				Object o = params.get(ParameterKeys.INTERVAL.name());
+				if (o instanceof Number) {
+					interval = ((Number)o).doubleValue();
+				}
 			}
+			
+			Double start = null;
+			if (params != null & params.containsKey(ParameterKeys.START.name())) {
+				Object s = params.get(ParameterKeys.START.name());
+				if (s instanceof Number) {
+					start = ((Number)s).doubleValue();
+				}
+			}
+
 
 			for (MoreMeasureManagerListener listener : listeners) {
 				listener.networkMeasureCalcAdded(network, measureDesc);
@@ -158,9 +172,14 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 			// execute the action once to calculate measures without the need to step further
 			// to display the values:
 			action.execute();
+			
+			if (start != null) {
+				schedule.schedule(MScheduleParameters.getEverlastingRandomScheduleParameter(start.doubleValue(), interval.doubleValue()), action);
+			}
+			else {
 			// TODO check if start=0 always works
-			schedule.schedule(MScheduleParameters.getUnboundedMScheduleParameters(interval == null ? 1.0 : interval
-					.doubleValue()), action);
+				schedule.schedule(MScheduleParameters.getUnboundedRandomMScheduleParameters(interval == null ? 1.0 : interval.doubleValue()), action);
+			}
 			return true;
 		} else {
 			return false;

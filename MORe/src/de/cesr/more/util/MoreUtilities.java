@@ -82,7 +82,7 @@ public class MoreUtilities {
 			graphMap.put("id", new GraphMLMetadata<Hypergraph<V, E>>("id", "-1", gTransformer));
 			graphWriter.setGraphData(graphMap);
 
-			graphWriter.save(network.getGraph(), fileWriter);
+			graphWriter.save(network.getJungGraph(), fileWriter);
 
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -27,7 +27,7 @@ public class MBasicNodeMeasureSupplier extends MAbstractMeasureSupplier {
 	
 	public MBasicNodeMeasureSupplier() {
 		
-		this.addMeasureSupplier(new MCentralityNMSupplier());
+		this.addMeasureSupplier(new MCentralityNodeMSupplier());
 		// TODO adapt classes
 //		this.addMeasureSupplier(new CentralityNormalizedNMSupplier());
 //		this.addMeasureSupplier(new CentralityStandardizedNMSupplier());

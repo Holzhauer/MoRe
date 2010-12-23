@@ -244,7 +244,7 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 	}
 
 	@Override
-	public Graph getGraph() {
+	public Graph getJungGraph() {
 		return network.getGraph();
 	}
 
@@ -257,7 +257,7 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 	 * @see de.cesr.more.networks.MoreNetwork#getEmptyInstance()
 	 */
 	@Override
-	public MoreNetwork<AgentT, EdgeT> getInstanceWithNewGraph(Graph<AgentT, EdgeT> graph) {
+	public MoreNetwork<AgentT, EdgeT> getGraphFilteredInstance(Graph<AgentT, EdgeT> graph) {
 		ContextJungNetwork<AgentT> jnetwork = new ContextJungNetwork<AgentT>((network.isDirected() ? new DirectedJungNetwork<AgentT>(getName()):
 			new UndirectedJungNetwork<AgentT>(getName())), context);
 		jnetwork.setGraph(((Graph<AgentT, RepastEdge<AgentT>>) graph));

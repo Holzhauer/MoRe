@@ -35,6 +35,7 @@ import de.cesr.more.measures.node.MNodeMeasureCategory;
 public enum MNetworkMeasureCategory implements MoreMeasureCategory{
 	NOT_DEFINED("Not defined"),
 	NETWORK_MISC("Network: Misc"),
+	NETWORK_CENTRALITY("Network: Centrality"),
 	NETWORK_CLUSTERING("Network: Clustering");
 
 	private String desc;

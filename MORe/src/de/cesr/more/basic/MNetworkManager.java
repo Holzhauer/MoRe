@@ -66,16 +66,16 @@ public class MNetworkManager {
 	 */
 	public static <V, E> MoreNetwork<V,E> storeVertexSubnetwork(MoreNetwork<V, E> in_network, Predicate<V> predicate, String newname) {
 		VertexPredicateFilter<V, E> filter = new VertexPredicateFilter(predicate);
-		MoreNetwork<V, E> out_network = in_network.getInstanceWithNewGraph(filter.transform(in_network.getGraph()));
+		MoreNetwork<V, E> out_network = in_network.getGraphFilteredInstance(filter.transform(in_network.getJungGraph()));
 		networks.put(newname, out_network);
 		return out_network;
 	}
 	
-	public static <V, E> Object getNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc) {
+	public static <V, E> Number getNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc) {
 		return measureStorage.get(network, desc);
 	}
 
-	public static <V, E> void setNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc, Object value) {
+	public static <V, E> void setNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc, Number value) {
 		measureStorage.put(network, desc, value);
 	}
 }

@@ -38,20 +38,20 @@ import de.cesr.more.networks.MoreNetwork;
  */
 public class MNetworkMeasureStorage {
 	
-	private Map<MoreNetwork<?, ?>, Map<MMeasureDescription, Object>> measures;
+	private Map<MoreNetwork<?, ?>, Map<MMeasureDescription, Number>> measures;
 	
 	public MNetworkMeasureStorage() {
-		measures = new HashMap<MoreNetwork<?, ?>, Map<MMeasureDescription, Object>>();
+		measures = new HashMap<MoreNetwork<?, ?>, Map<MMeasureDescription, Number>>();
 	}
 	
-	public void put(MoreNetwork<?, ?> network, MMeasureDescription desc, Object value) {
+	public void put(MoreNetwork<?, ?> network, MMeasureDescription desc, Number value) {
 		if (!measures.containsKey(network)) {
-			measures.put(network, new HashMap<MMeasureDescription, Object>());
+			measures.put(network, new HashMap<MMeasureDescription, Number>());
 		}
 		measures.get(network).put(desc, value);
 	}
 	
-	public Object get(MoreNetwork<?, ?> network, MMeasureDescription desc) {
+	public Number get(MoreNetwork<?, ?> network, MMeasureDescription desc) {
 		if (!measures.containsKey(network)) {
 			throw new IllegalStateException("There is no measure for network " + network.getName());
 		}

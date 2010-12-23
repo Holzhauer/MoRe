@@ -15,6 +15,6 @@ package de.cesr.more.io;
  */
 public interface MoreEdgeFactory<V,E> {
 	
-	public E createEdge(V soruce, V target, boolean directed);
+	public E createEdge(V source, V target, boolean directed);
 
 }

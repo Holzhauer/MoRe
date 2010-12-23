@@ -6,6 +6,8 @@
  */
 package de.cesr.more.networks;
 
+import java.util.NoSuchElementException;
+
 import edu.uci.ics.jung.graph.Graph;
 
 
@@ -22,11 +24,17 @@ public interface MoreNetwork<AgentType, EdgeType> {
 	public void addNode(AgentType node);
 
 	/**
-	 * MAke sure that the given graph is of corresponding directedness!
-	 * @return
+	 * The method is used to obtain a new Sub-MoreNetwork. The parameter is a {@link Graph} instance that contains subsets of
+	 * vertices and edges in the original MoreNetwork this method is applied to. For instance, such graphs may be a result
+	 * of a {@link VertexPredicateFilter}. The given graph needs to be of corresponding directedness! This (the original)
+	 * instance of {@link MoreNetwork} is not altered!
+	 * 
+	 * @throws NoSuchElementException when the given graph contains a vertex or an edge this network does not contain.
+	 * @return A new {@link MoreNetwork} containing only vertices and edges contained in given graph object
+	 * 
 	 * Created by Sascha Holzhauer on 16.11.2010
 	 */
-	public MoreNetwork<AgentType, EdgeType> getInstanceWithNewGraph(Graph<AgentType, EdgeType> graph);
+	public MoreNetwork<AgentType, EdgeType> getGraphFilteredInstance(Graph<AgentType, EdgeType> graph);
 	
 	/**
 	 * If there is already a connection object between these nodes it is removed and the given one added.
@@ -162,5 +170,5 @@ public interface MoreNetwork<AgentType, EdgeType> {
 	 * @return a JUNG Graph object of this network
 	 * Created by Sascha Holzhauer on 05.10.2010
 	 */
-	public Graph getGraph();
+	public Graph<AgentType, EdgeType> getJungGraph();
 }

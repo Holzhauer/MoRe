@@ -38,8 +38,11 @@ public class MScheduleParameters {
 	public static final double FIRST_PRIORITY = Double.POSITIVE_INFINITY;
 	public static final double LAST_PRIORITY = Double.NEGATIVE_INFINITY;
 	  
+	public static final double EVERLASTING = Double.POSITIVE_INFINITY;
+	
 	double start;
 	double interval;
+	double end;
 	double priority;
 	
 	/**
@@ -80,15 +83,45 @@ public class MScheduleParameters {
 	/**
 	 * @param priority the end to set
 	 */
-	public void setEnd(double priority) {
+	public void setPriority(double priority) {
 		this.priority = priority;
 	}
 	
 	
-	public MScheduleParameters(double start, double interval, double priority) {
+	
+	/**
+	 * @return the end
+	 */
+	public double getEnd() {
+		return end;
+	}
+
+	/**
+	 * @param end the end to set
+	 */
+	public void setEnd(double end) {
+		this.end = end;
+	}
+
+	private MScheduleParameters(double start, double interval, double end, double priority) {
 		this.start = start;
 		this.interval = interval;
+		this.end = end;
 		this.priority = priority;
+	}
+	
+	/**
+	 * Priority is MScheduleParameters.RANDOM_PRIORITY.
+	 * 
+	 * @param start
+	 * @param interval
+	 * @param end 
+	 * @param priority 
+	 * @return
+	 * Created by Sascha Holzhauer on 17.11.2010
+	 */
+	public static MScheduleParameters getScheduleParameter(double start, double interval, double end, double priority) {
+		return new MScheduleParameters(start, interval, end, priority);
 	}
 	
 	/**
@@ -99,12 +132,20 @@ public class MScheduleParameters {
 	 * @return
 	 * Created by Sascha Holzhauer on 17.11.2010
 	 */
-	public static MScheduleParameters getEverlastingScheduleParameter(double start, double interval) {
-		return new MScheduleParameters(start, interval, MScheduleParameters.RANDOM_PRIORITY);
+	public static MScheduleParameters getEverlastingRandomScheduleParameter(double start, double interval) {
+		return new MScheduleParameters(start, interval, MScheduleParameters.EVERLASTING, MScheduleParameters.RANDOM_PRIORITY);
 	}
 
-	public static MScheduleParameters getBeginningScheduleParameter(double interval, double end) {
-		return new MScheduleParameters(0, interval, end);
+	/**
+	 * 
+	 * Action starts right after Scheduling until [end] every [interval]th step.
+	 * @param interval
+	 * @param end
+	 * @return
+	 * Created by Sascha Holzhauer on 22.12.2010
+	 */
+	public static MScheduleParameters getFromBeginningRandomScheduleParameter(double interval, double end) {
+		return new MScheduleParameters(0, interval, end, MScheduleParameters.RANDOM_PRIORITY);
 	}
 
 	/**
@@ -113,8 +154,8 @@ public class MScheduleParameters {
 	 * @return
 	 * Created by Sascha Holzhauer on 17.11.2010
 	 */
-	public static MScheduleParameters getUnboundedMScheduleParameters(double interval) {
-		return new MScheduleParameters(0, interval, MScheduleParameters.RANDOM_PRIORITY);
+	public static MScheduleParameters getUnboundedRandomMScheduleParameters(double interval) {
+		return new MScheduleParameters(0, interval, MScheduleParameters.EVERLASTING, MScheduleParameters.RANDOM_PRIORITY);
 	}
 	
 	

@@ -41,7 +41,7 @@ import de.cesr.lara.components.impl.util.LRandom;
 import de.cesr.more.lara.LNetworkEnvironment;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.rs.adapter.DefaultLRsNetwork;
-import de.cesr.more.testing.lara.LNetworkAnalysisTest.TestAgent;
+import de.cesr.more.testing.LNetworkAnalysisTest.TestAgent;
 
 
 

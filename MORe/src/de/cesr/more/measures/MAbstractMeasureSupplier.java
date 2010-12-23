@@ -54,15 +54,15 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	/**
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#addMeasureSupplier(edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier)
 	 */
-	public void addMeasureSupplier(MoreMeasureSupplier supplier) {
-		suppliers.add(supplier);
+	public boolean addMeasureSupplier(MoreMeasureSupplier supplier) {
+		return suppliers.add(supplier);
 	}
 	
 	/**
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#removeMeasureSupplier(edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier)
 	 */
-	public void removeMeasureSupplier(MoreMeasureSupplier supplier) {
-		suppliers.remove(supplier);
+	public boolean removeMeasureSupplier(MoreMeasureSupplier supplier) {
+		return suppliers.remove(supplier);
 	}
 	
 	/**
@@ -79,6 +79,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	
 	/**
 	 * Delegate Pattern / Chain of Responsibility:
+	 * Searches for a {@link MoreMeasure} according to the given {@link MMeasureDescription} in the chain of {@link MoreMeasureSupplier}s.
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#findMeasure(edu.uos.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescriptionTemp)
 	 */
 	public MoreMeasure findMeasure(MMeasureDescription description){
@@ -105,5 +106,20 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 			categories.addAll(supplier.getCategories());
 		}
 		return categories;
+	}
+	
+	/**
+	 * Uses the Classes of the objects to compare and calls the classes' equals.
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		return this.getClass().equals(o.getClass());
+	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return this.getClass().hashCode();
 	}
 }

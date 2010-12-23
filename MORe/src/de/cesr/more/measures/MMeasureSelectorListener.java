@@ -54,7 +54,7 @@ public interface MMeasureSelectorListener {
 
 	/**
 	 * The <code>MeasureChooser</code> calls this method in order to fetch measures that might be added by the user for
-	 * a (user-)specified network.
+	 * a (user-)specified network. Only returns measures that have not been added before for the given network.
 	 * 
 	 * @date 10.07.2008
 	 * 

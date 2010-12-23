@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="libs/jung-io-2.0.1.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/JUNG_2.0.1/src/jung-io-2.0.1-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/LARA"/>
+	<classpathentry kind="lib" path="libs/JRI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

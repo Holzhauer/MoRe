@@ -10,8 +10,26 @@
 <h5>Last update: 16.11.2010</h5>
 <h1>MORe Usage</h1>
 
-	<h2>Managing Network Measures</h2>
+	<h2>Configuring the Network Measures</h2>
+		<h3>Adding Measure Definitions</h3>
+		<p>As default, the <code>NetworkMeasureManager</code> imports measure definitions from 
+		<code>MBasicNetworkMeasureSupplier</code> (see <a href="./javadoc/index.html">JavaDoc</a> for details).</p>
+		
+		<p class="text">Further measure definitions are added by passing an instance of <code>MoreMeasureSupplier</code> to
+		<code>NetworkMeasureManager#addMeasureSupplier(supplier)</code>. See <a href="#CustomMeasureImplementation">
+		Implementing Custom Measures</a> for further instructions.</p>
 	
+	<h2>Managing Network Measures</h2>
+		<h3>Basics</h3>
+		<p class=text">The central class for managing network measures is <code>MNetworkMeasureManager</code>.
+		To obtain an instance of the network manager call <code>MNetworkMeasureManager.getInstance()</code>. However, make sure to set the schedule before:
+		<code>MNetworkManager.setSchedule(MoreSchedule schedule)</code>!</p>
+		
+		<h3>Trigger measure calculation for networks</h3>
+		<p class=text"></p> 
+	
+	<h2>Managing Node Measures</h2>
+		<h3>Trigger measure calculation for nodes</h3>
 	
 	<h2>Defining subnetworks</h2>
 		<p class="text">
@@ -20,6 +38,14 @@
 			<li>Calculation and management of network an node measures</li>
 		</ul>
 		</p>
+		
+	<h2><a name="CustomMeasureImplementation">Implementing Custom Measures</a></h2>
+	<p class="text">A <code>MNetworkMeasureSupplier</code> should be implemented as singleton since it does not make sense to have more than one supplier. However,
+	the <code>MAbstractMeasureSupplier</code> overrides <code>equals()</code> and compares regarding the class name but does not prevent subclasses from overriding 
+	its <code>equals()</code> method.</p>
+	
+	<p class="text">The scheduling parameters (start, interval, end) are defined in the parameter map that is interpreted by <code>MNetworkMeasureManager</code>
+	or <code>MNodeMeasureManager</code>. Therefore, generating <code>MoreAction</code>s do not need to define a <code>MSchedulingParameter</code>.</p>
 <body>
 
 </html>

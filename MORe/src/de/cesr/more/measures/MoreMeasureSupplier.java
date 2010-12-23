@@ -30,16 +30,18 @@ public interface MoreMeasureSupplier {
 	 * @date 14.08.2008
 	 *
 	 * @param supplier The <code>NetworkMeasureSupplier</code> to register
+	 * @return true is adding was successful
 	 */
-	public void addMeasureSupplier(MoreMeasureSupplier supplier);
+	public boolean addMeasureSupplier(MoreMeasureSupplier supplier);
 	
 	/**
 	 * Removes another <code>NetworkMeasureSupplier</code> at the implementing supplier
 	 * @date 14.08.2008
 	 *
 	 * @param supplier The <code>NetworkMeasureSupplier</code> to register
+	 * @return true if removing was successful 
 	 */
-	public void removeMeasureSupplier(MoreMeasureSupplier supplier);
+	public boolean removeMeasureSupplier(MoreMeasureSupplier supplier);
 	
 	/**
 	 * Returns {@link MeasureDescription} of the {@link Measure}s this supplier provides

@@ -23,7 +23,11 @@
  */
 package de.cesr.more.networks;
 
+import java.util.NoSuchElementException;
+
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.io.MoreEdgeFactory;
+import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -36,10 +40,31 @@ import edu.uci.ics.jung.graph.Graph;
  * @date 16.11.2010 
  *
  */
-public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements MoreNetwork<V, E> {
+public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGraph<V, E> implements MoreNetwork<V, E> {
 
 	protected MoreEdgeFactory<V, E> edgeFactory = null;
+	protected String 				name;
 	
+	/**
+	 * @param <V>
+	 * @param <E>
+	 * @param edgeFactory
+	 * @param graph
+	 * @return
+	 * Created by Sascha Holzhauer on 10.12.2010
+	 */
+	public static <V, E extends MoreEdge<V>> MDirectedNetwork<V, E> getNetwork(MoreEdgeFactory<V, E> edgeFactory,
+			DirectedGraph<V, E> graph) {
+		MDirectedNetwork<V, E> subnet = new MDirectedNetwork<V, E>(edgeFactory);
+		for (V v : graph.getVertices()) {
+			subnet.addNode(v);
+		}
+		for (E e : graph.getEdges()) {
+			subnet.addEdge(e, e.getStart(), e.getEnd());
+		}
+		return subnet;
+	}
+
 	public MDirectedNetwork(MoreEdgeFactory<V, E> edgeFactory) {
 		this.edgeFactory = edgeFactory;
 	}
@@ -68,8 +93,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public void disconnect(V source, V target) {
-		// TODO Auto-generated method stub
-		
+		this.removeEdge(findEdge(source, target));
 	}
 
 	/**
@@ -77,8 +101,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public Iterable<V> getAdjacent(V ego) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getNeighbors(ego);
 	}
 
 	/**
@@ -86,8 +109,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public int getDegree(V ego) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getNeighborCount(ego);
 	}
 
 	/**
@@ -95,17 +117,15 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public E getEdge(V source, V target) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.findEdge(source, target);
 	}
 
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#getGraph()
 	 */
 	@Override
-	public Graph getGraph() {
-		// TODO Auto-generated method stub
-		return null;
+	public Graph getJungGraph() {
+		return this;
 	}
 
 	/**
@@ -113,8 +133,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public int getInDegree(V ego) {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.getPredecessorCount(ego);
 	}
 
 	/**
@@ -122,8 +141,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.name;
 	}
 
 	/**
@@ -131,8 +149,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public Iterable<V> getNodes() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.vertices.keySet();
 	}
 
 	/**
@@ -140,8 +157,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public int getOutDegree(V ego) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getSuccessorCount(ego);
 	}
 
 	/**
@@ -149,7 +165,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public V getRandomSuccessor(V ego) {
-		// TODO Auto-generated method stub
+		// TODO implement
 		return null;
 	}
 
@@ -158,8 +174,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public double getWeight(V source, V target) {
-		// TODO Auto-generated method stub
-		return 0;
+		return findEdge(source, target).getWeight();
 	}
 
 	/**
@@ -167,8 +182,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public boolean isAdjacent(V ego, V alter) {
-		// TODO Auto-generated method stub
-		return false;
+		return this.isNeighbor(ego, alter);
 	}
 
 	/**
@@ -176,8 +190,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public boolean isDirected() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -194,8 +207,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public int numEdges() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.getEdgeCount();
 	}
 
 	/**
@@ -203,8 +215,7 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public int numNodes() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.getVertexCount();
 	}
 
 	/**
@@ -212,17 +223,28 @@ public class MDirectedNetwork<V,E> extends DirectedSparseGraph<V, E>implements M
 	 */
 	@Override
 	public void setWeight(V source, V target, double weight) {
-		// TODO Auto-generated method stub
-		
+		this.findEdge(source, target).setWeight(weight);
 	}
 
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#getEmptyInstance()
 	 */
 	@Override
-	public MoreNetwork<V, E> getInstanceWithNewGraph(Graph<V,E> graph) {
-		// TODO Auto-generated method stub
-		return null;
+	public MoreNetwork<V, E> getGraphFilteredInstance(Graph<V,E> graph) {
+		MDirectedNetwork<V, E> subnet = new MDirectedNetwork<V, E>(edgeFactory);
+		for (V v : graph.getVertices()) {
+			if (!this.containsVertex(v)) {
+				throw new NoSuchElementException("Original network does not contain " + v);
+			}
+			subnet.addNode(v);
+		}
+		for (E e : graph.getEdges()) {
+			if (!this.containsEdge(e)) {
+				throw new NoSuchElementException("Original network does not contain " + e);
+			}
+			subnet.addEdge(e, e.getStart(), e.getEnd());
+		}
+		return subnet;
 	}
 
 }

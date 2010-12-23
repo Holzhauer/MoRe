@@ -50,6 +50,8 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 		
 	}
 
+	static MCcNetworkMeasureSupplier instance;
+	
 	MMeasureDescription		description;
 
 	/**
@@ -57,9 +59,16 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 	 */
 	static private Logger	logger	= Log4jLogger.getLogger(MCcNetworkMeasureSupplier.class);
 
-	public MCcNetworkMeasureSupplier() {
+	private MCcNetworkMeasureSupplier() {
 		addMeasures();
 		addCategories();
+	}
+	
+	public static MCcNetworkMeasureSupplier getInstance() {
+		if (instance == null) {
+			instance = new MCcNetworkMeasureSupplier();
+		}
+		return instance;
 	}
 
 	private void addCategories() {
@@ -79,7 +88,7 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 					@Override
 					public void execute() {
 						MNetworkManager.setNetworkMeasure(network, description, 
-								MClusteringCoefficient.getClusteringCoefficientOverallRatio(network.getGraph()));
+								MClusteringCoefficient.getClusteringCoefficientOverallRatio(network.getJungGraph()));
 					}
 				};
 			}

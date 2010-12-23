@@ -120,14 +120,6 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 		return (EdgeT) super.getEdge(source, target);
 	}
 
-	/**
-	 * @see de.cesr.more.networks.MoreNetwork#getInstanceWithNewGraph(edu.uci.ics.jung.graph.Graph)
-	 */
-	@Override
-	public MoreNetwork<AgentT, EdgeT> getInstanceWithNewGraph(Graph<AgentT, EdgeT> graph) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	
 	
@@ -217,6 +209,24 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 		}
 		this.mesaureDescB = desc;	
 		logger.debug("Set measure B to " + desc);
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#getGraphFilteredInstance(edu.uci.ics.jung.graph.Graph)
+	 */
+	@Override
+	public MoreNetwork<AgentT, EdgeT> getGraphFilteredInstance(Graph<AgentT, EdgeT> graph) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#getJungGraph()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Graph<AgentT, EdgeT> getJungGraph() {
+		return (Graph<AgentT, EdgeT>) super.getGraph();
 	}
 
 }

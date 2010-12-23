@@ -112,7 +112,7 @@ public abstract class MAbstractMeasureManager extends MAbstractMeasureSupplier i
 	 *
 	 * @param <T> Parameter of <code>ContextContextContextJungNetwork</code> (type of nodes) 
 	 * @param network
-	 * @return set of <code>Measures</code>
+	 * @return set of <code>Measures</code>. In case there are no measure actions scheduled for the given network an empty set is returned.
 	 */
 	public Set<MMeasureDescription> getMeasureCalculations(MoreNetwork<?, ?> network) {
 		if (measureActions.containsKey(network)) {
@@ -134,20 +134,17 @@ public abstract class MAbstractMeasureManager extends MAbstractMeasureSupplier i
 	}
 	
 	/**
-	 * 
+	 * @see de.cesr.more.measures.MMeasureSelectorListener#getAddableMeasures(de.cesr.more.networks.MoreNetwork)
 	 */
 	@Override
-	public Set<MMeasureDescription> getAddableMeasures(
-			MoreNetwork<?, ?> network) {
-		Set<MMeasureDescription> measures = 
-			new HashSet<MMeasureDescription>();
+	public Set<MMeasureDescription> getAddableMeasures(MoreNetwork<?, ?> network) {
+		Set<MMeasureDescription> measures = new HashSet<MMeasureDescription>();
 		for (MMeasureDescription measure : getMeasureDescriptions()) {
 			if (measureActions.containsKey(network)) {
-				if (!measureActions.get(network).containsKey(measure)){
-					measures.add(measure);	
+				if (!measureActions.get(network).containsKey(measure)) {
+					measures.add(measure);
 				}
-			}
-			else {
+			} else {
 				measures.add(measure);
 			}
 		}

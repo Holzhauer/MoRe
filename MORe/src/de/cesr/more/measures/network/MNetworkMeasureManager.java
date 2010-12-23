@@ -33,12 +33,16 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.measures.MAbstractMeasureManager;
+import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureBundle;
 import de.cesr.more.measures.MMeasureDescription;
+import de.cesr.more.measures.MNetworkMeasureCategory;
 import de.cesr.more.measures.MoreMeasureManagerListener;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
 import de.cesr.more.measures.measures.MoreMeasure;
 import de.cesr.more.measures.network.supply.MBasicNetworkMeasureSupplier;
+import de.cesr.more.measures.node.MoreNodeMeasureSupport;
+import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.networks.MoreNetwork;
@@ -54,6 +58,21 @@ import de.cesr.more.util.Log4jLogger;
 public class MNetworkMeasureManager extends MAbstractMeasureManager {
 	
 	protected static MNetworkMeasureManager instance;
+	
+	/**
+	 * Standard keys for measure action parameters
+	 */
+	public enum ParameterKeys {
+		/**
+		 * Interval to calculate measure
+		 */
+		INTERVAL,
+		
+		/**
+		 * First timestep to calculate measure
+		 */
+		START;
+	}
 	
 	/**
 	 * Logger
@@ -84,17 +103,13 @@ public class MNetworkMeasureManager extends MAbstractMeasureManager {
 	}
 	
 	/**
-	 * The Type that specifies the nodes of a <code>ContextContextContextJungNetwork</code> needs to extend 
-	 * {@link NetworkMeasureSupport} since the <code>NetworkMeasureUtilitites</code> needs to
-	 * access methods to get and set measures at the node.
-	 * @date 24.05.2008
 	 * 
-	 * Support for canceling parameter input added
-	 * @date 26.11.2008
-	 *
-	 * @param <T> Parameter of <code>ContextContextContextJungNetwork</code> (type of nodes) 
-	 * @param network
-	 * @param params
+	 * @param <T> Type of nodes)
+	 * @param <E> Edge type
+	 * @param network the network to add the measure for
+	 * @param measureDesc the measure description of the measure to add
+	 * @param params parameter map of options for calculation
+	 * @return true if adding the measure calculation was successful
 	 */
 	public <T, E> boolean addMeasureCalculation(MoreNetwork<T, E> network, 
 			MMeasureDescription measureDesc, Map<String, Object> params) {
@@ -125,16 +140,33 @@ public class MNetworkMeasureManager extends MAbstractMeasureManager {
 			logger.debug("If: After listener invocation");
 			
 			Double interval = null;
-			if (params != null) {
-				interval = (Double)params.get("INTERVAL");
+			if (params != null && params.containsKey(ParameterKeys.INTERVAL.toString())) {
+				Object o = params.get(ParameterKeys.INTERVAL.toString());
+				if (o instanceof Number) {
+					interval = ((Number)o).doubleValue();
+				}
 			}
+			
+			Double start = null;
+			if (params != null && params.containsKey(ParameterKeys.START.toString())) {
+				Object s = params.get(ParameterKeys.START.toString());
+				if (s instanceof Number) {
+					start = ((Number)s).doubleValue();
+				}
+			}
+			
 			// execute the action once to calculate measures without the need to step further
 			// to display the values:
 			logger.debug("If: before execute"); 
 			action.execute();
-			logger.debug("If: After execute"); 
+			logger.debug("If: After execute");
+			if (start != null) {
+				schedule.schedule(MScheduleParameters.getEverlastingRandomScheduleParameter(start.doubleValue(), interval.doubleValue()), action);
+			}
+			else {
 			// TODO check if start=0 always works
-			schedule.schedule(MScheduleParameters.getUnboundedMScheduleParameters(interval == null ? 1.0 : interval.doubleValue()), action);
+				schedule.schedule(MScheduleParameters.getUnboundedRandomMScheduleParameters(interval == null ? 1.0 : interval.doubleValue()), action);
+			}
 			logger.debug("If: After Schedule"); 
 			return true;
 		}
@@ -270,6 +302,10 @@ public class MNetworkMeasureManager extends MAbstractMeasureManager {
 			listener.networkMeasureCalcRemoved(network, key);
 		}
 		return removed;
+	}
+	
+	public <T, E> boolean removeMeasureCalculation(MoreNetwork<T, E> network, String shortName) {
+		return removeMeasureCalculation(network, new MMeasureDescription(shortName));
 	}
 
 	/**
