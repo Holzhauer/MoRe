@@ -49,6 +49,16 @@ public class MNetworkManager {
 		networks = new HashMap<String, MoreNetwork<?,?>>();
 		measureStorage = new MNetworkMeasureStorage();
 	}
+	/**
+	 * Add a new {@link MoreNetwork} to the network manager
+	 * @param network the network to add
+	 * @param name the network's identifier
+	 * 
+	 * Created by Sascha Holzhauer on 03.01.2011
+	 */
+	public static void setNetwork(MoreNetwork<?, ?> network, String name) {
+		networks.put(name, network);
+	}
 	
 	public static MoreNetwork<?,?> getNetwork(String name) {
 		return networks.get(name);
@@ -61,6 +71,7 @@ public class MNetworkManager {
 	 * @param <E>
 	 * @param in_network
 	 * @param predicate
+	 * @param newname an identifier for the new subnetwork
 	 * @return
 	 * Created by Sascha Holzhauer on 16.11.2010
 	 */
@@ -69,6 +80,19 @@ public class MNetworkManager {
 		MoreNetwork<V, E> out_network = in_network.getGraphFilteredInstance(filter.transform(in_network.getJungGraph()));
 		networks.put(newname, out_network);
 		return out_network;
+	}
+	
+	/**
+	 * @param <V>
+	 * @param <E>
+	 * @param in_network
+	 * @param predicate
+	 * @param newname
+	 * @return
+	 * Created by Sascha Holzhauer on 03.01.2011
+	 */
+	public static <V, E> MoreNetwork<V,E> storeVertexSubnetwork(String in_network, Predicate<V> predicate, String newname) {
+		return storeVertexSubnetwork((MoreNetwork<V,E>)getNetwork(in_network), predicate, newname);
 	}
 	
 	public static <V, E> Number getNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc) {

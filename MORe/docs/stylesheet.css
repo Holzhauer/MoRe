@@ -23,9 +23,16 @@ ul,ol {
 p {
 	margin-left: 10px;
 }
+
 p.text {
 	width:600px;
 }
+
+p.rs {
+	width:600px;
+	color:#5858FA;
+}
+
 
 a img {
 	border-width: 0px;

@@ -17,6 +17,7 @@ import java.util.Map;
 
 import javax.swing.JLabel;
 
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.networks.MoreNetwork;
 
@@ -33,8 +34,8 @@ import repast.simphony.context.space.graph.ContextJungNetwork;
  * @date 15.11.2010
  * 
  */
-public class MMeasureBundle {
-	private MoreNetwork<? extends MoreNodeMeasureSupport, ?>	network;
+public class MMeasureBundle<T extends MoreNodeMeasureSupport, E  extends MoreEdge> {
+	private MoreNetwork<T, E>										network;
 	private MMeasureDescription										measure;
 	private Map<String, Object>										params;
 
@@ -44,11 +45,11 @@ public class MMeasureBundle {
 		this(null, null);
 	}
 
-	public MMeasureBundle(MoreNetwork<? extends MoreNodeMeasureSupport, ?> net, MMeasureDescription measure) {
+	public MMeasureBundle(MoreNetwork<T, E> net, MMeasureDescription measure) {
 		this(net, measure, null);
 	}
 
-	protected MMeasureBundle(MoreNetwork<? extends MoreNodeMeasureSupport, ?> net, MMeasureDescription measure,
+	protected MMeasureBundle(MoreNetwork<T, E> net, MMeasureDescription measure,
 			Map<String, Object> params) {
 		this.measure = measure;
 		this.network = net;
@@ -67,7 +68,7 @@ public class MMeasureBundle {
 		return jLabel;
 	}
 
-	void setNetwork(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network) {
+	void setNetwork(MoreNetwork<T, E> network) {
 		this.network = network;
 	}
 

@@ -10,9 +10,11 @@
 <h5>Last update: 16.11.2010</h5>
 <h1>MORe Usage</h1>
 
+	<h2>Using this Documentation</h2>
+		<p class="rs">Text written like this indicates Repast Simphony specific instructions.</p>
 	<h2>Configuring the Network Measures</h2>
 		<h3>Adding Measure Definitions</h3>
-		<p>As default, the <code>NetworkMeasureManager</code> imports measure definitions from 
+		<p class="text">As default, the <code>NetworkMeasureManager</code> imports measure definitions from 
 		<code>MBasicNetworkMeasureSupplier</code> (see <a href="./javadoc/index.html">JavaDoc</a> for details).</p>
 		
 		<p class="text">Further measure definitions are added by passing an instance of <code>MoreMeasureSupplier</code> to
@@ -21,9 +23,11 @@
 	
 	<h2>Managing Network Measures</h2>
 		<h3>Basics</h3>
-		<p class=text">The central class for managing network measures is <code>MNetworkMeasureManager</code>.
+		<p class="text">The central class for managing network measures is <code>MNetworkMeasureManager</code>.
 		To obtain an instance of the network manager call <code>MNetworkMeasureManager.getInstance()</code>. However, make sure to set the schedule before:
 		<code>MNetworkManager.setSchedule(MoreSchedule schedule)</code>!</p>
+		<p class="rs">To use the Repast Simphony schedule call <code>MNetworkMeasureManager.setSchedule(new MRsSchedule(RunEnvironment.getInstance().getCurrentSchedule()));</code>
+		to use an adapter from RS's <code>ISchedule</code> to <code>MoreSchudule</code>.</p>
 		
 		<h3>Trigger measure calculation for networks</h3>
 		<p class=text"></p> 
@@ -32,10 +36,16 @@
 		<h3>Trigger measure calculation for nodes</h3>
 	
 	<h2>Defining subnetworks</h2>
-		<p class="text">
+		<p class="text">MoRe supports the definition of subnetworks according to criteria that may be derived from Java object properties to 
+		calculate network measures for certain network parts, for instance. As a default, subnetworks consist of nodes that fulfil given criteria
+		and all links of the original network between these nodes.</p>
+		
+		<p class="text">To define a subnetwork accomplish the following steps:</p> 
 		<ul>
-			<li>Social network modelling</li>
-			<li>Calculation and management of network an node measures</li>
+			<li>Define a <code>org.apache.commons.collections15.Predicate</code> whose <code>evaluate(object)</code> methods returns true for
+			all vertices that shall be included in the subnetwork.</li>
+			<li>Call <code>MNetworkManager.storeVertexSubnetwork(network, predicate, subnetwork_name)</code> where network may be the name
+			of a network already registered at the <code>MNetworkManager</code> or an instance of <code>MoreNetwork</code>.</li>
 		</ul>
 		</p>
 		

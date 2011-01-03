@@ -1,0 +1,23 @@
+<project>
+	<echo>Generate build info class...</echo>
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
+	<svn>
+		<status path="${basedir}\src\de\cesr\more\util\MVersionInfo.java" revisionProperty="svn.revision" />
+	</svn>
+	<tstamp>
+	    <format property="TODAY" pattern="EEE, d-MMMM-yyyy HH:mm:ss z" locale="ENGLISH, GERMANY"/>
+	 </tstamp>
+	
+	<echo>MoRe Revision: ${svn.revision}</echo>
+	<echo>Time stamp ${TODAY}</echo>
+	
+	<echo>Write build info to file ${basedir}\src\de\cesr\more\util\BuildInfo.java</echo>
+	<!-- the source code of the java class -->
+	<echo file="${basedir}\src\de\cesr\more\util\MVersionInfo.java">
+		package de.cesr.more.util;
+		public class MVersionInfo {
+			public static final String revisionNumber="${svn.revision}";
+			public static final String timeStamp="${TODAY}";
+		}
+	</echo>
+</project>
