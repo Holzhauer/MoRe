@@ -35,4 +35,11 @@ public interface MoreSchedule {
 	public void schedule(MScheduleParameters params, MoreAction action);
 	
 	public void removeAction(MoreAction action);
+	
+	/**
+	 * Lists scheduled actions and according parameters in the returned string.
+	 * @return
+	 * Created by Sascha Holzhauer on 11.01.2011
+	 */
+	public String getScheduleInfo();
 }

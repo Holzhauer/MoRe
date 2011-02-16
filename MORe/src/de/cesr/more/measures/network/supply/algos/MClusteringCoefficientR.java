@@ -31,9 +31,12 @@ import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.RVector;
 import org.rosuda.JRI.Rengine;
 
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.io.MoreEdgeFactory;
+import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
+import de.cesr.more.measures.util.MScheduleParameters;
+import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.util.Log4jLogger;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
@@ -61,6 +64,14 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 
 	
 	private MClusteringCoefficientR() {
+		// Stop R engine:
+		MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(MScheduleParameters.END_TICK, 1,
+				MScheduleParameters.END_TICK, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
+					@Override
+					public void execute() {
+						MClusteringCoefficientR.endEngine();
+					}
+				});
 	}
 	
 	static public MClusteringCoefficientR getInstance() {
@@ -68,6 +79,18 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 			instance = new MClusteringCoefficientR();
 		}
 		return instance;
+	}
+	
+	/**
+	 * Stops REngine.
+	 * 
+	 * Created by Sascha Holzhauer on 10.01.2011
+	 */
+	static public void endEngine() {
+		Rengine re = Rengine.getMainEngine();
+		if (re != null) {
+			re.end();
+		}
 	}
 	
 	public static <V, E extends MoreEdge> void assignGraphObject(Rengine re, Graph<V,E> graph, String targetSymbol) {
@@ -91,21 +114,25 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 	
 	
 	
-	public static <V, E extends MoreEdge> double getClusteringCoefficientR(final Graph<V, E> graph) {
+	public static <V, E extends MoreEdge> double getClusteringCoefficientOverallR(final Graph<V, E> graph) {
 		logger.info("Calculate Clustering Coefficient (R) for a graph containing " + graph.getVertexCount() + " nodes.");
+		
+		if (graph.getEdgeCount() == 0)  {
+			logger.warn("Graph " + graph + " does not contain any edges");
+			return Double.NaN;
+		}
 		
 		Rengine re = getRengine();
 		
-		logger.debug("Rengine created, waiting for R");
-		// the engine creates R is a new thread, so we should wait until it's ready
-        if (!re.waitForR()) {
-        	logger.error("Cannot load R");
-            return 0.0;
-        }
-        
 		REXP result;
 		assignGraphObject(re, graph, "g");
-		re.eval("print(g)");
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			re.eval("print(g)");
+		}
+		// LOGGING ->
+		
 		result = re.eval("transitivity(g, type=\"global\")");
 		logger.info("Result: " + result);
 		return result.asDouble();
@@ -118,7 +145,16 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 	public static Rengine getRengine() {
 		Rengine re = Rengine.getMainEngine();
 		if (re == null) {
+			logger.debug("REngine-Version: " + Rengine.getVersion());
 			re = new Rengine(R_ARGS, false, getInstance());
+			
+			// the engine creates R is a new thread, so we should wait until it's ready
+			logger.debug("Rengine created, waiting for R");
+			if (!re.waitForR()) {
+	        	logger.error("Cannot load R");
+	        	throw new IllegalStateException("Cannot load R");
+	        }
+	        
 		}
 		return re;
 	}
@@ -202,6 +238,5 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 		else if (level == 1) {
 			logger.warn(message);
 		}
-		assert false;
 	}
 }

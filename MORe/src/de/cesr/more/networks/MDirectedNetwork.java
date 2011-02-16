@@ -23,13 +23,15 @@
  */
 package de.cesr.more.networks;
 
+import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.io.MoreEdgeFactory;
+import de.cesr.more.building.MoreEdgeFactory;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
  * MORe
@@ -44,6 +46,20 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 
 	protected MoreEdgeFactory<V, E> edgeFactory = null;
 	protected String 				name;
+
+	/**
+	 * @deprecated (used to build new instances by JUNG...)
+	 */
+	public MDirectedNetwork() {
+		this.edgeFactory = null;
+		this.name = "NN";
+	}
+
+	public MDirectedNetwork(MoreEdgeFactory<V, E> edgeFactory, String name) {
+		this.edgeFactory = edgeFactory;
+		this.name = name;
+	}
+
 	
 	/**
 	 * @param <V>
@@ -54,19 +70,15 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	 * Created by Sascha Holzhauer on 10.12.2010
 	 */
 	public static <V, E extends MoreEdge<V>> MDirectedNetwork<V, E> getNetwork(MoreEdgeFactory<V, E> edgeFactory,
-			DirectedGraph<V, E> graph) {
-		MDirectedNetwork<V, E> subnet = new MDirectedNetwork<V, E>(edgeFactory);
+			DirectedGraph<V, E> graph, String name) {
+		MDirectedNetwork<V, E> net = new MDirectedNetwork<V, E>(edgeFactory, name);
 		for (V v : graph.getVertices()) {
-			subnet.addNode(v);
+			net.addNode(v);
 		}
 		for (E e : graph.getEdges()) {
-			subnet.addEdge(e, e.getStart(), e.getEnd());
+			net.addEdge(e, e.getStart(), e.getEnd());
 		}
-		return subnet;
-	}
-
-	public MDirectedNetwork(MoreEdgeFactory<V, E> edgeFactory) {
-		this.edgeFactory = edgeFactory;
+		return net;
 	}
 	
 	/**
@@ -125,7 +137,7 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	 */
 	@Override
 	public Graph getJungGraph() {
-		return this;
+		return (DirectedSparseGraph) this;
 	}
 
 	/**
@@ -230,8 +242,8 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	 * @see de.cesr.more.networks.MoreNetwork#getEmptyInstance()
 	 */
 	@Override
-	public MoreNetwork<V, E> getGraphFilteredInstance(Graph<V,E> graph) {
-		MDirectedNetwork<V, E> subnet = new MDirectedNetwork<V, E>(edgeFactory);
+	public MoreNetwork<V, E> getGraphFilteredInstance(Graph<V,E> graph, String newName) {
+		MDirectedNetwork<V, E> subnet = new MDirectedNetwork<V, E>(edgeFactory, newName);
 		for (V v : graph.getVertices()) {
 			if (!this.containsVertex(v)) {
 				throw new NoSuchElementException("Original network does not contain " + v);
@@ -246,5 +258,36 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 		}
 		return subnet;
 	}
+	
+	/**
+	 * @see edu.uci.ics.jung.graph.AbstractGraph#toString()
+	 */
+	public String toString() {
+		return getName();
+	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#reverseNetwork()
+	 */
+	@Override
+	public void reverseNetwork() {
+		
+		if (!this.isDirected()) {
+			Collection<E> orgEdges = this.getEdgesCollection();
+			for (E edge : orgEdges) {
+				this.removeEdge(edge);
+			}
+			for (E edge : orgEdges) {
+				this.connect(edge.getEnd(), edge.getStart());
+			}
+		}
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#getEdgesCollection()
+	 */
+	@Override
+	public Collection<E> getEdgesCollection() {
+		return this.getEdges();
+	}
 }

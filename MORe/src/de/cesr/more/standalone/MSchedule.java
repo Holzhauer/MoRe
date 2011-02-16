@@ -130,13 +130,13 @@ public class MSchedule implements MoreSchedule {
 	 */
 	public String getScheduleInfo() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("MSchedule Information:\n");
+		buffer.append("MSchedule (" + toString() + ") Information:\n");
 		for (Entry<MoreAction, MScheduleParameters> a : actions.entrySet()) {
 			buffer.append(MManager.getFloatPointFormat().format(a.getValue().getStart()));
 			buffer.append("\t> ");
 			buffer.append(MManager.getFloatPointFormat().format(a.getValue().getInterval()));
 			buffer.append("\t> ");
-			buffer.append(MManager.getFloatPointFormat().format(a.getValue().getEnd()));
+			buffer.append(a.getValue().getEnd());
 			buffer.append("\t ");
 			buffer.append(a.getKey());
 			buffer.append("\n");

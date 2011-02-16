@@ -26,7 +26,8 @@ import edu.uci.ics.jung.io.GraphMLReader;
 
 /**
  * MORe
- * Enables assigning the graph data to an existing set of vertices.
+ * Creates a new MoreNetwork using the factories. For edges, source and target informations is
+ * derived from the GraphML file.
  * 
  * @author Sascha Holzhauer
  * @date 06.10.2010 
@@ -35,17 +36,12 @@ import edu.uci.ics.jung.io.GraphMLReader;
  * @param <V> Vertex Type
  * @param <E> Edge Type
  */
-public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends GraphMLReader<G, V, E> {
+public class GraphMLReaderWithEdges<G extends Hypergraph<V, E>, V, E> extends GraphMLReader<G, V, E> {
 
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Log4jLogger.getLogger(GraphMLReader2NodeMap.class);
-	
-	/**
-	 * BidiMap that contains node ids (key) and node object (value)
-	 */
-	protected BidiMap<V, String> nodeMap;
 	
 	/**
 	 * An {@link MoreEdgeFactory} that is used to create edge objects
@@ -55,34 +51,15 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
 	/**
 	 * @param vertex_factory
 	 * @param edge_factory
-	 * @param nodeMap BidiMap that contains node ids (key) and node object (value)
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	public GraphMLReader2NodeMap(Factory<V> vertex_factory,
-			MoreEdgeFactory<V, E> edge_factory, BidiMap<V, String> nodeMap)
+	public GraphMLReaderWithEdges(Factory<V> vertex_factory,
+			MoreEdgeFactory<V, E> edge_factory)
         throws ParserConfigurationException, SAXException {
 		super(vertex_factory, null);
-		this.nodeMap = nodeMap;
 		this.edgeFactory = edge_factory;
     }
-	
-	/**
-	 * Passes a pseudo edge factory that throws an {@link IllegalStateException} every time the factory is called (indicating that
-	 * the nodeMap does not contain entries for every node).
-	 * @param edge_factory
-	 * @param nodeMap BidiMap that contains node ids (key) and node object (value)
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 */
-	public GraphMLReader2NodeMap(MoreEdgeFactory<V, E> edge_factory, BidiMap<V, String> nodeMap) throws ParserConfigurationException, SAXException {
-		this( new Factory<V>() {
-			@Override
-			public V create() {
-				throw new IllegalStateException("Obviously, the node Map did not contain a requested ID, and a vertex factory was not supplied");
-			}
-		}, edge_factory, nodeMap);
-	}
 
 	/**
 	 * Passes contents of {@link this#nodeMap} to {@link super#vertex_ids}.
@@ -91,12 +68,6 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
 	 */
 	protected void clearData() {
 		super.clearData();
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("NodeMap: " + this.nodeMap);
-		}
-		// LOGGING ->
-		this.vertex_ids.putAll(this.nodeMap);
 	}
 	
 	/**

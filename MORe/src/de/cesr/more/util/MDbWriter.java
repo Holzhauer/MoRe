@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.param.MoreBasicPa;
 import de.cesr.more.util.param.MParameterManager;
 
@@ -46,10 +47,20 @@ import de.cesr.more.util.param.MParameterManager;
  */
 public class MDbWriter {
 
-	public static final  boolean writeParamID = true;
+	public static final  boolean writeParamId = true;
+	
+	public static final  boolean writeRunId = true;
 
 	public static final  boolean writeVersionID = true;
 
+	protected String externalVersion;
+	
+	protected MoreNetwork network;
+	
+	protected int paramId;
+	
+	protected MoreRunIdProvider prov;
+	
 	/**
 	 * Logger
 	 */
@@ -60,8 +71,12 @@ public class MDbWriter {
 	private Connection con;
 	
 	
-	public MDbWriter() {
+	public MDbWriter(MoreNetwork network, String externalVersion, int paramId, MoreRunIdProvider prov) {
 		this.values = new HashMap<String, String>();
+		this.network = network;
+		this.externalVersion = externalVersion;
+		this.paramId = paramId;
+		this.prov = prov;
 	}
 	
 	public void addValue(String column, String value) {
@@ -76,19 +91,31 @@ public class MDbWriter {
 		String t1 = (String) MParameterManager.getParameter(MoreBasicPa.TBLNAME_NETWORK_MEASURES);
 
 		StringBuffer sql = new StringBuffer();
-		sql.append("INSERT INTO `" + t1 + "` AS t1 SET ");
+		sql.append("INSERT INTO `" + t1 + "` SET ");
 		
-		if (writeParamID) {
-			sql.append("ParamID = " + "");
+		if (writeParamId) {
+			sql.append("ParamID = " + paramId + ", ");
+		}
+
+		if (writeRunId) {
+			sql.append("runID = " + prov.getRunId() + ", ");
 		}
 		
+		if (writeVersionID) {
+			sql.append("Version = 'MoRe: " + MVersionInfo.revisionNumber + "/" + MVersionInfo.timeStamp + 
+					" | " + externalVersion + "', ");
+		}
+		
+		sql.append("network = '" + network.getName() + "'");
+		
 		for (Entry<String, String> e : this.values.entrySet()) {
-			sql.append(e.getKey() + " = " + e.getValue() + ", ");
+			sql.append(", `" + e.getKey() + "` = '" + (e.getValue().equals("NaN") ? "-1" : e.getValue()) + "'");
 		}
 		sql.append(";");
 		logger.debug("SQL-statement to fetch params: " + sql);
 		
 		connect(sql.toString());
+		disconnect();
 	}
 
 	/**
@@ -96,16 +123,17 @@ public class MDbWriter {
 	 * @return
 	 * Created by Sascha Holzhauer on 29.03.2010
 	 */
-	protected ResultSet connect(String sql) {
+	protected boolean connect(String sql) {
 		try {
 			if (con == null || con.isClosed()) {
 				con = getConnection();
 			}
+			
 			if (sql.startsWith("update:")) {
 				con.createStatement().executeUpdate(sql.substring(7));
-				return null;
+				return true;
 			} else {
-				return con.createStatement().executeQuery(sql);
+				return con.createStatement().execute(sql);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -116,7 +144,7 @@ public class MDbWriter {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return true;
 	}
 	
 	/**

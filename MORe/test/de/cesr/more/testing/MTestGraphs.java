@@ -32,9 +32,11 @@ import org.xml.sax.SAXException;
 
 import de.cesr.more.basic.MEdge;
 import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MNodeMeasures;
+import de.cesr.more.networks.MDirectedNetwork;
 import de.cesr.more.networks.MoreNetwork;
 
 import edu.uci.ics.jung.graph.DirectedGraph;
@@ -67,6 +69,10 @@ public class MTestGraphs {
 			return "TestNode" + this.id;
 		}
 
+		public int getId() {
+			return id;
+		}
+		
 		/**
 		 * @see de.cesr.more.measures.node.MoreNodeMeasureSupport#getNetworkMeasureObject(de.cesr.more.networks.MoreNetwork, de.cesr.more.measures.MMeasureDescription)
 		 */
@@ -108,6 +114,31 @@ public class MTestGraphs {
 				}
 			}
 		}
+		return completeG;
+	}
+	
+	public static MoreNetwork<TestNode, MoreEdge<TestNode>> getCompleteDirectedMNetwork(int num_nodes) {	
+		MoreNetwork<TestNode, MoreEdge<TestNode>> completeG = new MDirectedNetwork(new MoreEdgeFactory<TestNode, MoreEdge<TestNode>>() {
+
+			@Override
+			public MoreEdge<TestNode> createEdge(TestNode source, TestNode target, boolean directed) {
+				return new MEdge<TestNode>(source, target);
+			}
+		}, "TestNet");
+	
+		// Build complete graph:
+		TestNode[] agents = new TestNode[num_nodes];
+		for (int i = 0; i < num_nodes; i++) {
+			agents[i] = new MTestGraphs.TestNode();
+		}
+		for (int i = 0; i < agents.length; i++) {
+			for (int j = i; j < agents.length; j++) {
+				if (i != j) {
+					completeG.connect(agents[i], agents[j]);
+				}
+			}
+		}
+		completeG.getName();
 		return completeG;
 	}
 	

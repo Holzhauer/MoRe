@@ -19,86 +19,58 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 03.12.2010
+ * Created by Sascha Holzhauer on Jan 3, 2011
  */
-package de.cesr.more.basic;
+package de.cesr.more.rs.adapter;
+
+import repast.simphony.space.graph.RepastEdge;
+import de.cesr.more.basic.MoreEdge;
 
 /**
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 03.12.2010 
+ * @date Jan 3, 2011 
  *
  */
-public class MEdge<V> implements MoreEdge<V> {
-	
-	V start, end;
-	double weight;
-	boolean directed;
-	
-	/**
-	 * Creates an undirected edge.
-	 * @param start
-	 * @param end
-	 */
-	public MEdge(V start, V end) {
-		this(start, end, false);
-	}
+public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreEdge<AgentT> {
 
 	/**
-	 * @param start
-	 * @param end
-	 * @param directed 
+	 * @param source
+	 * @param target
+	 * @param directed
 	 */
-	public MEdge(V start, V end, boolean directed) {
-		this.start = start;
-		this.end = end;
-		this.directed = directed;
+	public MRepastEdge(AgentT source, AgentT target, boolean directed) {
+		super(source, target, directed);
+	}
+
+	public MRepastEdge(AgentT source, AgentT target, boolean directed, double weight) {
+		super(source, target, directed, weight);
 	}
 	
 	/**
 	 * @see de.cesr.more.basic.MoreEdge#getEnd()
 	 */
 	@Override
-	public V getEnd() {
-		return this.end;
+	public AgentT getEnd() {
+		return this.getTarget();
 	}
 
 	/**
 	 * @see de.cesr.more.basic.MoreEdge#getStart()
 	 */
 	@Override
-	public V getStart() {
-		return this.start;
-	}
-
-	/**
-	 * @see de.cesr.more.basic.MoreEdge#getWeight()
-	 */
-	@Override
-	public double getWeight() {
-		return this.weight;
-	}
-
-	/**
-	 * @see de.cesr.more.basic.MoreEdge#setWeight(double)
-	 */
-	@Override
-	public void setWeight(double weight) {
-		this.weight = weight;
+	public AgentT getStart() {
+		return this.getSource();
 	}
 	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		return "[" + getStart() + " > " + getEnd() + "]";
 	}
-
-	/**
-	 * @see de.cesr.more.basic.MoreEdge#isDirected()
-	 */
-	@Override
-	public boolean isDirected() {
-		return directed;
-	}
+	
 	
 	/**
 	 * @see java.lang.Object#hashCode()
@@ -109,4 +81,5 @@ public class MEdge<V> implements MoreEdge<V> {
 		result= 31 * result + getEnd().hashCode();
 		return result;
 	}
+
 }

@@ -4,7 +4,7 @@
  * Center for Environmental Systems Research, Kassel
  * Created by Sascha Holzhauer on 05.10.2010
  */
-package de.cesr.more.io;
+package de.cesr.more.building;
 
 /**
  * MORe

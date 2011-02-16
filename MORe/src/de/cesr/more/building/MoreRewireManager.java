@@ -19,26 +19,20 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 03.12.2010
+ * Created by Sascha Holzhauer on 25.01.2011
  */
-package de.cesr.more.basic;
+package de.cesr.more.building;
+
+import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 03.12.2010 
+ * @date 25.01.2011 
  *
  */
-public interface MoreEdge<V> {
+public interface MoreRewireManager<V, E> {
 
-	public V getStart();
-	
-	public V getEnd();
-	
-	public double getWeight();
-	
-	public void setWeight(double weight);
-	
-	public boolean isDirected();
+	public V getRewireTarget(Graph<V,E> graph, V source);
 }

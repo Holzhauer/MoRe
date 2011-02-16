@@ -90,8 +90,8 @@ public class MScheduleTest {
 			}
 		};
 
-		p1 = MScheduleParameters.getScheduleParameter(1, 2, MScheduleParameters.EVERLASTING, MScheduleParameters.RANDOM_PRIORITY);
-		p2 = MScheduleParameters.getScheduleParameter(3, 1, MScheduleParameters.EVERLASTING, MScheduleParameters.RANDOM_PRIORITY);
+		p1 = MScheduleParameters.getScheduleParameter(1, 2, MScheduleParameters.END_TICK, MScheduleParameters.RANDOM_PRIORITY);
+		p2 = MScheduleParameters.getScheduleParameter(3, 1, MScheduleParameters.END_TICK, MScheduleParameters.RANDOM_PRIORITY);
 	}
 
 	/**

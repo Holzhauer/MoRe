@@ -27,14 +27,19 @@ package de.cesr.more.rs.adapter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.log4j.Logger;
 
 import repast.simphony.engine.schedule.AbstractAction;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.measures.util.MoreSchedule;
+import de.cesr.more.util.Log4jLogger;
 
 
 
@@ -48,6 +53,11 @@ import de.cesr.more.measures.util.MoreSchedule;
 public class MRsSchedule implements MoreSchedule {
 
 	ISchedule							schedule;
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(MRsSchedule.class);
 
 	/**
 	 * Since RS identifies IActions by identity, theses objects need to be archived:
@@ -79,17 +89,44 @@ public class MRsSchedule implements MoreSchedule {
 	 */
 	@Override
 	public void schedule(MScheduleParameters params, final MoreAction action) {
-		ISchedulableAction newAction = new AbstractAction(ScheduleParameters.createRepeating(params.getStart(), params
-				.getInterval(), params.getPriority())) {
+		ScheduleParameters rSparams = ScheduleParameters.createRepeating(params.getStart(), params
+				.getInterval(), params.getPriority());
+		ISchedulableAction newAction = new AbstractAction(rSparams) {
+
+			/**
+			 * 
+			 */
+			private static final long	serialVersionUID	= 1L;
 
 			@Override
 			public void execute() {
+				logger.debug("Execute action: " + action );
 				action.execute();
 			}
 
 		};
 		actions.put(action, newAction);
-		schedule.schedule(newAction);
+		logger.debug("Schedule MoreAction: " + action);
+		schedule.schedule(rSparams, newAction);
+		logger.debug("Scheduled IAction: " + newAction);
+	}
+
+	/**
+	 * Returns a string containing all scheduled actions including their schedule parameters.
+	 * @return information about scheduled actions
+	 * 
+	 * Created by Sascha Holzhauer on 23.12.2010
+	 */
+	public String getScheduleInfo() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("MSchedule Information:\n");
+		for (Entry<MoreAction,ISchedulableAction> a : actions.entrySet()) {
+			buffer.append(MManager.getFloatPointFormat().format(a.getValue().getNextTime()));
+			buffer.append("\t: ");
+			buffer.append(a.getKey());
+			buffer.append("\n");
+		}
+		return buffer.toString();
 	}
 
 }

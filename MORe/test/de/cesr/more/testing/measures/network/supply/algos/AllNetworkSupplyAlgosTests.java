@@ -38,7 +38,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * run all adapter tests at once
  */
 @RunWith(Suite.class)
-@SuiteClasses({MClusteringCoefficientRTest.class})
+@SuiteClasses({MNetworkStatisticsRTest.class, MClusteringCoefficientRTest.class})
 public class AllNetworkSupplyAlgosTests {
 
 }

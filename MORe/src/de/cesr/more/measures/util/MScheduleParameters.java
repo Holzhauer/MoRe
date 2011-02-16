@@ -38,7 +38,7 @@ public class MScheduleParameters {
 	public static final double FIRST_PRIORITY = Double.POSITIVE_INFINITY;
 	public static final double LAST_PRIORITY = Double.NEGATIVE_INFINITY;
 	  
-	public static final double EVERLASTING = Double.POSITIVE_INFINITY;
+	public static final double END_TICK = Double.POSITIVE_INFINITY;
 	
 	double start;
 	double interval;
@@ -133,7 +133,7 @@ public class MScheduleParameters {
 	 * Created by Sascha Holzhauer on 17.11.2010
 	 */
 	public static MScheduleParameters getEverlastingRandomScheduleParameter(double start, double interval) {
-		return new MScheduleParameters(start, interval, MScheduleParameters.EVERLASTING, MScheduleParameters.RANDOM_PRIORITY);
+		return new MScheduleParameters(start, interval, MScheduleParameters.END_TICK, MScheduleParameters.RANDOM_PRIORITY);
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class MScheduleParameters {
 	 * Created by Sascha Holzhauer on 17.11.2010
 	 */
 	public static MScheduleParameters getUnboundedRandomMScheduleParameters(double interval) {
-		return new MScheduleParameters(0, interval, MScheduleParameters.EVERLASTING, MScheduleParameters.RANDOM_PRIORITY);
+		return new MScheduleParameters(0, interval, MScheduleParameters.END_TICK, MScheduleParameters.RANDOM_PRIORITY);
 	}
 	
 	

@@ -5,7 +5,7 @@
 		<status path="${basedir}\src\de\cesr\more\util\MVersionInfo.java" revisionProperty="svn.revision" />
 	</svn>
 	<tstamp>
-	    <format property="TODAY" pattern="EEE, d-MMMM-yyyy HH:mm:ss z" locale="ENGLISH, GERMANY"/>
+	    <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" locale="ENGLISH, GERMANY"/>
 	 </tstamp>
 	
 	<echo>MoRe Revision: ${svn.revision}</echo>

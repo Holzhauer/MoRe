@@ -19,7 +19,7 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 03.12.2010
+ * Created by Sascha Holzhauer on 11.01.2011
  */
 package de.cesr.more.testing.measures.network.supply.algos;
 
@@ -29,11 +29,10 @@ import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.Rengine;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR;
+import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
 import de.cesr.more.standalone.MSchedule;
 import de.cesr.more.testing.MTestGraphs;
 import de.cesr.more.util.Log4jLogger;
@@ -43,63 +42,44 @@ import edu.uci.ics.jung.graph.Graph;
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 03.12.2010 
+ * @date 11.01.2011 
  *
  */
-public class MClusteringCoefficientRTest {
-	
-	static private String[] R_ARGS = {""};
+public class MNetworkStatisticsRTest {
+
 	
 	private Logger logger;
 	
 	/**
 	 * @throws java.lang.Exception
-	 * Created by Sascha Holzhauer on 03.12.2010
+	 * Created by Sascha Holzhauer on 11.01.2011
 	 */
 	@Before
 	public void setUp() throws Exception {
 		/**
 		 * Logger
 		 */
-		logger = Log4jLogger.getLogger(MClusteringCoefficientRTest.class);
+		logger = Log4jLogger.getLogger(MNetworkStatisticsRTest.class);
 		MManager.setSchedule(new MSchedule());
 	}
 
 	/**
 	 * @throws java.lang.Exception
-	 * Created by Sascha Holzhauer on 03.12.2010
+	 * Created by Sascha Holzhauer on 11.01.2011
 	 */
 	@After
 	public void tearDown() throws Exception {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR#getClusteringCoefficientR(edu.uci.ics.jung.graph.Graph)}.
+	 * Test method for {@link de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR#getAveragepathLengthR(edu.uci.ics.jung.graph.Graph)}.
 	 */
 	@Test
-	public final void testGetClusteringCoefficientR() {
-		logger.info("Test calculating clustering coefficient.");
+	public final void testGetAveragepathLengthR() {
+		logger.info("Test calculating average path length.");
 		Graph g = MTestGraphs.getCompleteUndirectedGraph(5);
-		double result;
-		result = MClusteringCoefficientR.getClusteringCoefficientOverallR(g);
-		
-		
-		assertEquals("( transitivity is : " + result + ")", result, 1.0, 0.001);
+		double result = MNetworkStatisticsR.getAveragepathLengthR(g, false);
+		assertEquals("(Calculated Average Path length is : " + result + ")", result, 1.0, 0.001);
 	}
 
-	/**
-	 * Test method for {@link de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR#createRGraph(edu.uci.ics.jung.graph.Graph)}.
-	 */
-	@Test
-	public final void testCreateRGraph() {
-		logger.info("Test graph assignment.");
-		Graph g = MTestGraphs.getCompleteUndirectedGraph(5);
-		REXP result;
-		
-		Rengine re = MClusteringCoefficientR.getRengine();
-		MClusteringCoefficientR.assignGraphObject(re, g, "g");
-		
-		result = re.eval("is.list(g)");
-		assertTrue(result.asBool().isTRUE());
-	}
 }

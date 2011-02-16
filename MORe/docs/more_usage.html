@@ -12,7 +12,14 @@
 
 	<h2>Using this Documentation</h2>
 		<p class="rs">Text written like this indicates Repast Simphony specific instructions.</p>
-	<h2>Configuring the Network Measures</h2>
+		
+	<h2>Initialising MoRe</h2>
+	<p class="text">Consider the following steps to initialise MoRe properly:</p>
+	<ul>
+		<li>Set the appropriate random seed by calling <code>MManger.getMRandomService().setSeed(int)</code>.</li>
+	</ul>
+	
+	<h2>Configuring Network Measures</h2>
 		<h3>Adding Measure Definitions</h3>
 		<p class="text">As default, the <code>NetworkMeasureManager</code> imports measure definitions from 
 		<code>MBasicNetworkMeasureSupplier</code> (see <a href="./javadoc/index.html">JavaDoc</a> for details).</p>
@@ -32,6 +39,12 @@
 		<h3>Trigger measure calculation for networks</h3>
 		<p class=text"></p> 
 	
+		<h3>Setting Parameters for Network Measure Calculation</h3>
+		<p class="text">Every <code>MoreMeasure</code> has a parameter-map. The map contains key- (default)value pairs of parameters.
+		the user may walk through the map and alter parameter values to adjust measure calculations. For instance, to set scheduling
+		parameters:
+		NOTE: It is not guaranteed that a <code>MoreMeasure</code> provides a non-empty map!</p>
+		
 	<h2>Managing Node Measures</h2>
 		<h3>Trigger measure calculation for nodes</h3>
 	

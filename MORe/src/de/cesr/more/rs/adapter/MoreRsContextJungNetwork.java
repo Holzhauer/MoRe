@@ -8,13 +8,18 @@ package de.cesr.more.rs.adapter;
 
 
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
+import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.JungNetwork;
 import repast.simphony.space.graph.RepastEdge;
+import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.exception.IllegalValueTypeException;
 import de.cesr.more.measures.MMeasureDescription;
@@ -28,6 +33,8 @@ import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe
+ * Network Adapter for Repast Simphony models.
+ * Extends a ContextJungNetwork (required to be used within Repast Simphony).
  * 
  * @author Sascha Holzhauer
  * @param <AgentT>
@@ -42,6 +49,9 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 	 * Logger
 	 */
 	static private Logger	logger	= Log4jLogger.getLogger(MoreRsContextJungNetwork.class);
+	
+	protected Context context;
+	protected JungNetwork network;
 
 	private EdgeCreator<? extends RepastEdge, AgentT> edgeCreator = null;
 	
@@ -52,8 +62,10 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 	 * @param net
 	 * @param context
 	 */
-	public MoreRsContextJungNetwork(JungNetwork<AgentT> net, Context<AgentT> context) {
-		super(net, context);
+	public MoreRsContextJungNetwork(JungNetwork<AgentT> network, Context<AgentT> context) {
+		super(network, context);
+		this.context = context;
+		this.network = network;
 	}
 
 	@Override
@@ -67,7 +79,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 			this.addEdge(edgeCreator.createEdge(source, target, this.isDirected(), 0.0));
 		}
 		else {
-			this.addEdge(source, target);
+			this.addEdge(new MRepastEdge<AgentT>(source, target, this.isDirected()));
 		}
 	}
 
@@ -110,6 +122,9 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 		edge.setWeight(weight);
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreRsNetwork#setEdgeFactory(repast.simphony.space.graph.EdgeCreator)
+	 */
 	public void setEdgeFactory(EdgeCreator<? extends RepastEdge, AgentT> edgeCreator) {
 		this.edgeCreator = edgeCreator;
 	}
@@ -215,9 +230,13 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 	 * @see de.cesr.more.networks.MoreNetwork#getGraphFilteredInstance(edu.uci.ics.jung.graph.Graph)
 	 */
 	@Override
-	public MoreNetwork<AgentT, EdgeT> getGraphFilteredInstance(Graph<AgentT, EdgeT> graph) {
-		// TODO Auto-generated method stub
-		return null;
+	public MoreNetwork<AgentT, EdgeT> getGraphFilteredInstance(Graph<AgentT, EdgeT> graph, String newName) {
+		JungNetwork<AgentT> jnetwork = 
+				(this.isDirected() ? new DirectedJungNetwork<AgentT>(newName) : new UndirectedJungNetwork<AgentT>(
+						newName));
+		jnetwork.setGraph(((Graph<AgentT, RepastEdge<AgentT>>) graph));
+		MoreNetwork<AgentT, EdgeT> out_net = new MoreRsContextJungNetwork<AgentT, EdgeT>(jnetwork, context);
+		return out_net;
 	}
 
 	/**
@@ -227,6 +246,46 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 	@Override
 	public Graph<AgentT, EdgeT> getJungGraph() {
 		return (Graph<AgentT, EdgeT>) super.getGraph();
+	}
+	
+	/**
+	 * @see repast.simphony.context.space.graph.ContextJungNetwork#toString()
+	 */
+	public String toString()  {
+		return getName() + " (" + numNodes() + " nodes / " + numEdges() + " edges)";
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#reverseNetwork()
+	 */
+	@Override
+	public void reverseNetwork() {
+		if (this.isDirected()) {
+			Collection<EdgeT> orgEdges = this.getEdgesCollection();
+			for (EdgeT edge :orgEdges) {
+				this.removeEdge(edge);
+			}
+			for (EdgeT edge :orgEdges) {
+				
+				if (edgeCreator != null) {
+					this.addEdge(edgeCreator.createEdge(edge.getTarget(),  edge.getSource(), this.isDirected(), 0.0));
+				}
+				else {
+					this.addEdge(new MRepastEdge<AgentT>(edge.getTarget(),  edge.getSource(), this.isDirected()));
+				}
+			}
+		}
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#getEdgesCollection()
+	 */
+	@Override
+	public Collection<EdgeT> getEdgesCollection() {
+		Collection<RepastEdge<AgentT>> edges = new HashSet<RepastEdge<AgentT>>();
+		for (RepastEdge<AgentT> edge : this.getEdges())
+			edges.add(edge);
+		return (Collection<EdgeT>) edges;
 	}
 
 }

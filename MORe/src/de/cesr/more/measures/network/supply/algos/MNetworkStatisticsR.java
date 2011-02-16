@@ -30,8 +30,11 @@ import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
+import de.cesr.more.measures.util.MScheduleParameters;
+import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.util.Log4jLogger;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -59,13 +62,42 @@ public class MNetworkStatisticsR extends MAbstractMeasureSupplier implements RMa
 
 	
 	private MNetworkStatisticsR() {
+		// Stop R engine:
+		logger.info("Schedule stopping REngine at end");
+		MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(MScheduleParameters.END_TICK, 1,
+				MScheduleParameters.END_TICK, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
+					@Override
+					public void execute() {
+						logger.info("Stop REngine.");
+						MNetworkStatisticsR.endEngine();
+					}
+					
+					public String toString() {
+						return "Stops REngine";
+					}
+				});
+		logger.info("Schedule: " + MManager.getSchedule().getScheduleInfo());
+		logger.info("Instance created");
 	}
 	
 	static public MNetworkStatisticsR getInstance() {
 		if (instance == null) {
+			logger.info("Create new instance");
 			instance = new MNetworkStatisticsR();
 		}
 		return instance;
+	}
+	
+	/**
+	 * Stops REngine.
+	 * 
+	 * Created by Sascha Holzhauer on 10.01.2011
+	 */
+	static public void endEngine() {
+		Rengine re = Rengine.getMainEngine();
+		if (re != null) {
+			re.end();
+		}
 	}
 	
 	public static <V, E extends MoreEdge> void assignGraphObject(Rengine re, Graph<V,E> graph, String targetSymbol) {
@@ -90,6 +122,9 @@ public class MNetworkStatisticsR extends MAbstractMeasureSupplier implements RMa
 	
 	
 	/**
+	 * Return {@link Double.NaN} when graph does not contain any edge.
+	 * If the graph is unconnected, the length of the missing paths are counted having 
+	 * length vcount(graph), one longer than the longest possible geodesic in the network.
 	 * 
 	 * TODO automatically check whether graph is connected and pass result to R
 	 * @param <V>
@@ -98,22 +133,27 @@ public class MNetworkStatisticsR extends MAbstractMeasureSupplier implements RMa
 	 * @return
 	 * Created by Sascha Holzhauer on 23.12.2010
 	 */
-	public static <V, E extends MoreEdge> double getAveragepathLengthR(final Graph<V, E> graph) {
+	public static <V, E extends MoreEdge> double getAveragepathLengthR(final Graph<V, E> graph, boolean considerIsolates) {
 		logger.info("Calculate Average Path Length (R) for a graph containing " + graph.getVertexCount() + " nodes.");
 		
-		Rengine re = getRengine();
+		if (graph.getEdgeCount() == 0)  {
+			logger.warn("Graph " + graph + " does not contain any edges");
+			return Double.NaN;
+		}
 		
-		logger.debug("Rengine created, waiting for R");
-		// the engine creates R is a new thread, so we should wait until it's ready
-        if (!re.waitForR()) {
-        	logger.error("Cannot load R");
-            return 0.0;
-        }
+		Rengine re = getRengine();
         
 		REXP result;
 		assignGraphObject(re, graph, "g");
-		re.eval("print(g)");
-		result = re.eval("average.path.length(g, directed=" + ((graph instanceof DirectedGraph) ? "TRUE" : "FALSE") + " , unconnected=TRUE)");
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			re.eval("print(g)");
+		}
+		// LOGGING ->
+
+		result = re.eval("average.path.length(g, directed=" + ((graph instanceof DirectedGraph) ? "TRUE" : "FALSE") + " , " +
+				"unconnected=" + (considerIsolates ? "FALSE" : "TRUE")+ ")");
 		logger.info("Result: " + result);
 		return result.asDouble();
 	}
@@ -125,7 +165,17 @@ public class MNetworkStatisticsR extends MAbstractMeasureSupplier implements RMa
 	public static Rengine getRengine() {
 		Rengine re = Rengine.getMainEngine();
 		if (re == null) {
+			logger.debug("REngine-Version: " + Rengine.getVersion());
 			re = new Rengine(R_ARGS, false, getInstance());
+			
+			// the engine creates R is a new thread, so we should wait until it's ready
+			logger.debug("Rengine created, waiting for R");
+
+			if (!re.waitForR()) {
+	        	logger.error("Cannot load R");
+	        	throw new IllegalStateException("Cannot load R");
+	        }
+			logger.debug("New REngine instantiated: " + re);
 		}
 		return re;
 	}
@@ -209,6 +259,5 @@ public class MNetworkStatisticsR extends MAbstractMeasureSupplier implements RMa
 		else if (level == 1) {
 			logger.warn(message);
 		}
-		assert false;
 	}
 }

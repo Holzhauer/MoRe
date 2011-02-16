@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeSet;
 
+import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.networks.MoreNetwork;
@@ -41,22 +42,6 @@ import de.cesr.more.networks.MoreNetwork;
  *
  */
 public abstract class MAbstractMeasureManager extends MAbstractMeasureSupplier implements MMeasureSelectorListener {
-
-	protected static MoreSchedule schedule;
-	/**
-	 * @return the schedule
-	 */
-	public static MoreSchedule getSchedule() {
-		return schedule;
-	}
-
-	/**
-	 * @param schedule the schedule to set
-	 */
-	public static void setSchedule(MoreSchedule schedule) {
-		MAbstractMeasureManager.schedule = schedule;
-	}
-
 	
 	protected static boolean promptForMeasureParameters;
 	

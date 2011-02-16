@@ -50,7 +50,7 @@ public class MMeasureDescription implements Comparable<MMeasureDescription> {
 		 * @param shortDescription The short description for the new <code>MeasureDescription</code>
 		 */
 		public MMeasureDescription(String shortDescription) {
-			this(MNodeMeasureCategory.NOT_DEFINED, shortDescription, "");
+			this(MNodeMeasureCategory.NOT_DEFINED, shortDescription, shortDescription);
 		}
 		
 		/**

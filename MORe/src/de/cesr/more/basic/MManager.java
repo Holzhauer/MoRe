@@ -23,49 +23,57 @@
  */
 package de.cesr.more.basic;
 
+
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import de.cesr.lara.components.LaraRandom;
+import de.cesr.more.measures.util.MoreSchedule;
+import de.cesr.more.util.MRandom;
+import de.cesr.more.util.MoreRandomService;
+
+
+
 /**
  * MORe
- *
+ * 
  * @author Sascha Holzhauer
- * @date 23.12.2010 
- *
+ * @date 23.12.2010
+ * 
  */
 public class MManager {
-	
+
+	protected static MoreSchedule		schedule;
+
+	protected static MoreRandomService	randomService;
+
 	/**
 	 * {@link NumberFormat} to format integer numbers
 	 */
-	protected static NumberFormat 		integerFormat;
-	
+	protected static NumberFormat		integerFormat;
+
 	/**
 	 * {@link NumberFormat} to format floating point numbers
 	 */
-	protected static NumberFormat 		floatPointFormat;
-	
-	
+	protected static NumberFormat		floatPointFormat;
+
 	/**
-	 * @param format
-	 * Created by Sascha Holzhauer on 23.12.2010
+	 * @param format Created by Sascha Holzhauer on 23.12.2010
 	 */
 	public static void setFloatPointFormat(NumberFormat format) {
 		floatPointFormat = format;
 	}
-	
+
 	/**
-	 * @param format
-	 * Created by Sascha Holzhauer on 23.12.2010
+	 * @param format Created by Sascha Holzhauer on 23.12.2010
 	 */
 	public static void setIntegerFormat(NumberFormat format) {
 		integerFormat = format;
 	}
-	
 
 	/**
-	 * @return
-	 * Created by Sascha Holzhauer on 23.12.2010
+	 * @return Created by Sascha Holzhauer on 23.12.2010
 	 */
 	public static NumberFormat getFloatPointFormat() {
 		if (floatPointFormat == null) {
@@ -75,8 +83,7 @@ public class MManager {
 	}
 
 	/**
-	 * @return
-	 * Created by Sascha Holzhauer on 23.12.2010
+	 * @return Created by Sascha Holzhauer on 23.12.2010
 	 */
 	public static NumberFormat getIntegerFormat() {
 		if (integerFormat == null) {
@@ -85,4 +92,44 @@ public class MManager {
 		return integerFormat;
 	}
 
+	/**
+	 * @param schedule the schedule to set
+	 */
+	public static void setSchedule(MoreSchedule schedule) {
+		MManager.schedule = schedule;
+	}
+
+	/**
+	 * @return the schedule
+	 */
+	public static MoreSchedule getSchedule() {
+		if (schedule == null) {
+			throw new IllegalStateException("The MoreScheduler has not been set before!");
+		}
+		return MManager.schedule;
+	}
+
+	/**
+	 * @return Created by Sascha Holzhauer on 11.01.2011
+	 */
+	public static boolean isScheduleSet() {
+		return (schedule != null);
+	}
+
+	/**
+	 * Return the random manager that is used for random processes in LARA. Either, the model author should implement
+	 * (or assign to this.randomMan when extending AbstracLModel) the random number generator used in the custom model
+	 * part, or reset the LRandom by calling getLRandom.setSeed(seed) using the correct seed parameter.
+	 * 
+	 * NOTE: Make sure that the {@link LaraRandom} class is instantiated only once since creating an instance every time
+	 * this method is called results in starting the random sequence anew each time the method is called!
+	 * 
+	 * @return the random manager
+	 */
+	public static MoreRandomService getMRandomService() {
+		if (randomService == null) {
+			randomService = new MRandom(0);
+		}
+		return randomService;
+	}
 }

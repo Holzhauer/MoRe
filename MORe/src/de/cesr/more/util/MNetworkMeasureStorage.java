@@ -23,6 +23,8 @@
  */
 package de.cesr.more.util;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +61,27 @@ public class MNetworkMeasureStorage {
 			throw new IllegalStateException("There is no value for measure " + desc.toString() + " for network " + network.getName());
 		}
 		return measures.get(network).get(desc);
+	}
+	
+	/**
+	 * Returns an unmodifiable map of all measures of the given network.
+	 * 
+	 * @param network
+	 * @return
+	 * Created by Sascha Holzhauer on Jan 3, 2011
+	 */
+	public Map<MMeasureDescription, Number> getAllMeasures(MoreNetwork<?, ?> network) {
+		if (! measures.containsKey(network)) {
+			throw new IllegalStateException("No measures defined for the given network (" + network.getName() + ")");
+		}
+		return Collections.unmodifiableMap(measures.get(network));
+	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return measures.toString();
 	}
 
 }

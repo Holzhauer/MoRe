@@ -41,6 +41,7 @@ import de.cesr.lara.components.impl.util.LRandom;
 import de.cesr.more.lara.LNetworkEnvironment;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.rs.adapter.DefaultLRsNetwork;
+import de.cesr.more.rs.adapter.MRepastEdge;
 import de.cesr.more.testing.LNetworkAnalysisTest.TestAgent;
 
 
@@ -55,7 +56,7 @@ public class DefaultRSNetworkTest {
 
 	LaraAgent				center;
 	LaraEnvironment			env;
-	MoreNetwork<LaraAgent, RepastEdge<LaraAgent>>	network;
+	MoreNetwork<LaraAgent, MRepastEdge<LaraAgent>>	network;
 
 	/**
 	 * test agent
@@ -114,7 +115,7 @@ public class DefaultRSNetworkTest {
 		});
 		env = new LNetworkEnvironment();
 		Context context = new DefaultContext<LaraAgent>();
-		network = new DefaultLRsNetwork<LaraAgent, RepastEdge<LaraAgent>>(new ContextJungNetwork<LaraAgent>(new UndirectedJungNetwork<LaraAgent>("network"),
+		network = new DefaultLRsNetwork<LaraAgent, MRepastEdge<LaraAgent>>(new ContextJungNetwork<LaraAgent>(new UndirectedJungNetwork<LaraAgent>("network"),
 				context), context);
 
 		// build network (star of max diameter 5):
@@ -184,7 +185,8 @@ public class DefaultRSNetworkTest {
 	@Test
 	public final void testSetWeight() {
 		LaraAgent friend = network.getAdjacent(center).iterator().next();
-		assertEquals("Weight of initialization should be 1.0", 1.0, network.getWeight(center, friend), 0);
+		assertEquals("Weight of initialization should be 1.0", DefaultLRsNetwork.DEFAULT_EDGE_WEIGHT, 
+				network.getWeight(center, friend), 0);
 		network.setWeight(center, friend, 42.0);
 		assertEquals("Weight of initialization should be 42.0", 42.0, network.getWeight(center, friend), 0);
 	}

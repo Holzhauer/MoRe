@@ -30,6 +30,12 @@ public class MBasicNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 		this.addMeasureSupplier(MCcNetworkMeasureSupplier.getInstance());
 		// TODO adapt classes
 		this.addMeasureSupplier(MCentralityNetMSupplier.getInstance());
+		
+		// require R:
+		this.addMeasureSupplier(MCcNetworkMeasureRSupplier.getInstance());
+		this.addMeasureSupplier(MNetworkStatisticsSupplier.getInstance());
+		
+		
 //		this.addMeasureSupplier(new CentralityStandardizedNMSupplier());
 //		
 //		this.addMeasureSupplier(new PrestigeNetworkSupplier());

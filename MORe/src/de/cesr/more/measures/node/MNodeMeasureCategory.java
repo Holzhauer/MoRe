@@ -43,7 +43,7 @@ public enum MNodeMeasureCategory implements MoreMeasureCategory {
 	NODE_PRESTIGE("Prestige"),
 	NODE_AUTHORITY("Authority"),
 	
-	NETWORK_MISC("Network: Misc");
+	NODE_MISC("Network: Misc");
 
 	private String desc;
 	/**

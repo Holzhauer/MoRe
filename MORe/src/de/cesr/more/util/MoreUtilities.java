@@ -9,6 +9,7 @@ package de.cesr.more.util;
 
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,11 +17,20 @@ import java.util.Map;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
 import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
 
+import de.cesr.more.basic.MEdge;
+import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.io.GraphMLReaderWithEdges;
+import de.cesr.more.networks.MDirectedNetwork;
 import de.cesr.more.networks.MoreNetwork;
+import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Hypergraph;
 import edu.uci.ics.jung.io.GraphMLMetadata;
 import edu.uci.ics.jung.io.GraphMLWriter;
@@ -99,4 +109,32 @@ public class MoreUtilities {
 		}
 	}
 
+	public static <V> MoreNetwork<V, MoreEdge<V>> inputNetwork(File inputfile, Factory<V> nodeFactory, String name) {
+		MoreEdgeFactory<V, MoreEdge<V>> edgeFactory = new MoreEdgeFactory<V, MoreEdge<V>>() {
+			public MoreEdge<V> createEdge(V source, V target, boolean isDirected) {
+				MoreEdge<V> edge = new MEdge<V>(source, target, isDirected);
+				return edge;
+			}
+		};
+		MoreNetwork<V, MoreEdge<V>> network = new MDirectedNetwork<V, MoreEdge<V>>(edgeFactory, name);
+		GraphMLReaderWithEdges<Graph<V, MoreEdge<V>>, V, MoreEdge<V>> graphReader;
+		try {
+			graphReader = new GraphMLReaderWithEdges<Graph<V, MoreEdge<V>>, V, MoreEdge<V>>(nodeFactory,
+					edgeFactory);
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Load network from file " + inputfile.toString());
+			}
+			// LOGGING ->
+
+			graphReader.load(new FileReader(inputfile), network.getJungGraph());
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return network;
+	}
 }

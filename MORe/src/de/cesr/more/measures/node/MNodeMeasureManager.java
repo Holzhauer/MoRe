@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.MAbstractMeasureManager;
 import de.cesr.more.measures.MMeasureBundle;
 import de.cesr.more.measures.MMeasureDescription;
@@ -29,6 +30,7 @@ import de.cesr.more.measures.network.MNetworkMeasureManager.ParameterKeys;
 import de.cesr.more.measures.node.supply.MBasicNodeMeasureSupplier;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.networks.MoreNetwork;
 
 
@@ -61,9 +63,6 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	 */
 	public static MNodeMeasureManager getInstance() {
 		if (instance == null) {
-			if (schedule == null) {
-				throw new IllegalStateException("The MoreScheduler has not been set before!");
-			}
 			instance = new MNodeMeasureManager();
 		}
 		return instance;
@@ -86,6 +85,7 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	public <T extends MoreNodeMeasureSupport, E> boolean addMeasureCalculation(MoreNetwork<T, E> network,
 			MMeasureDescription measureDesc, Map<String, Object> params) {
 
+		MoreSchedule schedule = MManager.getSchedule();
 		MoreMeasure measure = findMeasure(measureDesc);
 		boolean cancel = false;
 
@@ -203,7 +203,7 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	public <T extends MoreNodeMeasureSupport, E> boolean removeMeasureCalculation(MoreNetwork<T, E> network,
 			MMeasureDescription key) {
 		MoreAction action = measureActions.get(network).get(key);
-		schedule.removeAction(action);
+		MManager.getSchedule().removeAction(action);
 		boolean removed = false;
 		if (measureActions.get(network).remove(key) != null) {
 			removed = true;

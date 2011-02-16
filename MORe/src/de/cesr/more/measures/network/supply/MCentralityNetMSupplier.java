@@ -27,18 +27,24 @@ package de.cesr.more.measures.network.supply;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.measures.MNetworkMeasureCategory;
+import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
+import de.cesr.more.measures.network.supply.MCcNetworkMeasureSupplier.Short;
+import de.cesr.more.measures.network.supply.algos.MInDegreeScorer;
+import de.cesr.more.measures.network.supply.algos.MOutDegreeScorer;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.util.Log4jLogger;
 import edu.uci.ics.jung.algorithms.scoring.DegreeScorer;
 
 
@@ -60,15 +66,25 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 	 * @date 22.12.2010
 	 * 
 	 */
-	public enum MCenShort {
+	public enum Short {
 		/**
 		 * Network Measure: Degree-based centrality
 		 */
-		NET_CEN_DEGREE("Net-Cen-degree");
+		NET_CEN_DEGREE("Net-Cen-degree"),
+		
+		/**
+		 * Network Measure: In-Degree-based centrality
+		 */
+		NET_CEN_INDEGREE("Net-Cen-indegree"),
+		
+		/**
+		 * Network Measure: Out-Degree-based centrality
+		 */
+		NET_CEN_OUTDEGREE("Net-Cen-outdegree");
 
 		String	name;
 
-		private MCenShort(String name) {
+		private Short(String name) {
 			this.name = name;
 		}
 
@@ -82,6 +98,11 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 	}
 
 	private static MCentralityNetMSupplier instance;
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(MCentralityNetMSupplier.class);
 	
 	MMeasureDescription	description;
 
@@ -105,13 +126,13 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 	}
 
 	private void addCategories() {
-		categories.add(MNodeMeasureCategory.NODE_CENTRALITY);
+		categories.add(MNetworkMeasureCategory.NETWORK_CENTRALITY);
 	}
 
 	private void addMeasures() {
 
-		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_CENTRALITY, MCenShort.NET_CEN_DEGREE
-				.toString(), "Degree based network centrality (not normalized)");
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_CENTRALITY, Short.NET_CEN_DEGREE
+				.getName(), "Degree based network centrality (not normalized)");
 
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 
@@ -123,22 +144,83 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 
 					@Override
 					public void execute() {
+						logger.info("Calculate " + Short.NET_CEN_DEGREE.getName() + " for " + network.getName() + "...");
 						int sum = 0;
 						for (T node : network.getNodes()) {
 							sum += scorer.getVertexScore(node);
 						}
-						MNetworkManager.setNetworkMeasure(network, description, (double) sum
-								/ (double) network.numNodes());
-
+						MNetworkManager.setNetworkMeasure(network, new MMeasureDescription(Short.NET_CEN_DEGREE.getName()),
+								(double) sum / (double) network.numNodes());
+						logger.info("... finished.");
 					}
 					
 					public String toString() {
-						return description.getShort();
+						return Short.NET_CEN_DEGREE.getName();
 					}
 				};
 			}
 		});
 
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_CENTRALITY, Short.NET_CEN_INDEGREE.name,
+				"In-Degree based network centrality (not normalized)");
+
+		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
+
+			@Override
+			public <T, EdgeType extends MoreEdge> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction() {
+					MInDegreeScorer<T>	scorer	= new MInDegreeScorer<T>(network.getJungGraph());
+
+					@Override
+					public void execute() {
+						logger.info("Calculate " + Short.NET_CEN_INDEGREE.getName() + " for " + network.getName() + "...");
+						int sum = 0;
+						for (T node : network.getNodes()) {
+							sum += scorer.getVertexScore(node);
+						}
+						MNetworkManager.setNetworkMeasure(network, new MMeasureDescription(Short.NET_CEN_INDEGREE.name),
+								(double) sum / (double) network.numNodes());
+						logger.info("... finished.");
+					}
+					
+					public String toString() {
+						return Short.NET_CEN_INDEGREE.getName();
+					}
+				};
+			}
+		});
+		
+		
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_CENTRALITY, Short.NET_CEN_OUTDEGREE.name
+				, "Out-Degree based network centrality (not normalized)");
+
+		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
+
+			@Override
+			public <T, EdgeType extends MoreEdge> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction() {
+					MOutDegreeScorer<T>	scorer	= new MOutDegreeScorer<T>(network.getJungGraph());
+
+					@Override
+					public void execute() {
+						logger.info("Calculate " + Short.NET_CEN_OUTDEGREE.getName() + " for " + network.getName() + "...");
+						int sum = 0;
+						for (T node : network.getNodes()) {
+							sum += scorer.getVertexScore(node);
+						}
+						MNetworkManager.setNetworkMeasure(network, new MMeasureDescription(Short.NET_CEN_OUTDEGREE.name),
+								(double) sum / (double) network.numNodes());
+						logger.info("... finished.");
+					}
+					
+					public String toString() {
+						return Short.NET_CEN_OUTDEGREE.getName();
+					}
+				};
+			}
+		});
 		// description = new NetworkMeasureUtilities.MeasureDescription(NetworkMeasureUtilities.CENTRALITY, "ODCnn",
 		// "Outdegree based centrality (not normalized)");
 		//

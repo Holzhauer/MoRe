@@ -25,13 +25,19 @@ package de.cesr.more.basic;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections15.Predicate;
+import org.apache.log4j.Logger;
 
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.util.Log4jLogger;
+import de.cesr.more.util.MDbWriter;
 import de.cesr.more.util.MNetworkMeasureStorage;
+import de.cesr.more.util.MoreRunIdProvider;
 import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
+import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe
@@ -41,6 +47,11 @@ import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
  *
  */
 public class MNetworkManager {
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(MNetworkManager.class);
 	
 	static Map<String, MoreNetwork<?,?>> networks;
 	static MNetworkMeasureStorage measureStorage;
@@ -58,9 +69,18 @@ public class MNetworkManager {
 	 */
 	public static void setNetwork(MoreNetwork<?, ?> network, String name) {
 		networks.put(name, network);
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Networks:\n" + networks);
+		}
+		// LOGGING ->
+
 	}
 	
 	public static MoreNetwork<?,?> getNetwork(String name) {
+		if (networks.get(name) == null) {
+			throw new IllegalArgumentException("The network \"" + name + "\" is not registered at the MNetworkManager!");
+		}
 		return networks.get(name);
 	}
 	
@@ -75,11 +95,40 @@ public class MNetworkManager {
 	 * @return
 	 * Created by Sascha Holzhauer on 16.11.2010
 	 */
-	public static <V, E> MoreNetwork<V,E> storeVertexSubnetwork(MoreNetwork<V, E> in_network, Predicate<V> predicate, String newname) {
+	public static <V, E> MoreNetwork<V,E> storeVertexSubnetwork(MoreNetwork<V, E> in_network, Predicate<V> predicate, String newname) {		
 		VertexPredicateFilter<V, E> filter = new VertexPredicateFilter(predicate);
-		MoreNetwork<V, E> out_network = in_network.getGraphFilteredInstance(filter.transform(in_network.getJungGraph()));
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("In.network: " + in_network);
+		}
+		// LOGGING ->
+
+		MoreNetwork<V, E> out_network = in_network.getGraphFilteredInstance(filter.transform(in_network.getJungGraph()), newname);
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Put as " + newname + ": " + out_network);
+		}
+		// LOGGING ->
+
 		networks.put(newname, out_network);
 		return out_network;
+	}
+	
+	public static void writeNetworkMeasuresToDb(String network, String externalVersion, int paramID, MoreRunIdProvider prov) {
+		MDbWriter dbWriter = new MDbWriter(getNetwork(network), externalVersion, paramID, prov);
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("MeasureStorage: \n" + measureStorage);
+		}
+		// LOGGING ->
+
+		for (Entry<MMeasureDescription, Number> e : measureStorage.getAllMeasures(getNetwork(network)).entrySet()) {
+			dbWriter.addValue(e.getKey().getShort(), e.getValue().toString());
+		}
+		dbWriter.writeData();
 	}
 	
 	/**
@@ -92,6 +141,9 @@ public class MNetworkManager {
 	 * Created by Sascha Holzhauer on 03.01.2011
 	 */
 	public static <V, E> MoreNetwork<V,E> storeVertexSubnetwork(String in_network, Predicate<V> predicate, String newname) {
+		if (!networks.containsKey(in_network)) {
+			throw new IllegalArgumentException("The network \"" + in_network + "\" is not registered at the MNetworkManager!");
+		}
 		return storeVertexSubnetwork((MoreNetwork<V,E>)getNetwork(in_network), predicate, newname);
 	}
 	
@@ -101,5 +153,11 @@ public class MNetworkManager {
 
 	public static <V, E> void setNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc, Number value) {
 		measureStorage.put(network, desc, value);
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Content of Measure Storage:\n" + measureStorage.toString());
+		}
+		// LOGGING ->
+
 	}
 }

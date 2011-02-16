@@ -19,6 +19,7 @@ import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.supply.algos.MClusteringCoefficient;
+import de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MScheduleParameters;
@@ -35,7 +36,7 @@ import de.cesr.more.util.Log4jLogger;
  * @date 12.04.2010
  * 
  */
-public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
+public class MCcNetworkMeasureRSupplier extends MAbstractMeasureSupplier {
 	
 	/**
 	 * MORe
@@ -45,7 +46,7 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 	 *
 	 */
 	public enum Short {
-		N_CL_OVERALL("N-Cl-overall");
+		R_N_CL_OVERALL("R_N-Cl-overall");
 		
 		String name;
 		private Short(String name) {
@@ -58,7 +59,7 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 		
 	}
 
-	static MCcNetworkMeasureSupplier instance;
+	static MCcNetworkMeasureRSupplier instance;
 	
 	MMeasureDescription		description;
 
@@ -67,14 +68,14 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 	 */
 	static private Logger	logger	= Log4jLogger.getLogger(MCcNetworkMeasureSupplier.class);
 
-	private MCcNetworkMeasureSupplier() {
+	private MCcNetworkMeasureRSupplier() {
 		addMeasures();
 		addCategories();
 	}
 	
-	public static MCcNetworkMeasureSupplier getInstance() {
+	public static MCcNetworkMeasureRSupplier getInstance() {
 		if (instance == null) {
-			instance = new MCcNetworkMeasureSupplier();
+			instance = new MCcNetworkMeasureRSupplier();
 		}
 		return instance;
 	}
@@ -85,8 +86,8 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 
 	private void addMeasures() {
 
-		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_CLUSTERING, Short.N_CL_OVERALL.name,
-				"Network Clustering coefficient (overall ration)");
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_CLUSTERING, Short.R_N_CL_OVERALL.name,
+				"R: Network Clustering coefficient (overall ration)");
 
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 			@Override
@@ -95,9 +96,9 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 
 					@Override
 					public void execute() {
-						logger.info("Calculate " + Short.N_CL_OVERALL.getName() + " for " + network.getName() + "...");
+						logger.info("Calculate " + Short.R_N_CL_OVERALL.getName() + " for " + network.getName() + "...");
 						MNetworkManager.setNetworkMeasure(network, description, 
-								MClusteringCoefficient.getClusteringCoefficientOverallRatio(network.getJungGraph()));
+								MClusteringCoefficientR.getClusteringCoefficientOverallR(network.getJungGraph()));
 						logger.info("... finished.");
 					}
 				};

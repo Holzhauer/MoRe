@@ -48,7 +48,7 @@ public enum MoreBasicPa implements ParameterDefinition {
 		this(type, null);
 	}
 
-	MoreBasicPa(Class type, Object value) {
+	MoreBasicPa(Class type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
 	}

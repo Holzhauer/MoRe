@@ -39,19 +39,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.more.basic.MEdge;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.io.MoreEdgeFactory;
+import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.measures.MAbstractMeasureManager;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.measures.MNetworkMeasureCategory;
+import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.MoreMeasureManagerListener;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
 import de.cesr.more.measures.network.supply.MCentralityNetMSupplier;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.networks.MDirectedNetwork;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.standalone.MSchedule;
@@ -150,15 +152,15 @@ public class MNetworkMeasureManagerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		schedule = new MSchedule();
-		MAbstractMeasureManager.setSchedule(schedule);
+		MManager.setSchedule(new MSchedule());
+		schedule = (MSchedule) MManager.getSchedule();
 		netMan = MNetworkMeasureManager.getInstance();
 		net = MDirectedNetwork.getNetwork(new MoreEdgeFactory<TestNode, MoreEdge<TestNode>>() {
 			public MoreEdge<TestNode> createEdge(TestNode source, TestNode target, boolean directed) {
 				return new MEdge<TestNode>(source, target);
 			}
-		}, MTestGraphs.getCompleteDirectedGraph(4));
-		centDesc = new MMeasureDescription(MCentralityNetMSupplier.MCenShort.NET_CEN_DEGREE.toString());
+		}, MTestGraphs.getCompleteDirectedGraph(4), "TestNet");
+		centDesc = new MMeasureDescription(MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName());
 		this.supplier = new MarkerNetworkMeasureSupplier();
 		netMan.addMeasureSupplier(supplier);
 		marker = false;
@@ -203,6 +205,7 @@ public class MNetworkMeasureManagerTest {
 	 */
 	@Test
 	public final void testAddMeasureCalculationCustomParam() {
+		marker = false;
 		// using custom parameters:
 		// / empty map:
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -242,9 +245,9 @@ public class MNetworkMeasureManagerTest {
 	 */
 	@Test
 	public final void testGetMeasureCalculations() {
-		netMan.addMeasureCalculation(net, MCentralityNetMSupplier.MCenShort.NET_CEN_DEGREE.toString());
+		netMan.addMeasureCalculation(net, MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName());
 		assertTrue("Should contain the added Network Measure", netMan.getMeasureCalculations(net).contains(
-				new MMeasureDescription(MCentralityNetMSupplier.MCenShort.NET_CEN_DEGREE.toString())));
+				new MMeasureDescription(MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName())));
 	}
 
 	/**
@@ -352,12 +355,12 @@ public class MNetworkMeasureManagerTest {
 	public final void testCentralityDegreeMeasure() {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put(MNetworkMeasureManager.ParameterKeys.INTERVAL.toString(), new Double(1.0));
-		netMan.addMeasureCalculation(net, MCentralityNetMSupplier.MCenShort.NET_CEN_DEGREE.toString(), params);
+		netMan.addMeasureCalculation(net, MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName(), params);
 		schedule.step(1);
 		schedule.step(2);
 		assertEquals("centrality-degree is wrong (should be 6 in a complete, directed network with n=4)", 6.0,
 				MNetworkManager.getNetworkMeasure(net,
-						new MMeasureDescription(MCentralityNetMSupplier.MCenShort.NET_CEN_DEGREE.toString()))
+						new MMeasureDescription(MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName()))
 						.doubleValue(), 0.001);
 	}
 

@@ -19,26 +19,29 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 03.12.2010
+ * Created by Sascha Holzhauer on 24.01.2011
  */
-package de.cesr.more.basic;
+package de.cesr.more.building.util;
+
+import de.cesr.more.building.MSmallWorldBetaModelNetworkGenerator;
 
 /**
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 03.12.2010 
+ * @param <V> the node type for that beta values are provided
+ * @date 24.01.2011 
  *
  */
-public interface MoreEdge<V> {
+public interface MoreBetaProvider<V> {
 
-	public V getStart();
-	
-	public V getEnd();
-	
-	public double getWeight();
-	
-	public void setWeight(double weight);
-	
-	public boolean isDirected();
+	/**
+	 * Returns the beta value to rewire in {@link MSmallWorldBetaModelNetworkGenerator}
+	 * for the given node.
+	 * 
+	 * @param node
+	 * @return
+	 * Created by Sascha Holzhauer on 24.01.2011
+	 */
+	public double getBetaValue(V node );
 }

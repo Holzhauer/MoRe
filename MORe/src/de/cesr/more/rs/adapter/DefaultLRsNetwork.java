@@ -9,6 +9,7 @@ package de.cesr.more.rs.adapter;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -19,33 +20,37 @@ import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
+import sun.management.Agent;
+import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.networks.MDirectedNetwork;
 import de.cesr.more.networks.MoreNetwork;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 
 
 /**
- * Network Adapter for Repast Simphony models
+ * Network Adapter for Repast Simphony models.
+ * Encapsulates a ContextJungNetwork.
  * 
- * TODO handle edge objects to deal with weights etc... and allow more complex edge objects.
- * TODO error handling for missing nodes
+ * TODO handle edge objects to deal with weights etc... and allow more complex edge objects. TODO error handling for
+ * missing nodes
  * 
  * @author Sascha Holzhauer
  * @param <AgentT>
  * @date 03.02.2010
  * 
  */
-public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> implements MoreNetwork<AgentT, EdgeT> {
+public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> implements
+		MoreNetwork<AgentT, EdgeT> {
 
 	private ContextJungNetwork<AgentT>	network;
 	private Context						context;
-	private EdgeCreator<? extends RepastEdge, AgentT> edgeCreator = null;
+	private EdgeCreator<EdgeT, AgentT>	edgeCreator	= null;
+	
+	public static double DEFAULT_EDGE_WEIGHT = 1.0;
 
 	/**
-	 * @param network
-	 *            the network that is going to be wrapped
+	 * @param network the network that is going to be wrapped
 	 */
 	public DefaultLRsNetwork(ContextJungNetwork<AgentT> network, Context context) {
 		this.network = network;
@@ -58,10 +63,9 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 	@Override
 	public void connect(AgentT source, AgentT target) {
 		if (edgeCreator != null) {
-			network.addEdge(edgeCreator.createEdge(source, target, network.isDirected(), 0.0));
-		}
-		else {
-			network.addEdge(source, target);
+			network.addEdge(edgeCreator.createEdge(source, target, network.isDirected(), DEFAULT_EDGE_WEIGHT));
+		} else {
+			network.addEdge(new MRepastEdge<AgentT>(source, target, network.isDirected(), DEFAULT_EDGE_WEIGHT));
 		}
 	}
 
@@ -70,7 +74,7 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 	 */
 	@Override
 	public void disconnect(AgentT source, AgentT target) {
-		network.removeEdge(network.getEdge(source, target));
+		network.removeEdge(getEdge(source, target));
 	}
 
 	/**
@@ -200,7 +204,7 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 	 */
 	@Override
 	public void setWeight(AgentT source, AgentT target, double weight) {
-		network.getEdge(source, target).setWeight(weight);
+		getEdge(source, target).setWeight(weight);
 	}
 
 	/**
@@ -229,12 +233,12 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 	public boolean isSuccessor(AgentT ego, AgentT alter) {
 		return network.isSuccessor(alter, ego);
 	}
-	
+
 	public ContextJungNetwork<AgentT> getNetwork() {
 		return network;
 	}
-	
-	public void setEdgeFactory(EdgeCreator<? extends RepastEdge, AgentT> edgeCreator) {
+
+	public void setEdgeFactory(EdgeCreator<EdgeT, AgentT> edgeCreator) {
 		this.edgeCreator = edgeCreator;
 	}
 
@@ -243,24 +247,67 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> i
 		network.addVertex(node);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Graph getJungGraph() {
-		return network.getGraph();
+	public Graph<AgentT, EdgeT> getJungGraph() {
+		return (Graph<AgentT, EdgeT>) network.getGraph();
 	}
 
 	@Override
 	public EdgeT getEdge(AgentT source, AgentT target) {
-		return (EdgeT) network.getEdge(source, target);
+		RepastEdge<AgentT> e = network.getEdge(source, target);
+		if (e instanceof MRepastEdge) {
+			return (EdgeT) e;
+		}
+		if (edgeCreator != null) {
+			return edgeCreator.createEdge(source, target, e.isDirected(), e.getWeight());
+		} else {
+			return (EdgeT) new MRepastEdge<AgentT>(source, target, e.isDirected(), e.getWeight());
+		}
 	}
 
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#getEmptyInstance()
 	 */
 	@Override
-	public MoreNetwork<AgentT, EdgeT> getGraphFilteredInstance(Graph<AgentT, EdgeT> graph) {
-		ContextJungNetwork<AgentT> jnetwork = new ContextJungNetwork<AgentT>((network.isDirected() ? new DirectedJungNetwork<AgentT>(getName()):
-			new UndirectedJungNetwork<AgentT>(getName())), context);
+	public MoreNetwork<AgentT, EdgeT> getGraphFilteredInstance(Graph<AgentT, EdgeT> graph, String newName) {
+		ContextJungNetwork<AgentT> jnetwork = new ContextJungNetwork<AgentT>(
+				(network.isDirected() ? new DirectedJungNetwork<AgentT>(newName) : new UndirectedJungNetwork<AgentT>(
+						getName())), context);
 		jnetwork.setGraph(((Graph<AgentT, RepastEdge<AgentT>>) graph));
-		return new DefaultLRsNetwork<AgentT, EdgeT>(jnetwork, context);
+		MoreNetwork<AgentT, EdgeT> out_net = new DefaultLRsNetwork<AgentT, EdgeT>(jnetwork, context);
+		
+		return out_net;
+	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return this.getName();
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#reverseNetwork()
+	 */
+	@Override
+	public void reverseNetwork() {
+		if (this.isDirected()){
+			Collection<EdgeT> orgEdges = this.getEdgesCollection();
+			for (EdgeT edge : orgEdges) {
+				network.removeEdge(edge);
+			}
+			for (EdgeT edge : orgEdges) {
+				network.addEdge(edge.getTarget(), edge.getSource());
+			}
+		}
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#getEdges()
+	 */
+	@Override
+	public Collection<EdgeT> getEdgesCollection() {
+		return getJungGraph().getEdges();
 	}
 }

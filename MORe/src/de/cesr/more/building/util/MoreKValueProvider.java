@@ -19,26 +19,26 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 03.12.2010
+ * Created by Sascha Holzhauer on 24.01.2011
  */
-package de.cesr.more.basic;
+package de.cesr.more.building.util;
 
 /**
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 03.12.2010 
+ * @param <V> 
+ * @date 24.01.2011 
  *
  */
-public interface MoreEdge<V> {
-
-	public V getStart();
+public interface MoreKValueProvider<V> {
 	
-	public V getEnd();
-	
-	public double getWeight();
-	
-	public void setWeight(double weight);
-	
-	public boolean isDirected();
+	/**
+	 * Return the k value specific for the given node.
+	 * 
+	 * @param node
+	 * @return
+	 * Created by Sascha Holzhauer on 24.01.2011
+	 */
+	int getKValue(V node);
 }

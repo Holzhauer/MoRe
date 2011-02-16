@@ -19,24 +19,34 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 08.11.2010
+ * Created by Sascha Holzhauer on 28.10.2010
  */
-package de.cesr.more.measures;
+package de.cesr.more.measures.network;
 
-import de.cesr.more.measures.node.MNodeMeasureCategory;
+import de.cesr.more.measures.MoreMeasureCategory;
+
 
 /**
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 08.11.2010 
+ * @date 28.10.2010 
  *
  */
-public enum MNetworkMeasureCategory implements MoreMeasureCategory{
+public enum MNetworkMeasureCategory implements MoreMeasureCategory {
+	
 	NOT_DEFINED("Not defined"),
-	NETWORK_MISC("Network: Misc"),
-	NETWORK_CENTRALITY("Network: Centrality"),
-	NETWORK_CLUSTERING("Network: Clustering");
+	
+	NETWORK_CLUSTERING("Network: Clustering"),
+	NETWORK_CENTRALITY("Network: Centrality, not normalized"),
+	NETWORK_CENTRALITY_NORM("Centrality, normalized"),
+	NETWORK_CENTRALITY_STD("Centrality, standardized"),
+	NETWORK_PRESTIGE("Prestige"),
+	NETWORK_AUTHORITY("Authority"),
+	
+	NETWORK_STATISTICS("Network Statistics"),
+	
+	NETWORK_MISC("Network: Misc");
 
 	private String desc;
 	/**
@@ -62,7 +72,7 @@ public enum MNetworkMeasureCategory implements MoreMeasureCategory{
 	 * @param category
 	 * @return true if the categories have the same description
 	 */
-	public boolean equals(MNodeMeasureCategory category) {
+	public boolean equals(MNetworkMeasureCategory category) {
 		return desc == category.toString();
 	}
 }

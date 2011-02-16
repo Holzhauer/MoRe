@@ -6,6 +6,7 @@
  */
 package de.cesr.more.networks;
 
+import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -34,7 +35,7 @@ public interface MoreNetwork<AgentType, EdgeType> {
 	 * 
 	 * Created by Sascha Holzhauer on 16.11.2010
 	 */
-	public MoreNetwork<AgentType, EdgeType> getGraphFilteredInstance(Graph<AgentType, EdgeType> graph);
+	public MoreNetwork<AgentType, EdgeType> getGraphFilteredInstance(Graph<AgentType, EdgeType> graph, String new_name);
 	
 	/**
 	 * If there is already a connection object between these nodes it is removed and the given one added.
@@ -160,6 +161,14 @@ public interface MoreNetwork<AgentType, EdgeType> {
 	 */
 	public EdgeType getEdge(AgentType source, AgentType target);
 
+	
+	/**
+	 * @return collection of all edges
+	 * 
+	 * Created by Sascha Holzhauer on 07.10.2010
+	 */
+	public Collection<EdgeType> getEdgesCollection();
+	
 	/**
 	 * @return Created by Sascha Holzhauer on 15.01.2010
 	 */
@@ -171,4 +180,12 @@ public interface MoreNetwork<AgentType, EdgeType> {
 	 * Created by Sascha Holzhauer on 05.10.2010
 	 */
 	public Graph<AgentType, EdgeType> getJungGraph();
+	
+	/**
+	 * Returns a reversed network, i.e. for all edges source and target vertices are excahnged.
+	 * @return reversed network
+	 * 
+	 * Created by Sascha Holzhauer on 25.01.2011
+	 */
+	public void reverseNetwork();
 }

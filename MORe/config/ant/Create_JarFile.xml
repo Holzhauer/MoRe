@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- excludes example models; excludes java runtime classes from UML; display only operations -->
+<project default="MoRe-jar-creation">
+	<!-- ================================= 
+          target: Fetch SVN Revision Number        
+              	
+         ================================= -->
+    <target name="svn_infos" description="description">
+    	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
+    	<svn javahl="false" username="holzhauer" password="holzhauer">
+    		<info target="${basedir}"/>
+    	</svn>
+    	<echo>"Last Revision: ${svn.info.rev}"</echo>
+    </target>
+
+<target name="MoRe-jar-creation" depends="svn_infos" description="creates a jar file from MoRe">
+	<delete file="../KUBUS_Proto01/lib/MORe.jar"/>
+    <jar destfile="../KUBUS_Proto01/lib/MORe.jar"
+        basedir="${basedir}/bin"
+        includes="**/*.class"
+        update="false"
+        compress="true"
+        duplicate="add">
+        
+       <manifest>
+            <attribute name="Built-By" value="Sascha Holzhauer"/>
+            <attribute name="Implementation-Version"  value="${svn.info.rev}"/>
+            <attribute name="Built-Date" value="${TODAY}"/>
+        </manifest>
+    </jar>
+</target>
+</project>

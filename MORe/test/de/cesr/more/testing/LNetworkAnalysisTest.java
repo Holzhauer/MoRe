@@ -34,7 +34,7 @@ import de.cesr.more.lara.LaraSimpleNetworkAgent;
 import de.cesr.more.lara.util.LNetworkAnalysis;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.rs.adapter.DefaultLRsNetwork;
-
+import de.cesr.more.rs.adapter.MRepastEdge;
 
 
 /**
@@ -47,12 +47,12 @@ public class LNetworkAnalysisTest {
 
 	TestAgent				center;
 	LaraEnvironment						env;
-	MoreNetwork<TestAgent, RepastEdge<TestAgent>>	network;
+	MoreNetwork<TestAgent, MRepastEdge<TestAgent>>	network;
 
 	/**
 	 * test agent
 	 */
-	public static class TestAgent extends AbstractLaraNetworkAgent<TestAgent, RepastEdge<TestAgent>, LaraBehaviouralOption> {
+	public static class TestAgent extends AbstractLaraNetworkAgent<TestAgent, MRepastEdge<TestAgent>, LaraBehaviouralOption> {
 
 		/**
 		 * constructor
@@ -83,7 +83,7 @@ public class LNetworkAnalysisTest {
 
 		env = new LNetworkEnvironment();
 		Context context = new DefaultContext<TestAgent>();
-		network = new DefaultLRsNetwork<TestAgent,RepastEdge<TestAgent>>(new ContextJungNetwork<TestAgent>(
+		network = new DefaultLRsNetwork<TestAgent,MRepastEdge<TestAgent>>(new ContextJungNetwork<TestAgent>(
 				new UndirectedJungNetwork<TestAgent>("network"), context), context);
 
 		// build network (star of max diameter 5):
@@ -128,11 +128,11 @@ public class LNetworkAnalysisTest {
 	public final void testGetCompoundValue() {
 		// // TODO test more complicated network structures!
 		ComboundNetworkInfo netInfo = new AbstractLCompoundNetworkInfo("Value", 1);
-		netInfo = LNetworkAnalysis.<TestAgent,RepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
+		netInfo = LNetworkAnalysis.<TestAgent, MRepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
 		assertEquals("Reach 1: 5*200*1/5 = 200.0 ", 200.0, netInfo.getValue(), 0);
 
 		netInfo = new AbstractLCompoundNetworkInfo("Value", 2);
-		netInfo = LNetworkAnalysis.<TestAgent,RepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
+		netInfo = LNetworkAnalysis.<TestAgent, MRepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
 		assertEquals("Reach 2: (5*200*1 + 5*5*30*1*1)/(5*5+5) = 230.0 ", 58.3, netInfo.getValue(), 0.1);
 
 		// test for different edge weights:
@@ -146,11 +146,11 @@ public class LNetworkAnalysisTest {
 		}
 		network.normalizeWeights();
 		netInfo = new AbstractLCompoundNetworkInfo("Value", 1);
-		netInfo = LNetworkAnalysis.<TestAgent,RepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
+		netInfo = LNetworkAnalysis.<TestAgent, MRepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
 		assertEquals("Reach 1: 5*200*1/5 = 200.0 ", 200.0, netInfo.getValue(), 0);
 
 		netInfo = new AbstractLCompoundNetworkInfo("Value", 2);
-		netInfo = LNetworkAnalysis.<TestAgent, RepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
+		netInfo = LNetworkAnalysis.<TestAgent, MRepastEdge<TestAgent>> getCompoundValue(network, center, netInfo);
 		assertEquals("Reach 2: (5*200*1 + 5*5*30*1*0.1)/(5+5*5) = 35.83 ", 35.83, netInfo.getValue(), 0.1);
 	}
 
