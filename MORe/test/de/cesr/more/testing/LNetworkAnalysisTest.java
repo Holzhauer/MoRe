@@ -19,7 +19,7 @@ import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import de.cesr.lara.components.LaraAgent;
+import de.cesr.lara.components.LaraSimpleAgent;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraDecisionBuilder;
 import de.cesr.lara.components.LaraEnvironment;
@@ -63,7 +63,7 @@ public class LNetworkAnalysisTest {
 		 */
 		public TestAgent(LaraEnvironment env, float value, String name) {
 			super(env, name);
-			getMemory().memorize(new LFloatProperty("Value", value));
+			getLaraComp().getMemory().memorize(new LFloatProperty("Value", value));
 		}
 
 		@Override

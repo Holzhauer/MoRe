@@ -10,10 +10,9 @@ package de.cesr.more.lara;
 
 import java.util.Collection;
 
-import de.cesr.lara.components.LaraAgent;
+import de.cesr.lara.components.LaraSimpleAgent;
 import de.cesr.lara.components.LaraAgentComponent;
 import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.lara.components.LaraSimpleAgent;
 import de.cesr.more.lara.LaraAgentNetworkComp;
 import de.cesr.more.lara.LaraNetworkAgent;
 import de.cesr.more.networks.MoreNetwork;
@@ -30,12 +29,12 @@ import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter.EdgeType;
  * @date 19.01.2010
  */
 public interface LaraNetworkAgent<AgentT extends LaraSimpleAgent, EdgeType, BoType extends LaraBehaviouralOption<?>> 
-	extends LaraAgent<AgentT, BoType>, LaraAgentNetworkComp<AgentT, EdgeType> {
+	extends LaraSimpleAgent, LaraAgentNetworkComp<AgentT, EdgeType> {
 
 	/**
 	 * @return Set of LaraNetworks
 		 */
-	public abstract Collection<MoreNetwork<LaraAgent, EdgeType>> getLNetworks();
+	public abstract Collection<MoreNetwork<LaraSimpleAgent, EdgeType>> getLNetworks();
 
 	/**
 	 * @return LARA Network Component
