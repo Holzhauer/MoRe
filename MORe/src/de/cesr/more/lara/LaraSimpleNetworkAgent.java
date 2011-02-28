@@ -8,28 +8,29 @@ package de.cesr.more.lara;
 
 
 
-import de.cesr.lara.components.LaraSimpleAgent;
+import de.cesr.lara.components.LaraAgent;
+import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.more.lara.LaraAgentNetworkComp;
 
 
 
 /**
  * @author Sascha Holzhauer
- * @param <AgentType> the common type (of agents) that is contained as nodes in the networks this agent refers to
+ * @param <A> the common type (of agents) that is contained as nodes in the networks this agent refers to
  * @date 19.01.2010
  */
-public interface LaraSimpleNetworkAgent<AgentType, EdgeType> extends LaraSimpleAgent {
+public interface LaraSimpleNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>, E> extends LaraAgent<A, BO> {
 
 	/**
 	 * @return LARA Network Component
-	 * @see de.cesr.lara.components.LaraSimpleAgent#getLaraComp()
+	 * @see de.cesr.lara.components.LaraAgent#getLaraComp()
 	 */
-	public LaraAgentNetworkComp<AgentType, EdgeType> getLaraNetworkComp();
+	public LaraAgentNetworkComp<A, E> getLaraNetworkComp();
 
 	/**
 	 * @param component 
-	 * @see de.cesr.lara.components.LaraSimpleAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
+	 * @see de.cesr.lara.components.LaraAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
 	 */
-	public void setLaraNetworkComp(LaraAgentNetworkComp<AgentType, EdgeType> component);
+	public void setLaraNetworkComp(LaraAgentNetworkComp<A, E> component);
 
 }

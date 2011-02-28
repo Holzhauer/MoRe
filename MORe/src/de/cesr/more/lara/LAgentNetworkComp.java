@@ -10,32 +10,34 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.cesr.lara.components.LaraAgent;
+import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.more.networks.MoreNetwork;
 
 /** 
  * TODO check if networks of different type are required!
  * TODO make sure not more than one network with same name inserted
  * @author Sascha Holzhauer
- * @param <AgentType> the common type (of agents) that is contained as nodes in the networks
+ * @param <A> the common type (of agents) that is contained as nodes in the networks
  * @date 19.01.2010
  */
-public class LAgentNetworkComp<AgentType, EdgeType> implements LaraAgentNetworkComp<AgentType, EdgeType> {
+public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>, E> implements LaraAgentNetworkComp<A, E> {
 	
-	LaraSimpleNetworkAgent<AgentType, EdgeType> agent;
+	LaraSimpleNetworkAgent<A, BO, E> agent;
 	
 
 	/**
 	 * @uml.property  name="networks"
 	 */
-	private Map<String, MoreNetwork<AgentType, EdgeType>> networks;
+	private Map<String, MoreNetwork<? super A, E>> networks;
 	
 	/**
 	 * @param agent
 	 */
-	public LAgentNetworkComp(LaraSimpleNetworkAgent<AgentType, EdgeType> agent) {
+	public LAgentNetworkComp(LaraSimpleNetworkAgent<A, BO, E> agent) {
 		super();
 		this.agent = agent;
-		networks = new HashMap<String, MoreNetwork<AgentType, EdgeType>>();
+		networks = new HashMap<String, MoreNetwork<? super A, E>>();
 	}
 
 
@@ -54,7 +56,7 @@ public class LAgentNetworkComp<AgentType, EdgeType> implements LaraAgentNetworkC
 	 * @return  Returns the networks.
 	 * @uml.property  name="networks"
 	 */
-	public Collection<MoreNetwork<AgentType, EdgeType>> getNetworks() {
+	public Collection<MoreNetwork<? super A, E>> getNetworks() {
 		return networks.values();
 	}
 
@@ -62,7 +64,7 @@ public class LAgentNetworkComp<AgentType, EdgeType> implements LaraAgentNetworkC
 	/**
 	 * @see de.cesr.more.lara.LaraAgentNetworkComp#setNetwork(de.cesr.lara.components.LaraNetwork)
 	 */
-	public void setNetwork(MoreNetwork<AgentType, EdgeType> network) {
+	public void setNetwork(MoreNetwork<? super A, E> network) {
 		this.networks.put(network.getName(), network);
 	}
 	
@@ -70,7 +72,7 @@ public class LAgentNetworkComp<AgentType, EdgeType> implements LaraAgentNetworkC
 	/**
 	 * @see de.cesr.more.lara.LaraAgentNetworkComp#getNetwork(java.lang.String)
 	 */
-	public MoreNetwork<AgentType, EdgeType> getNetwork(String name) {
+	public MoreNetwork<? super A, E> getNetwork(String name) {
 		return this.networks.get(name);
 	}
 

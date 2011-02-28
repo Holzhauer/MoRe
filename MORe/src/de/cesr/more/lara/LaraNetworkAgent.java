@@ -10,35 +10,34 @@ package de.cesr.more.lara;
 
 import java.util.Collection;
 
-import de.cesr.lara.components.LaraSimpleAgent;
+import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.LaraAgentComponent;
 import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.more.lara.LaraAgentNetworkComp;
-import de.cesr.more.lara.LaraNetworkAgent;
 import de.cesr.more.networks.MoreNetwork;
-import edu.uci.ics.jung.algorithms.filters.KNeighborhoodFilter.EdgeType;
 
 
 
 /**
- * Interface for agents with network support that allows to directly call the {@link LaraAgentComponent} and {@link LaraAgentNetworkComp} methods at
- * the agent.
+ * Interface for agents with network support that allows to directly call the {@link LaraAgentComponent} and
+ * {@link LaraAgentNetworkComp} methods at the agent.
  * 
  * @author Sascha Holzhauer
- * @param <AgentT> the common type (of agents) that is contained as nodes in the networks this agent refers to
+ * @param <A> the common type (of agents) that is contained as nodes in the networks this agent refers to
+ * @param <E> edge type
+ * @param <BO> behavioural option type
  * @date 19.01.2010
  */
-public interface LaraNetworkAgent<AgentT extends LaraSimpleAgent, EdgeType, BoType extends LaraBehaviouralOption<?>> 
-	extends LaraSimpleAgent, LaraAgentNetworkComp<AgentT, EdgeType> {
+public interface LaraNetworkAgent<A extends LaraAgent<A, BO>, E, BO extends LaraBehaviouralOption<? super A, BO>>
+		extends LaraAgent<A, BO>, LaraAgentNetworkComp<A, E> {
 
 	/**
 	 * @return Set of LaraNetworks
-		 */
-	public abstract Collection<MoreNetwork<LaraSimpleAgent, EdgeType>> getLNetworks();
+	 */
+	public abstract Collection<MoreNetwork<? super A, E>> getLNetworks();
 
 	/**
 	 * @return LARA Network Component
-			 */
-	public abstract LaraAgentNetworkComp<LaraNetworkAgent<AgentT, EdgeType, BoType>, EdgeType> getLNetworkComp();
+	 */
+	public abstract LaraAgentNetworkComp<LaraNetworkAgent<A, E, BO>, E> getLNetworkComp();
 
 }

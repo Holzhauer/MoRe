@@ -6,9 +6,11 @@
  */
 package de.cesr.more.testing;
 
+import de.cesr.lara.components.LGeneralBehaviouralOption;
 import de.cesr.lara.components.LaraDecisionBuilder;
 import de.cesr.lara.components.LaraEnvironment;
 import de.cesr.more.lara.AbstractLaraNetworkAgent;
+import de.cesr.more.rs.adapter.MRepastEdge;
 
 /**
  * MORe
@@ -22,7 +24,7 @@ public class TestUtilsLara {
 	/**
 	 * test network agent
 	 */
-	public static class TestNetworkAgent extends AbstractLaraNetworkAgent {
+	public static class TestNetworkAgent extends AbstractLaraNetworkAgent<TestNetworkAgent, LGeneralBehaviouralOption<TestNetworkAgent>, MRepastEdge<TestNetworkAgent>> {
 
 		/**
 		 * constructor
@@ -33,8 +35,20 @@ public class TestUtilsLara {
 			super(env, name);
 		}
 
+		/**
+		 * @see de.cesr.lara.components.impl.AbstractLaraAgent#getThis()
+		 */
 		@Override
-		public void perceive(LaraDecisionBuilder dBuilder) {
+		public TestNetworkAgent getThis() {
+			return this;
+		}
+
+		/**
+		 * @see de.cesr.lara.components.LaraAgent#laraPerceive(de.cesr.lara.components.LaraDecisionBuilder)
+		 */
+		@Override
+		public void laraPerceive(LaraDecisionBuilder dBuilder) {
+			// nothing to do
 		}
 	}
 }

@@ -19,7 +19,8 @@ import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import de.cesr.lara.components.LaraSimpleAgent;
+import de.cesr.lara.components.LGeneralBehaviouralOption;
+import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraDecisionBuilder;
 import de.cesr.lara.components.LaraEnvironment;
@@ -52,7 +53,7 @@ public class LNetworkAnalysisTest {
 	/**
 	 * test agent
 	 */
-	public static class TestAgent extends AbstractLaraNetworkAgent<TestAgent, MRepastEdge<TestAgent>, LaraBehaviouralOption> {
+	public static class TestAgent extends AbstractLaraNetworkAgent<TestAgent, LGeneralBehaviouralOption<TestAgent>, MRepastEdge<TestAgent>> {
 
 		/**
 		 * constructor
@@ -66,8 +67,20 @@ public class LNetworkAnalysisTest {
 			getLaraComp().getMemory().memorize(new LFloatProperty("Value", value));
 		}
 
+		/**
+		 * @see de.cesr.lara.components.impl.AbstractLaraAgent#getThis()
+		 */
 		@Override
-		public void perceive(LaraDecisionBuilder dBuilder) {
+		public TestAgent getThis() {
+			return this;
+		}
+
+		/**
+		 * @see de.cesr.lara.components.LaraAgent#laraPerceive(de.cesr.lara.components.LaraDecisionBuilder)
+		 */
+		@Override
+		public void laraPerceive(LaraDecisionBuilder dBuilder) {
+			// nothing to do
 		}
 	}
 
@@ -110,7 +123,7 @@ public class LNetworkAnalysisTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.lara.util.LNetworkAnalysis#getNumReachedNodes(LaraNetwork, de.cesr.lara.components.LaraSimpleAgent, de.cesr.lara.components.LaraSimpleAgent, int, int)}
+	 * {@link de.cesr.more.lara.util.LNetworkAnalysis#getNumReachedNodes(LaraNetwork, de.cesr.lara.components.LaraAgent, de.cesr.lara.components.LaraAgent, int, int)}
 	 * .
 	 */
 	@Test

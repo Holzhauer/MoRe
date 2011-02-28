@@ -25,7 +25,7 @@ import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.lara.components.LaraDecisionBuilder;
 import de.cesr.lara.components.LaraEnvironment;
 import de.cesr.lara.components.LaraRandom;
-import de.cesr.lara.components.LaraSimpleAgent;
+import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.impl.AbstractLaraAgent;
 import de.cesr.lara.components.impl.AbstractStandaloneParallelModel;
 import de.cesr.lara.components.impl.LModel;
@@ -35,6 +35,8 @@ import de.cesr.more.lara.LNetworkEnvironment;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.rs.adapter.DefaultLRsNetwork;
 import de.cesr.more.rs.adapter.MRepastEdge;
+import de.cesr.more.testing.TestUtilsLara;
+import de.cesr.more.testing.TestUtilsLara.TestNetworkAgent;
 
 
 
@@ -46,15 +48,17 @@ import de.cesr.more.rs.adapter.MRepastEdge;
  */
 public class DefaultRSNetworkTest {
 
-	LaraSimpleAgent												center;
-	LaraEnvironment												env;
-	MoreNetwork<LaraSimpleAgent, MRepastEdge<LaraSimpleAgent>>	network;
+	TestAgent														center;
+	LaraEnvironment													env;
+	MoreNetwork<TestAgent, MRepastEdge<TestAgent>>					network;
+
 
 	/**
 	 * test agent
 	 */
-	public static class TestAgent extends AbstractLaraAgent {
-
+	public static class TestAgent extends TestNetworkAgent {
+		
+		static int id = 0;
 		/**
 		 * constructor
 		 * 
@@ -62,15 +66,11 @@ public class DefaultRSNetworkTest {
 		 * @param value
 		 */
 		public TestAgent(LaraEnvironment env, float value) {
-			super(env);
+			super(env, "testAgent_" + id++);
 			getLaraComp().getMemory().memorize(new LFloatProperty("Value", value));
 		}
-
-		@Override
-		public void perceive(LaraDecisionBuilder dBuilder) {
-		}
 	}
-
+	
 	/**
 	 * @throws java.lang.Exception Created by Sascha Holzhauer on 15.01.2010
 	 */
@@ -101,22 +101,26 @@ public class DefaultRSNetworkTest {
 			}
 		});
 		env = new LNetworkEnvironment();
-		Context context = new DefaultContext<LaraSimpleAgent>();
-		network = new DefaultLRsNetwork<LaraSimpleAgent, MRepastEdge<LaraSimpleAgent>>(
-				new ContextJungNetwork<LaraSimpleAgent>(new UndirectedJungNetwork<LaraSimpleAgent>("network"), context),
+		Context context = new DefaultContext<TestAgent>();
+		network = new DefaultLRsNetwork<TestAgent, MRepastEdge<TestAgent>>(
+				new ContextJungNetwork<TestAgent>(new UndirectedJungNetwork<TestAgent>("network"), context),
 				context);
 
 		// build network (star of max diameter 5):
 		center = new TestAgent(env, 1000);
+		network.addNode(center);
 
 		for (int i = 0; i < 5; i++) {
-			LaraSimpleAgent next = new TestAgent(env, 200);
+			TestAgent next = new TestAgent(env, 200);
+			network.addNode(next);
 			network.connect(center, next);
 			for (int j = 0; j < 5; j++) {
-				LaraSimpleAgent edge = new TestAgent(env, 30);
-				network.connect(next, edge);
+				TestAgent outer = new TestAgent(env, 30);
+				network.addNode(outer);
+				network.connect(next, outer);
 			}
 		}
+		System.out.println(network.getNodes());
 	}
 
 	/**
@@ -124,7 +128,7 @@ public class DefaultRSNetworkTest {
 	 */
 	@Test
 	public final void testConnect() {
-		LaraSimpleAgent target = new TestAgent(env, 1);
+		TestAgent target = new TestAgent(env, 1);
 		network.connect(center, target);
 		assertEquals("An edge between both agents should exist", true, network.isAdjacent(center, target));
 	}
@@ -134,7 +138,7 @@ public class DefaultRSNetworkTest {
 	 */
 	@Test
 	public final void testDisconnect() {
-		LaraSimpleAgent enemy = network.getAdjacent(center).iterator().next();
+		TestAgent enemy = network.getAdjacent(center).iterator().next();
 		assertEquals("Both agents should be adjacent", true, network.isAdjacent(center, enemy));
 		network.disconnect(center, enemy);
 		assertEquals("Both agents should not be adjacent anymore", false, network.isAdjacent(center, enemy));
@@ -145,12 +149,12 @@ public class DefaultRSNetworkTest {
 	 */
 	@Test
 	public final void testGetAdjacent() {
-		Collection<LaraSimpleAgent> adjacent = new ArrayList<LaraSimpleAgent>();
-		Iterator<LaraSimpleAgent> iter = network.getAdjacent(center).iterator();
+		Collection<TestAgent> adjacent = new ArrayList<TestAgent>();
+		Iterator<TestAgent> iter = network.getAdjacent(center).iterator();
 		while (iter.hasNext()) {
 			adjacent.add(iter.next());
 		}
-		assertEquals("Number of adjavend nodes should be 5", 5, adjacent.size());
+		assertEquals("Number of adjacent nodes should be 5", 5, adjacent.size());
 	}
 
 	/**
@@ -166,7 +170,7 @@ public class DefaultRSNetworkTest {
 	 */
 	@Test
 	public final void testSetWeight() {
-		LaraSimpleAgent friend = network.getAdjacent(center).iterator().next();
+		TestAgent friend = network.getAdjacent(center).iterator().next();
 		assertEquals("Weight of initialization should be 1.0", DefaultLRsNetwork.DEFAULT_EDGE_WEIGHT, network
 				.getWeight(center, friend), 0);
 		network.setWeight(center, friend, 42.0);
@@ -179,18 +183,18 @@ public class DefaultRSNetworkTest {
 	 */
 	@Test
 	public final void testNormalizeWeights() {
-		for (LaraSimpleAgent next : network.getAdjacent(center)) {
+		for (TestAgent next : network.getAdjacent(center)) {
 			network.setWeight(center, next, 50);
-			for (LaraSimpleAgent edge : network.getAdjacent(next)) {
+			for (TestAgent edge : network.getAdjacent(next)) {
 				if (edge != center) {
 					network.setWeight(next, edge, 5);
 				}
 			}
 		}
 		network.normalizeWeights();
-		for (LaraSimpleAgent next : network.getAdjacent(center)) {
+		for (TestAgent next : network.getAdjacent(center)) {
 			assertEquals("Normalized weight should be 50 / 50 = 1.0", 1.0, network.getWeight(center, next), 0);
-			for (LaraSimpleAgent edge : network.getAdjacent(next)) {
+			for (TestAgent edge : network.getAdjacent(next)) {
 				if (edge != center) {
 					assertEquals("Normalized weight should be 5 / 50 = 0.1", 0.1, network.getWeight(next, edge), 0);
 				}

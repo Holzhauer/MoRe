@@ -11,7 +11,7 @@ package de.cesr.more.lara;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraEnvironment;
-import de.cesr.lara.components.LaraSimpleAgent;
+import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.impl.AbstractLaraAgent;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
@@ -23,17 +23,17 @@ import de.cesr.more.networks.MoreNetwork;
 /**
  * 
  * @author Sascha Holzhauer
- * @param <AgentT>
+ * @param <A>
  *            the type (of agents) that are contained as nodes in the networks this agent refers to
  * @param <BOType> the type of behavioural options the BO-memory of this agent may store
  * @date 19.01.2010
  * 
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractLaraNetworkAgent<AgentT extends LaraSimpleAgent, EdgeType, BoType extends LaraBehaviouralOption> 
-	extends AbstractLaraAgent<AgentT, BoType> implements LaraSimpleNetworkAgent<AgentT, EdgeType>, MoreNodeMeasureSupport {
+public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>, E> 
+	extends AbstractLaraAgent<A, BO> implements LaraSimpleNetworkAgent<A, BO, E>, MoreNodeMeasureSupport {
 
-	LaraAgentNetworkComp<AgentT, EdgeType>	netComp;
+	LaraAgentNetworkComp<A, E>	netComp;
 	MNodeMeasures measures = new MNodeMeasures();
 
 	/**
@@ -43,7 +43,7 @@ public abstract class AbstractLaraNetworkAgent<AgentT extends LaraSimpleAgent, E
 	 */
 	public AbstractLaraNetworkAgent(LaraEnvironment env) {
 		super(env);
-		netComp = new LAgentNetworkComp<AgentT, EdgeType>(this);
+		netComp = new LAgentNetworkComp<A, BO, E>(this);
 	}
 
 	/**
@@ -54,20 +54,20 @@ public abstract class AbstractLaraNetworkAgent<AgentT extends LaraSimpleAgent, E
 	 */
 	public AbstractLaraNetworkAgent(LaraEnvironment env, String name) {
 		super(env, name);
-		netComp = new LAgentNetworkComp<AgentT, EdgeType>(this);
+		netComp = new LAgentNetworkComp<A, BO, E>(this);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.LaraSimpleAgent#getLaraComp()
+	 * @see de.cesr.lara.components.LaraAgent#getLaraComp()
 	 */
-	public LaraAgentNetworkComp<AgentT, EdgeType> getLaraNetworkComp() {
+	public LaraAgentNetworkComp<A, E> getLaraNetworkComp() {
 		return netComp;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.LaraSimpleAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
+	 * @see de.cesr.lara.components.LaraAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
 	 */
-	public void setLaraNetworkComp(LaraAgentNetworkComp<AgentT, EdgeType> component) {
+	public void setLaraNetworkComp(LaraAgentNetworkComp<A, E> component) {
 		this.netComp = component;
 	}
 	

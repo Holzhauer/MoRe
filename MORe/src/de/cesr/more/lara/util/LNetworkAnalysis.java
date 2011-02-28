@@ -6,7 +6,7 @@
  */
 package de.cesr.more.lara.util;
 
-import de.cesr.lara.components.LaraSimpleAgent;
+import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.impl.LModel;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.lara.LaraSimpleNetworkAgent;
@@ -28,14 +28,15 @@ public class LNetworkAnalysis {
 	 * are multiplied. For weights < 1 this means a discount for distant nodes. Normalized weights are
 	 * considered.
 	 * @param network 
-	 * @param <AgentType> 
+	 * @param <A> agent type
+	 * @param <E> edge type
 	 * 
 	 * @param agent
 	 * @param netInfo 
 	 * @return ComboundNetworkInfo
 	 */
-	public static <AgentType extends LaraSimpleNetworkAgent<?, EdgeType>, EdgeType> ComboundNetworkInfo getCompoundValue(MoreNetwork<AgentType, EdgeType> network, 
-			AgentType agent, ComboundNetworkInfo netInfo) {
+	public static <A extends LaraSimpleNetworkAgent<A, ?, E>, E> ComboundNetworkInfo getCompoundValue(MoreNetwork<A, E> network, 
+			A agent, ComboundNetworkInfo netInfo) {
 		netInfo.setValue(getAdjacentValues(network, agent, null, netInfo.getName(), netInfo.getReach(), 1, 1.0) / 
 				getNumReachedNodes(network, agent, null, netInfo.getReach(), 1));
 		return netInfo;
@@ -51,7 +52,7 @@ public class LNetworkAnalysis {
 	 * If a node is connected to the centred agent via different path, both paths count since additional
 	 * paths increase the opportunity to get informed! 
 	 * @param network 
-	 * @param <AgentType> 
+	 * @param <A> 
 	 * 
 	 * @param agent
 	 * @param precessor 
@@ -62,10 +63,10 @@ public class LNetworkAnalysis {
 	 * @return
 	 * Created by Sascha Holzhauer on 15.01.2010
 	 */
-	protected static <AgentType extends LaraSimpleAgent, EdgeType> double getAdjacentValues(MoreNetwork<AgentType, EdgeType> network, AgentType agent, 
-			AgentType precessor, String key, int reach, int curReach, double weight) {
+	protected static <A extends LaraAgent<A, ?>, E> double getAdjacentValues(MoreNetwork<A, E> network, A agent, 
+			A precessor, String key, int reach, int curReach, double weight) {
 		double value = 0.0;
-		for (AgentType a : network.getAdjacent(agent)) {
+		for (A a : network.getAdjacent(agent)) {
 			if (a != precessor) {
 				value += ((Float)a.getLaraComp().getMemory().recall(key, LModel.getModel().getCurrentStep()).getValue()).floatValue() * (
 						network.getWeight(agent, a) * weight);
@@ -79,11 +80,12 @@ public class LNetworkAnalysis {
 	}
 	
 	/**
-	 * Analogue to {@link LNetworkAnalysis#getAdjacentValues(LaraNetwork, LaraSimpleAgent, LaraSimpleAgent, String, int, int, double)} nodes
+	 * Analogue to {@link LNetworkAnalysis#getAdjacentValues(LaraNetwork, LaraAgent, LaraAgent, String, int, int, double)} nodes
 	 * may be considered more than once because of paths. However, a path by which an agent was reached is not gone
 	 * back.
 	 * @param network 
-	 * @param <AgentType> 
+	 * @param <A> 
+	 * @param <E> edge type
 	 * @param center
 	 * @param predecessor
 	 * @param reach 
@@ -91,10 +93,10 @@ public class LNetworkAnalysis {
 	 * @return
 	 * Created by Sascha Holzhauer on 19.01.2010
 	 */
-	public static <AgentType extends LaraSimpleAgent, EdgeType> int getNumReachedNodes(MoreNetwork<AgentType, EdgeType> network, AgentType center, AgentType predecessor,
+	public static <A extends LaraAgent<A, ?>, E> int getNumReachedNodes(MoreNetwork<A, E> network, A center, A predecessor,
 			int reach, int curReach) {
 		int sum = 0;
-		for (AgentType a : network.getAdjacent(center)) {
+		for (A a : network.getAdjacent(center)) {
 			if (a != predecessor) {
 				sum++;
 				if (reach > curReach) {

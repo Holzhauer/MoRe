@@ -16,7 +16,7 @@ import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.space.graph.RepastEdge;
-import de.cesr.lara.components.LaraSimpleAgent;
+import de.cesr.lara.components.LaraAgent;
 import de.cesr.more.networks.MoreNetwork;
 
 
@@ -30,8 +30,8 @@ import de.cesr.more.networks.MoreNetwork;
  */
 public class RSSocialNetworkAdapter {
 
-	private Map<Context<? extends LaraSimpleAgent>, Map<String, MoreNetwork<? extends LaraSimpleAgent, ? extends 
-			RepastEdge<? extends LaraSimpleAgent>>>>	networks;
+	private Map<Context<? extends LaraAgent>, Map<String, MoreNetwork<? extends LaraAgent, ? extends 
+			RepastEdge<? extends LaraAgent>>>>	networks;
 
 	/**
 	 * This is a helper method to query all networks a given agent is in.
@@ -61,7 +61,7 @@ public class RSSocialNetworkAdapter {
 	 * @param name
 	 * @return Created by Sascha Holzhauer on 04.02.2010
 	 */
-	public MoreNetwork<? extends LaraSimpleAgent, ? extends RepastEdge<? extends LaraSimpleAgent>> getNetwork(Context<? extends LaraSimpleAgent> context, String name) {
+	public MoreNetwork<? extends LaraAgent, ? extends RepastEdge<? extends LaraAgent>> getNetwork(Context<? extends LaraAgent> context, String name) {
 		return networks.get(context).get(name);
 	}
 }

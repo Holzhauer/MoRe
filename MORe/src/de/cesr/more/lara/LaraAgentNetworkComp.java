@@ -17,23 +17,24 @@ import de.cesr.more.networks.MoreNetwork;
 
 /**
  * @author Sascha Holzhauer
- * @param <AgentType> the common type (of agents) that is contained as nodes in the networks
+ * @param <A> the common type (of agents) that is contained as nodes in the networks
+ * @param <E> the edge type
  * @date 19.01.2010
  */
-public interface LaraAgentNetworkComp<AgentType, EdgeType> {
+public interface LaraAgentNetworkComp<A, E> {
 
 	
 	/**
 	 * @param network
 	 * @uml.property  name="network"
 	 */
-	public void setNetwork(MoreNetwork<AgentType, EdgeType> network);
+	public void setNetwork(MoreNetwork<? super A, E> network);
 	
 	/**
 	 * @param name
 	 * @return the network with the given name
 	 */
-	public MoreNetwork<AgentType, EdgeType> getNetwork(String name);
+	public MoreNetwork<? super A, E> getNetwork(String name);
 
 	/**
 		 */
