@@ -10,8 +10,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.more.networks.MoreNetwork;
 
 /** 

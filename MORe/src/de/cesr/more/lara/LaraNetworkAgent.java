@@ -10,9 +10,9 @@ package de.cesr.more.lara;
 
 import java.util.Collection;
 
-import de.cesr.lara.components.LaraAgent;
-import de.cesr.lara.components.LaraAgentComponent;
 import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.agents.LaraAgentComponent;
 import de.cesr.more.networks.MoreNetwork;
 
 

@@ -8,8 +8,8 @@ package de.cesr.more.lara;
 
 
 
-import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.LaraBehaviouralOption;
+import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.more.lara.LaraAgentNetworkComp;
 
 
@@ -23,13 +23,13 @@ public interface LaraSimpleNetworkAgent<A extends LaraAgent<A, BO>, BO extends L
 
 	/**
 	 * @return LARA Network Component
-	 * @see de.cesr.lara.components.LaraAgent#getLaraComp()
+	 * @see de.cesr.lara.components.agents.LaraAgent#getLaraComp()
 	 */
 	public LaraAgentNetworkComp<A, E> getLaraNetworkComp();
 
 	/**
 	 * @param component 
-	 * @see de.cesr.lara.components.LaraAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
+	 * @see de.cesr.lara.components.agents.LaraAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
 	 */
 	public void setLaraNetworkComp(LaraAgentNetworkComp<A, E> component);
 

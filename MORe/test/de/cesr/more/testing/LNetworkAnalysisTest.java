@@ -19,14 +19,14 @@ import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import de.cesr.lara.components.LGeneralBehaviouralOption;
-import de.cesr.lara.components.LaraAgent;
 import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.lara.components.LaraDecisionBuilder;
-import de.cesr.lara.components.LaraEnvironment;
-import de.cesr.lara.components.impl.LModel;
-import de.cesr.lara.components.impl.container.properties.LFloatProperty;
-import de.cesr.lara.components.impl.container.properties.LIntProperty;
+import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.container.properties.impl.LFloatProperty;
+import de.cesr.lara.components.container.properties.impl.LIntProperty;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.impl.LGeneralBehaviouralOption;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.more.lara.AbstractLCompoundNetworkInfo;
 import de.cesr.more.lara.AbstractLaraNetworkAgent;
 import de.cesr.more.lara.ComboundNetworkInfo;
@@ -68,7 +68,7 @@ public class LNetworkAnalysisTest {
 		}
 
 		/**
-		 * @see de.cesr.lara.components.impl.AbstractLaraAgent#getThis()
+		 * @see de.cesr.lara.components.agents.impl.LAbstractAgent#getThis()
 		 */
 		@Override
 		public TestAgent getThis() {
@@ -76,10 +76,10 @@ public class LNetworkAnalysisTest {
 		}
 
 		/**
-		 * @see de.cesr.lara.components.LaraAgent#laraPerceive(de.cesr.lara.components.LaraDecisionBuilder)
+		 * @see de.cesr.lara.components.agents.LaraAgent#laraPerceive(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 		 */
 		@Override
-		public void laraPerceive(LaraDecisionBuilder dBuilder) {
+		public void laraPerceive(LaraDecisionConfiguration dBuilder) {
 			// nothing to do
 		}
 	}
@@ -123,7 +123,7 @@ public class LNetworkAnalysisTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.lara.util.LNetworkAnalysis#getNumReachedNodes(LaraNetwork, de.cesr.lara.components.LaraAgent, de.cesr.lara.components.LaraAgent, int, int)}
+	 * {@link de.cesr.more.lara.util.LNetworkAnalysis#getNumReachedNodes(LaraNetwork, de.cesr.lara.components.agents.LaraAgent, de.cesr.lara.components.agents.LaraAgent, int, int)}
 	 * .
 	 */
 	@Test

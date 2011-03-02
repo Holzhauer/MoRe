@@ -28,7 +28,7 @@ package de.cesr.more.basic;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import de.cesr.lara.components.LaraRandom;
+import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.util.MRandom;
 import de.cesr.more.util.MoreRandomService;
@@ -119,7 +119,7 @@ public class MManager {
 	/**
 	 * Return the random manager that is used for random processes in LARA. Either, the model author should implement
 	 * (or assign to this.randomMan when extending AbstracLModel) the random number generator used in the custom model
-	 * part, or reset the LRandom by calling getLRandom.setSeed(seed) using the correct seed parameter.
+	 * part, or reset the LRandomService by calling getLRandom.setSeed(seed) using the correct seed parameter.
 	 * 
 	 * NOTE: Make sure that the {@link LaraRandom} class is instantiated only once since creating an instance every time
 	 * this method is called results in starting the random sequence anew each time the method is called!

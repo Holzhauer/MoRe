@@ -22,15 +22,15 @@ import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import de.cesr.lara.components.LaraDecisionBuilder;
-import de.cesr.lara.components.LaraEnvironment;
-import de.cesr.lara.components.LaraRandom;
-import de.cesr.lara.components.LaraAgent;
-import de.cesr.lara.components.impl.AbstractLaraAgent;
-import de.cesr.lara.components.impl.AbstractStandaloneParallelModel;
-import de.cesr.lara.components.impl.LModel;
-import de.cesr.lara.components.impl.container.properties.LFloatProperty;
-import de.cesr.lara.components.impl.util.LRandom;
+import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.agents.impl.LAbstractAgent;
+import de.cesr.lara.components.container.properties.impl.LFloatProperty;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
+import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
+import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.lara.components.util.LaraRandom;
+import de.cesr.lara.components.util.impl.LRandomService;
 import de.cesr.more.lara.LNetworkEnvironment;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.rs.adapter.DefaultLRsNetwork;
@@ -77,7 +77,7 @@ public class DefaultRSNetworkTest {
 	@Before
 	public void setUp() throws Exception {
 
-		LModel.setNewModel(new AbstractStandaloneParallelModel() {
+		LModel.setNewModel(new LAbstractStandaloneSynchronisedModel() {
 
 			@Override
 			public void finish() {
@@ -88,16 +88,16 @@ public class DefaultRSNetworkTest {
 			}
 
 			@Override
-			protected void processDecisions(LaraDecisionBuilder dBuilder) {
+			protected void execute(LaraDecisionConfiguration dBuilder) {
 			}
 
 			@Override
 			public LaraRandom getLRandom() {
-				return new LRandom((int) System.currentTimeMillis());
+				return new LRandomService((int) System.currentTimeMillis());
 			}
 
 			@Override
-			public void process() {
+			public void processStep() {
 			}
 		});
 		env = new LNetworkEnvironment();

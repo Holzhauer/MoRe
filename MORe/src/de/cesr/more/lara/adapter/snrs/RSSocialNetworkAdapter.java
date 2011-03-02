@@ -16,7 +16,7 @@ import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.space.graph.RepastEdge;
-import de.cesr.lara.components.LaraAgent;
+import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.more.networks.MoreNetwork;
 
 

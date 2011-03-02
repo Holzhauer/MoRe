@@ -6,8 +6,8 @@
  */
 package de.cesr.more.lara.util;
 
-import de.cesr.lara.components.LaraAgent;
-import de.cesr.lara.components.impl.LModel;
+import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.lara.LaraSimpleNetworkAgent;
 import de.cesr.more.networks.MoreNetwork;

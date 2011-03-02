@@ -8,8 +8,8 @@ package de.cesr.more.lara;
 
 
 
-import de.cesr.lara.components.impl.environment.LEnvironment;
-import de.cesr.lara.components.impl.environment.LaraEnvironmentalProperty;
+import de.cesr.lara.components.environment.impl.LEnvironment;
+import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
 import de.cesr.more.networks.MoreNetwork;
 
 
@@ -25,18 +25,18 @@ public class LNetworkEnvironment<A extends LaraSimpleNetworkAgent<A, ?, E>, E> e
 	MoreNetwork<A, E>	network;
 
 	/**
-	 * @see de.cesr.lara.components.impl.environment.LEnvironment#getPropertyByName(java.lang.String)
+	 * @see de.cesr.lara.components.environment.impl.LEnvironment#getPropertyByName(java.lang.String)
 	 */
 	@Override
-	public LaraEnvironmentalProperty<?> getPropertyByName(String name) {
+	public LAbstractEnvironmentalProperty<?> getPropertyByName(String name) {
 		return super.getPropertyByName(name);
 	}
 
 	/**
-	 * @see de.cesr.lara.components.impl.environment.LEnvironment#getTypedPropertyByName(java.lang.String)
+	 * @see de.cesr.lara.components.environment.impl.LEnvironment#getTypedPropertyByName(java.lang.String)
 	 */
 	@Override
-	public <ValueType> LaraEnvironmentalProperty<ValueType> getTypedPropertyByName(String name) {
+	public <ValueType> LAbstractEnvironmentalProperty<ValueType> getTypedPropertyByName(String name) {
 		return super.getTypedPropertyByName(name);
 	}
 

@@ -10,9 +10,9 @@ package de.cesr.more.lara;
 
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.lara.components.LaraEnvironment;
-import de.cesr.lara.components.LaraAgent;
-import de.cesr.lara.components.impl.AbstractLaraAgent;
+import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.lara.components.agents.impl.LAbstractAgent;
+import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MNodeMeasures;
@@ -31,7 +31,7 @@ import de.cesr.more.networks.MoreNetwork;
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>, E> 
-	extends AbstractLaraAgent<A, BO> implements LaraSimpleNetworkAgent<A, BO, E>, MoreNodeMeasureSupport {
+	extends LAbstractAgent<A, BO> implements LaraSimpleNetworkAgent<A, BO, E>, MoreNodeMeasureSupport {
 
 	LaraAgentNetworkComp<A, E>	netComp;
 	MNodeMeasures measures = new MNodeMeasures();
@@ -58,14 +58,14 @@ public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO ex
 	}
 
 	/**
-	 * @see de.cesr.lara.components.LaraAgent#getLaraComp()
+	 * @see de.cesr.lara.components.agents.LaraAgent#getLaraComp()
 	 */
 	public LaraAgentNetworkComp<A, E> getLaraNetworkComp() {
 		return netComp;
 	}
 
 	/**
-	 * @see de.cesr.lara.components.LaraAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
+	 * @see de.cesr.lara.components.agents.LaraAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
 	 */
 	public void setLaraNetworkComp(LaraAgentNetworkComp<A, E> component) {
 		this.netComp = component;
