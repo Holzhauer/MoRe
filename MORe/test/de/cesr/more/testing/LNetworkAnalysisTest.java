@@ -64,7 +64,7 @@ public class LNetworkAnalysisTest {
 		 */
 		public TestAgent(LaraEnvironment env, float value, String name) {
 			super(env, name);
-			getLaraComp().getMemory().memorize(new LFloatProperty("Value", value));
+			getLaraComp().getGeneralMemory().memorize(new LFloatProperty("Value", value));
 		}
 
 		/**

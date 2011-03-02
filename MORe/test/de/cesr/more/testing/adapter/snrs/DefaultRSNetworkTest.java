@@ -67,7 +67,7 @@ public class DefaultRSNetworkTest {
 		 */
 		public TestAgent(LaraEnvironment env, float value) {
 			super(env, "testAgent_" + id++);
-			getLaraComp().getMemory().memorize(new LFloatProperty("Value", value));
+			getLaraComp().getGeneralMemory().memorize(new LFloatProperty("Value", value));
 		}
 	}
 	

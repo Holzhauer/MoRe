@@ -68,7 +68,7 @@ public class LNetworkAnalysis {
 		double value = 0.0;
 		for (A a : network.getAdjacent(agent)) {
 			if (a != precessor) {
-				value += ((Float)a.getLaraComp().getMemory().recall(key, LModel.getModel().getCurrentStep()).getValue()).floatValue() * (
+				value += ((Float)a.getLaraComp().getGeneralMemory().recall(key, LModel.getModel().getCurrentStep()).getValue()).floatValue() * (
 						network.getWeight(agent, a) * weight);
 				if (reach > curReach) {
 					value += getAdjacentValues(network, a, agent, key, reach, curReach + 1,

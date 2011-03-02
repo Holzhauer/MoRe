@@ -8,10 +8,8 @@ package de.cesr.more.lara;
 
 
 
-import de.cesr.lara.components.LaraAgent;
-import de.cesr.lara.components.impl.environment.AbstractEnvironmentalProperty;
 import de.cesr.lara.components.impl.environment.LEnvironment;
-import de.cesr.more.lara.util.LNetworkAnalysis;
+import de.cesr.lara.components.impl.environment.LaraEnvironmentalProperty;
 import de.cesr.more.networks.MoreNetwork;
 
 
@@ -27,44 +25,18 @@ public class LNetworkEnvironment<A extends LaraSimpleNetworkAgent<A, ?, E>, E> e
 	MoreNetwork<A, E>	network;
 
 	/**
-	 * @see de.cesr.lara.components.impl.environment.LEnvironment#getPropertyByName(java.lang.String,
-	 *      de.cesr.lara.components.LaraAgent)
-	 */
-	@Override
-	public AbstractEnvironmentalProperty<?> getPropertyByName(String name, LaraAgent agent) {
-		// TODO Auto-generated method stub
-		return super.getPropertyByName(name, agent);
-	}
-
-	/**
 	 * @see de.cesr.lara.components.impl.environment.LEnvironment#getPropertyByName(java.lang.String)
 	 */
 	@Override
-	public AbstractEnvironmentalProperty<?> getPropertyByName(String name) {
-		// TODO Auto-generated method stub
+	public LaraEnvironmentalProperty<?> getPropertyByName(String name) {
 		return super.getPropertyByName(name);
-	}
-
-	/**
-	 * @see de.cesr.lara.components.impl.environment.LEnvironment#getTypedPropertyByName(java.lang.String,
-	 *      de.cesr.lara.components.LaraAgent)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <ValueType> AbstractEnvironmentalProperty<ValueType> getTypedPropertyByName(String name,
-			LaraAgent agent) {
-		// TODO check for LaraSimpleNetworkAgent!
-		AbstractEnvironmentalProperty<ComboundNetworkInfo> property = super.getTypedPropertyByName(name, agent);
-		return (AbstractEnvironmentalProperty<ValueType>) LNetworkAnalysis.<A, E> getCompoundValue(network,
-				(A) agent, property.getValue());
 	}
 
 	/**
 	 * @see de.cesr.lara.components.impl.environment.LEnvironment#getTypedPropertyByName(java.lang.String)
 	 */
 	@Override
-	public <ValueType> AbstractEnvironmentalProperty<ValueType> getTypedPropertyByName(String name) {
-		// TODO Auto-generated method stub
+	public <ValueType> LaraEnvironmentalProperty<ValueType> getTypedPropertyByName(String name) {
 		return super.getTypedPropertyByName(name);
 	}
 
