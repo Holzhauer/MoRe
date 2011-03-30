@@ -34,7 +34,7 @@ import repast.simphony.context.space.graph.ContextJungNetwork;
  * @date 15.11.2010
  * 
  */
-public class MMeasureBundle<T extends MoreNodeMeasureSupport, E  extends MoreEdge> {
+public class MMeasureBundle<T extends MoreNodeMeasureSupport, E  extends MoreEdge<? super T>> {
 	private MoreNetwork<T, E>										network;
 	private MMeasureDescription										measure;
 	private Map<String, Object>										params;

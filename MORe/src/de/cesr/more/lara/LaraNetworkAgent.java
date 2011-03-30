@@ -13,6 +13,7 @@ import java.util.Collection;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.LaraAgentComponent;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 
 
@@ -27,17 +28,17 @@ import de.cesr.more.networks.MoreNetwork;
  * @param <BO> behavioural option type
  * @date 19.01.2010
  */
-public interface LaraNetworkAgent<A extends LaraAgent<A, BO>, E, BO extends LaraBehaviouralOption<? super A, BO>>
+public interface LaraNetworkAgent<A extends LaraAgent<A, BO>, E extends MoreEdge<? super A>, BO extends LaraBehaviouralOption<? super A, BO>>
 		extends LaraAgent<A, BO>, LaraAgentNetworkComp<A, E> {
 
 	/**
 	 * @return Set of LaraNetworks
 	 */
-	public abstract Collection<MoreNetwork<? super A, E>> getLNetworks();
+	public abstract Collection<MoreNetwork<A, E>> getLNetworks();
 
 	/**
 	 * @return LARA Network Component
 	 */
-	public abstract LaraAgentNetworkComp<LaraNetworkAgent<A, E, BO>, E> getLNetworkComp();
+	public abstract LaraAgentNetworkComp<A, E> getLNetworkComp();
 
 }

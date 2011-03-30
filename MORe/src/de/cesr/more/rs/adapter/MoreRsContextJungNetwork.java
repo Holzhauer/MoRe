@@ -21,6 +21,7 @@ import repast.simphony.space.graph.JungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.MNetworkManager;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.exception.IllegalValueTypeException;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
@@ -42,7 +43,7 @@ import edu.uci.ics.jung.graph.Graph;
  * @date 12.10.2010
  * 
  */
-public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> extends ContextJungNetwork<AgentT>
+public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> extends ContextJungNetwork<AgentT>
 		implements MoreRsNetwork<AgentT, EdgeT> {
 
 	/**
@@ -286,6 +287,14 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> 
 		for (RepastEdge<AgentT> edge : this.getEdges())
 			edges.add(edge);
 		return (Collection<EdgeT>) edges;
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#addEdge(java.lang.Object)
+	 */
+	@Override
+	public void addEdge(EdgeT edge) {
+		super.addEdge(edge);
 	}
 
 }

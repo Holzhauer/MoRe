@@ -54,7 +54,7 @@ public class MoreUtilities {
 	/**
 	 * TODO handle exception Created by Sascha Holzhauer on 06.05.2010
 	 */
-	public static <V, E> void outputGraph(final MoreNetwork<V, E> network, File outputFile) {
+	public static <V, E extends MoreEdge<? super V>> void outputGraph(final MoreNetwork<V, E> network, File outputFile) {
 		long startTimeMillis = 0;
 		if (logger.isDebugEnabled()) {
 			startTimeMillis = System.currentTimeMillis();

@@ -10,6 +10,7 @@ package de.cesr.more.lara;
 
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 
 
@@ -20,7 +21,7 @@ import de.cesr.more.networks.MoreNetwork;
  * @param <E> edge type
  * @date 15.01.2010
  */
-public class LNetworkEnvironment<A extends LaraSimpleNetworkAgent<A, ?, E>, E> extends LEnvironment {
+public class LNetworkEnvironment<A extends LaraSimpleNetworkAgent<A, ?, E >, E extends MoreEdge<? super A>> extends LEnvironment {
 
 	MoreNetwork<A, E>	network;
 

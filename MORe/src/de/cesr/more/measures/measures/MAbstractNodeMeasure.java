@@ -25,6 +25,7 @@ package de.cesr.more.measures.measures;
 
 import java.util.Map;
 
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MoreAction;
@@ -120,6 +121,6 @@ public abstract class MAbstractNodeMeasure implements MoreMeasure{
 	 * @param parameters The parameter map
 	 * @return The <code>BasicAction</code> that is scheduled for computation
 	 */
-	public abstract <T extends MoreNodeMeasureSupport, E> MoreAction getAction(MoreNetwork<T, E> network,
+	public abstract <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> MoreAction getAction(MoreNetwork<T, E> network,
 			Map<String, Object> parameters);
 }

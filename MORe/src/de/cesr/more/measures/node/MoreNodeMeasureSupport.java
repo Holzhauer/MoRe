@@ -49,12 +49,11 @@ public interface MoreNodeMeasureSupport {
 	 * @param value Value-object of measure to set
 	 */
 	public void setNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
-			MMeasureDescription key, Object value);
+			MMeasureDescription key, Number value);
 
 	/**
 	 * Returns the value-object of this vertex for the network measure identified by the network measure key with the
-	 * network this measure is associated with. For measures that are double values use <code>getNetworkMeasure</code>
-	 * instead!
+	 * network this measure is associated with.
 	 * 
 	 * @param network The Network the measure value to set is associated with
 	 * @param key The Key that identifies the measure to set
@@ -62,6 +61,6 @@ public interface MoreNodeMeasureSupport {
 	 * @return value The Value of this vertex for the given network measure key, <code>null</code> if the specified
 	 *         measure key has not been set.
 	 */
-	public Object getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+	public Number getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
 			MMeasureDescription key);
 }

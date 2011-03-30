@@ -16,7 +16,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.more.measures.measures.MoreMeasure;
+import de.cesr.more.util.Log4jLogger;
 
 
 /**
@@ -41,6 +44,11 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	 * A Set that stores all children
 	 */
 	protected Set<MoreMeasureSupplier> suppliers;
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(MAbstractMeasureSupplier.class);
 	
 	/**
 	 * Basic constructor that initializes the map and sets

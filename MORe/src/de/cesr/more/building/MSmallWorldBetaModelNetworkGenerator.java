@@ -120,6 +120,7 @@ public class MSmallWorldBetaModelNetworkGenerator<V, E extends MoreEdge<V>> exte
     	
     	// rewiring:
     	for (E edge : orgEdges) {
+    		// TODO allow for custom random numbers
     		if (MManager.getMRandomService().getUniform().nextDouble() <= betaProvider.getBetaValue(edge.getStart()))  {
     			edge_factory.createEdge(edge.getStart(), rewireManager.getRewireTarget(graph, edge.getStart()), is_directed);
     			graph.removeEdge(edge);

@@ -9,6 +9,8 @@ package de.cesr.more.networks;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import de.cesr.more.basic.MoreEdge;
+
 import edu.uci.ics.jung.graph.Graph;
 
 
@@ -20,8 +22,13 @@ import edu.uci.ics.jung.graph.Graph;
  * @param <EdgeType> the edge type
  * @date 07.01.2010
  */
-public interface MoreNetwork<AgentType, EdgeType> {
+public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentType>> {
 	
+	/**
+	 * Add a node to the network.
+	 * @param node
+	 * Created by Sascha Holzhauer on 30.03.2011
+	 */
 	public void addNode(AgentType node);
 
 	/**
@@ -44,6 +51,14 @@ public interface MoreNetwork<AgentType, EdgeType> {
 	 * Created by Sascha Holzhauer on 15.01.2010
 	 */
 	public void connect(AgentType source, AgentType target);
+	
+	/**
+	 * Adds an edge to this network.
+	 * 
+	 * @param edge
+	 * Created by Sascha Holzhauer on 30.03.2011
+	 */
+	public void addEdge(EdgeType edge);
 
 	/**
 	 * @param source

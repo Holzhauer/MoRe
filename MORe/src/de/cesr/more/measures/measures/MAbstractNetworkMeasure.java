@@ -128,7 +128,7 @@ public abstract class MAbstractNetworkMeasure implements MoreMeasure{
 		 * @param parameters The parameter map
 		 * @return The <code>BasicAction</code> that is scheduled for computation
 		 */
-		abstract public <T, EdgeType extends MoreEdge> MoreAction getAction(
+		abstract public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(
 				MoreNetwork<T, EdgeType> network,
 				Map<String, Object> parameters);
 	}

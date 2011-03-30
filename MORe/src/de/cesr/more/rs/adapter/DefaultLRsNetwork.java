@@ -310,4 +310,12 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	public Collection<EdgeT> getEdgesCollection() {
 		return getJungGraph().getEdges();
 	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#addEdge(de.cesr.more.basic.MoreEdge)
+	 */
+	@Override
+	public void addEdge(EdgeT edge) {
+		network.addEdge(edge);
+	}
 }

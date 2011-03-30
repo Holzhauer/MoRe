@@ -10,7 +10,9 @@ package de.cesr.more.lara;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.lara.LaraAgentNetworkComp;
+import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 
 
 
@@ -19,7 +21,8 @@ import de.cesr.more.lara.LaraAgentNetworkComp;
  * @param <A> the common type (of agents) that is contained as nodes in the networks this agent refers to
  * @date 19.01.2010
  */
-public interface LaraSimpleNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>, E> extends LaraAgent<A, BO> {
+public interface LaraSimpleNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>, E extends MoreEdge<? super A>> extends LaraAgent<A, BO>,
+	MoreNodeMeasureSupport{
 
 	/**
 	 * @return LARA Network Component

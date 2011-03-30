@@ -137,7 +137,7 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 
 			@Override
-			public <T, EdgeType extends MoreEdge> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
+			public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
 					Map<String, Object> parameters) {
 				return new MAbstractAction() {
 					DegreeScorer<T>	scorer	= new DegreeScorer<T>(network.getJungGraph());
@@ -167,7 +167,7 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 
 			@Override
-			public <T, EdgeType extends MoreEdge> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
+			public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
 					Map<String, Object> parameters) {
 				return new MAbstractAction() {
 					MInDegreeScorer<T>	scorer	= new MInDegreeScorer<T>(network.getJungGraph());
@@ -198,7 +198,7 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 
 			@Override
-			public <T, EdgeType extends MoreEdge> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
+			public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
 					Map<String, Object> parameters) {
 				return new MAbstractAction() {
 					MOutDegreeScorer<T>	scorer	= new MOutDegreeScorer<T>(network.getJungGraph());

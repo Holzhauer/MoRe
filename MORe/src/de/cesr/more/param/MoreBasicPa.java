@@ -35,11 +35,11 @@ public enum MoreBasicPa implements ParameterDefinition {
 	DB_SETTINGS_FILE(String.class, "./DBSettings.xml"), 
 	
 	LOCATION(String.class, "mysql2"),
-	DBNAME(String.class, "klimzug"),
+	DBNAME(String.class, "holzhauer"),
 	USER(String.class, "holzhauer"),
 	PASSWORD(String.class, "ymxncbv"),
 	
-	TBLNAME_NETWORK_MEASURES(String.class, "more_net_measures");
+	TBLNAME_NETWORK_MEASURES(String.class, "kubus_sna2011_more_net_measures");
 	
 	private Class<?> type;
 	private Object defaultValue;

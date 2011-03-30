@@ -95,7 +95,7 @@ public class MNetworkManager {
 	 * @return
 	 * Created by Sascha Holzhauer on 16.11.2010
 	 */
-	public static <V, E> MoreNetwork<V,E> storeVertexSubnetwork(MoreNetwork<V, E> in_network, Predicate<V> predicate, String newname) {		
+	public static <V, E extends MoreEdge<? super V>> MoreNetwork<V,E> storeVertexSubnetwork(MoreNetwork<V, E> in_network, Predicate<V> predicate, String newname) {		
 		VertexPredicateFilter<V, E> filter = new VertexPredicateFilter(predicate);
 		
 		// <- LOGGING
@@ -140,18 +140,18 @@ public class MNetworkManager {
 	 * @return
 	 * Created by Sascha Holzhauer on 03.01.2011
 	 */
-	public static <V, E> MoreNetwork<V,E> storeVertexSubnetwork(String in_network, Predicate<V> predicate, String newname) {
+	public static <V, E extends MoreEdge<? super V>> MoreNetwork<V,E> storeVertexSubnetwork(String in_network, Predicate<V> predicate, String newname) {
 		if (!networks.containsKey(in_network)) {
 			throw new IllegalArgumentException("The network \"" + in_network + "\" is not registered at the MNetworkManager!");
 		}
 		return storeVertexSubnetwork((MoreNetwork<V,E>)getNetwork(in_network), predicate, newname);
 	}
 	
-	public static <V, E> Number getNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc) {
+	public static <V, E extends MoreEdge<? super V>> Number getNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc) {
 		return measureStorage.get(network, desc);
 	}
 
-	public static <V, E> void setNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc, Number value) {
+	public static <V, E extends MoreEdge<? super V>> void setNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc, Number value) {
 		measureStorage.put(network, desc, value);
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {

@@ -1,5 +1,5 @@
 /**
- * Social Network Analysis and Visualization Library
+ * Social Network Analysis and Visualisation Library
  * for RepastJ Models (SoNetA)
  * 
  * [see license.txt in the root directory of this library
@@ -26,7 +26,7 @@ import de.cesr.more.networks.MoreNetwork;
  */
 public class MNodeMeasures {
 	
-	protected HashMap<MoreNetwork<? extends MoreNodeMeasureSupport, ?>,HashMap<MMeasureDescription, Object>> objectMeasures;
+	protected HashMap<MoreNetwork<? extends MoreNodeMeasureSupport, ?>,HashMap<MMeasureDescription, Number>> objectMeasures;
 	protected Double temp;
 	
 	
@@ -35,7 +35,7 @@ public class MNodeMeasures {
 	 */
 	public MNodeMeasures() {
 		objectMeasures = new HashMap<MoreNetwork<? extends MoreNodeMeasureSupport, ?>, 
-			HashMap<MMeasureDescription, Object>>();
+			HashMap<MMeasureDescription, Number>>();
 	}
 	
 	/**
@@ -47,9 +47,9 @@ public class MNodeMeasures {
 	 * @param value the value to set
 	 */
 	public void setNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network, 
-			MMeasureDescription key, Object value) {
+			MMeasureDescription key, Number value) {
 		if (!objectMeasures.containsKey(network)) {
-			objectMeasures.put(network, new HashMap<MMeasureDescription, Object>());
+			objectMeasures.put(network, new HashMap<MMeasureDescription, Number>());
 		}
 		objectMeasures.get(network).put(key, value);
 	}
@@ -62,7 +62,7 @@ public class MNodeMeasures {
 	 * @param key The key of the measure
 	 * @return the value of that measure for the given network
 	 */
-	public Object getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network, 
+	public Number getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network, 
 			MMeasureDescription key) {
 		if (objectMeasures.containsKey(network)) {		
 			return objectMeasures.get(network).get(key);

@@ -1,5 +1,5 @@
 /**
- * Social Network Analysis and Visualization Library
+ * Social Network Analysis and Visualisation Library
  * for RepastJ Models (SoNetA)
  * 
  * [see license.txt in the root directory of this library
@@ -18,7 +18,11 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.MNetworkManager;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureManager;
 import de.cesr.more.measures.MMeasureBundle;
 import de.cesr.more.measures.MMeasureDescription;
@@ -32,6 +36,7 @@ import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.util.Log4jLogger;
 
 
 
@@ -55,6 +60,11 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	private MNodeMeasureManager() {
 		addMeasureSupplier(new MBasicNodeMeasureSupplier());
 	}
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Log4jLogger.getLogger(MNodeMeasureManager.class);
 
 	/**
 	 * @date 15.08.2008
@@ -82,11 +92,18 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	 * @param params parameter map of options for calculation
 	 * @return true if adding the measure calculation was successful
 	 */
-	public <T extends MoreNodeMeasureSupport, E> boolean addMeasureCalculation(MoreNetwork<T, E> network,
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean addMeasureCalculation(MoreNetwork<T, E> network,
 			MMeasureDescription measureDesc, Map<String, Object> params) {
 
 		MoreSchedule schedule = MManager.getSchedule();
 		MoreMeasure measure = findMeasure(measureDesc);
+		
+		// <- LOGGING
+		if (measure == null) {
+			logger.error("MoreMeasure for key " + measureDesc.getShort() + " could not be found!");
+		}
+		// LOGGING ->
+		
 		boolean cancel = false;
 
 		if (params == null) {
@@ -185,7 +202,27 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 			return false;
 		}
 	}
+	
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean addMeasureCalculation(String network, MMeasureDescription measureDesc,
+			Map<String, Object> params) {
+		return addMeasureCalculation((MoreNetwork<T, E>) MNetworkManager.getNetwork(network), measureDesc, params);
+	}
 
+	
+	/**
+	 * Takes a short description instead of a {@link MeasureDescription}.
+	 * 
+	 * @see MNodeMeasureManager#addMeasureCalculation(ContextContextJungNetwork,
+	 *      de.cesr.more.measures.node.MNodeMeasureManager.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescription,
+	 *      Map)
+	 */
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean addMeasureCalculation(String network, String shortname,
+			Map<String, Object> params) {
+		return addMeasureCalculation((MoreNetwork<T, E>) MNetworkManager.getNetwork(network), new MMeasureDescription(
+				shortname), params);
+	}
+
+	
 	/**
 	 * Removes <code>BasicAction</code> that calculates the measure for the given network for the given measure key from
 	 * the <code>Schedule</code> to stop computation of that measure. Furthermore its sets the associated measures at
@@ -200,7 +237,7 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	 * 
 	 * @return true, if there was a measure that could be removed
 	 */
-	public <T extends MoreNodeMeasureSupport, E> boolean removeMeasureCalculation(MoreNetwork<T, E> network,
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean removeMeasureCalculation(MoreNetwork<T, E> network,
 			MMeasureDescription key) {
 		MoreAction action = measureActions.get(network).get(key);
 		MManager.getSchedule().removeAction(action);
@@ -241,7 +278,7 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	 *      de.cesr.more.measures.node.MNodeMeasureManager.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescription,
 	 *      Map)
 	 */
-	public <T extends MoreNodeMeasureSupport, E> void addMeasureCalculation(MoreNetwork<T, E> network,
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> void addMeasureCalculation(MoreNetwork<T, E> network,
 			String shortname, Map<String, Object> params) {
 		addMeasureCalculation(network, new MMeasureDescription(shortname), params);
 	}

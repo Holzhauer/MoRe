@@ -10,6 +10,7 @@ package de.cesr.more.lara;
 
 import java.util.Collection;
 
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.networks.MoreNetwork;
 
@@ -21,20 +22,20 @@ import de.cesr.more.networks.MoreNetwork;
  * @param <E> the edge type
  * @date 19.01.2010
  */
-public interface LaraAgentNetworkComp<A, E> {
+public interface LaraAgentNetworkComp<A, E extends MoreEdge<? super A>> {
 
 	
 	/**
 	 * @param network
 	 * @uml.property  name="network"
 	 */
-	public void setNetwork(MoreNetwork<? super A, E> network);
+	public void setNetwork(MoreNetwork<A, E> network);
 	
 	/**
 	 * @param name
 	 * @return the network with the given name
 	 */
-	public MoreNetwork<? super A, E> getNetwork(String name);
+	public MoreNetwork<A, E> getNetwork(String name);
 
 	/**
 		 */

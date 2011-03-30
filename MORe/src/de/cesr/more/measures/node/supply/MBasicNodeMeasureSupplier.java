@@ -1,5 +1,5 @@
 /**
- * Social Network Analysis and Visualization Library
+ * Social Network Analysis and Visualisation Library
  * for RepastJ Models (SoNetA)
  * 
  * [see license.txt in the root directory of this library
@@ -25,9 +25,14 @@ public class MBasicNodeMeasureSupplier extends MAbstractMeasureSupplier {
 
 	MMeasureDescription description;
 	
+	/**
+	 * Adds other suppliers.
+	 */
 	public MBasicNodeMeasureSupplier() {
 		
 		this.addMeasureSupplier(new MCentralityNodeMSupplier());
+		this.addMeasureSupplier(new MAvgNearestNeighbourDegree());
+		
 		// TODO adapt classes
 //		this.addMeasureSupplier(new CentralityNormalizedNMSupplier());
 //		this.addMeasureSupplier(new CentralityStandardizedNMSupplier());

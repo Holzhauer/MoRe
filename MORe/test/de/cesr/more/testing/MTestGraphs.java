@@ -77,7 +77,7 @@ public class MTestGraphs {
 		 * @see de.cesr.more.measures.node.MoreNodeMeasureSupport#getNetworkMeasureObject(de.cesr.more.networks.MoreNetwork, de.cesr.more.measures.MMeasureDescription)
 		 */
 		@Override
-		public Object getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+		public Number getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
 				MMeasureDescription key) {
 			return measures.getNetworkMeasureObject(network, key);
 		}
@@ -87,7 +87,7 @@ public class MTestGraphs {
 		 */
 		@Override
 		public void setNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
-				MMeasureDescription key, Object value) {
+				MMeasureDescription key, Number value) {
 			measures.setNetworkMeasureObject(network, key, value);
 		}
 	}

@@ -17,6 +17,7 @@ import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.building.MoreNetworkBuilder;
 import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.rs.adapter.MRepastEdge;
 
 
 
@@ -27,7 +28,7 @@ import de.cesr.more.networks.MoreNetwork;
  * @date 22.07.2010
  * 
  */
-public class MRsWattsBetaBuilder<AgentType> implements MoreNetworkBuilder<AgentType, RepastEdge<AgentType>> {
+public class MRsWattsBetaBuilder<AgentType> implements MoreNetworkBuilder<AgentType, MRepastEdge<AgentType>> {
 
 	private Context	context;
 

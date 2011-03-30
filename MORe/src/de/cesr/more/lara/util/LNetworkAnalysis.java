@@ -8,6 +8,7 @@ package de.cesr.more.lara.util;
 
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.lara.LaraSimpleNetworkAgent;
 import de.cesr.more.networks.MoreNetwork;
@@ -35,7 +36,7 @@ public class LNetworkAnalysis {
 	 * @param netInfo 
 	 * @return ComboundNetworkInfo
 	 */
-	public static <A extends LaraSimpleNetworkAgent<A, ?, E>, E> ComboundNetworkInfo getCompoundValue(MoreNetwork<A, E> network, 
+	public static <A extends LaraSimpleNetworkAgent<A, ?, E>, E  extends MoreEdge<? super A>> ComboundNetworkInfo getCompoundValue(MoreNetwork<A, E> network, 
 			A agent, ComboundNetworkInfo netInfo) {
 		netInfo.setValue(getAdjacentValues(network, agent, null, netInfo.getName(), netInfo.getReach(), 1, 1.0) / 
 				getNumReachedNodes(network, agent, null, netInfo.getReach(), 1));
@@ -63,7 +64,7 @@ public class LNetworkAnalysis {
 	 * @return
 	 * Created by Sascha Holzhauer on 15.01.2010
 	 */
-	protected static <A extends LaraAgent<A, ?>, E> double getAdjacentValues(MoreNetwork<A, E> network, A agent, 
+	protected static <A extends LaraAgent<A, ?>, E  extends MoreEdge<? super A>> double getAdjacentValues(MoreNetwork<A, E> network, A agent, 
 			A precessor, String key, int reach, int curReach, double weight) {
 		double value = 0.0;
 		for (A a : network.getAdjacent(agent)) {
@@ -93,7 +94,7 @@ public class LNetworkAnalysis {
 	 * @return
 	 * Created by Sascha Holzhauer on 19.01.2010
 	 */
-	public static <A extends LaraAgent<A, ?>, E> int getNumReachedNodes(MoreNetwork<A, E> network, A center, A predecessor,
+	public static <A extends LaraAgent<A, ?>, E  extends MoreEdge<? super A>> int getNumReachedNodes(MoreNetwork<A, E> network, A center, A predecessor,
 			int reach, int curReach) {
 		int sum = 0;
 		for (A a : network.getAdjacent(center)) {

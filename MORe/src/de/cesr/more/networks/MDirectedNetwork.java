@@ -290,4 +290,12 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	public Collection<E> getEdgesCollection() {
 		return this.getEdges();
 	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#addEdge(de.cesr.more.basic.MoreEdge)
+	 */
+	@Override
+	public void addEdge(E edge) {
+		super.addEdge(edge, edge.getStart(), edge.getEnd());
+	}
 }

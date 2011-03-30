@@ -8,6 +8,7 @@ package de.cesr.more.building;
 
 import java.util.Collection;
 
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 
 /**
@@ -18,7 +19,7 @@ import de.cesr.more.networks.MoreNetwork;
  * @date 22.07.2010 
  *
  */
-public interface MoreNetworkBuilder<AgentType, EdgeType> {
+public interface MoreNetworkBuilder<AgentType, EdgeType extends MoreEdge<? super AgentType>> {
 	
 	/**
 	 * @param agents

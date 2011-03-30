@@ -6,6 +6,7 @@
  */
 package de.cesr.more.networks;
 
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.exception.IllegalValueTypeException;
 import de.cesr.more.measures.MMeasureDescription;
 import repast.simphony.context.ContextListener;
@@ -23,8 +24,8 @@ import repast.simphony.space.projection.Projection;
  * @date 12.10.2010 
  *
  */
-public interface MoreRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT>> extends Projection<AgentT>, ContextListener<AgentT>, 
-	MoreNetwork<AgentT, EdgeT>, Network<AgentT> {
+public interface MoreRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> 
+	extends Projection<AgentT>, ContextListener<AgentT>, MoreNetwork<AgentT, EdgeT>, Network<AgentT> {
 
 	/**
 	 * @param edgeCreator

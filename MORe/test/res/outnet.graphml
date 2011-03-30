@@ -8,20 +8,20 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 </key>
 <graph edgedefault="directed">
 <data key="id">TestNet</data>
-<node id="TestNode3"/>
 <node id="TestNode2"/>
-<node id="TestNode0"/>
+<node id="TestNode3"/>
 <node id="TestNode1"/>
+<node id="TestNode0"/>
 <node id="TestNode4"/>
-<edge source="TestNode1" target="TestNode3"/>
-<edge source="TestNode0" target="TestNode1"/>
-<edge source="TestNode1" target="TestNode2"/>
-<edge source="TestNode2" target="TestNode3"/>
-<edge source="TestNode0" target="TestNode4"/>
-<edge source="TestNode0" target="TestNode2"/>
-<edge source="TestNode2" target="TestNode4"/>
-<edge source="TestNode1" target="TestNode4"/>
-<edge source="TestNode0" target="TestNode3"/>
 <edge source="TestNode3" target="TestNode4"/>
+<edge source="TestNode1" target="TestNode3"/>
+<edge source="TestNode0" target="TestNode4"/>
+<edge source="TestNode0" target="TestNode1"/>
+<edge source="TestNode2" target="TestNode4"/>
+<edge source="TestNode0" target="TestNode3"/>
+<edge source="TestNode1" target="TestNode2"/>
+<edge source="TestNode0" target="TestNode2"/>
+<edge source="TestNode2" target="TestNode3"/>
+<edge source="TestNode1" target="TestNode4"/>
 </graph>
 </graphml>

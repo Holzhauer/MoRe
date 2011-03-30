@@ -91,7 +91,7 @@ public class MCcNetworkMeasureRSupplier extends MAbstractMeasureSupplier {
 
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 			@Override
-			public <T, E extends MoreEdge> MoreAction getAction(final MoreNetwork<T, E> network, Map<String, Object> parameters) {
+			public <T, E extends MoreEdge<? super T>> MoreAction getAction(final MoreNetwork<T, E> network, Map<String, Object> parameters) {
 				return new MAbstractAction() {
 
 					@Override

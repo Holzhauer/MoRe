@@ -92,7 +92,7 @@ public class MNetworkMeasureManagerTest {
 			measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 
 				@Override
-				public <T, EdgeType extends MoreEdge> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
+				public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(final MoreNetwork<T, EdgeType> network,
 						Map<String, Object> parameters) {
 					return new MAbstractAction() {
 						@Override

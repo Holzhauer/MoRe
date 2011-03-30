@@ -12,6 +12,7 @@ import java.util.Map;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 
 /** 
@@ -21,7 +22,8 @@ import de.cesr.more.networks.MoreNetwork;
  * @param <A> the common type (of agents) that is contained as nodes in the networks
  * @date 19.01.2010
  */
-public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>, E> implements LaraAgentNetworkComp<A, E> {
+public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>,
+	E extends MoreEdge<? super A>> implements LaraAgentNetworkComp<A, E> {
 	
 	LaraSimpleNetworkAgent<A, BO, E> agent;
 	
@@ -29,7 +31,7 @@ public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * @uml.property  name="networks"
 	 */
-	private Map<String, MoreNetwork<? super A, E>> networks;
+	private Map<String, MoreNetwork<A, E>> networks;
 	
 	/**
 	 * @param agent
@@ -37,7 +39,7 @@ public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	public LAgentNetworkComp(LaraSimpleNetworkAgent<A, BO, E> agent) {
 		super();
 		this.agent = agent;
-		networks = new HashMap<String, MoreNetwork<? super A, E>>();
+		networks = new HashMap<String, MoreNetwork<A, E>>();
 	}
 
 
@@ -56,7 +58,7 @@ public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	 * @return  Returns the networks.
 	 * @uml.property  name="networks"
 	 */
-	public Collection<MoreNetwork<? super A, E>> getNetworks() {
+	public Collection<MoreNetwork<A, E>> getNetworks() {
 		return networks.values();
 	}
 
@@ -64,7 +66,7 @@ public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * @see de.cesr.more.lara.LaraAgentNetworkComp#setNetwork(de.cesr.lara.components.LaraNetwork)
 	 */
-	public void setNetwork(MoreNetwork<? super A, E> network) {
+	public void setNetwork(MoreNetwork<A, E> network) {
 		this.networks.put(network.getName(), network);
 	}
 	
@@ -72,7 +74,7 @@ public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * @see de.cesr.more.lara.LaraAgentNetworkComp#getNetwork(java.lang.String)
 	 */
-	public MoreNetwork<? super A, E> getNetwork(String name) {
+	public MoreNetwork<A, E> getNetwork(String name) {
 		return this.networks.get(name);
 	}
 

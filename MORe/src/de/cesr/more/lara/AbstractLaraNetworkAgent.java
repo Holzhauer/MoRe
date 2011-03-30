@@ -8,33 +8,40 @@ package de.cesr.more.lara;
 
 
 
-import repast.simphony.context.space.graph.ContextJungNetwork;
+import org.apache.log4j.Logger;
+
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MNodeMeasures;
 import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.util.Log4jLogger;
 
 
 
 /**
  * 
  * @author Sascha Holzhauer
- * @param <A>
- *            the type (of agents) that are contained as nodes in the networks this agent refers to
- * @param <BOType> the type of behavioural options the BO-memory of this agent may store
+ * @param <A> the type (of agents) that are contained as nodes in the networks this agent refers to
+ * @param <BO> the type of behavioural options the BO-memory of this agent may store
+ * @param <E> edge type
  * @date 19.01.2010
  * 
  */
-@SuppressWarnings("unchecked")
-public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>, E> 
-	extends LAbstractAgent<A, BO> implements LaraSimpleNetworkAgent<A, BO, E>, MoreNodeMeasureSupport {
+public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>, E extends MoreEdge<? super A>>
+		extends LAbstractAgent<A, BO> implements LaraSimpleNetworkAgent<A, BO, E>, MoreNodeMeasureSupport {
 
 	LaraAgentNetworkComp<A, E>	netComp;
-	MNodeMeasures measures = new MNodeMeasures();
+	MNodeMeasures				measures	= new MNodeMeasures();
+
+	/**
+	 * Logger
+	 */
+	static private Logger		logger		= Log4jLogger.getLogger(AbstractLaraNetworkAgent.class);
 
 	/**
 	 * constructor
@@ -65,35 +72,37 @@ public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO ex
 	}
 
 	/**
-	 * @see de.cesr.lara.components.agents.LaraAgent#setLaraComp(de.cesr.lara.components.LaraAgentComponent)
+	 * @see de.cesr.more.lara.LaraSimpleNetworkAgent#setLaraNetworkComp(de.cesr.more.lara.LaraAgentNetworkComp)
 	 */
 	public void setLaraNetworkComp(LaraAgentNetworkComp<A, E> component) {
 		this.netComp = component;
 	}
-	
 
 	/**********************************************************
 	 *** Network Measure Support ***
 	 **********************************************************/
 
 	/**
-	 * @see edu.uos.sh.soneta.measures.NetworkMeasureSupport#getNetworkMeasureObject(repast.simphony.space.graph.JungNetwork,
-	 *      edu.uos.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescription)
+	 * @see de.cesr.more.measures.node.MoreNodeMeasureSupport#getNetworkMeasureObject(de.cesr.more.networks.MoreNetwork,
+	 * de.cesr.more.measures.MMeasureDescription)
 	 */
-	public Object getNetworkMeasureObject(
-			MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+	public Number getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
 			MMeasureDescription key) {
+
+		if (measures.getNetworkMeasureObject(network, key) == null) {
+			// <- LOGGING
+			logger.error("No mesure defined for key " + key);
+			// LOGGING ->
+		}
 		return measures.getNetworkMeasureObject(network, key);
 	}
 
 	/**
-	 * @see edu.uos.sh.soneta.measures.NetworkMeasureSupport#setNetworkMeasureObject(repast.simphony.space.graph.JungNetwork,
-	 *      edu.uos.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescription,
-	 *      java.lang.Object)
+	 * @see de.cesr.more.measures.node.MoreNodeMeasureSupport#setNetworkMeasureObject(de.cesr.more.networks.MoreNetwork,
+	 * de.cesr.more.measures.MMeasureDescription, java.lang.Number)
 	 */
-	public void setNetworkMeasureObject(
-			MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
-			MMeasureDescription key, Object value) {
+	public void setNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+			MMeasureDescription key, Number value) {
 		measures.setNetworkMeasureObject(network, key, value);
 	}
 }
