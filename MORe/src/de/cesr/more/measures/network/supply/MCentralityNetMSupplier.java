@@ -155,7 +155,7 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 					}
 					
 					public String toString() {
-						return Short.NET_CEN_DEGREE.getName();
+						return Short.NET_CEN_DEGREE.getName() + "(" + network.getName() + ")";
 					}
 				};
 			}
@@ -185,7 +185,7 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 					}
 					
 					public String toString() {
-						return Short.NET_CEN_INDEGREE.getName();
+						return Short.NET_CEN_INDEGREE.getName() + "(" + network.getName() + ")";
 					}
 				};
 			}
@@ -216,7 +216,7 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 					}
 					
 					public String toString() {
-						return Short.NET_CEN_OUTDEGREE.getName();
+						return Short.NET_CEN_OUTDEGREE.getName() + "(" + network.getName() + ")";
 					}
 				};
 			}

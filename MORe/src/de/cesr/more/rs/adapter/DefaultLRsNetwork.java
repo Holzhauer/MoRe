@@ -61,11 +61,15 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	 * @see de.cesr.lara.components.LaraNetwork#connect(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void connect(AgentT source, AgentT target) {
+	public EdgeT connect(AgentT source, AgentT target) {
 		if (edgeCreator != null) {
-			network.addEdge(edgeCreator.createEdge(source, target, network.isDirected(), DEFAULT_EDGE_WEIGHT));
+			EdgeT edge = edgeCreator.createEdge(source, target, network.isDirected(), DEFAULT_EDGE_WEIGHT);
+			network.addEdge(edge);
+			return edge;
 		} else {
-			network.addEdge(new MRepastEdge<AgentT>(source, target, network.isDirected(), DEFAULT_EDGE_WEIGHT));
+			EdgeT edge = (EdgeT) new MRepastEdge<AgentT>(source, target, network.isDirected(), DEFAULT_EDGE_WEIGHT);
+			network.addEdge(edge);
+			return edge;
 		}
 	}
 
@@ -309,6 +313,13 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	@Override
 	public Collection<EdgeT> getEdgesCollection() {
 		return getJungGraph().getEdges();
+	}
+	
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#addEdge(java.lang.Object)
+	 */
+	public EdgeT addEdge(AgentT source, AgentT target) {
+		return this.connect(source, target);
 	}
 
 	/**

@@ -23,7 +23,9 @@
  */
 package de.cesr.more.basic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,6 +36,7 @@ import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.util.Log4jLogger;
 import de.cesr.more.util.MDbWriter;
+import de.cesr.more.util.MNetworkClusterMeasureStorage;
 import de.cesr.more.util.MNetworkMeasureStorage;
 import de.cesr.more.util.MoreRunIdProvider;
 import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
@@ -55,10 +58,12 @@ public class MNetworkManager {
 	
 	static Map<String, MoreNetwork<?,?>> networks;
 	static MNetworkMeasureStorage measureStorage;
+	static MNetworkClusterMeasureStorage measureClusterStorage;
 	
 	static {
 		networks = new HashMap<String, MoreNetwork<?,?>>();
 		measureStorage = new MNetworkMeasureStorage();
+		measureClusterStorage = new MNetworkClusterMeasureStorage();
 	}
 	/**
 	 * Add a new {@link MoreNetwork} to the network manager
@@ -77,6 +82,11 @@ public class MNetworkManager {
 
 	}
 	
+	/**
+	 * @param name name of requested network
+	 * @return
+	 * Created by Sascha Holzhauer on 24.05.2011
+	 */
 	public static MoreNetwork<?,?> getNetwork(String name) {
 		if (networks.get(name) == null) {
 			throw new IllegalArgumentException("The network \"" + name + "\" is not registered at the MNetworkManager!");
@@ -116,8 +126,8 @@ public class MNetworkManager {
 		return out_network;
 	}
 	
-	public static void writeNetworkMeasuresToDb(String network, String externalVersion, int paramID, MoreRunIdProvider prov) {
-		MDbWriter dbWriter = new MDbWriter(getNetwork(network), externalVersion, paramID, prov);
+	public static void writeNetworkMeasuresToDb(String network, String externalVersion, int paramID, MoreRunIdProvider prov, int tick) {
+		MDbWriter dbWriter = new MDbWriter(network, externalVersion, paramID, prov);
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -128,6 +138,23 @@ public class MNetworkManager {
 		for (Entry<MMeasureDescription, Number> e : measureStorage.getAllMeasures(getNetwork(network)).entrySet()) {
 			dbWriter.addValue(e.getKey().getShort(), e.getValue().toString());
 		}
+		dbWriter.addValue("tick", "" + tick );
+		dbWriter.writeData();
+	}
+
+	public static void writeNetworkClusterMeasuresToDb(String network, String externalVersion, int paramID, MoreRunIdProvider prov, int tick) {
+		MDbWriter dbWriter = new MDbWriter(network, externalVersion, paramID, prov);
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("MeasureClusterStorage: \n" + measureClusterStorage);
+		}
+		// LOGGING ->
+
+		for (Entry<MMeasureDescription, Number> e : measureClusterStorage.getAllMeasures(network).entrySet()) {
+			dbWriter.addValue(e.getKey().getShort(), e.getValue().toString());
+		}
+		dbWriter.addValue("tick", "" + tick );
 		dbWriter.writeData();
 	}
 	
@@ -150,6 +177,16 @@ public class MNetworkManager {
 	public static <V, E extends MoreEdge<? super V>> Number getNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc) {
 		return measureStorage.get(network, desc);
 	}
+	
+	public static <V, E extends MoreEdge<? super V>> List<Number> getNetworkMeasure(String network, MMeasureDescription desc) {
+		List<Number> numbers = new ArrayList<Number>();
+		for (String name : measureClusterStorage.getNetworkNames()) {
+			if (name.startsWith(network)) {
+				numbers.add(measureClusterStorage.get(network, desc));
+			}
+		}
+		return numbers;
+	}
 
 	public static <V, E extends MoreEdge<? super V>> void setNetworkMeasure(MoreNetwork<V, E> network, MMeasureDescription desc, Number value) {
 		measureStorage.put(network, desc, value);
@@ -160,4 +197,15 @@ public class MNetworkManager {
 		// LOGGING ->
 
 	}
+	
+	public static <V, E extends MoreEdge<? super V>> void setNetworkClusterMeasure(String network, MMeasureDescription desc, Number value) {
+		measureClusterStorage.put(network, desc, value);
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Content of Measure Storage:\n" + measureClusterStorage.toString());
+		}
+		// LOGGING ->
+
+	}
+
 }

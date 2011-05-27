@@ -49,8 +49,9 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * @param source
 	 * @param target
 	 * Created by Sascha Holzhauer on 15.01.2010
+	 * @return the new edge
 	 */
-	public void connect(AgentType source, AgentType target);
+	public EdgeType connect(AgentType source, AgentType target);
 	
 	/**
 	 * Adds an edge to this network.

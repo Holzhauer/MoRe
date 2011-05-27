@@ -155,32 +155,32 @@ public class MNetworkMeasureManager extends MAbstractMeasureManager {
 			}
 
 			double interval = 1.0;
-			if (params != null && params.containsKey(ParameterKeys.INTERVAL.toString())) {
-				Object o = params.get(ParameterKeys.INTERVAL.toString());
+			if (params != null && params.containsKey(ParameterKeys.INTERVAL.name())) {
+				Object o = params.get(ParameterKeys.INTERVAL.name());
 				if (o instanceof Number) {
 					interval = ((Number) o).doubleValue();
 				}
 			}
 
 			double start = 0.0;
-			if (params != null && params.containsKey(ParameterKeys.START.toString())) {
-				Object s = params.get(ParameterKeys.START.toString());
+			if (params != null && params.containsKey(ParameterKeys.START.name())) {
+				Object s = params.get(ParameterKeys.START.name());
 				if (s instanceof Number) {
 					start = ((Number) s).doubleValue();
 				}
 			}
 			
 			double end = MScheduleParameters.END_TICK;
-			if (params != null && params.containsKey(ParameterKeys.END.toString())) {
-				Object e = params.get(ParameterKeys.END.toString());
+			if (params != null && params.containsKey(ParameterKeys.END.name())) {
+				Object e = params.get(ParameterKeys.END.name());
 				if (e instanceof Number) {
 					end = ((Number) e).doubleValue();
 				}
 			}
 			
 			double priority = MScheduleParameters.LAST_PRIORITY;
-			if (params != null && params.containsKey(ParameterKeys.PRIORITY.toString())) {
-				Object e = params.get(ParameterKeys.PRIORITY.toString());
+			if (params != null && params.containsKey(ParameterKeys.PRIORITY.name())) {
+				Object e = params.get(ParameterKeys.PRIORITY.name());
 				if (e instanceof Number) {
 					priority = ((Number) e).doubleValue();
 				}

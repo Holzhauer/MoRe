@@ -15,8 +15,17 @@ package de.cesr.more.util.param;
  */
 public interface ParameterReader {
 	
+	/**
+	 * Inits the parameter values of this reader.
+	 * Created by Sascha Holzhauer on 06.05.2011
+	 */
 	public void initParameters();
 	
+	/**
+	 * Registers further {@link ParameterReader}s at this reader.
+	 * @param reader to register.
+	 * Created by Sascha Holzhauer on 06.05.2011
+	 */
 	public void registerParameterReader(ParameterReader reader);
 
 }

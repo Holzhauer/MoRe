@@ -18,6 +18,7 @@ import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
+import de.cesr.more.measures.network.supply.MNetworkStatisticsSupplier.Short;
 import de.cesr.more.measures.network.supply.algos.MClusteringCoefficient;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.util.MAbstractAction;
@@ -99,6 +100,10 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 						MNetworkManager.setNetworkMeasure(network, description, 
 								MClusteringCoefficient.getClusteringCoefficientOverallRatio(network.getJungGraph()));
 						logger.info("... finished.");
+					}
+					
+					public String toString() {
+						return Short.N_CL_OVERALL.getName() + "(" + network.getName() + ")";
 					}
 				};
 			}

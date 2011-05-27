@@ -35,6 +35,7 @@ import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
+import de.cesr.more.measures.network.supply.MCentralityNetMSupplier.Short;
 import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
@@ -54,6 +55,8 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 
 	public enum Short {
 		N_STAT_AVGPATH("N-Stat-AvgPath"),
+		
+		N_STAT_AVGPATH_CLUS("N-Stat-AvgPath-Clus"),
 
 		N_STAT_NODES("N-Stat-NumNodes"),
 
@@ -80,7 +83,7 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 	/**
 	 * Logger
 	 */
-	static private Logger				logger	= Log4jLogger.getLogger(MCcNetworkMeasureSupplier.class);
+	static private Logger				logger	= Log4jLogger.getLogger(MNetworkStatisticsSupplier.class);
 
 	private MNetworkStatisticsSupplier() {
 		addMeasures();
@@ -117,9 +120,42 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 								.<T, E> getAveragepathLengthR(network.getJungGraph(), false));
 						logger.info("... finished.");
 					}
+					
+					public String toString() {
+						return Short.N_STAT_AVGPATH.getName() + "(" + network.getName() + ")";
+					}
 				};
 			}
 		});
+
+
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_STATISTICS, Short.N_STAT_AVGPATH_CLUS.name,
+		"Network Statistics: Average Path Length for Clusters");
+
+		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
+			@Override
+			public <T, E extends MoreEdge<? super T>> MoreAction getAction(final MoreNetwork<T, E> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction() {
+
+					//TODO use parameter
+					@Override
+					public void execute() {
+						logger.info("Calculate Average Path length for clusters in " + network.getName() + "...");
+						double[] data = MNetworkStatisticsR.<T, E>getAveragepathLengthClustersR(network.getJungGraph(), false);
+						for (int i = 0; i < data.length; i++) {
+							MNetworkManager.setNetworkClusterMeasure(network.getName() + "_" + i, new MMeasureDescription(Short.N_STAT_AVGPATH.name), data[i]);
+						}
+						logger.info("... finished.");
+					}
+					
+					public String toString() {
+						return Short.N_STAT_AVGPATH_CLUS.getName() + "(" + network.getName() + ")";
+					}
+				};
+			}
+		});
+
 
 		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_STATISTICS, Short.N_STAT_NODES.name,
 				"Network Statistics: Number of nodes");
@@ -135,6 +171,10 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 						logger.info("Output number of nodes for " + network.getName() + "...");
 						MNetworkManager.setNetworkMeasure(network, new MMeasureDescription(Short.N_STAT_NODES.name), network.numNodes());
 						logger.info("... finished.");
+					}
+					
+					public String toString() {
+						return Short.N_STAT_NODES.getName() + "(" + network.getName() + ")";
 					}
 				};
 			}
@@ -154,6 +194,10 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 						logger.info("Output number of nodes for " + network.getName() + "...");
 						MNetworkManager.setNetworkMeasure(network, new MMeasureDescription(Short.N_STAT_EDGES.name), network.numEdges());
 						logger.info("... finished.");
+					}
+					
+					public String toString() {
+						return Short.N_STAT_EDGES.getName() + "(" + network.getName() + ")";
 					}
 				};
 			}

@@ -93,11 +93,13 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	 * @see de.cesr.more.networks.MoreNetwork#connect(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void connect(V source, V target) {
+	public E connect(V source, V target) {
 		if (edgeFactory == null) {
 			throw new IllegalStateException("No edge factory specified");
 		}
-		this.addEdge(edgeFactory.createEdge(source, target, true), source, target);
+		E edge = edgeFactory.createEdge(source, target, true);
+		this.addEdge(edge, source, target);
+		return edge;
 	}
 
 	/**

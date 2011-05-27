@@ -2,7 +2,7 @@
 <!-- excludes example models; excludes java runtime classes from UML; display only operations -->
 <project default="MoRe-jar-creation">
 	
-	<property name="Project" value="KUBUS_SNA-01"/>
+	<property name="dir_taret" value="C:/Sascha/Workspace36/SonoMode/lib" />
 	
 	<!-- ================================= 
           target: Fetch SVN Revision Number        
@@ -17,8 +17,8 @@
     </target>
 
 <target name="MoRe-jar-creation" depends="svn_infos" description="creates a jar file from MoRe">
-	<delete file="../${Project}/lib/MORe.jar"/>
-    <jar destfile="../${Project}/lib/MORe.jar"
+	<delete file="${dir_taret}/MORe.jar"/>
+    <jar destfile="${dir_taret}/MORe.jar"
         basedir="${basedir}/bin"
         includes="**/*.class"
         update="false"

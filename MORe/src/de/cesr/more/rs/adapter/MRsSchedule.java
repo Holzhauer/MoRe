@@ -106,7 +106,7 @@ public class MRsSchedule implements MoreSchedule {
 
 		};
 		actions.put(action, newAction);
-		logger.debug("Schedule MoreAction: " + action);
+		logger.debug("Schedule MoreAction: " + action + "Parameter: " + params);
 		schedule.schedule(rSparams, newAction);
 		logger.debug("Scheduled IAction: " + newAction);
 	}

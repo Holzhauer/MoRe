@@ -36,6 +36,8 @@ public class MParameterManager extends AbstractParameterReader {
 	static Map<ParameterDefinition, Object>	params		= new HashMap<ParameterDefinition, Object>();
 	static ArrayList<ParameterDefinition>		definitions	= new ArrayList<ParameterDefinition>();
 	static MParameterManager paraManager;
+	
+	static boolean initialised = false;
 
 	/**
 	 * Registers {@link ParameterDefinition}s to this manager.
@@ -73,6 +75,11 @@ public class MParameterManager extends AbstractParameterReader {
 	 *         Created by Holzhauer on 08.01.2009
 	 */
 	public static Object getParameter(ParameterDefinition parameter) {
+		if (!initialised) {
+			// needs to be set to true already here to prevent endless loop
+			initialised = true;
+			MParameterManager.init();
+		}
 		if (params.containsKey(parameter)) {
 			return params.get(parameter);
 		} else {
@@ -100,10 +107,17 @@ public class MParameterManager extends AbstractParameterReader {
 	public static void init() {
 		if (paraManager == null) {
 			paraManager = new MParameterManager();
+			
+			// add reader:
+			paraManager.registerParameterReader(new MDbXmlParameterReader());
 		}
 		paraManager.initParameters();
 	}
 	
+	/**
+	 * @param reader to register
+	 * Created by Sascha Holzhauer on 06.05.2011
+	 */
 	public static void registerReader(ParameterReader reader) {
 		if (paraManager == null) {
 			paraManager = new MParameterManager();

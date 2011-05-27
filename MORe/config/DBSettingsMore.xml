@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<settings>
+	<db>
+		<SQL_LOCATION>mysql2</SQL_LOCATION>
+		<SQL_DBNAME>klimzug</SQL_DBNAME>
+		<SQL_USER>holzhauer</SQL_USER>
+		<SQL_PASSWORD>ymxncbv</SQL_PASSWORD>
+		<SQL_TBLNAME>amorepujol2005_params</SQL_TBLNAME>
+	</db>
+</settings>

@@ -110,6 +110,12 @@ public class MScheduleParameters {
 		this.priority = priority;
 	}
 	
+	public String toString() {
+		return 	"Start: " + start + "/"
+			+	"Interval: " + interval + "/"
+			+  	"End: " + end + "/"
+			+	"Priority: " + priority;
+	}
 	/**
 	 * Priority is MScheduleParameters.RANDOM_PRIORITY.
 	 * 

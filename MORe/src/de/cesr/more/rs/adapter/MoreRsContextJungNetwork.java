@@ -54,7 +54,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	protected Context context;
 	protected JungNetwork network;
 
-	private EdgeCreator<? extends RepastEdge, AgentT> edgeCreator = null;
+	private EdgeCreator<? extends EdgeT, AgentT> edgeCreator = null;
 	
 	private MMeasureDescription mesaureDescA;
 	private MMeasureDescription mesaureDescB;
@@ -75,12 +75,16 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	}
 
 	@Override
-	public void connect(AgentT source, AgentT target) {
+	public EdgeT connect(AgentT source, AgentT target) {
 		if (edgeCreator != null) {
-			this.addEdge(edgeCreator.createEdge(source, target, this.isDirected(), 0.0));
+			EdgeT edge = edgeCreator.createEdge(source, target, this.isDirected(), 0.0);
+			this.addEdge(edge);
+			return edge;
 		}
 		else {
-			this.addEdge(new MRepastEdge<AgentT>(source, target, this.isDirected()));
+			EdgeT edge = (EdgeT) new MRepastEdge<AgentT>(source, target, this.isDirected());
+			this.addEdge(edge);
+			return edge;
 		}
 	}
 
@@ -126,7 +130,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	/**
 	 * @see de.cesr.more.networks.MoreRsNetwork#setEdgeFactory(repast.simphony.space.graph.EdgeCreator)
 	 */
-	public void setEdgeFactory(EdgeCreator<? extends RepastEdge, AgentT> edgeCreator) {
+	public void setEdgeFactory(EdgeCreator<? extends EdgeT, AgentT> edgeCreator) {
 		this.edgeCreator = edgeCreator;
 	}
 	
@@ -289,6 +293,14 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 		return (Collection<EdgeT>) edges;
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#addEdge(java.lang.Object)
+	 */
+	@Override
+	public EdgeT addEdge(AgentT source, AgentT target) {
+		return this.connect(source, target);
+	}
+	
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#addEdge(java.lang.Object)
 	 */

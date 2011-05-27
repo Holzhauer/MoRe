@@ -60,7 +60,7 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 	
 	static private MClusteringCoefficientR instance = null;
 	
-	static private String[] R_ARGS = {""};
+	static private String[] R_ARGS = {"--no-save"};
 
 	
 	private MClusteringCoefficientR() {

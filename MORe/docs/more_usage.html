@@ -69,6 +69,26 @@
 	
 	<p class="text">The scheduling parameters (start, interval, end) are defined in the parameter map that is interpreted by <code>MNetworkMeasureManager</code>
 	or <code>MNodeMeasureManager</code>. Therefore, generating <code>MoreAction</code>s do not need to define a <code>MSchedulingParameter</code>.</p>
+	
+	<h2>Defining Parameters</h2>
+	<h3>The Framework</h3>
+	<p class="text">The framework's center is the <code>MParameterManager</code>:</p>
+	<ul>
+		<li><code>ParameterDefinition</code>s are registered at the manager, for instance by calling
+		<code>ParameterManager.registerParametersDefinitions(Arrays.asList(SqlPa.values()));</code>.</li>
+		<li>Parameter values are retrieved from the manager by calling <code>getParameter(ParameterDefinition parameter)</code>.</li>
+		<li>Its <code>init()</code> method is called to read in available parameter data. The way to
+	accomplish that task is defined by <code>ParameterReader</code>s that are registered at the <code>MParameterManager</code> by
+	<code>registerReader(ParameterReader reader)</code>. The have a <code>initParameters()</code> method that is called from the 
+	manager. If no parameter values are read in, the parameter manager steps back to the default value defined in 
+	<code>ParameterDefinition</code>.
+	</ul>
+	
+	<img alt="Parameter Framework" src="./res/ParameterManagement.png">
+	
+	<h3>MDbXmlParameterReader</h3>
+	<p class="text">The <code>MDbXmlParameterReader</code> is registered at the <code>MParameterManager</code> by default and reads in
+	database settings specified in an XML-file whose name and location is defined in <code>MoreBasicPa</code>.</p>
 <body>
 
 </html>

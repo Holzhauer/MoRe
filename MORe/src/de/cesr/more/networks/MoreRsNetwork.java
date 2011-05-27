@@ -31,7 +31,7 @@ public interface MoreRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEd
 	 * @param edgeCreator
 	 * Created by Sascha Holzhauer on 12.10.2010
 	 */
-	public void setEdgeFactory(EdgeCreator<? extends RepastEdge, AgentT> edgeCreator);
+	public void setEdgeFactory(EdgeCreator<? extends EdgeT, AgentT> edgeCreator);
 	
 	/*************************************************
 	 *  Accessing network measures by Repast Simphony

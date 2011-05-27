@@ -22,7 +22,7 @@ public abstract class AbstractParameterReader implements ParameterReader {
 	Collection<ParameterReader> readers = new ArrayList<ParameterReader>();
 
 	/**
-	 * @see param.framework.ParameterReader#initParameters()
+	 * @see de.cesr.more.util.param.ParameterReader#initParameters()
 	 */
 	@Override
 	public void initParameters() {
@@ -34,7 +34,7 @@ public abstract class AbstractParameterReader implements ParameterReader {
 	}
 
 	/**
-	 * @see param.framework.ParameterReader#registerParameterReader(param.framework.ParameterReader)
+	 * @see de.cesr.more.util.param.ParameterReader#registerParameterReader(de.cesr.more.util.param.ParameterReader)
 	 */
 	@Override
 	public void registerParameterReader(ParameterReader reader) {

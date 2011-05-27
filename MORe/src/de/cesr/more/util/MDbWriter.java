@@ -56,7 +56,7 @@ public class MDbWriter {
 
 	protected String			externalVersion;
 
-	protected MoreNetwork		network;
+	protected String		network;
 
 	protected int				paramId;
 
@@ -71,7 +71,7 @@ public class MDbWriter {
 
 	private Connection			con;
 
-	public MDbWriter(MoreNetwork network, String externalVersion, int paramId, MoreRunIdProvider prov) {
+	public MDbWriter(String network, String externalVersion, int paramId, MoreRunIdProvider prov) {
 		this.values = new HashMap<String, String>();
 		this.network = network;
 		this.externalVersion = externalVersion;
@@ -102,7 +102,7 @@ public class MDbWriter {
 					+ externalVersion + "', ");
 		}
 
-		sql.append("network = '" + network.getName() + "'");
+		sql.append("network = '" + network + "'");
 
 		for (Entry<String, String> e : this.values.entrySet()) {
 			sql.append(", `" + e.getKey() + "` = '" + (e.getValue().equals("NaN") ? "-1" : e.getValue()) + "'");

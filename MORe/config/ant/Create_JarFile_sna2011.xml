@@ -14,8 +14,8 @@
     </target>
 
 <target name="MoRe-jar-creation" depends="svn_infos" description="creates a jar file from MoRe">
-	<delete file="M://holzhauer/Dissertation/Puplikationen/SNAMAS2011/Modell/132/KUBUS_132_lib/MORe.jar"/>
-    <jar destfile="M://holzhauer/Dissertation/Puplikationen/SNAMAS2011/Modell/132/KUBUS_132_lib/MORe.jar"
+	<delete file="M://holzhauer/Dissertation/Publikationen/SNAMAS2011/Modell/132/KUBUS_132_lib/MORe.jar"/>
+    <jar destfile="M://holzhauer/Dissertation/Publikationen/SNAMAS2011/Modell/132/KUBUS_132_lib/MORe.jar"
         basedir="${basedir}/bin"
         includes="**/*.class"
         update="false"
