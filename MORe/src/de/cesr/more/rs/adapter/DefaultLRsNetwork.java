@@ -20,9 +20,7 @@ import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import sun.management.Agent;
 import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.networks.MDirectedNetwork;
 import de.cesr.more.networks.MoreNetwork;
 import edu.uci.ics.jung.graph.Graph;
 
