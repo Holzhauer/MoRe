@@ -78,12 +78,12 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	public EdgeT connect(AgentT source, AgentT target) {
 		if (edgeCreator != null) {
 			EdgeT edge = edgeCreator.createEdge(source, target, this.isDirected(), 0.0);
-			this.addEdge(edge);
+			this.connect(edge);
 			return edge;
 		}
 		else {
 			EdgeT edge = (EdgeT) new MRepastEdge<AgentT>(source, target, this.isDirected());
-			this.addEdge(edge);
+			this.connect(edge);
 			return edge;
 		}
 	}
@@ -273,7 +273,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 			for (EdgeT edge :orgEdges) {
 				
 				if (edgeCreator != null) {
-					this.addEdge(edgeCreator.createEdge(edge.getTarget(),  edge.getSource(), this.isDirected(), 0.0));
+					this.connect(edgeCreator.createEdge(edge.getTarget(),  edge.getSource(), this.isDirected(), 0.0));
 				}
 				else {
 					this.addEdge(new MRepastEdge<AgentT>(edge.getTarget(),  edge.getSource(), this.isDirected()));
@@ -294,7 +294,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	}
 
 	/**
-	 * @see de.cesr.more.networks.MoreNetwork#addEdge(java.lang.Object)
+	 * @see de.cesr.more.networks.MoreNetwork#connect(java.lang.Object)
 	 */
 	@Override
 	public EdgeT addEdge(AgentT source, AgentT target) {
@@ -302,10 +302,10 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	}
 	
 	/**
-	 * @see de.cesr.more.networks.MoreNetwork#addEdge(java.lang.Object)
+	 * @see de.cesr.more.networks.MoreNetwork#connect(java.lang.Object)
 	 */
 	@Override
-	public void addEdge(EdgeT edge) {
+	public void connect(EdgeT edge) {
 		super.addEdge(edge);
 	}
 

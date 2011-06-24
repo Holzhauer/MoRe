@@ -314,17 +314,17 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	}
 	
 	/**
-	 * @see de.cesr.more.networks.MoreNetwork#addEdge(java.lang.Object)
+	 * @see de.cesr.more.networks.MoreNetwork#connect(java.lang.Object)
 	 */
 	public EdgeT addEdge(AgentT source, AgentT target) {
 		return this.connect(source, target);
 	}
 
 	/**
-	 * @see de.cesr.more.networks.MoreNetwork#addEdge(de.cesr.more.basic.MoreEdge)
+	 * @see de.cesr.more.networks.MoreNetwork#connect(de.cesr.more.basic.MoreEdge)
 	 */
 	@Override
-	public void addEdge(EdgeT edge) {
+	public void connect(EdgeT edge) {
 		network.addEdge(edge);
 	}
 

@@ -66,7 +66,7 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * @param edge
 	 * Created by Sascha Holzhauer on 30.03.2011
 	 */
-	public void addEdge(EdgeType edge);
+	public void connect(EdgeType edge);
 
 	/**
 	 * @param source

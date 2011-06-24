@@ -294,10 +294,10 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	}
 
 	/**
-	 * @see de.cesr.more.networks.MoreNetwork#addEdge(de.cesr.more.basic.MoreEdge)
+	 * @see de.cesr.more.networks.MoreNetwork#connect(de.cesr.more.basic.MoreEdge)
 	 */
 	@Override
-	public void addEdge(E edge) {
+	public void connect(E edge) {
 		super.addEdge(edge, edge.getStart(), edge.getEnd());
 	}
 
