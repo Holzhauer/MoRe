@@ -13,5 +13,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/LARA"/>
 	<classpathentry kind="lib" path="libs/JRI.jar"/>
+	<classpathentry kind="lib" path="libs/jung-algorithms-2.0-beta1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

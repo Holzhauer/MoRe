@@ -300,4 +300,12 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	public void addEdge(E edge) {
 		super.addEdge(edge, edge.getStart(), edge.getEnd());
 	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#removeNode(java.lang.Object)
+	 */
+	@Override
+	public void removeNode(V node) {
+		this.removeNode(node);
+	}
 }

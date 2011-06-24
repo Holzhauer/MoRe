@@ -70,6 +70,30 @@
 	<p class="text">The scheduling parameters (start, interval, end) are defined in the parameter map that is interpreted by <code>MNetworkMeasureManager</code>
 	or <code>MNodeMeasureManager</code>. Therefore, generating <code>MoreAction</code>s do not need to define a <code>MSchedulingParameter</code>.</p>
 	
+	
+	<h2>Defining Dynamics of Networks</h2>
+	<h3><code>MLinkWeightNetStructureManager</code></h3>
+	<p>Nodes whose links shall be managed according to differences between partners regarding some node property need to
+	implement <code>MoreNetStructureManageable</code>.</p>
+	<p>The <code>MLinkWeightNetStructureManager</code> is a node component that takes care of updating links weights and
+	removing and establishing links if required. In case the node properties undergo a certain threshold, weights are
+	increased. As the opposite, if properties exceed a threshold, weights get decreased. When weights fall below zero,
+	the according links is removed and another one is established. Links removal and establishment is done by a
+	<code>MoreEdgeManager</code>.<br>
+	Thresholds for weight changes and amounts of amount of changed can be defined by setter methods (defaults are given).</p>
+	
+	<p>For making new connections transitivity links and common-out-neighbour links are considered and ordered according to
+	the property difference between the focal node and the potential partner node.</p>
+	
+	<p>In order to activate the structure manager, the component needs to be assigned to node objects:</p>
+	<p class=""><code>this.netStructureMan = new MLinkWeightNetStructureManager<Household<?>, SimKlAEdge>(this, ModelManager.getMan()
+					.getNetwork().getName(), ModelManager.getMan().getEdgeManager());</code></p>
+	<p>The update method then needs to be called every time links weights shall be updated:</p>
+	<p><code>this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();</code></p> 
+	
+	
+	
+	
 	<h2>Defining Parameters</h2>
 	<h3>The Framework</h3>
 	<p class="text">The framework's center is the <code>MParameterManager</code>:</p>

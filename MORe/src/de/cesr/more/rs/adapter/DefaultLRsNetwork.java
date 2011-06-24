@@ -329,4 +329,12 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	public void addEdge(EdgeT edge) {
 		network.addEdge(edge);
 	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#removeNode(java.lang.Object)
+	 */
+	@Override
+	public void removeNode(AgentT node) {
+		network.removeVertex(node);
+	}
 }

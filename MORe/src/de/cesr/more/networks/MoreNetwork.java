@@ -32,6 +32,13 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	public void addNode(AgentType node);
 
 	/**
+	 * Removes a node from the network.
+	 * @param node
+	 * Created by Sascha Holzhauer on 30.03.2011
+	 */
+	public void removeNode(AgentType node);
+	
+	/**
 	 * The method is used to obtain a new Sub-MoreNetwork. The parameter is a {@link Graph} instance that contains subsets of
 	 * vertices and edges in the original MoreNetwork this method is applied to. For instance, such graphs may be a result
 	 * of a {@link VertexPredicateFilter}. The given graph needs to be of corresponding directedness! This (the original)

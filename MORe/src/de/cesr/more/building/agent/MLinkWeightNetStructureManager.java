@@ -48,22 +48,22 @@ import de.cesr.more.util.Log4jLogger;
  * @date 21.04.2011 
  *
  */
-public class MNetStructureManagerLinkWeight<A extends MoreNetStructureManageable<A, ?, E>,
+public class MLinkWeightNetStructureManager<A extends MoreNetStructureManageable<A, ?, E>,
 		E extends MoreEdge<? super A>> {
 	
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Log4jLogger.getLogger(MNetStructureManagerLinkWeight.class);
+	static private Logger logger = Log4jLogger.getLogger(MLinkWeightNetStructureManager.class);
 
-	public final double INCREASE_TRESHOLD = 0.1;
-	public final double DECREASE_TRESHOLD = 0.5;
+	public final double INCREASE_THRESHOLD = 0.1;
+	public final double DECREASE_THRESHOLD = 0.5;
 	
 	public final double INCREASE_AMOUNT = 0.05;
 	public final double DECREASE_AMOUNT = 0.05;
 	
-	private double increaseTreshold = INCREASE_TRESHOLD;
-	private double decreaseTreshold = DECREASE_TRESHOLD;
+	private double increaseThreshold = INCREASE_THRESHOLD;
+	private double decreaseThreshold = DECREASE_THRESHOLD;
 	
 	private double increaseAmount = INCREASE_AMOUNT;
 	private double decreaseAmount = DECREASE_AMOUNT;
@@ -78,7 +78,7 @@ public class MNetStructureManagerLinkWeight<A extends MoreNetStructureManageable
 	 * @param agent 
 	 * @param network
 	 */
-	public MNetStructureManagerLinkWeight(A agent, String network, MoreEdgeManager<A, E> edgeMan) {
+	public MLinkWeightNetStructureManager(A agent, String network, MoreEdgeManager<A, E> edgeMan) {
 		this.agent = agent;
 		this.network = network;
 		this.net = agent.getLaraNetworkComp().getNetwork(network);
@@ -93,7 +93,7 @@ public class MNetStructureManagerLinkWeight<A extends MoreNetStructureManageable
 		int counter = 0;
 		for (A neighbour : net.getPredecessors(agent)) {
 			E edge = net.getEdge(neighbour, agent);
-			if (agent.getValueDifference(neighbour) < increaseTreshold) {
+			if (agent.getValueDifference(neighbour) < increaseThreshold) {
 				edge.setWeight(Math.min(edge.getWeight() + 
 						increaseAmount, 1.0));
 				// <- LOGGING
@@ -102,7 +102,7 @@ public class MNetStructureManagerLinkWeight<A extends MoreNetStructureManageable
 				}
 				// LOGGING ->
 			}
-			if (agent.getValueDifference(neighbour) > decreaseTreshold) {
+			if (agent.getValueDifference(neighbour) > decreaseThreshold) {
 				edge.setWeight(Math.max(edge.getWeight() - 
 						decreaseAmount, 0.0));
 				// <- LOGGING
@@ -177,31 +177,31 @@ public class MNetStructureManagerLinkWeight<A extends MoreNetStructureManageable
 		}
 	}
 	/**
-	 * @return the increaseTreshold
+	 * @return the increaseThreshold
 	 */
-	public double getIncreaseTreshold() {
-		return increaseTreshold;
+	public double getIncreaseThreshold() {
+		return increaseThreshold;
 	}
 
 	/**
-	 * @param increaseTreshold the increaseTreshold to set
+	 * @param increaseThreshold the increaseThreshold to set
 	 */
-	public void setIncreaseTreshold(double increaseTreshold) {
-		this.increaseTreshold = increaseTreshold;
+	public void setIncreaseThreshold(double increaseThreshold) {
+		this.increaseThreshold = increaseThreshold;
 	}
 
 	/**
-	 * @return the decreaseTreshold
+	 * @return the decreaseThreshold
 	 */
-	public double getDecreaseTreshold() {
-		return decreaseTreshold;
+	public double getDecreaseThreshold() {
+		return decreaseThreshold;
 	}
 
 	/**
-	 * @param decreaseTreshold the decreaseTreshold to set
+	 * @param decreaseThreshold the decreaseThreshold to set
 	 */
-	public void setDecreaseTreshold(double decreaseTreshold) {
-		this.decreaseTreshold = decreaseTreshold;
+	public void setDecreaseThreshold(double decreaseThreshold) {
+		this.decreaseThreshold = decreaseThreshold;
 	}
 
 	/**

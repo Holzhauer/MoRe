@@ -309,4 +309,12 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 		super.addEdge(edge);
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#removeNode(java.lang.Object)
+	 */
+	@Override
+	public void removeNode(AgentT node) {
+		network.removeVertex(node);
+	}
+
 }

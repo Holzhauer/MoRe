@@ -2,7 +2,8 @@
 <!-- excludes example models; excludes java runtime classes from UML; display only operations -->
 <project default="MoRe-jar-creation">
 	
-	<property name="Project" value="KUBUS_SNA-01"/>
+	<property name="Project" value="KUBUS_Proto01"/>
+	<property name="base" value="${basedir}" />
 	
 	<!-- ================================= 
           target: Fetch SVN Revision Number        
@@ -19,12 +20,11 @@
 <target name="MoRe-jar-creation" depends="svn_infos" description="creates a jar file from MoRe">
 	<!--delete file="../${Project}/lib/MORe.jar"/-->
     <jar destfile="../${Project}/lib/MORe.jar"
-        basedir="${basedir}/bin"
-        includes="**/*.class"
-        update="false"
-        compress="true"
-        duplicate="add">
-        
+	    update="false"
+   		compress="true"
+    	duplicate="add">	
+		<fileset dir="${base}/bin"/>
+    	<fileset dir="${base}/src"/>
        <manifest>
             <attribute name="Built-By" value="Sascha Holzhauer"/>
             <attribute name="Implementation-Version"  value="${svn.info.rev}"/>
