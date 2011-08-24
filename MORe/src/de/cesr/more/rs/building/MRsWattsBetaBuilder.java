@@ -27,6 +27,8 @@ import de.cesr.more.rs.adapter.MRepastEdge;
  * @author Sascha Holzhauer
  * @date 22.07.2010
  * 
+ * @deprecated use MRsWattsBetaSwBuilder instead
+ * 
  */
 public class MRsWattsBetaBuilder<AgentType> implements MoreNetworkBuilder<AgentType, MRepastEdge<AgentType>> {
 

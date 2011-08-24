@@ -35,9 +35,6 @@ import cern.jet.random.Normal;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
-import de.cesr.lara.components.util.impl.LUniformController;
-import de.cesr.lara.components.util.logging.impl.Log4jLogger;
-
 
 
 /**
@@ -70,7 +67,7 @@ public class MRandom implements MoreRandomService {
 		distributions = new HashMap<String, AbstractDistribution>();
 
 		if (logger.isDebugEnabled()) {
-			distributions.put(UNIFORM_DEFAULT, new LUniformController(defaultGenerator));
+			distributions.put(UNIFORM_DEFAULT, new MUniformDistributionController(defaultGenerator));
 		} else {
 			distributions.put(UNIFORM_DEFAULT, new Uniform(defaultGenerator));
 		}
@@ -127,7 +124,7 @@ public class MRandom implements MoreRandomService {
 		invalidateDistributions();
 		defaultGenerator = new MersenneTwister(seed);
 		if (logger.isDebugEnabled()) {
-			distributions.put(UNIFORM_DEFAULT, new LUniformController(defaultGenerator));
+			distributions.put(UNIFORM_DEFAULT, new MUniformDistributionController(defaultGenerator));
 		} else {
 			distributions.put(UNIFORM_DEFAULT, new Uniform(defaultGenerator));
 		}

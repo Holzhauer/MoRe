@@ -17,7 +17,7 @@
     </target>
 
 <target name="MoRe-jar-creation" depends="svn_infos" description="creates a jar file from MoRe">
-	<delete file="${dir_taret}/MORe.jar"/>
+	<!--delete file="${dir_taret}/MORe.jar"/-->
     <jar destfile="${dir_taret}/MORe.jar"
         basedir="${basedir}/bin"
         includes="**/*.class"
