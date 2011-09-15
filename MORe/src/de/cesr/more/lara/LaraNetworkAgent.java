@@ -28,7 +28,7 @@ import de.cesr.more.networks.MoreNetwork;
  * @param <BO> behavioural option type
  * @date 19.01.2010
  */
-public interface LaraNetworkAgent<A extends LaraAgent<A, BO>, E extends MoreEdge<? super A>, BO extends LaraBehaviouralOption<? super A, BO>>
+public interface LaraNetworkAgent<A extends LaraAgent<A, BO>, E extends MoreEdge<? super A>, BO extends LaraBehaviouralOption<?, ? extends BO>>
 		extends LaraAgent<A, BO>, LaraAgentNetworkComp<A, E> {
 
 	/**

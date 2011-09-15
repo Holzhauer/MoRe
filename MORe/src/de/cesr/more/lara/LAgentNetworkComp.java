@@ -22,7 +22,7 @@ import de.cesr.more.networks.MoreNetwork;
  * @param <A> the common type (of agents) that is contained as nodes in the networks
  * @date 19.01.2010
  */
-public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<A, BO>,
+public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>,
 	E extends MoreEdge<? super A>> implements LaraAgentNetworkComp<A, E> {
 	
 	LaraSimpleNetworkAgent<A, BO, E> agent;

@@ -35,7 +35,7 @@ import de.cesr.more.lara.LaraSimpleNetworkAgent;
  * @date 21.04.2011 
  *
  */
-public interface MoreNetStructureManageable<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>, 
+public interface MoreNetStructureManageable<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>, 
 	E extends MoreEdge<? super A>> extends LaraSimpleNetworkAgent<A, BO, E>{
 
 	

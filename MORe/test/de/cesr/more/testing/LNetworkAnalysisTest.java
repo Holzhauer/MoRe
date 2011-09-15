@@ -17,21 +17,15 @@ import org.junit.Test;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
-import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.lara.components.LaraBehaviouralOption;
-import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.container.properties.impl.LFloatProperty;
-import de.cesr.lara.components.container.properties.impl.LIntProperty;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.environment.LaraEnvironment;
-import de.cesr.lara.components.impl.LGeneralBehaviouralOption;
-import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.more.lara.AbstractLCompoundNetworkInfo;
 import de.cesr.more.lara.AbstractLaraNetworkAgent;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.lara.LNetworkEnvironment;
-import de.cesr.more.lara.LaraSimpleNetworkAgent;
 import de.cesr.more.lara.util.LNetworkAnalysis;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.rs.adapter.DefaultLRsNetwork;
@@ -53,7 +47,7 @@ public class LNetworkAnalysisTest {
 	/**
 	 * test agent
 	 */
-	public static class TestAgent extends AbstractLaraNetworkAgent<TestAgent, LGeneralBehaviouralOption<TestAgent>, MRepastEdge<TestAgent>> {
+	public static class TestAgent extends AbstractLaraNetworkAgent<TestAgent, LaraBehaviouralOption<?,?>, MRepastEdge<TestAgent>> {
 
 		/**
 		 * constructor

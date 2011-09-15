@@ -21,7 +21,7 @@ import de.cesr.more.measures.node.MoreNodeMeasureSupport;
  * @param <A> the common type (of agents) that is contained as nodes in the networks this agent refers to
  * @date 19.01.2010
  */
-public interface LaraSimpleNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<? super A, BO>, E extends MoreEdge<? super A>> extends LaraAgent<A, BO>,
+public interface LaraSimpleNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>, E extends MoreEdge<? super A>> extends LaraAgent<A, BO>,
 	MoreNodeMeasureSupport{
 
 	/**
