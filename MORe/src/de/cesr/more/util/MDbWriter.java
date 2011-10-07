@@ -35,9 +35,8 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import de.cesr.more.networks.MoreNetwork;
-import de.cesr.more.param.MoreBasicPa;
-import de.cesr.more.util.param.MParameterManager;
+import de.cesr.more.param.MSqlPa;
+import de.cesr.parma.core.PmParameterManager;
 
 
 
@@ -88,7 +87,7 @@ public class MDbWriter {
 	 */
 	public void writeData() {
 
-		String t1 = (String) MParameterManager.getParameter(MoreBasicPa.TBLNAME_NETWORK_MEASURES);
+		String t1 = (String) PmParameterManager.getParameter(MSqlPa.TBLNAME_NETWORK_MEASURES);
 
 		StringBuffer sql = new StringBuffer();
 		sql.append("INSERT INTO `" + t1 + "` SET ");
@@ -154,23 +153,23 @@ public class MDbWriter {
 			SQLException {
 
 		Properties properties = new Properties();
-		properties.put("user", MParameterManager.getParameter(MoreBasicPa.USER));
-		properties.put("password", MParameterManager.getParameter(MoreBasicPa.PASSWORD));
-		String connectTo = "jdbc:mysql://" + MParameterManager.getParameter(MoreBasicPa.LOCATION)
-				+ (((String) MParameterManager.getParameter(MoreBasicPa.LOCATION)).endsWith("/") ? "" : "/")
-				+ MParameterManager.getParameter(MoreBasicPa.DBNAME);
+		properties.put("user", PmParameterManager.getParameter(MSqlPa.USER));
+		properties.put("password", PmParameterManager.getParameter(MSqlPa.PASSWORD));
+		String connectTo = "jdbc:mysql://" + PmParameterManager.getParameter(MSqlPa.LOCATION)
+				+ (((String) PmParameterManager.getParameter(MSqlPa.LOCATION)).endsWith("/") ? "" : "/")
+				+ PmParameterManager.getParameter(MSqlPa.DBNAME);
 
 		// error handling:
-		if (MParameterManager.getParameter(MoreBasicPa.LOCATION) == null) {
+		if (PmParameterManager.getParameter(MSqlPa.LOCATION) == null) {
 			throw new IllegalArgumentException("Invalid database settings: Invalid database location!");
 		}
-		if (MParameterManager.getParameter(MoreBasicPa.DBNAME) == null) {
+		if (PmParameterManager.getParameter(MSqlPa.DBNAME) == null) {
 			throw new IllegalArgumentException("Invalid database settings: Invalid database name!");
 		}
-		if (MParameterManager.getParameter(MoreBasicPa.USER) == null) {
+		if (PmParameterManager.getParameter(MSqlPa.USER) == null) {
 			throw new IllegalArgumentException("Invalid database settings: Invalid user name!");
 		}
-		if (MParameterManager.getParameter(MoreBasicPa.PASSWORD) == null) {
+		if (PmParameterManager.getParameter(MSqlPa.PASSWORD) == null) {
 			throw new IllegalArgumentException("Invalid database settings: Invalid password!");
 		}
 

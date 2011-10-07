@@ -68,11 +68,13 @@ public class MSmallWorldBetaModelNetworkGenerator<V, E extends MoreEdge<V>> exte
 	public MSmallWorldBetaModelNetworkGenerator(Factory<? extends Graph<V, E>> graphFactory, Factory<V> vertexFactory,
 			MoreEdgeFactory<V,E> edgeFactory, int numNodes, final int k_value, boolean isToroidal, final double beta) {
 		this(graphFactory, vertexFactory, edgeFactory, numNodes, new MoreKValueProvider<V>() {
+			@Override
 			public int getKValue(V node) {
 				return k_value;
 			}
 
 		}, isToroidal, new MoreBetaProvider<V>() {
+			@Override
 			public double getBetaValue(V node) {
 				return beta;
 			}
@@ -109,7 +111,8 @@ public class MSmallWorldBetaModelNetworkGenerator<V, E extends MoreEdge<V>> exte
 				});
 	}
 	
-    public Graph<V, E> create() {
+    @Override
+	public Graph<V, E> create() {
     	Graph<V, E> graph = super.create();
     	
     	Collection<E> orgEdges = new ArrayList<E>(graph.getEdgeCount());

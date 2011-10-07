@@ -28,18 +28,15 @@ import javax.swing.JFileChooser;
 import org.apache.log4j.Logger;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
-import org.rosuda.JRI.RVector;
 import org.rosuda.JRI.Rengine;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.util.Log4jLogger;
 import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 
 /**

@@ -62,6 +62,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	/**
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#addMeasureSupplier(edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier)
 	 */
+	@Override
 	public boolean addMeasureSupplier(MoreMeasureSupplier supplier) {
 		return suppliers.add(supplier);
 	}
@@ -69,6 +70,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	/**
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#removeMeasureSupplier(edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier)
 	 */
+	@Override
 	public boolean removeMeasureSupplier(MoreMeasureSupplier supplier) {
 		return suppliers.remove(supplier);
 	}
@@ -76,6 +78,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	/**
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#getMeasureDescriptions()
 	 */
+	@Override
 	public Set<MMeasureDescription> getMeasureDescriptions() {
 		Set<MMeasureDescription> descriptions = new HashSet<MMeasureDescription>();
 		descriptions.addAll(measures.keySet());
@@ -90,6 +93,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	 * Searches for a {@link MoreMeasure} according to the given {@link MMeasureDescription} in the chain of {@link MoreMeasureSupplier}s.
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#findMeasure(edu.uos.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescriptionTemp)
 	 */
+	@Override
 	public MoreMeasure findMeasure(MMeasureDescription description){
 		if (measures.containsKey(description)) {
 			return measures.get(description);
@@ -108,6 +112,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	/**
 	 * @see edu.MoreMeasureSupplier.sh.soneta.measures.supply.NetworkMeasureSupplier#getCategories()
 	 */
+	@Override
 	public Set<MoreMeasureCategory> getCategories() {
 		HashSet<MoreMeasureCategory> categories = new HashSet<MoreMeasureCategory>();
 		for (MoreMeasureSupplier supplier : suppliers) {
@@ -120,6 +125,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	 * Uses the Classes of the objects to compare and calls the classes' equals.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		return this.getClass().equals(o.getClass());
 	}
@@ -127,6 +133,7 @@ public abstract class MAbstractMeasureSupplier implements MoreMeasureSupplier{
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return this.getClass().hashCode();
 	}

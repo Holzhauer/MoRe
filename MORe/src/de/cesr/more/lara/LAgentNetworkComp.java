@@ -66,6 +66,7 @@ public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * @see de.cesr.more.lara.LaraAgentNetworkComp#setNetwork(de.cesr.lara.components.LaraNetwork)
 	 */
+	@Override
 	public void setNetwork(MoreNetwork<A, E> network) {
 		this.networks.put(network.getName(), network);
 	}
@@ -74,6 +75,7 @@ public class LAgentNetworkComp<A extends LaraAgent<A, BO>, BO extends LaraBehavi
 	/**
 	 * @see de.cesr.more.lara.LaraAgentNetworkComp#getNetwork(java.lang.String)
 	 */
+	@Override
 	public MoreNetwork<A, E> getNetwork(String name) {
 		return this.networks.get(name);
 	}

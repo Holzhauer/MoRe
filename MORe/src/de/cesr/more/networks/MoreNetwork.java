@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.building.MoreEdgeFactory;
 
 import edu.uci.ics.jung.graph.Graph;
 
@@ -62,6 +63,7 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	
 	/**
 	 * Adds an edge to this network.
+	 * Implementing classes are required to use the edge factory.
 	 * 
 	 * @param edge
 	 * Created by Sascha Holzhauer on 30.03.2011
@@ -73,7 +75,7 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * @param target
 	 * Created by Sascha Holzhauer on 15.01.2010
 	 */
-	public void disconnect(AgentType source, AgentType target);
+	public EdgeType disconnect(AgentType source, AgentType target);
 
 	/**
 	 * @param source
@@ -85,21 +87,19 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 
 	/**
 	 * Normalises the edges' weights by dividing by the largest weight. 
-	 * Created by Sascha Holzhauer on 18.01.2010
 	 */
 	public void normalizeWeights();
 	
 	/**
 	 * @param source
 	 * @param target
-	 * @return
-	 * Created by Sascha Holzhauer on 18.01.2010
+	 * @return 
 	 */
 	public double getWeight(AgentType source, AgentType target);
 	
 	/**
 	 * @param ego
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return iterable collection of all adjacent nodes (predecessors and successors) to the given node
 	 */
 	public Iterable<AgentType> getAdjacent(AgentType ego);
 
@@ -113,20 +113,20 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	
 	/**
 	 * @param ego
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return iterable collection of all predecessors of the given node
 	 */
 	public Iterable<AgentType> getPredecessors(AgentType ego);
 
 	/**
 	 * @param ego
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return iterable collection of all successors from the given node
 	 */
 	public Iterable<AgentType> getSuccessors(AgentType ego);
 
 	/**
 	 * @param ego
 	 * @param alter
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return true if the given nodes are adjacent to each other
 	 */
 	public boolean isAdjacent(AgentType ego, AgentType alter);
 	
@@ -139,19 +139,19 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	public boolean isSuccessor(AgentType ego, AgentType alter);
 
 	/**
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return true if this network is directed
 	 */
 	public boolean isDirected();
 
 	/**
 	 * @param ego
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return the number of outgoing edges (outdegree)
 	 */
 	public int getDegree(AgentType ego);
 
 	/**
 	 * @param ego
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return the number of incoming edges (indegree)
 	 */
 	public int getInDegree(AgentType ego);
 
@@ -162,17 +162,17 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	public int getOutDegree(AgentType ego);
 
 	/**
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return the network's name
 	 */
 	public String getName();
 
 	/**
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return the collection of all nodes
 	 */
 	public Iterable<AgentType> getNodes();
 
 	/**
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return the number of edges in this network
 	 */
 	public int numEdges();
 	
@@ -180,35 +180,35 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * @param source
 	 * @param target
 	 * @return
-	 * Created by Sascha Holzhauer on 07.10.2010
 	 */
 	public EdgeType getEdge(AgentType source, AgentType target);
 
 	
 	/**
 	 * @return collection of all edges
-	 * 
-	 * Created by Sascha Holzhauer on 07.10.2010
 	 */
 	public Collection<EdgeType> getEdgesCollection();
 	
 	/**
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return the number of nodes in this network
 	 */
 	public int numNodes();
 	
 	/**
 	 * Return a JUNG Graph object of this network.
 	 * @return a JUNG Graph object of this network
-	 * Created by Sascha Holzhauer on 05.10.2010
 	 */
 	public Graph<AgentType, EdgeType> getJungGraph();
 	
 	/**
-	 * Returns a reversed network, i.e. for all edges source and target vertices are excahnged.
+	 * Returns a reversed network, i.e. for all edges source and target vertices are exchanged.
 	 * @return reversed network
-	 * 
-	 * Created by Sascha Holzhauer on 25.01.2011
 	 */
 	public void reverseNetwork();
+	
+	/**
+	 * Sets the {@link MoreEdgeFactory} that is used to connect agents.
+	 * @param edgeFac
+	 */
+	public void setEdgeFactory(MoreEdgeFactory<AgentType, EdgeType> edgeFac);
 }

@@ -26,6 +26,7 @@ package de.cesr.more.util;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Normal;
 import cern.jet.random.Uniform;
+import cern.jet.random.engine.RandomEngine;
 
 /**
  * MORe
@@ -53,6 +54,14 @@ public interface MoreRandomService {
 	 * @return the default uniform distribution
 	 */
 	public Uniform getUniform();
+	
+	/**
+	 * Returns a Uniform distribution that is fed by the given {@link RandomEngine}.
+	 * Advantage: Uses a {@link MUniformDistributionController} in case logger is debug enabled.
+	 * @param engine to fed the distribution
+	 * @return uniform distribution
+	 */
+	public Uniform getNewUniformDistribution(RandomEngine engine);
 	
 	/**
 	 * Create a normal distribution with the given parameters

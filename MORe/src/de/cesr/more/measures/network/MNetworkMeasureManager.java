@@ -374,6 +374,7 @@ public class MNetworkMeasureManager extends MAbstractMeasureManager {
 	 * @see edu.MMeasureSelectorListener.sh.soneta.gui.MeasureChooserListener#setMeasureBundle(edu.MMeasureBundle.sh.soneta.measures.MeasureBundle,
 	 *      boolean)
 	 */
+	@Override
 	public boolean setMeasureBundle(MMeasureBundle bundle, boolean remove) {
 		if (remove) {
 			return removeMeasureCalculation(bundle.getNetwork(), bundle.getMeasure());

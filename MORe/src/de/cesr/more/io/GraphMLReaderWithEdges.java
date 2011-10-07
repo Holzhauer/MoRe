@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.collections15.BidiMap;
 import org.apache.commons.collections15.Factory;
 import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
@@ -66,6 +65,7 @@ public class GraphMLReaderWithEdges<G extends Hypergraph<V, E>, V, E> extends Gr
 	 * super{@link #clearData()} is called after super{@link #initializeData()}...
 	 * @see edu.uci.ics.jung.io.GraphMLReader#clearData()
 	 */
+	@Override
 	protected void clearData() {
 		super.clearData();
 	}
@@ -75,6 +75,7 @@ public class GraphMLReaderWithEdges<G extends Hypergraph<V, E>, V, E> extends Gr
 	 * and extended edge object.
 	 * @see edu.uci.ics.jung.io.GraphMLReader#createEdge(org.xml.sax.Attributes, edu.uci.ics.jung.io.GraphMLReader.TagState)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void createEdge(Attributes atts, TagState state)
 		throws SAXNotSupportedException
@@ -153,7 +154,8 @@ public class GraphMLReaderWithEdges<G extends Hypergraph<V, E>, V, E> extends Gr
      * Adapted to this application when vertex_ids is provided beforehand.
      * @see edu.uci.ics.jung.io.GraphMLReader#createVertex(org.xml.sax.Attributes)
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	protected void createVertex(Attributes atts) throws SAXNotSupportedException
     {
         Map<String, String> vertex_atts = getAttributeMap(atts);

@@ -29,9 +29,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.networks.MoreNetwork;
 
 /**

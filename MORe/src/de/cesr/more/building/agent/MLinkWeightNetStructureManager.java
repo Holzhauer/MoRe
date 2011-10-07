@@ -32,7 +32,7 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.building.MoreEdgeManager;
+import de.cesr.more.building.MoreNetworkEdgeModifier;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.util.Log4jLogger;
 
@@ -68,7 +68,7 @@ public class MLinkWeightNetStructureManager<A extends MoreNetStructureManageable
 	private double increaseAmount = INCREASE_AMOUNT;
 	private double decreaseAmount = DECREASE_AMOUNT;
 
-	protected MoreEdgeManager<A, E> edgeMan;
+	protected MoreNetworkEdgeModifier<A, E> edgeMan;
 	
 	protected A agent;
 	protected String network;
@@ -78,7 +78,7 @@ public class MLinkWeightNetStructureManager<A extends MoreNetStructureManageable
 	 * @param agent 
 	 * @param network
 	 */
-	public MLinkWeightNetStructureManager(A agent, String network, MoreEdgeManager<A, E> edgeMan) {
+	public MLinkWeightNetStructureManager(A agent, String network, MoreNetworkEdgeModifier<A, E> edgeMan) {
 		this.agent = agent;
 		this.network = network;
 		this.net = agent.getLaraNetworkComp().getNetwork(network);
@@ -112,7 +112,7 @@ public class MLinkWeightNetStructureManager<A extends MoreNetStructureManageable
 				// LOGGING ->
 			}
 			if (net.getEdge(neighbour, agent).getWeight() == 0.0) {
-				edgeMan.removeEdge(neighbour, agent);
+				edgeMan.removeEdge(net, neighbour, agent);
 				counter++;
 				
 				// <- LOGGING
@@ -139,7 +139,7 @@ public class MLinkWeightNetStructureManager<A extends MoreNetStructureManageable
 			for (A third : net.getPredecessors(neighbour)) {
 				Double value = new Double(Math.abs(agent.getValueDifference(third)));
 				if (!potPartners.containsKey(value)) {
-					potPartners.put(value, new ArrayList());
+					potPartners.put(value, new ArrayList<A>());
 				}
 				potPartners.get(value).add(third);
 			}
@@ -150,7 +150,7 @@ public class MLinkWeightNetStructureManager<A extends MoreNetStructureManageable
 			for (A third : net.getPredecessors(neighbour)) {
 				Double value = new Double(Math.abs(agent.getValueDifference(third)));
 				if (!potPartners.containsKey(value)) {
-					potPartners.put(value, new ArrayList());
+					potPartners.put(value, new ArrayList<A>());
 				}
 				potPartners.get(value).add(third);
 			}
@@ -162,7 +162,7 @@ public class MLinkWeightNetStructureManager<A extends MoreNetStructureManageable
 			for (A item : list) {
 				if (!net.isSuccessor(item, agent)) {
 					net.connect(item, agent);
-					edgeMan.createEdge(item, agent, true);
+					edgeMan.createEdge(net, item, agent);
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
 						logger.debug("Edge created: " + net.getEdge(item, agent));

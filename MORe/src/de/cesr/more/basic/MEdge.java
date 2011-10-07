@@ -88,6 +88,7 @@ public class MEdge<V> implements MoreEdge<V> {
 		this.weight = weight;
 	}
 	
+	@Override
 	public String toString() {
 		return "[" + getStart() + " > " + getEnd() + "]";
 	}
@@ -103,6 +104,7 @@ public class MEdge<V> implements MoreEdge<V> {
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int result = 17;
 		result= 31 * result + getStart().hashCode(); 

@@ -23,9 +23,6 @@
  */
 package de.cesr.more.measures.network.supply.algos;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.JFileChooser;
 
 import org.apache.log4j.Logger;
@@ -75,6 +72,7 @@ public class MNetworkStatisticsR extends MAbstractMeasureSupplier implements RMa
 						MNetworkStatisticsR.endEngine();
 					}
 					
+					@Override
 					public String toString() {
 						return "Stops REngine";
 					}

@@ -90,6 +90,7 @@ public class MMeasureDescription implements Comparable<MMeasureDescription> {
 		 * @see java.lang.Object#toString()
 		 * Returns the long description
 		 */
+		@Override
 		public String toString() {
 			return longname;
 		}
@@ -107,6 +108,7 @@ public class MMeasureDescription implements Comparable<MMeasureDescription> {
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 * Uses the short description to identify a <code>MeasureDescription</code>
 		 */
+		@Override
 		public boolean equals(Object description) {
 			if (description instanceof MMeasureDescription) {
 				return shortname.equals(((MMeasureDescription)description).getShort());
@@ -120,6 +122,7 @@ public class MMeasureDescription implements Comparable<MMeasureDescription> {
 		 * @see java.lang.Object#hashCode()
 		 * Uses the short description's hash code
 		 */
+		@Override
 		public int hashCode() {
 			return shortname.hashCode();
 		}

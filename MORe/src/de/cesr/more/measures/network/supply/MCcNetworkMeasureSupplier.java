@@ -18,11 +18,9 @@ import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
-import de.cesr.more.measures.network.supply.MNetworkStatisticsSupplier.Short;
 import de.cesr.more.measures.network.supply.algos.MClusteringCoefficient;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.util.MAbstractAction;
-import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.util.Log4jLogger;
@@ -102,6 +100,7 @@ public class MCcNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 						logger.info("... finished.");
 					}
 					
+					@Override
 					public String toString() {
 						return Short.N_CL_OVERALL.getName() + "(" + network.getName() + ")";
 					}

@@ -78,6 +78,10 @@ public class MRandom implements MoreRandomService {
 	 */
 	@Override
 	public AbstractDistribution getDistribution(String name) {
+		if (!distributions.containsKey(name)) {
+			logger.error("The requested ditribution (" + name + ") is not available!");
+			throw new IllegalStateException("The requested ditribution (" + name + ") is not available!");
+		}
 		return distributions.get(name);
 	}
 
@@ -95,6 +99,7 @@ public class MRandom implements MoreRandomService {
 	/**
 	 * @see de.cesr.more.util.MoreRandomService#createNormal(double, double)
 	 */
+	@Override
 	public Normal createNormal(double mean, double std) {
 		distributions.put(NORMAL_DEFAULT, new Normal(mean, std, defaultGenerator));
 		return (Normal) distributions.get(NORMAL_DEFAULT);
@@ -112,13 +117,30 @@ public class MRandom implements MoreRandomService {
 	 * @see de.cesr.more.util.MoreRandomService#registerDistribution(cern.jet.random.AbstractDistribution,
 	 *      java.lang.String)
 	 */
+	@Override
 	public void registerDistribution(AbstractDistribution dist, String name) {
 		distributions.put(name, dist);
 	}
 
+
+	/**
+	 * @see de.cesr.more.util.MoreRandomService#getNewUniformDistribution(cern.jet.random.engine.RandomEngine)
+	 */
+	@Override
+	public Uniform getNewUniformDistribution(RandomEngine engine) {
+		Uniform uniform = null;
+		if (logger.isDebugEnabled()) {
+			uniform =  new MUniformDistributionController(engine);
+		} else {
+			uniform =  new Uniform(engine);
+		}
+		return uniform;
+	}
+	
 	/**
 	 * @see de.cesr.more.util.MoreRandomService#setSeed(int)
 	 */
+	@Override
 	public void setSeed(int seed) {
 		this.seed = seed;
 		invalidateDistributions();

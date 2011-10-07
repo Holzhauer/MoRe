@@ -43,7 +43,6 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreEdgeFactory;
-import de.cesr.more.measures.MAbstractMeasureManager;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
@@ -53,7 +52,6 @@ import de.cesr.more.measures.network.MNetworkMeasureManager;
 import de.cesr.more.measures.network.supply.MCentralityNetMSupplier;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.networks.MDirectedNetwork;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.standalone.MSchedule;
@@ -156,6 +154,7 @@ public class MNetworkMeasureManagerTest {
 		schedule = (MSchedule) MManager.getSchedule();
 		netMan = MNetworkMeasureManager.getInstance();
 		net = MDirectedNetwork.getNetwork(new MoreEdgeFactory<TestNode, MoreEdge<TestNode>>() {
+			@Override
 			public MoreEdge<TestNode> createEdge(TestNode source, TestNode target, boolean directed) {
 				return new MEdge<TestNode>(source, target);
 			}

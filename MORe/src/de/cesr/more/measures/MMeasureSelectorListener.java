@@ -15,7 +15,6 @@ package de.cesr.more.measures;
 
 import java.util.Set;
 
-import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.networks.MoreNetwork;
 
 

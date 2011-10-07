@@ -1,0 +1,134 @@
+/**
+ * This file is part of
+ * 
+ * MORe - Managing Ongoing Relationships
+ *
+ * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *  
+ * MORe - Managing Ongoing Relationships is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Center for Environmental Systems Research, Kassel
+ * 
+ * Created by holzhauer on 06.10.2011
+ */
+package de.cesr.more.testing.rs.building.geo;
+
+import static org.junit.Assert.*;
+
+import java.util.Collection;
+import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
+
+import repast.simphony.context.Context;
+import repast.simphony.context.DefaultContext;
+import repast.simphony.context.space.gis.GeographyFactoryFinder;
+import repast.simphony.query.space.gis.ContainsQuery;
+import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.GeographyParameters;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
+
+import de.cesr.more.param.MBasicPa;
+import de.cesr.more.rs.building.geo.MGeoDistanceQuery;
+import de.cesr.more.util.MTorusCoordinate;
+import de.cesr.parma.core.PmParameterManager;
+
+/**
+ * MORe
+ *
+ * @author holzhauer
+ * @date 06.10.2011 
+ *
+ */
+public class MGeoDistanceQueryTest {
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger.getLogger(MGeoDistanceQueryTest.class);
+
+	static final int NUM_AGENTS = 10;
+
+	Collection<Object> agents;
+	Geography<Object> geography;
+	GeometryFactory geoFactory ;
+	
+	TestAgent a100, a101, a150;
+
+	static class TestAgent {
+		String id;
+
+		public TestAgent(int id) {
+			this.id = new Integer(id).toString();
+		}
+
+		@Override
+		public String toString() {
+			return this.id;
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		Context<Object> context = new DefaultContext<Object>();
+		this.geoFactory = new GeometryFactory(new PrecisionModel(),
+				new Integer(4326));
+		GeographyParameters<Object> geoParams = new GeographyParameters<Object>();
+		this.geography = GeographyFactoryFinder.createGeographyFactory(null)
+				.createGeography("Geography", context, geoParams);
+
+		
+		a100 = new TestAgent(100);
+		a101 = new TestAgent(101);
+		a150 = new TestAgent(150);
+		
+		double upper_x = ((Double)PmParameterManager.getParameter(MBasicPa.FIELD_UPPER_X)).doubleValue();
+		geography.move(a100,
+				geoFactory.createPoint(new MTorusCoordinate(upper_x, 1)));
+		geography.move(a101,
+				geoFactory.createPoint(new MTorusCoordinate(1, 1)));
+		geography.move(a150,
+				geoFactory.createPoint(new MTorusCoordinate(upper_x/2, 1)));
+	}
+	
+	@Test
+	public void test() {
+		System.out.println(geography.getGeometry(a100).distance(geography.getGeometry(a101)));
+		System.out.println(geography.getGeometry(a100).distance(geography.getGeometry(a150)));
+		System.out.println(geography.getGeometry(a101).distance(geography.getGeometry(a150)));
+	}
+
+	@Test
+	public void queryTest() {
+		int totalNumObject = 0;
+		MGeoDistanceQuery<Object> containsQuery = new MGeoDistanceQuery<Object>(
+				this.geography, 50, a100);
+		for (Object agent : containsQuery.query()) {
+			totalNumObject++;
+		}
+		assertEquals(2, totalNumObject);
+		
+		totalNumObject = 0;
+		containsQuery = new MGeoDistanceQuery<Object>(
+				this.geography, 20, a100);
+		for (Object agent : containsQuery.query()) {
+			totalNumObject++;
+		}
+		assertEquals(1, totalNumObject);
+	}
+}

@@ -65,6 +65,7 @@ public class MTestGraphs {
 		
 		protected MNodeMeasures measures = new MNodeMeasures();
 		
+		@Override
 		public String toString() {
 			return "TestNode" + this.id;
 		}
@@ -179,10 +180,12 @@ public class MTestGraphs {
 		GraphMLReader<Graph<Object, Object>, Object, Object> graphReader;
 		try {
 			graphReader = new GraphMLReader<Graph<Object, Object>, Object, Object>(new Factory<Object>() {
+				@Override
 				public Object create() {
 					return new Object();
 				}
 			}, new Factory<Object>() {
+					@Override
 					public Object create() {
 						return new Object();
 					}

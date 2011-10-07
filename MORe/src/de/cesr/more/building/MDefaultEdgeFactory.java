@@ -24,6 +24,7 @@
 package de.cesr.more.building;
 
 import de.cesr.more.basic.MEdge;
+import de.cesr.more.basic.MoreEdge;
 
 /**
  * MORe
@@ -32,13 +33,13 @@ import de.cesr.more.basic.MEdge;
  * @date 24.06.2011 
  *
  */
-public class MDefaultEdgeFactory<V, E> implements MoreEdgeFactory<V, E> {
+public class MDefaultEdgeFactory<V> implements MoreEdgeFactory<V, MoreEdge<V>> {
 
 	/**
 	 * @see de.cesr.more.building.MoreEdgeFactory#createEdge(java.lang.Object, java.lang.Object, boolean)
 	 */
 	@Override
-	public E createEdge(V source, V target, boolean directed) {
-		return (E) new MEdge<V>(source, target, directed);
+	public MoreEdge<V> createEdge(V source, V target, boolean directed) {
+		return new MEdge<V>(source, target, directed);
 	} 
 }

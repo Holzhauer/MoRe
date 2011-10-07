@@ -25,12 +25,8 @@ package de.cesr.more.measures.measures;
 
 import java.util.Map;
 
-import repast.simphony.context.space.graph.ContextJungNetwork;
-import repast.simphony.engine.schedule.ISchedulableAction;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.networks.MoreNetwork;
 
 
 /**

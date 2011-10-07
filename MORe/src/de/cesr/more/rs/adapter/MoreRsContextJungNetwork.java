@@ -16,12 +16,13 @@ import org.apache.log4j.Logger;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.DirectedJungNetwork;
-import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.JungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.building.MDefaultREdgeFactory;
+import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.exception.IllegalValueTypeException;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
@@ -51,10 +52,10 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	 */
 	static private Logger	logger	= Log4jLogger.getLogger(MoreRsContextJungNetwork.class);
 	
-	protected Context context;
-	protected JungNetwork network;
-
-	private EdgeCreator<? extends EdgeT, AgentT> edgeCreator = null;
+	protected Context<AgentT> context;
+	protected JungNetwork<AgentT> network;
+	
+	protected MoreEdgeFactory<AgentT, EdgeT> edgeFac;
 	
 	private MMeasureDescription mesaureDescA;
 	private MMeasureDescription mesaureDescB;
@@ -64,40 +65,65 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	 * @param context
 	 */
 	public MoreRsContextJungNetwork(JungNetwork<AgentT> network, Context<AgentT> context) {
+		this(network, context, null);
+	}
+
+	/**
+	 * @param net
+	 * @param context
+	 */
+	public MoreRsContextJungNetwork(JungNetwork<AgentT> network, Context<AgentT> context, MoreEdgeFactory<AgentT, EdgeT> edgeFac) {
 		super(network, context);
 		this.context = context;
 		this.network = network;
+		this.edgeFac = edgeFac;
 	}
-
+	
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#addNode(java.lang.Object)
+	 */
 	@Override
 	public void addNode(AgentT node) {
 		this.addVertex(node);
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#connect(java.lang.Object, java.lang.Object)
+	 * Tries to use the {@link MDefaultEdgeFactory} in case no {@link MoreEdgeFactory} has been
+	 * set before. This fails if EdgeT is not {@link MoreEdge<AgentT}.
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public EdgeT connect(AgentT source, AgentT target) {
-		if (edgeCreator != null) {
-			EdgeT edge = edgeCreator.createEdge(source, target, this.isDirected(), 0.0);
-			this.connect(edge);
-			return edge;
+		if (edgeFac == null) {
+			this.edgeFac = (MoreEdgeFactory<AgentT, EdgeT>) new MDefaultREdgeFactory<AgentT>();
 		}
-		else {
-			EdgeT edge = (EdgeT) new MRepastEdge<AgentT>(source, target, this.isDirected());
-			this.connect(edge);
-			return edge;
-		}
+		EdgeT edge = this.edgeFac.createEdge(source, target, isDirected());
+		this.connect(edge);
+		return edge;
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#disconnect(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void disconnect(AgentT source, AgentT target) {
-		this.removeEdge(this.getEdge(source, target));
+	public EdgeT disconnect(AgentT source, AgentT target) {
+		EdgeT edge = this.getEdge(source, target);
+		this.removeEdge(edge);
+		return edge;
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#getWeight(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public double getWeight(AgentT source, AgentT target) {
 		return this.getEdge(source, target).getWeight();
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#normalizeWeights()
+	 */
 	@Override
 	public void normalizeWeights() {
 		double maxWeight = 0;
@@ -113,11 +139,17 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 		}
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#numNodes()
+	 */
 	@Override
 	public int numNodes() {
 		return this.size();
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#setWeight(java.lang.Object, java.lang.Object, double)
+	 */
 	@Override
 	public void setWeight(AgentT source, AgentT target, double weight) {
 		EdgeT edge = this.getEdge(source, target);
@@ -128,12 +160,8 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	}
 
 	/**
-	 * @see de.cesr.more.networks.MoreRsNetwork#setEdgeFactory(repast.simphony.space.graph.EdgeCreator)
+	 * @see repast.simphony.context.space.graph.ContextJungNetwork#getEdge(java.lang.Object, java.lang.Object)
 	 */
-	public void setEdgeFactory(EdgeCreator<? extends EdgeT, AgentT> edgeCreator) {
-		this.edgeCreator = edgeCreator;
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public EdgeT getEdge(AgentT source, AgentT target) {
@@ -142,11 +170,9 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 
 
 	
-	
 	/*************************************************
 	 *  Accessing network measures by Repast Simphony
 	 ************************************************/
-	
 	
 	/**
 	 * @see de.cesr.more.networks.MoreRsNetwork#getMeasureA()
@@ -234,6 +260,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#getGraphFilteredInstance(edu.uci.ics.jung.graph.Graph)
 	 */
+	@SuppressWarnings("unchecked")  // ContextJungNetworks do not support edge parameters
 	@Override
 	public MoreNetwork<AgentT, EdgeT> getGraphFilteredInstance(Graph<AgentT, EdgeT> graph, String newName) {
 		JungNetwork<AgentT> jnetwork = 
@@ -247,7 +274,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#getJungGraph()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")  // ContextJungNetworks do not support edge parameters
 	@Override
 	public Graph<AgentT, EdgeT> getJungGraph() {
 		return (Graph<AgentT, EdgeT>) super.getGraph();
@@ -256,13 +283,17 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	/**
 	 * @see repast.simphony.context.space.graph.ContextJungNetwork#toString()
 	 */
+	@Override
 	public String toString()  {
 		return getName() + " (" + numNodes() + " nodes / " + numEdges() + " edges)";
 	}
 
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#reverseNetwork()
+	 * Tries to use the {@link MDefaultEdgeFactory} in case no {@link MoreEdgeFactory} has been
+	 * set before. This fails if EdgeT is not {@link MoreEdge<AgentT}.
 	 */
+	@SuppressWarnings("unchecked") // ContextJungNetworks do not support edge parameters
 	@Override
 	public void reverseNetwork() {
 		if (this.isDirected()) {
@@ -270,14 +301,11 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 			for (EdgeT edge :orgEdges) {
 				this.removeEdge(edge);
 			}
+			if (edgeFac == null) {
+				this.edgeFac = (MoreEdgeFactory<AgentT, EdgeT>) new MDefaultREdgeFactory<AgentT>();
+			}
 			for (EdgeT edge :orgEdges) {
-				
-				if (edgeCreator != null) {
-					this.connect(edgeCreator.createEdge(edge.getTarget(),  edge.getSource(), this.isDirected(), 0.0));
-				}
-				else {
-					this.addEdge(new MRepastEdge<AgentT>(edge.getTarget(),  edge.getSource(), this.isDirected()));
-				}
+				this.addEdge(edgeFac.createEdge(edge.getTarget(),  edge.getSource(), this.isDirected()));
 			}
 		}
 	}
@@ -285,11 +313,12 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	/**
 	 * @see de.cesr.more.networks.MoreNetwork#getEdgesCollection()
 	 */
+	@SuppressWarnings("unchecked") // ContextJungNetworks do not support edge parameters
 	@Override
 	public Collection<EdgeT> getEdgesCollection() {
-		Collection<RepastEdge<AgentT>> edges = new HashSet<RepastEdge<AgentT>>();
+		Collection<MRepastEdge<AgentT>> edges = new HashSet<MRepastEdge<AgentT>>();
 		for (RepastEdge<AgentT> edge : this.getEdges())
-			edges.add(edge);
+			edges.add((MRepastEdge<AgentT>) edge);
 		return (Collection<EdgeT>) edges;
 	}
 
@@ -317,4 +346,11 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 		network.removeVertex(node);
 	}
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#setEdgeFactory(de.cesr.more.building.MoreEdgeFactory)
+	 */
+	@Override
+	public void setEdgeFactory(MoreEdgeFactory<AgentT, EdgeT> edgeFac) {
+		this.edgeFac = edgeFac;
+	}
 }

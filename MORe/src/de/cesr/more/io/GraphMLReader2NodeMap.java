@@ -89,6 +89,7 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
 	 * super{@link #clearData()} is called after super{@link #initializeData()}...
 	 * @see edu.uci.ics.jung.io.GraphMLReader#clearData()
 	 */
+	@Override
 	protected void clearData() {
 		super.clearData();
 		// <- LOGGING
@@ -104,6 +105,7 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
 	 * and extended edge object.
 	 * @see edu.uci.ics.jung.io.GraphMLReader#createEdge(org.xml.sax.Attributes, edu.uci.ics.jung.io.GraphMLReader.TagState)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void createEdge(Attributes atts, TagState state)
 		throws SAXNotSupportedException
@@ -182,7 +184,8 @@ public class GraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gra
      * Adapted to this application when vertex_ids is provided beforehand.
      * @see edu.uci.ics.jung.io.GraphMLReader#createVertex(org.xml.sax.Attributes)
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	protected void createVertex(Attributes atts) throws SAXNotSupportedException
     {
         Map<String, String> vertex_atts = getAttributeMap(atts);

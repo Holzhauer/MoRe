@@ -35,7 +35,6 @@ import de.cesr.more.building.MoreEdgeFactory;
 import edu.uci.ics.jung.algorithms.generators.GraphGenerator;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 
 
 
@@ -84,6 +83,7 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 	/**
 	 * @see edu.uci.ics.jung.algorithms.generators.GraphGenerator#create()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Graph<V, E> create() {
 		int vertex_count = numVertices;

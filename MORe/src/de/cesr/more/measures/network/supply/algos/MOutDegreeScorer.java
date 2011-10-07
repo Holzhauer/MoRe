@@ -61,6 +61,7 @@ public class MOutDegreeScorer<V> implements VertexScorer<V, Integer> {
 	 * 
 	 * @return the (out-)degree of the vertex
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public Integer getVertexScore(V v) {
 		if (graph instanceof DirectedGraph) {

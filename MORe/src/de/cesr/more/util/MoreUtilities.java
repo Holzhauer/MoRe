@@ -84,6 +84,7 @@ public class MoreUtilities {
 			// add graph id:
 			Map<String, GraphMLMetadata<Hypergraph<V, E>>> graphMap = new HashMap<String, GraphMLMetadata<Hypergraph<V, E>>>();
 			Transformer<Hypergraph<V, E>, String> gTransformer = new Transformer<Hypergraph<V, E>, String>() {
+				@Override
 				public String transform(Hypergraph<V, E> graph) {
 					return network.getName();
 				}
@@ -111,6 +112,7 @@ public class MoreUtilities {
 
 	public static <V> MoreNetwork<V, MoreEdge<V>> inputNetwork(File inputfile, Factory<V> nodeFactory, String name) {
 		MoreEdgeFactory<V, MoreEdge<V>> edgeFactory = new MoreEdgeFactory<V, MoreEdge<V>>() {
+			@Override
 			public MoreEdge<V> createEdge(V source, V target, boolean isDirected) {
 				MoreEdge<V> edge = new MEdge<V>(source, target, isDirected);
 				return edge;

@@ -30,11 +30,11 @@ package de.cesr.more.basic;
  * @date 03.12.2010 
  *
  */
-public interface MoreEdge<V> {
+public interface MoreEdge<AgentType> {
 
-	public V getStart();
+	public AgentType getStart();
 	
-	public V getEnd();
+	public AgentType getEnd();
 	
 	public double getWeight();
 	

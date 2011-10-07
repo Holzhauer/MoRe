@@ -51,6 +51,7 @@ public interface MoreRsNetworkBuilder<AgentType, EdgeType extends MRepastEdge<Ag
 	 * @param agents
 	 * @return Created by Sascha Holzhauer on 22.07.2010
 	 */
+	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents);
 	
 	/**

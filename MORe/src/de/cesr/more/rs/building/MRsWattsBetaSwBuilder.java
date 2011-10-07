@@ -25,14 +25,19 @@ package de.cesr.more.rs.building;
 
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.context.Context;
-import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.context.space.graph.WattsBetaSmallWorldGenerator;
+import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.building.MRsEdgeFactory;
 import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.networks.MoreRsNetwork;
+import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.adapter.MRepastEdge;
+import de.cesr.more.rs.adapter.MoreRsContextJungNetwork;
+import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
@@ -44,7 +49,13 @@ import de.cesr.more.rs.adapter.MRepastEdge;
 public class MRsWattsBetaSwBuilder<AgentType, EdgeType extends MRepastEdge<AgentType>> implements
 		MoreRsNetworkBuilder<AgentType, EdgeType> {
 
-	private Context	context;
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger
+			.getLogger(MRsWattsBetaSwBuilder.class);
+	
+	private Context<AgentType>	context;
 	private MoreEdgeFactory<AgentType, EdgeType>	eFac;
 
 	/**
@@ -58,23 +69,45 @@ public class MRsWattsBetaSwBuilder<AgentType, EdgeType extends MRepastEdge<Agent
 	/**
 	 * @param eFac
 	 */
-	public MRsWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+	public MRsWattsBetaSwBuilder(MRsEdgeFactory<AgentType, EdgeType> eFac) {
 		this.eFac = eFac;
 	}
 	
 	
-	public void setContext(Context context) {
+	@Override
+	public void setContext(Context<AgentType> context) {
 		this.context = context;
 	}
 
+	/**
+	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection)
+	 * Parameters are assigned through the parameter framework to allow network builders to be 
+	 * initialises automatically.
+	 */
+	@SuppressWarnings("unchecked") // WattsBetaSmallWorldGenerator#createNetwork returns the network it receives
 	@Override
-	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection agents) {
-		ContextJungNetwork<AgentType> network = new ContextJungNetwork<AgentType>(new UndirectedJungNetwork<AgentType>(
-				"Network"), context);
-		network = (ContextJungNetwork<AgentType>) new WattsBetaSmallWorldGenerator<AgentType>(0.1, 5, false)
+	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
+		if (context == null) {
+			logger.error("Context not set!");
+			throw new IllegalStateException("Context not set!");
+		}
+		MoreRsNetwork<AgentType, EdgeType> network = new MoreRsContextJungNetwork<AgentType, EdgeType>(
+				((Boolean)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
+						new DirectedJungNetwork<AgentType>("Network") :
+				new UndirectedJungNetwork<AgentType>("Network")
+				, context);
+		network.setEdgeFactory(eFac);
+		
+		for (AgentType agent : agents) {
+			network.addNode(agent);
+		}
+		
+		network =  (MoreRsNetwork<AgentType, EdgeType>) new WattsBetaSmallWorldGenerator<AgentType>(
+				((Double)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_BETA)).doubleValue(),
+				((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_DEGREE)).intValue(),
+				((Boolean)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)))
 				.createNetwork(network);
-		return null;
+		return network;
 	}
-
 }
 

@@ -67,6 +67,7 @@ public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO ex
 	/**
 	 * @see de.cesr.lara.components.agents.LaraAgent#getLaraComp()
 	 */
+	@Override
 	public LaraAgentNetworkComp<A, E> getLaraNetworkComp() {
 		return netComp;
 	}
@@ -74,6 +75,7 @@ public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO ex
 	/**
 	 * @see de.cesr.more.lara.LaraSimpleNetworkAgent#setLaraNetworkComp(de.cesr.more.lara.LaraAgentNetworkComp)
 	 */
+	@Override
 	public void setLaraNetworkComp(LaraAgentNetworkComp<A, E> component) {
 		this.netComp = component;
 	}
@@ -86,6 +88,7 @@ public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO ex
 	 * @see de.cesr.more.measures.node.MoreNodeMeasureSupport#getNetworkMeasureObject(de.cesr.more.networks.MoreNetwork,
 	 * de.cesr.more.measures.MMeasureDescription)
 	 */
+	@Override
 	public Number getNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
 			MMeasureDescription key) {
 
@@ -101,6 +104,7 @@ public abstract class AbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO ex
 	 * @see de.cesr.more.measures.node.MoreNodeMeasureSupport#setNetworkMeasureObject(de.cesr.more.networks.MoreNetwork,
 	 * de.cesr.more.measures.MMeasureDescription, java.lang.Number)
 	 */
+	@Override
 	public void setNetworkMeasureObject(MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
 			MMeasureDescription key, Number value) {
 		measures.setNetworkMeasureObject(network, key, value);

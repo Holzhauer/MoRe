@@ -22,8 +22,6 @@ import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import de.cesr.lara.components.agents.LaraAgent;
-import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.components.container.properties.impl.LFloatProperty;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.environment.LaraEnvironment;
@@ -35,7 +33,6 @@ import de.cesr.more.lara.LNetworkEnvironment;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.rs.adapter.DefaultLRsNetwork;
 import de.cesr.more.rs.adapter.MRepastEdge;
-import de.cesr.more.testing.TestUtilsLara;
 import de.cesr.more.testing.TestUtilsLara.TestNetworkAgent;
 
 

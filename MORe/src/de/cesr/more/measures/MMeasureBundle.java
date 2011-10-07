@@ -21,8 +21,6 @@ import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.networks.MoreNetwork;
 
-import repast.simphony.context.space.graph.ContextJungNetwork;
-
 
 
 /**

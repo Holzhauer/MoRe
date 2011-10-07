@@ -31,7 +31,6 @@ import de.cesr.more.building.MoreEdgeFactory;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
  * MORe
@@ -50,6 +49,7 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	/**
 	 * @deprecated (used to build new instances by JUNG...)
 	 */
+	@Deprecated
 	public MDirectedNetwork() {
 		this.edgeFactory = null;
 		this.name = "NN";
@@ -106,8 +106,10 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	 * @see de.cesr.more.networks.MoreNetwork#disconnect(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void disconnect(V source, V target) {
-		this.removeEdge(findEdge(source, target));
+	public E disconnect(V source, V target) {
+		E edge = findEdge(source, target);
+		this.removeEdge(edge);
+		return edge;
 	}
 
 	/**
@@ -139,7 +141,7 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	 */
 	@Override
 	public Graph getJungGraph() {
-		return (DirectedSparseGraph) this;
+		return this;
 	}
 
 	/**
@@ -264,6 +266,7 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	/**
 	 * @see edu.uci.ics.jung.graph.AbstractGraph#toString()
 	 */
+	@Override
 	public String toString() {
 		return getName();
 	}
@@ -307,5 +310,13 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	@Override
 	public void removeNode(V node) {
 		this.removeNode(node);
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#setEdgeFactory(de.cesr.more.building.MoreEdgeFactory)
+	 */
+	@Override
+	public void setEdgeFactory(MoreEdgeFactory<V, E> edgeFac) {
+		this.edgeFactory = edgeFac;
 	}
 }

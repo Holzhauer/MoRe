@@ -34,7 +34,6 @@ import de.cesr.more.measures.measures.MAbstractNodeMeasure;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MAbstractAction;
-import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.networks.MoreNetwork;
 

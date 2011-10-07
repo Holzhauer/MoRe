@@ -61,6 +61,7 @@ public enum MNetworkMeasureCategory implements MoreMeasureCategory {
 	 * Returns the description of this <code>MeasureCategory</code>
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return desc;
 	}

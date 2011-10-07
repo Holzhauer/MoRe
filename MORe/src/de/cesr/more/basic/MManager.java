@@ -28,10 +28,17 @@ package de.cesr.more.basic;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import cern.jet.random.Uniform;
+import cern.jet.random.engine.MersenneTwister;
+
 import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.more.measures.util.MoreSchedule;
+import de.cesr.more.param.MRandomPa;
+import de.cesr.more.param.MSqlPa;
 import de.cesr.more.util.MRandom;
 import de.cesr.more.util.MoreRandomService;
+import de.cesr.parma.core.PmParameterManager;
+import de.cesr.parma.reader.PmDbXmlParameterReader;
 
 
 
@@ -57,6 +64,19 @@ public class MManager {
 	 * {@link NumberFormat} to format floating point numbers
 	 */
 	protected static NumberFormat		floatPointFormat;
+	
+	
+	/**
+	 * Initialised parameter framework.
+	 */
+	public static void init() {
+		PmParameterManager.registerReader(new PmDbXmlParameterReader(MSqlPa.DB_SETTINGS_FILE));
+		
+		// init random streams
+		getMRandomService().registerDistribution(new Uniform(new MersenneTwister(
+				((Integer)PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue())),
+				(String)PmParameterManager.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING));
+	}
 
 	/**
 	 * @param format Created by Sascha Holzhauer on 23.12.2010
@@ -117,18 +137,13 @@ public class MManager {
 	}
 
 	/**
-	 * Return the random manager that is used for random processes in LARA. Either, the model author should implement
-	 * (or assign to this.randomMan when extending AbstracLModel) the random number generator used in the custom model
-	 * part, or reset the LRandomService by calling getLRandom.setSeed(seed) using the correct seed parameter.
-	 * 
-	 * NOTE: Make sure that the {@link LaraRandom} class is instantiated only once since creating an instance every time
-	 * this method is called results in starting the random sequence anew each time the method is called!
+	 * Return the random manager that is used for random processes.
 	 * 
 	 * @return the random manager
 	 */
 	public static MoreRandomService getMRandomService() {
 		if (randomService == null) {
-			randomService = new MRandom(0);
+			randomService = new MRandom(((Integer)PmParameterManager.getParameter(MRandomPa.RANDOM_SEED)).intValue());
 		}
 		return randomService;
 	}

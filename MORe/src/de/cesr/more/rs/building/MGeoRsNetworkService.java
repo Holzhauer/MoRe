@@ -26,26 +26,30 @@ package de.cesr.more.rs.building;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
+import repast.simphony.space.graph.RepastEdge;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.util.Log4jLogger;
+import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.basic.MoreGeoEdge;
 import de.cesr.more.building.MDefaultEdgeFactory;
 import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.building.MoreGeoNetworkBuilder;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.networks.MoreRsNetwork;
-import de.cesr.more.rs.adapter.MRepastEdge;
 import de.cesr.more.util.MoreUtilities;
-import de.cesr.more.util.param.MNetworkBuildingParam;
+import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -55,7 +59,7 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 23.09.2011 
  *
  */
-public abstract class MGeoRsNetworkService<AgentType, EdgeType extends MRepastEdge<AgentType>> implements
+public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends RepastEdge<AgentType> & MoreEdge<AgentType>> implements
 		MoreRsNetworkService<AgentType, EdgeType>,
 		MoreGeoNetworkBuilder<AgentType, EdgeType> {
 
@@ -64,52 +68,83 @@ public abstract class MGeoRsNetworkService<AgentType, EdgeType extends MRepastEd
 	 */
 	static private Logger			logger			= Log4jLogger.getLogger(MGeoRsNetworkService.class);
 
-	private static final double		ARROW_ARC		= 20.0 / 180.0;
-	/**
-	 * in degree
-	 */
-	private static final double		ARROW_LENGTH	= 0.0005;
-
 	
 	/**
 	 * Need to be of type {@link Object} since network objects and agents should be insertable
 	 */
-	protected Geography<Object>		areasGeography;
+	protected Geography<Object>		geography;
 	
 	protected GeometryFactory		geoFactory		= null;
+	
+	protected MoreEdgeFactory<AgentType, EdgeType> edgeFac = null;
 
 	/**
 	 * The context the network belongs to.
 	 */
-	protected Context<?>						   context;
-
-	protected MoreEdgeFactory<AgentType, EdgeType> edgeFactory;
+	protected Context<AgentType>						   context;
 	
+	/**
+	 * should be accessed via getEdgeModifer...
+	 */
+	private MGeoRsNetworkEdgeModifier<AgentType, EdgeType> edgeModifier;
+	
+
 	/**
 	 * @param areasGeography
 	 */
-	public MGeoRsNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFactory) {
-		this.areasGeography = areasGeography;
-		this.edgeFactory = edgeFactory;
+	public MGeoRsNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this.geography = areasGeography;
+		this.edgeFac = edgeFac;
 		this.geoFactory = new GeometryFactory(new PrecisionModel(),
-				((Integer) PmParameterManager.getParameter(MNetworkBuildingParam.SPATIAL_REFERENCE_ID)).intValue());
+				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.SPATIAL_REFERENCE_ID)).intValue());
 	}
 
 	/**
 	 * @param areasGeography
 	 */
-	public MGeoRsNetworkService(Geography<Object> areasGeography) {
-		this(areasGeography, new MDefaultEdgeFactory<AgentType, EdgeType>());
+	public MGeoRsNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this(null, edgeFac);
 	}
 	
 	/**
-	 * Set the (root) context the network shall span
-	 * 
-	 * @param context
+	 * @param areasGeography
 	 */
-	public void setContext(Context<?> context) {
-		this.context = context;
+	public MGeoRsNetworkService() {
+		this(null, (MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
 	}
+	
+	/**
+	 * Adds agents as nodes to the given network without linking them.
+	 * @param network
+	 * @param agents
+	 */
+	protected void addAgents(MoreRsNetwork<AgentType, EdgeType> network, Collection<AgentType> agents) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Adding agents to collection.");
+		}
+		// LOGGING ->
+
+		for (AgentType o : agents) {
+			network.addNode(o);
+		}
+	}
+	
+	/**
+	 * @see de.cesr.more.building.MoreNetworkModifier#removeNode(de.cesr.more.networks.MoreNetwork, java.lang.Object)
+	 */
+	@Override
+	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		for (AgentType partner : network.getSuccessors(node)) {
+			edgeModifier.removeEdge(network, node, partner);
+		}
+		for (AgentType partner : network.getPredecessors(node)) {
+			edgeModifier.removeEdge(network, partner, node);
+		}
+		network.removeNode(node);
+		return false;
+	}
+	
 
 	/**
 	 * @param agents the agents that are to be connected by the network builder
@@ -122,10 +157,19 @@ public abstract class MGeoRsNetworkService<AgentType, EdgeType extends MRepastEd
 	/**
 	 * @see de.cesr.more.building.MoreNetworkBuilder#buildNetwork(java.util.Collection)
 	 */
+	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
 		return buildRsNetwork(agents, "Network");
 	}
 
+	/**
+	 * @see de.cesr.more.building.MoreNetworkEdgeModifier#removeEdge(de.cesr.more.networks.MoreNetwork, java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
+		return getEdgeModifier().removeEdge(network, source, target);
+	}
+	
 	/**
 	 * Created an edge in the direction from potInfluencer to influencedHh
 	 * 
@@ -133,107 +177,96 @@ public abstract class MGeoRsNetworkService<AgentType, EdgeType extends MRepastEd
 	 * @param influencedHh
 	 * @param potInfluencer
 	 */
-	protected void createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType influencedHh,
-			AgentType potInfluencer) {
-		EdgeType edge = edgeFactory.createEdge(potInfluencer, influencedHh, true);
-
-		network.connect(edge);
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Edge added: " + edge);
-		}
-		// LOGGING ->
-
-		addEdgeToGeography(influencedHh, potInfluencer, edge);
+	@Override
+	public EdgeType createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source,
+			AgentType target) {
+		return getEdgeModifier().createEdge(network, source, target);
 	}
 
-	/**
-	 * @param hh
-	 * @param potInfluencer
-	 * @param edge Created by Sascha Holzhauer on 25.01.2011
-	 */
-	protected void addEdgeToGeography(AgentType hh, AgentType potInfluencer, EdgeType edge) {
-		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingParam.ADD_EDGES_TO_GEOGRAPHY)) {
-			Coordinate[] coords1 = { areasGeography.getGeometry(hh).getCoordinate(),
-					areasGeography.getGeometry(potInfluencer).getCoordinate() };
-
-			// calculate arc location
-
-			Coordinate hhCoord = areasGeography.getGeometry(hh).getCoordinate();
-			Coordinate influencerCoord = areasGeography.getGeometry(potInfluencer).getCoordinate();
-			double arcArrow = Math.atan((influencerCoord.y - hhCoord.y) / (influencerCoord.x - hhCoord.x));
-
-			Coordinate[] coordsE = {
-					hhCoord,
-					new Coordinate(hhCoord.x - ARROW_LENGTH * Math.cos(arcArrow), hhCoord.y + ARROW_LENGTH
-							* Math.sin(arcArrow)) };
-
-			Coordinate[] coordsL = {
-					hhCoord,
-					new Coordinate(hhCoord.x - ARROW_LENGTH * Math.cos(1.0 / 2.0 - ARROW_ARC - arcArrow), hhCoord.y
-							- ARROW_LENGTH * Math.sin(90.0 - ARROW_ARC - arcArrow)) };
-			Coordinate[] coordsR = {
-					hhCoord,
-					new Coordinate(hhCoord.x - ARROW_LENGTH * Math.cos(1.0 / 2.0 + ARROW_ARC - arcArrow), hhCoord.y
-							- ARROW_LENGTH * Math.sin(90.0 + ARROW_ARC - arcArrow)) };
-
-			LineString[] lines = { this.geoFactory.createLineString(coords1),
-			// TODO finish
-			// ModelManager.getMan().getGeomFactory().createLineString(coordsE),
-			// ModelManager.getMan().getGeomFactory().createLineString(coordsR)
-			};
-
-			areasGeography.move(edge, this.geoFactory.createMultiLineString(lines));
-
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("Moved " + edge + " to " + lines + "(" + coordsL[0].x + "," + coordsL[0].y + ")" + " / "
-						+ "(" + coordsL[1].x + "," + coordsL[1].y + ")" + "-" + "(" + coordsR[0].x + "," + coordsR[0].y
-						+ ")" + " / " + "(" + coordsR[1].x + "," + coordsR[1].y + ")");
-			}
-			// LOGGING ->
-		}
-	}
 
 	/**
 	 * @param network
 	 */
 	protected void outputNetwork(MoreNetwork<AgentType, EdgeType> network) {
-		File file1 = new File(((String) PmParameterManager.getParameter(MNetworkBuildingParam.NETWORK_TARGET_FILE)));
+		File file1 = new File(((String) PmParameterManager.getParameter(MNetworkBuildingPa.NETWORK_TARGET_FILE)));
 		MoreUtilities.<AgentType, EdgeType> outputGraph(network, file1);
 	}
 
+	/**
+	 * @param network
+	 */
+	protected void logEdges(MoreRsNetwork<AgentType, EdgeType> network, String prestring) {
+		if (logger.isDebugEnabled()) {
+			Set<MoreEdge<AgentType>> edges = new TreeSet<MoreEdge<AgentType>>(
+					new Comparator<MoreEdge<AgentType>>() {
+
+						@Override
+						public int compare(MoreEdge<AgentType> o1,
+								MoreEdge<AgentType> o2) {
+							// if
+							// (!o1.getStart().getAgentID().equals(o2.getStart().getAgentID()))
+							// {
+							// return
+							// o1.getStart().getAgentID().compareTo(o2.getStart().getAgentID());
+							// } else {
+							// return
+							// o1.getEnd().getAgentID().compareTo(o2.getEnd().getAgentID());
+							// }
+							if (!o1.getEnd().getAgentId()
+									.equals(o2.getEnd().getAgentId())) {
+								return o1.getEnd().getAgentId()
+										.compareTo(o2.getEnd().getAgentId());
+							} else {
+								return o1.getStart().getAgentId()
+										.compareTo(o2.getStart().getAgentId());
+							}
+						}
+					});
+			edges.addAll(network.getEdgesCollection());
+			for (MoreEdge<AgentType> edge : edges) {
+				logger.debug(prestring + edge);
+			}
+		}
+	}
 	
 	/*************************************
 	 *   GETTER & SETTER
 	 *************************************/
-
+	
 	/**
-	 * @return the edgeFactory
+	 * @see de.cesr.more.building.MoreGeoNetworkBuilder#setGeograpy(repast.simphony.space.gis.Geography)
 	 */
-	public MoreEdgeFactory<AgentType, EdgeType> getEdgeFactory() {
-		return edgeFactory;
-	}
-
-	/**
-	 * @param edgeFactory the edgeFactory to set
-	 */
-	public void setEdgeFactory(MoreEdgeFactory<AgentType, EdgeType> edgeFactory) {
-		this.edgeFactory = edgeFactory;
+	@Override
+	public void setGeograpy(Geography<Object> geography) {
+		this.geography = geography;
+		this.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(this.edgeFac, geography, geoFactory);
 	}
 	
 	/**
-	 * @return the geoFactory
+	 * Set the (root) context the network shall span
+	 * 
+	 * @param context
 	 */
-	public GeometryFactory getGeoFactory() {
-		return geoFactory;
+	public void setContext(Context<AgentType> context) {
+		this.context = context;
 	}
 
 	/**
-	 * @param geoFactory the geoFactory to set
+	 * @return the edgeModifier
 	 */
-	public void setGeoFactory(GeometryFactory geoFactory) {
-		this.geoFactory = geoFactory;
+	public MGeoRsNetworkEdgeModifier<AgentType, EdgeType> getEdgeModifier() {
+		if (edgeModifier == null) {
+			logger.error("Edge Modifier has not been set or could not be instantiated since geography was not set!");
+			throw new IllegalArgumentException("Edge Modifier has not been set or could not be instantiated since geography was not set!");
+		}
+		return edgeModifier;
+	}
+
+	/**
+	 * @param edgeModifier the edgeModifier to set
+	 */
+	public void setEdgeModifier(
+			MGeoRsNetworkEdgeModifier<AgentType, EdgeType> edgeModifier) {
+		this.edgeModifier = edgeModifier;
 	}
 }

@@ -28,7 +28,6 @@ import java.util.Map;
 
 import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.networks.MoreNetwork;
 
@@ -96,6 +95,7 @@ public abstract class MAbstractNetworkMeasure implements MoreMeasure{
 		 *
 		 * @return The class type of the object that represents the measure and is set at the nodes
 		 */
+		@Override
 		public Class<?> getType() {
 			return type;
 		}
@@ -105,6 +105,7 @@ public abstract class MAbstractNetworkMeasure implements MoreMeasure{
 		 *
 		 * @return A map with key-values pairs as parameters for this measure
 		 */
+		@Override
 		public Map<String, Object> getParameters() {
 			return parameters;
 		}
@@ -114,6 +115,7 @@ public abstract class MAbstractNetworkMeasure implements MoreMeasure{
 		 *
 		 * @return The {@link MMeasureDescription} for this measure
 		 */
+		@Override
 		public MMeasureDescription getMeasureDescription() {
 			return desc;
 		}

@@ -35,6 +35,7 @@ public class AbstractLCompoundNetworkInfo implements ComboundNetworkInfo {
 	/**
 	 * Getter of the property <tt>reach</tt>
 	 */
+	@Override
 	public int getReach() {
 		return reach;
 	}

@@ -35,7 +35,6 @@ import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
-import de.cesr.more.measures.network.supply.MCentralityNetMSupplier.Short;
 import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
@@ -121,6 +120,7 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 						logger.info("... finished.");
 					}
 					
+					@Override
 					public String toString() {
 						return Short.N_STAT_AVGPATH.getName() + "(" + network.getName() + ")";
 					}
@@ -149,6 +149,7 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 						logger.info("... finished.");
 					}
 					
+					@Override
 					public String toString() {
 						return Short.N_STAT_AVGPATH_CLUS.getName() + "(" + network.getName() + ")";
 					}
@@ -173,6 +174,7 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 						logger.info("... finished.");
 					}
 					
+					@Override
 					public String toString() {
 						return Short.N_STAT_NODES.getName() + "(" + network.getName() + ")";
 					}
@@ -196,6 +198,7 @@ public class MNetworkStatisticsSupplier extends MAbstractMeasureSupplier {
 						logger.info("... finished.");
 					}
 					
+					@Override
 					public String toString() {
 						return Short.N_STAT_EDGES.getName() + "(" + network.getName() + ")";
 					}

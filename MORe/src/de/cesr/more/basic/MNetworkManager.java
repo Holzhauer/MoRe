@@ -40,7 +40,6 @@ import de.cesr.more.util.MNetworkClusterMeasureStorage;
 import de.cesr.more.util.MNetworkMeasureStorage;
 import de.cesr.more.util.MoreRunIdProvider;
 import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
-import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe

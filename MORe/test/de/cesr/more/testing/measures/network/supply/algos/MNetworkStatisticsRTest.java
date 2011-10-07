@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.more.basic.MManager;
-import de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR;
 import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
 import de.cesr.more.standalone.MSchedule;
 import de.cesr.more.testing.MTestGraphs;

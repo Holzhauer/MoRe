@@ -35,7 +35,13 @@ import de.cesr.more.basic.MoreEdge;
  * @date 23.09.2011 
  *
  */
-public interface MoreGeoNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> extends
+public interface MoreGeoNetworkBuilder<AgentType, EdgeType extends MoreEdge<? super AgentType>> extends
 		MoreNetworkBuilder<AgentType, EdgeType> {
+	
+	/**
+	 * Sets the geography that defines the spatial proximity of nodes.
+	 * @param geography
+	 */
+	public void setGeograpy(Geography<Object> geography);
 
 }

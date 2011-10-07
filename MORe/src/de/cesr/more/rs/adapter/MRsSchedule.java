@@ -117,6 +117,7 @@ public class MRsSchedule implements MoreSchedule {
 	 * 
 	 * Created by Sascha Holzhauer on 23.12.2010
 	 */
+	@Override
 	public String getScheduleInfo() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("MSchedule Information:\n");

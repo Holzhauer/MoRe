@@ -23,8 +23,10 @@
  */
 package de.cesr.more.rs.building;
 
+import repast.simphony.space.graph.RepastEdge;
+import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreNetworkBuilder;
-import de.cesr.more.rs.adapter.MRepastEdge;
+import de.cesr.more.building.MoreNetworkModifier;
 
 /**
  * MORe
@@ -34,8 +36,7 @@ import de.cesr.more.rs.adapter.MRepastEdge;
  * @date 23.09.2011 
  *
  */
-public interface MoreRsNetworkService<AgentType, EdgeType extends MRepastEdge<AgentType>> extends
+public interface MoreRsNetworkService<AgentType, EdgeType extends RepastEdge<AgentType> & MoreEdge<AgentType>> extends
 		MoreNetworkBuilder<AgentType, EdgeType>,
-		MoreRsNetworkUpdater<AgentType, EdgeType> {
-
+		MoreNetworkModifier<AgentType, EdgeType> {
 }

@@ -25,6 +25,7 @@ package de.cesr.more.rs.adapter;
 
 import repast.simphony.space.graph.RepastEdge;
 import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.basic.MoreGeoEdge;
 
 /**
  * MORe
@@ -33,8 +34,10 @@ import de.cesr.more.basic.MoreEdge;
  * @date Jan 3, 2011 
  *
  */
-public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreEdge<AgentT> {
+public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEdge<AgentT> {
 
+	protected double length = 0.0;
+	
 	/**
 	 * @param source
 	 * @param target
@@ -67,6 +70,7 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreEdge<
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "[" + getStart() + " > " + getEnd() + "]";
 	}
@@ -75,11 +79,28 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreEdge<
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int result = 17;
 		result= 31 * result + getStart().hashCode(); 
 		result= 31 * result + getEnd().hashCode();
 		return result;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.MoreGeoEdge#setLength(double)
+	 */
+	@Override
+	public void setLength(double length) {
+		this.length = length;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.MoreGeoEdge#getLength()
+	 */
+	@Override
+	public double getLength() {
+		return this.length;
 	}
 
 }
