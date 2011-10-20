@@ -10,6 +10,8 @@ import de.cesr.more.testing.adapter.AlLAdapterTests;
 import de.cesr.more.testing.building.AllBuildingTests;
 import de.cesr.more.testing.measures.network.AllMeasuresNetworksTests;
 import de.cesr.more.testing.measures.network.supply.algos.AllNetworkSupplyAlgosTests;
+import de.cesr.more.testing.networks.AllNetworkTests;
+import de.cesr.more.testing.rs.adapter.AllRsAdapterTests;
 import de.cesr.more.testing.standalone.AllStandaloneTests;
 import de.cesr.more.testing.util.AllUtilitiesTests;
 
@@ -20,6 +22,7 @@ import de.cesr.more.testing.util.AllUtilitiesTests;
  */
 @RunWith(Suite.class)
 @SuiteClasses( { AllUtilitiesTests.class, AllNetworkSupplyAlgosTests.class, AllMeasuresNetworksTests.class,
-		AlLAdapterTests.class, AllStandaloneTests.class,AllBuildingTests.class })
+		AlLAdapterTests.class, AllStandaloneTests.class,AllBuildingTests.class, AllNetworkTests.class,
+		AllRsAdapterTests.class})
 public class AllMoreTests {
 }

@@ -38,11 +38,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.more.basic.MEdge;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.edges.MEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;

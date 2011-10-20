@@ -10,7 +10,7 @@ package de.cesr.more.lara;
 
 import java.util.Collection;
 
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.networks.MoreNetwork;
 

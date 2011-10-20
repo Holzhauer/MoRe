@@ -19,27 +19,23 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 24.06.2011
+ * Created by Sascha Holzhauer on 18.10.2011
  */
-package de.cesr.more.building;
+package de.cesr.more.testing.rs.adapter;
 
-import de.cesr.more.edges.MEdge;
-import de.cesr.more.edges.MoreEdge;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * MORe
  *
- * @author holzhauer
- * @date 24.06.2011 
+ * @author Sascha Holzhauer
+ * @date 18.10.2011 
  *
  */
-public class MDefaultEdgeFactory<V> implements MoreEdgeFactory<V, MoreEdge<V>> {
+@RunWith(Suite.class)
+@SuiteClasses({MRsContextJungNetworkTest.class})
+public class AllRsAdapterTests {
 
-	/**
-	 * @see de.cesr.more.building.MoreEdgeFactory#createEdge(java.lang.Object, java.lang.Object, boolean)
-	 */
-	@Override
-	public MoreEdge<V> createEdge(V source, V target, boolean directed) {
-		return new MEdge<V>(source, target, directed);
-	} 
 }

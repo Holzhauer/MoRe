@@ -31,10 +31,10 @@ import java.util.Collection;
 import org.apache.commons.collections15.Factory;
 
 import de.cesr.more.basic.MManager;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.util.MLattice1DGenerator;
 import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
+import de.cesr.more.edges.MoreEdge;
 import edu.uci.ics.jung.graph.Graph;
 
 

@@ -26,8 +26,8 @@ import repast.simphony.util.collections.IndexedIterable;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MRsEdgeFactory;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.networks.MoreRsNetwork;
 import de.cesr.more.param.MMilieuPa;
@@ -35,7 +35,7 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.adapter.MRepastEdge;
-import de.cesr.more.rs.adapter.MoreRsContextJungNetwork;
+import de.cesr.more.rs.adapter.MRsContextJungNetwork;
 import de.cesr.more.rs.building.geo.MGeographyWrapper;
 import de.cesr.more.util.MMilieuNetworkParameterMap;
 import de.cesr.parma.core.PmParameterManager;
@@ -106,7 +106,7 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 		MMilieuNetworkParameterMap paraMap = (MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 
-		MoreRsNetwork<AgentType, EdgeType> network = new MoreRsContextJungNetwork<AgentType, EdgeType>(
+		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				new DirectedJungNetwork<AgentType>(name), context);
 
 		addAgents(network, agents);

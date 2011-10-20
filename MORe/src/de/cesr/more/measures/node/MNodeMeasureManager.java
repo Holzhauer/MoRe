@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureManager;
 import de.cesr.more.measures.MMeasureBundle;
 import de.cesr.more.measures.MMeasureDescription;

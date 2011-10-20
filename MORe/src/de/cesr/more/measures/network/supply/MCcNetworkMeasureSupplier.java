@@ -13,7 +13,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.MNetworkManager;
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;

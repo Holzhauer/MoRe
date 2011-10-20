@@ -41,11 +41,11 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.util.Log4jLogger;
-import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.basic.MoreGeoEdge;
 import de.cesr.more.building.MDefaultEdgeFactory;
 import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.building.MoreGeoNetworkBuilder;
+import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.networks.MoreRsNetwork;
 import de.cesr.more.util.MoreUtilities;

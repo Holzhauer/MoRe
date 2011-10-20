@@ -14,7 +14,7 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.components.environment.LaraEnvironment;
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MNodeMeasures;

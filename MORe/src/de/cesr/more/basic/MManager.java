@@ -24,21 +24,19 @@
 package de.cesr.more.basic;
 
 
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 
-import de.cesr.lara.components.util.LaraRandom;
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.MSqlPa;
-import de.cesr.more.util.MRandom;
-import de.cesr.more.util.MoreRandomService;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.parma.reader.PmDbXmlParameterReader;
+import de.cesr.uranus.core.URandomService;
+import de.cesr.uranus.core.UranusRandomService;
 
 
 
@@ -51,19 +49,19 @@ import de.cesr.parma.reader.PmDbXmlParameterReader;
  */
 public class MManager {
 
-	protected static MoreSchedule		schedule;
+	protected static MoreSchedule			schedule;
 
-	protected static MoreRandomService	randomService;
+	protected static UranusRandomService	randomService;
 
 	/**
 	 * {@link NumberFormat} to format integer numbers
 	 */
-	protected static NumberFormat		integerFormat;
+	protected static NumberFormat			integerFormat;
 
 	/**
 	 * {@link NumberFormat} to format floating point numbers
 	 */
-	protected static NumberFormat		floatPointFormat;
+	protected static NumberFormat			floatPointFormat;
 	
 	
 	/**
@@ -79,21 +77,22 @@ public class MManager {
 	}
 
 	/**
-	 * @param format Created by Sascha Holzhauer on 23.12.2010
+	 * @param format
 	 */
 	public static void setFloatPointFormat(NumberFormat format) {
 		floatPointFormat = format;
 	}
 
 	/**
-	 * @param format Created by Sascha Holzhauer on 23.12.2010
+	 * @param the common format for integers
 	 */
 	public static void setIntegerFormat(NumberFormat format) {
 		integerFormat = format;
 	}
 
 	/**
-	 * @return Created by Sascha Holzhauer on 23.12.2010
+	 * Mainly used for logging purposes.
+	 * @return common format for float numbers
 	 */
 	public static NumberFormat getFloatPointFormat() {
 		if (floatPointFormat == null) {
@@ -103,7 +102,8 @@ public class MManager {
 	}
 
 	/**
-	 * @return Created by Sascha Holzhauer on 23.12.2010
+	 * Mainly used for logging purposes.
+	 * @return common format for integers
 	 */
 	public static NumberFormat getIntegerFormat() {
 		if (integerFormat == null) {
@@ -120,6 +120,7 @@ public class MManager {
 	}
 
 	/**
+	 * Used for instance to schedule network measure calculations.
 	 * @return the schedule
 	 */
 	public static MoreSchedule getSchedule() {
@@ -130,7 +131,7 @@ public class MManager {
 	}
 
 	/**
-	 * @return Created by Sascha Holzhauer on 11.01.2011
+	 * @return true if the schedule has been set
 	 */
 	public static boolean isScheduleSet() {
 		return (schedule != null);
@@ -138,12 +139,11 @@ public class MManager {
 
 	/**
 	 * Return the random manager that is used for random processes.
-	 * 
 	 * @return the random manager
 	 */
-	public static MoreRandomService getMRandomService() {
+	public static UranusRandomService getMRandomService() {
 		if (randomService == null) {
-			randomService = new MRandom(((Integer)PmParameterManager.getParameter(MRandomPa.RANDOM_SEED)).intValue());
+			randomService = new URandomService(((Integer)PmParameterManager.getParameter(MRandomPa.RANDOM_SEED)).intValue());
 		}
 		return randomService;
 	}

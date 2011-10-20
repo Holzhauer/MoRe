@@ -17,7 +17,7 @@ import java.util.Map;
 
 import javax.swing.JLabel;
 
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.networks.MoreNetwork;
 

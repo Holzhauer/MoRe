@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.testing.MTestGraphs;
 import de.cesr.more.testing.MTestGraphs.TestNode;

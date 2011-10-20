@@ -1,22 +1,37 @@
 /**
- * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * This file is part of
+ * 
+ * MORe - Managing Ongoing Relationships
+ *
+ * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *  
+ * MORe - Managing Ongoing Relationships is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Center for Environmental Systems Research, Kassel
- * Created by Sascha Holzhauer on 07.01.2010
  */
 package de.cesr.more.networks;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.edges.MoreEdge;
 
 import edu.uci.ics.jung.graph.Graph;
 
 
 /**
- * Specifies demands on network implementations that shall integrate into LARA's decision making modelling.
+ * Specifies demands on network implementations.
  * 
  * @author Sascha Holzhauer
  * @param <AgentType> the common type (of agents) that is contained as nodes in the network
@@ -28,16 +43,21 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	/**
 	 * Add a node to the network.
 	 * @param node
-	 * Created by Sascha Holzhauer on 30.03.2011
 	 */
 	public void addNode(AgentType node);
 
 	/**
-	 * Removes a node from the network.
+	 * Removes a node and all its edges from the network.
 	 * @param node
-	 * Created by Sascha Holzhauer on 30.03.2011
 	 */
 	public void removeNode(AgentType node);
+	
+	/**
+	 * Return true if the given node is contained within this network
+	 * @param node
+	 * @return true if the network contains the given node
+	 */
+	public boolean containsNode(AgentType node);
 	
 	/**
 	 * The method is used to obtain a new Sub-MoreNetwork. The parameter is a {@link Graph} instance that contains subsets of
@@ -47,8 +67,6 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * 
 	 * @throws NoSuchElementException when the given graph contains a vertex or an edge this network does not contain.
 	 * @return A new {@link MoreNetwork} containing only vertices and edges contained in given graph object
-	 * 
-	 * Created by Sascha Holzhauer on 16.11.2010
 	 */
 	public MoreNetwork<AgentType, EdgeType> getGraphFilteredInstance(Graph<AgentType, EdgeType> graph, String new_name);
 	
@@ -56,7 +74,6 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * If there is already a connection object between these nodes it is removed and the given one added.
 	 * @param source
 	 * @param target
-	 * Created by Sascha Holzhauer on 15.01.2010
 	 * @return the new edge
 	 */
 	public EdgeType connect(AgentType source, AgentType target);
@@ -65,8 +82,7 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * Adds an edge to this network.
 	 * Implementing classes are required to use the edge factory.
 	 * 
-	 * @param edge
-	 * Created by Sascha Holzhauer on 30.03.2011
+	 * @param edge to add to the network
 	 */
 	public void connect(EdgeType edge);
 
@@ -81,7 +97,6 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * @param source
 	 * @param target
 	 * @param weight
-	 *  Created by Sascha Holzhauer on 15.01.2010
 	 */
 	public void setWeight(AgentType source, AgentType target, double weight);
 
@@ -93,7 +108,7 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	/**
 	 * @param source
 	 * @param target
-	 * @return 
+	 * @return the weight of the edge between source and target node
 	 */
 	public double getWeight(AgentType source, AgentType target);
 	
@@ -131,12 +146,12 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	public boolean isAdjacent(AgentType ego, AgentType alter);
 	
 	/**
-	 * Checks whether there is a links from ego to alter.
+	 * Checks whether there is a link from ego to alter.
 	 * @param ego
 	 * @param alter
-	 * @return true, if alter is a successor of ego
+	 * @return true, if alter (1st node) is a successor of ego (2nd node)
 	 */
-	public boolean isSuccessor(AgentType ego, AgentType alter);
+	public boolean isSuccessor(AgentType alter, AgentType ego);
 
 	/**
 	 * @return true if this network is directed
@@ -145,19 +160,19 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 
 	/**
 	 * @param ego
-	 * @return the number of outgoing edges (outdegree)
+	 * @return the number of in- and outgoing edges (degree)
 	 */
 	public int getDegree(AgentType ego);
 
 	/**
 	 * @param ego
-	 * @return the number of incoming edges (indegree)
+	 * @return the number of incoming edges (in-degree)
 	 */
 	public int getInDegree(AgentType ego);
 
 	/**
 	 * @param ego
-	 * @return Created by Sascha Holzhauer on 15.01.2010
+	 * @return the number of outgoing edges (out-degree)
 	 */
 	public int getOutDegree(AgentType ego);
 

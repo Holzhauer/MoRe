@@ -10,7 +10,7 @@ package de.cesr.more.lara;
 
 import de.cesr.lara.components.environment.impl.LEnvironment;
 import de.cesr.lara.components.environment.impl.LAbstractEnvironmentalProperty;
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 
 

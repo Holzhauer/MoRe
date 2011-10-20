@@ -8,7 +8,7 @@ package de.cesr.more.building;
 
 import java.util.Collection;
 
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 
 /**

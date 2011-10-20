@@ -22,7 +22,6 @@
  */
 package de.cesr.more.param;
 
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 
 import de.cesr.parma.core.PmParameterDefinition;
 

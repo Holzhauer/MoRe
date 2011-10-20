@@ -19,20 +19,23 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 07.10.2011
+ * Created by Sascha Holzhauer on 18.10.2011
  */
-package de.cesr.more.basic;
+package de.cesr.more.testing.networks;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 
 /**
  * MORe
  *
- * @author holzhauer
- * @date 07.10.2011 
+ * @author Sascha Holzhauer
+ * @date 18.10.2011 
  *
  */
-public interface MoreGeoEdge<AgentType> extends MoreEdge<AgentType> {
-	
-	public void setLength(double length);
-	
-	public double getLength();
+@RunWith(Suite.class)
+@SuiteClasses({MDirectedNetworkTest.class})
+public class AllNetworkTests {
 }

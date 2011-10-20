@@ -20,9 +20,9 @@ import repast.simphony.space.graph.JungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.MNetworkManager;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MDefaultREdgeFactory;
 import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.exception.IllegalValueTypeException;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
@@ -44,13 +44,13 @@ import edu.uci.ics.jung.graph.Graph;
  * @date 12.10.2010
  * 
  */
-public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> extends ContextJungNetwork<AgentT>
+public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> extends ContextJungNetwork<AgentT>
 		implements MoreRsNetwork<AgentT, EdgeT> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Log4jLogger.getLogger(MoreRsContextJungNetwork.class);
+	static private Logger	logger	= Log4jLogger.getLogger(MRsContextJungNetwork.class);
 	
 	protected Context<AgentT> context;
 	protected JungNetwork<AgentT> network;
@@ -64,7 +64,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	 * @param net
 	 * @param context
 	 */
-	public MoreRsContextJungNetwork(JungNetwork<AgentT> network, Context<AgentT> context) {
+	public MRsContextJungNetwork(JungNetwork<AgentT> network, Context<AgentT> context) {
 		this(network, context, null);
 	}
 
@@ -72,7 +72,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	 * @param net
 	 * @param context
 	 */
-	public MoreRsContextJungNetwork(JungNetwork<AgentT> network, Context<AgentT> context, MoreEdgeFactory<AgentT, EdgeT> edgeFac) {
+	public MRsContextJungNetwork(JungNetwork<AgentT> network, Context<AgentT> context, MoreEdgeFactory<AgentT, EdgeT> edgeFac) {
 		super(network, context);
 		this.context = context;
 		this.network = network;
@@ -267,7 +267,7 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 				(this.isDirected() ? new DirectedJungNetwork<AgentT>(newName) : new UndirectedJungNetwork<AgentT>(
 						newName));
 		jnetwork.setGraph(((Graph<AgentT, RepastEdge<AgentT>>) graph));
-		MoreNetwork<AgentT, EdgeT> out_net = new MoreRsContextJungNetwork<AgentT, EdgeT>(jnetwork, context);
+		MoreNetwork<AgentT, EdgeT> out_net = new MRsContextJungNetwork<AgentT, EdgeT>(jnetwork, context);
 		return out_net;
 	}
 
@@ -352,5 +352,18 @@ public class MoreRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> &
 	@Override
 	public void setEdgeFactory(MoreEdgeFactory<AgentT, EdgeT> edgeFac) {
 		this.edgeFac = edgeFac;
+	}
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#containsNode(java.lang.Object)
+	 */
+	@Override
+	public boolean containsNode(AgentT node) {
+		for (AgentT n : network.getNodes())  {
+			if (n.equals(node)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

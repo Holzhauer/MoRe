@@ -8,7 +8,7 @@ package de.cesr.more.lara.util;
 
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.model.impl.LModel;
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.lara.ComboundNetworkInfo;
 import de.cesr.more.lara.LaraSimpleNetworkAgent;
 import de.cesr.more.networks.MoreNetwork;

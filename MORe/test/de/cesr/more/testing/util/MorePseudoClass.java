@@ -1,6 +1,8 @@
-package de.cesr.more.util;
+package de.cesr.more.testing.util;
 
 import org.apache.log4j.Logger;
+
+import de.cesr.more.util.Log4jLogger;
 
 public class MorePseudoClass {
 	
@@ -11,7 +13,6 @@ public class MorePseudoClass {
 
 	/**
 	 * @param args
-	 * Created by Sascha Holzhauer on 05.10.2010
 	 */
 	public static void main(String[] args) {
 		// <- LOGGING

@@ -24,9 +24,9 @@ import org.apache.commons.collections15.Transformer;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
-import de.cesr.more.basic.MEdge;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.edges.MEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.io.GraphMLReaderWithEdges;
 import de.cesr.more.networks.MDirectedNetwork;
 import de.cesr.more.networks.MoreNetwork;

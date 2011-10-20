@@ -10,7 +10,7 @@ package de.cesr.more.lara;
 
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.lara.LaraAgentNetworkComp;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 

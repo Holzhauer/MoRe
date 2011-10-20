@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+	<key id="id" for="graph">
+	<desc>id</desc>
+	<default>-1</default>
+	</key>
+  <graph edgedefault="directed" id="G">
+    <node id="n0">
+    </node>
+    <node id="n1">
+    </node>
+    <node id="n2">
+    </node>
+    <node id="n3">
+    </node>
+    <edge source="n0" target="n1">
+    </edge>
+    <edge source="n0" target="n3">
+	</edge>
+    <edge source="n1" target="n0">
+	</edge>
+    <edge source="n1" target="n2">
+    </edge>
+    <edge source="n1" target="n3">
+    </edge>
+    <edge source="n2" target="n1">
+    </edge>
+    <edge source="n2" target="n3">
+    </edge>
+    <edge source="n3" target="n0">
+    </edge>
+    <edge source="n3" target="n1">
+    </edge>
+    <edge source="n3" target="n2">
+    </edge>
+  </graph>
+</graphml>

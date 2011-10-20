@@ -19,26 +19,31 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 03.12.2010
+ * Created by holzhauer on 07.10.2011
  */
-package de.cesr.more.basic;
+package de.cesr.more.geo;
+
+import de.cesr.more.edges.MoreEdge;
 
 /**
  * MORe
- *
- * @author Sascha Holzhauer
- * @date 03.12.2010 
+ * 
+ * MoreGeoEdges have an additional, pre-defined property which is their
+ * geographical length.
+ * 
+ * @author holzhauer
+ * @date 07.10.2011 
  *
  */
-public interface MoreEdge<AgentType> {
-
-	public AgentType getStart();
+public interface MoreGeoEdge<AgentType> extends MoreEdge<AgentType> {
 	
-	public AgentType getEnd();
+	/**
+	 * @param length this node's geographical length
+	 */
+	public void setLength(double length);
 	
-	public double getWeight();
-	
-	public void setWeight(double weight);
-	
-	public boolean isDirected();
+	/**
+	 * @return this node's geographical length
+	 */
+	public double getLength();
 }

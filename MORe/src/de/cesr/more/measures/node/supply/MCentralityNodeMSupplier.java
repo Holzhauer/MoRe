@@ -15,7 +15,7 @@ package de.cesr.more.measures.node.supply;
 
 import java.util.Map;
 
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.measures.MAbstractNodeMeasure;

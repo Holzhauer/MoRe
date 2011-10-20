@@ -24,7 +24,7 @@
 package de.cesr.more.building;
 
 import repast.simphony.space.gis.Geography;
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 
 /**
  * MORe

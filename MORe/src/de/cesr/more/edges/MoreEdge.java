@@ -19,27 +19,43 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 24.06.2011
+ * Created by Sascha Holzhauer on 03.12.2010
  */
-package de.cesr.more.building;
-
-import de.cesr.more.edges.MEdge;
-import de.cesr.more.edges.MoreEdge;
+package de.cesr.more.edges;
 
 /**
  * MORe
  *
- * @author holzhauer
- * @date 24.06.2011 
+ * @author Sascha Holzhauer
+ * @date 03.12.2010 
  *
  */
-public class MDefaultEdgeFactory<V> implements MoreEdgeFactory<V, MoreEdge<V>> {
+public interface MoreEdge<AgentType> {
 
 	/**
-	 * @see de.cesr.more.building.MoreEdgeFactory#createEdge(java.lang.Object, java.lang.Object, boolean)
+	 * For undirected edges, it returns the node that was given as first node parameter.
+	 * @return the edge's start node
 	 */
-	@Override
-	public MoreEdge<V> createEdge(V source, V target, boolean directed) {
-		return new MEdge<V>(source, target, directed);
-	} 
+	public AgentType getStart();
+	
+	/**
+	 * For undirected edges, it returns the node that was given as second node parameter.
+	 * @return the edge's target node
+	 */
+	public AgentType getEnd();
+	
+	/**
+	 * @return the weight that is associated with this edge
+	 */
+	public double getWeight();
+	
+	/**
+	 * @param weight that is associated with this edge
+	 */
+	public void setWeight(double weight);
+	
+	/**
+	 * @return true if this edge is directed
+	 */
+	public boolean isDirected();
 }

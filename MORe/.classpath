@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="libs/geoapi-nogenerics-2.1-M2.jar"/>
 	<classpathentry kind="lib" path="libs/gt2-referencing-2.3.3.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/gt2-2.3.3/module/referencing/src"/>
 	<classpathentry kind="lib" path="libs/gt2-main-2.3.3.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/gt2-2.3.3/module/main/src"/>
+	<classpathentry kind="lib" path="libs/Uranus.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

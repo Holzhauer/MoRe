@@ -47,15 +47,16 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	MILIEU_NETPREFS_PARAMID(Integer.class, 0),
 	
 	/**
-	 * range: (0,1)
+	 * The probability of an edge being rewired randomly; the proportion of randomly
+	 * rewired edges in a graph. Rrange: (0,1)
 	 */
 	BUILD_WSSM_BETA(Double.class, 0.1),
 	
 	/**
-	 * Initial degree that is used to build to regular network
-	 * to start from.
+	 * Initial degree that is used to build to regular network (local ngh size)
+	 * to start from. Must be an even number.
 	 */
-	BUILD_WSSM_INITIAL_DEGREE(Integer.class, 4),
+	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
 	
 	BUILD_DIRECTED(Boolean.class, false),
 	

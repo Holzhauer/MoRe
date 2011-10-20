@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 import org.apache.commons.collections15.Predicate;
 import org.apache.log4j.Logger;
 
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.util.Log4jLogger;

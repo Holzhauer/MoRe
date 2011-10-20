@@ -21,7 +21,8 @@
  * 
  * Created by Sascha Holzhauer on 03.12.2010
  */
-package de.cesr.more.basic;
+package de.cesr.more.edges;
+
 
 /**
  * MORe
@@ -31,6 +32,8 @@ package de.cesr.more.basic;
  *
  */
 public class MEdge<V> implements MoreEdge<V> {
+	
+	private final static double DEFAULT_EDGE_WEIGHT = 1.0;
 	
 	V start, end;
 	double weight;
@@ -51,13 +54,24 @@ public class MEdge<V> implements MoreEdge<V> {
 	 * @param directed 
 	 */
 	public MEdge(V start, V end, boolean directed) {
-		this.start = start;
-		this.end = end;
-		this.directed = directed;
+		this(start, end, directed, DEFAULT_EDGE_WEIGHT);
 	}
 	
 	/**
-	 * @see de.cesr.more.basic.MoreEdge#getEnd()
+	 * @param start
+	 * @param end
+	 * @param directed
+	 * @param weight
+	 */
+	public MEdge(V start, V end, boolean directed, double weight) {
+		this.start = start;
+		this.end = end;
+		this.directed = directed;
+		this.weight = weight;
+	}
+	
+	/**
+	 * @see de.cesr.more.edges.MoreEdge#getEnd()
 	 */
 	@Override
 	public V getEnd() {
@@ -65,7 +79,7 @@ public class MEdge<V> implements MoreEdge<V> {
 	}
 
 	/**
-	 * @see de.cesr.more.basic.MoreEdge#getStart()
+	 * @see de.cesr.more.edges.MoreEdge#getStart()
 	 */
 	@Override
 	public V getStart() {
@@ -73,7 +87,7 @@ public class MEdge<V> implements MoreEdge<V> {
 	}
 
 	/**
-	 * @see de.cesr.more.basic.MoreEdge#getWeight()
+	 * @see de.cesr.more.edges.MoreEdge#getWeight()
 	 */
 	@Override
 	public double getWeight() {
@@ -81,7 +95,7 @@ public class MEdge<V> implements MoreEdge<V> {
 	}
 
 	/**
-	 * @see de.cesr.more.basic.MoreEdge#setWeight(double)
+	 * @see de.cesr.more.edges.MoreEdge#setWeight(double)
 	 */
 	@Override
 	public void setWeight(double weight) {
@@ -94,7 +108,7 @@ public class MEdge<V> implements MoreEdge<V> {
 	}
 
 	/**
-	 * @see de.cesr.more.basic.MoreEdge#isDirected()
+	 * @see de.cesr.more.edges.MoreEdge#isDirected()
 	 */
 	@Override
 	public boolean isDirected() {

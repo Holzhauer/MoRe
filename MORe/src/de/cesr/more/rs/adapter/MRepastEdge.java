@@ -24,8 +24,8 @@
 package de.cesr.more.rs.adapter;
 
 import repast.simphony.space.graph.RepastEdge;
-import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.basic.MoreGeoEdge;
+import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.geo.MoreGeoEdge;
 
 /**
  * MORe
@@ -52,7 +52,7 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	}
 	
 	/**
-	 * @see de.cesr.more.basic.MoreEdge#getEnd()
+	 * @see de.cesr.more.edges.MoreEdge#getEnd()
 	 */
 	@Override
 	public AgentT getEnd() {
@@ -60,7 +60,7 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	}
 
 	/**
-	 * @see de.cesr.more.basic.MoreEdge#getStart()
+	 * @see de.cesr.more.edges.MoreEdge#getStart()
 	 */
 	@Override
 	public AgentT getStart() {
@@ -88,7 +88,7 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	}
 
 	/**
-	 * @see de.cesr.more.basic.MoreGeoEdge#setLength(double)
+	 * @see de.cesr.more.geo.MoreGeoEdge#setLength(double)
 	 */
 	@Override
 	public void setLength(double length) {
@@ -96,7 +96,7 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	}
 
 	/**
-	 * @see de.cesr.more.basic.MoreGeoEdge#getLength()
+	 * @see de.cesr.more.geo.MoreGeoEdge#getLength()
 	 */
 	@Override
 	public double getLength() {

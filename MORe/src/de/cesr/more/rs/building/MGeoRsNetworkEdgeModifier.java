@@ -42,10 +42,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-import de.cesr.more.basic.MoreEdge;
-import de.cesr.more.basic.MoreGeoEdge;
 import de.cesr.more.building.MoreEdgeFactory;
 import de.cesr.more.building.MoreNetworkEdgeModifier;
+import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;

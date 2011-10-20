@@ -24,9 +24,9 @@
 package de.cesr.more.rs.building;
 
 import repast.simphony.space.graph.RepastEdge;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreNetworkBuilder;
 import de.cesr.more.building.MoreNetworkModifier;
+import de.cesr.more.edges.MoreEdge;
 
 /**
  * MORe

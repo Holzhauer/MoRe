@@ -23,7 +23,7 @@
  */
 package de.cesr.more.networks;
 
-import de.cesr.more.basic.MoreEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.exception.IllegalValueTypeException;
 import de.cesr.more.measures.MMeasureDescription;
 import repast.simphony.context.ContextListener;

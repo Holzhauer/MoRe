@@ -30,9 +30,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.collections15.Factory;
 import org.xml.sax.SAXException;
 
-import de.cesr.more.basic.MEdge;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.edges.MEdge;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MNodeMeasures;

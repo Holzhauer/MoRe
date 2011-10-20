@@ -19,18 +19,19 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 05.10.2011
+ * Created by Sascha Holzhauer on 14.10.2011
  */
-package de.cesr.more.rs.building;
+package de.cesr.more.building.aggregate;
 
 /**
  * MORe
  *
- * @author holzhauer
- * @date 05.10.2011 
+ * @author Sascha Holzhauer
+ * @date 14.10.2011 
  *
  */
-public class MNetworkPopulationAggregator {
-
+public interface MoreAggregateService<AgentType> {
 	
+	public double getDifferenceValue(AgentType one, AgentType two);
+
 }

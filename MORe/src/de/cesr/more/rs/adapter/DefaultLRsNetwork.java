@@ -19,9 +19,9 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MDefaultREdgeFactory;
 import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -194,8 +194,11 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	}
 
 
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#isSuccessor(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isSuccessor(AgentT ego, AgentT alter) {
+	public boolean isSuccessor(AgentT alter, AgentT ego) {
 		return network.isSuccessor(alter, ego);
 	}
 
@@ -286,7 +289,7 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	}
 
 	/**
-	 * @see de.cesr.more.networks.MoreNetwork#connect(de.cesr.more.basic.MoreEdge)
+	 * @see de.cesr.more.networks.MoreNetwork#connect(de.cesr.more.edges.MoreEdge)
 	 */
 	@Override
 	public void connect(EdgeT edge) {
@@ -299,6 +302,20 @@ public final class DefaultLRsNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & 
 	@Override
 	public void removeNode(AgentT node) {
 		network.removeVertex(node);
+	}
+	
+
+	/**
+	 * @see de.cesr.more.networks.MoreNetwork#containsNode(java.lang.Object)
+	 */
+	@Override
+	public boolean containsNode(AgentT node) {
+		for (AgentT n : network.getNodes())  {
+			if (n.equals(node)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

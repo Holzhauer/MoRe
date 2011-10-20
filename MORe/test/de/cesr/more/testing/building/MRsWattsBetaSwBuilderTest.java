@@ -53,7 +53,6 @@ public class MRsWattsBetaSwBuilderTest {
 	
 	/**
 	 * @throws java.lang.Exception
-	 * Created by holzhauer on 27.09.2011
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -72,14 +71,13 @@ public class MRsWattsBetaSwBuilderTest {
 		networkBuilder.setContext(new DefaultContext<Object>());
 		MoreRsNetwork<Object, MRepastEdge<Object>> network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());
-		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_DEGREE)).intValue() / 2, network.numEdges());
+		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue() / 2, network.numEdges());
 
 		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(true));
 		networkBuilder = new MRsWattsBetaSwBuilder<Object, MRepastEdge<Object>>();
 		networkBuilder.setContext(new DefaultContext<Object>());
 		network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());
-		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_DEGREE)).intValue(), network.numEdges());
-		
+		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue(), network.numEdges());
 	}
 }

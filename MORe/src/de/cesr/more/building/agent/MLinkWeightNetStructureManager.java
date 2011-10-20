@@ -31,8 +31,8 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import de.cesr.more.basic.MoreEdge;
 import de.cesr.more.building.MoreNetworkEdgeModifier;
+import de.cesr.more.edges.MoreEdge;
 import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.util.Log4jLogger;
 
