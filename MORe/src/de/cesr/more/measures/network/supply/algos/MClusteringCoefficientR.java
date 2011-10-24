@@ -31,7 +31,7 @@ import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 
 import de.cesr.more.basic.MManager;
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;

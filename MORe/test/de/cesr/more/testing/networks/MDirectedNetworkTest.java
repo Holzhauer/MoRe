@@ -29,13 +29,13 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.more.building.MoreEdgeFactory;
-import de.cesr.more.edges.MEdge;
-import de.cesr.more.edges.MoreEdge;
-import de.cesr.more.networks.MDirectedNetwork;
-import de.cesr.more.networks.MoreNetwork;
-import de.cesr.more.testing.MTestGraphs;
-import de.cesr.more.testing.MTestGraphs.TestNode;
+import de.cesr.more.basic.edge.MEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MDirectedNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.testing.testutils.MTestGraphs;
+import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
 
 /**
  * MORe
@@ -73,7 +73,7 @@ public class MDirectedNetworkTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.more.networks.MDirectedNetwork#normalizeWeights()}.
+	 * Test method for {@link de.cesr.more.basic.network.MDirectedNetwork#normalizeWeights()}.
 	 */
 	@Test
 	public void testNormalizeWeights() {

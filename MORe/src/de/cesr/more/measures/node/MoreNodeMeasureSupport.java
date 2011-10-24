@@ -25,8 +25,8 @@ package de.cesr.more.measures.node;
 
 
 
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.networks.MoreNetwork;
 
 
 

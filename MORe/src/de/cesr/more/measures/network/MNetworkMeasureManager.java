@@ -36,19 +36,18 @@ import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MAbstractMeasureManager;
 import de.cesr.more.measures.MMeasureBundle;
 import de.cesr.more.measures.MMeasureDescription;
+import de.cesr.more.measures.MoreMeasure;
 import de.cesr.more.measures.MoreMeasureManagerListener;
-import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
-import de.cesr.more.measures.measures.MoreMeasure;
 import de.cesr.more.measures.network.supply.MBasicNetworkMeasureSupplier;
 import de.cesr.more.measures.node.MNodeMeasureManager;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.measures.util.MoreSchedule;
-import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.util.Log4jLogger;
 
 

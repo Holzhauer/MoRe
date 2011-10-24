@@ -33,10 +33,10 @@ import org.junit.Test;
 
 import repast.simphony.context.DefaultContext;
 
-import de.cesr.more.networks.MoreRsNetwork;
 import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.rs.adapter.MRepastEdge;
 import de.cesr.more.rs.building.MRsWattsBetaSwBuilder;
+import de.cesr.more.rs.edge.MRepastEdge;
+import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -67,6 +67,7 @@ public class MRsWattsBetaSwBuilderTest {
 	 */
 	@Test
 	public void testBuildNetwork() {
+		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(false));
 		MRsWattsBetaSwBuilder<Object, MRepastEdge<Object>> networkBuilder = new MRsWattsBetaSwBuilder<Object, MRepastEdge<Object>>();
 		networkBuilder.setContext(new DefaultContext<Object>());
 		MoreRsNetwork<Object, MRepastEdge<Object>> network = networkBuilder.buildNetwork(agents);

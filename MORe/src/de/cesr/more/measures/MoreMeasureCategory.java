@@ -23,8 +23,7 @@
  */
 package de.cesr.more.measures;
 
-import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
-import de.cesr.more.measures.measures.MoreMeasure;
+import de.cesr.more.measures.network.MAbstractNetworkMeasure;
 
 
 /**

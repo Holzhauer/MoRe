@@ -27,15 +27,15 @@ package de.cesr.more.measures.node.supply;
 
 import java.util.Map;
 
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.measures.measures.MAbstractNodeMeasure;
+import de.cesr.more.measures.node.MAbstractNodeMeasure;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.networks.MoreNetwork;
 
 
 

@@ -30,15 +30,15 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.MNetworkManager;
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
+import de.cesr.more.measures.network.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.networks.MoreNetwork;
 import de.cesr.more.util.Log4jLogger;
 
 

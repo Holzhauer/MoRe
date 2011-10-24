@@ -26,7 +26,6 @@ package de.cesr.more.param;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import de.cesr.more.util.MMilieuNetworkParameterMap;
 import de.cesr.parma.core.PmParameterDefinition;
 
 /**

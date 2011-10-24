@@ -41,15 +41,15 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.util.Log4jLogger;
-import de.cesr.more.building.MDefaultEdgeFactory;
-import de.cesr.more.building.MoreEdgeFactory;
-import de.cesr.more.building.MoreGeoNetworkBuilder;
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.util.io.MoreIoUtilities;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MDefaultEdgeFactory;
+import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.geo.MoreGeoEdge;
-import de.cesr.more.networks.MoreNetwork;
-import de.cesr.more.networks.MoreRsNetwork;
-import de.cesr.more.util.MoreUtilities;
+import de.cesr.more.geo.building.MoreGeoNetworkBuilder;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -131,7 +131,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	}
 	
 	/**
-	 * @see de.cesr.more.building.MoreNetworkModifier#removeNode(de.cesr.more.networks.MoreNetwork, java.lang.Object)
+	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#removeNode(de.cesr.more.basic.network.MoreNetwork, java.lang.Object)
 	 */
 	@Override
 	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
@@ -155,7 +155,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	public abstract MoreRsNetwork<AgentType, EdgeType> buildRsNetwork(Collection<AgentType> agents, String name);
 
 	/**
-	 * @see de.cesr.more.building.MoreNetworkBuilder#buildNetwork(java.util.Collection)
+	 * @see de.cesr.more.building.network.MoreNetworkBuilder#buildNetwork(java.util.Collection)
 	 */
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
@@ -163,7 +163,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	}
 
 	/**
-	 * @see de.cesr.more.building.MoreNetworkEdgeModifier#removeEdge(de.cesr.more.networks.MoreNetwork, java.lang.Object, java.lang.Object)
+	 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#removeEdge(de.cesr.more.basic.network.MoreNetwork, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
@@ -189,7 +189,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 */
 	protected void outputNetwork(MoreNetwork<AgentType, EdgeType> network) {
 		File file1 = new File(((String) PmParameterManager.getParameter(MNetworkBuildingPa.NETWORK_TARGET_FILE)));
-		MoreUtilities.<AgentType, EdgeType> outputGraph(network, file1);
+		MoreIoUtilities.<AgentType, EdgeType> outputGraph(network, file1);
 	}
 
 	/**
@@ -234,7 +234,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 *************************************/
 	
 	/**
-	 * @see de.cesr.more.building.MoreGeoNetworkBuilder#setGeograpy(repast.simphony.space.gis.Geography)
+	 * @see de.cesr.more.geo.building.MoreGeoNetworkBuilder#setGeograpy(repast.simphony.space.gis.Geography)
 	 */
 	@Override
 	public void setGeograpy(Geography<Object> geography) {

@@ -42,11 +42,11 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-import de.cesr.more.building.MoreEdgeFactory;
-import de.cesr.more.building.MoreNetworkEdgeModifier;
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.geo.MoreGeoEdge;
-import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -91,7 +91,7 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	}
 
 	/**
-	 * @see de.cesr.more.building.MoreNetworkEdgeModifier#createEdge(java.lang.Object, java.lang.Object, boolean)
+	 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#createEdge(java.lang.Object, java.lang.Object, boolean)
 	 */
 	@Override
 	public EdgeType createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
@@ -110,7 +110,7 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	}
 
 	/**
-	 * @see de.cesr.more.building.MoreNetworkEdgeModifier#removeEdge(java.lang.Object, java.lang.Object)
+	 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#removeEdge(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {

@@ -29,8 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections15.Factory;
+import org.apache.log4j.Logger;
 
-import de.cesr.more.building.MoreEdgeFactory;
+import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.building.network.MSmallWorldBetaModelNetworkGenerator;
+import de.cesr.more.building.network.MoreKValueProvider;
 
 import edu.uci.ics.jung.algorithms.generators.GraphGenerator;
 import edu.uci.ics.jung.graph.DirectedGraph;
@@ -50,10 +53,17 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 	protected MoreKValueProvider<V>				kProvider;
 	protected boolean							is_toroidal;
 	protected boolean							is_directed;
+	protected boolean							is_symmetrical;
 	protected Factory<? extends Graph<V, E>>	graph_factory;
 	protected Factory<V>						vertex_factory;
 	protected MoreEdgeFactory<V,E>				edge_factory;
 	private List<V>								v_array;
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger
+			.getLogger(MSmallWorldBetaModelNetworkGenerator.class);
 
 	/**
 	 * Constructs a generator of square lattices of size {@code latticeSize} with the specified parameters.
@@ -66,7 +76,8 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 	 * @param isToroidal if true, the created lattice wraps from top to bottom and left to right
 	 */
 	public MLattice1DGenerator(Factory<? extends Graph<V, E>> graph_factory, Factory<V> vertex_factory,
-			MoreEdgeFactory<V,E> edge_factory, int lattice_size, MoreKValueProvider<V> kProvider, boolean isToroidal) {
+			MoreEdgeFactory<V,E> edge_factory, int lattice_size, MoreKValueProvider<V> kProvider, boolean isToroidal,
+			boolean is_symmetrical) {
 		if (lattice_size < 2) {
 			throw new IllegalArgumentException("Lattice size counts must each be at least 2.");
 		}
@@ -78,13 +89,13 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 		this.vertex_factory = vertex_factory;
 		this.edge_factory = edge_factory;
 		this.is_directed = (graph_factory.create() instanceof DirectedGraph);
+		this.is_symmetrical = is_symmetrical;
 	}
 
 	/**
 	 * @see edu.uci.ics.jung.algorithms.generators.GraphGenerator#create()
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Graph<V, E> create() {
 		int vertex_count = numVertices;
 		Graph<V, E> graph = graph_factory.create();
@@ -101,7 +112,15 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 		// fill in edges
 		// clockwise:
 		for (int i = 1; i <= numVertices; i++) {
-			for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)); j++) {
+			// degree <= |nodes| !
+			if (kProvider.getKValue(v_array.get(i - 1)) > graph.getVertexCount()) {
+				String msg = "Degree/K value (" + kProvider.getKValue(v_array.get(i - 1))
+						+ ") may not exceed the number of nodes ("
+						+ graph.getVertexCount() + ")";
+				logger.error(msg);
+				throw new IllegalStateException(msg);
+			}
+			for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)) * 0.5; j++) {
 				if (is_toroidal || (!is_toroidal && i + j <= numVertices)) {
 					graph.addEdge(edge_factory.createEdge(getVertex(getIndex(i)), getVertex(getIndex(i + j)), this.is_directed), 
 							getVertex(getIndex(i)), getVertex(getIndex(i + j)));
@@ -113,10 +132,14 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 		if (graph instanceof DirectedGraph) {
 			// counter-clockwise
 			for (int i = 1; i <= numVertices; i++) {
-				for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)); j++) {
+				for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)) * 0.5; j++) {
 					if (is_toroidal || (!is_toroidal && i - j >= 0)) {
 						graph.addEdge(edge_factory.createEdge(getVertex(getIndex(i)), getVertex(getIndex(i - j)), this.is_directed), 
 								getVertex(getIndex(i)), getVertex(getIndex(i - j)));
+						if (is_symmetrical) {
+							graph.addEdge(edge_factory.createEdge( getVertex(getIndex(i - j)), getVertex(getIndex(i)), this.is_directed), 
+									getVertex(getIndex(i - j)), getVertex(getIndex(i)));
+						}
 					}
 				}
 			}

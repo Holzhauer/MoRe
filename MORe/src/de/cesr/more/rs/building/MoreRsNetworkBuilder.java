@@ -29,9 +29,9 @@ import java.util.Collection;
 
 import repast.simphony.context.Context;
 
-import de.cesr.more.building.MoreNetworkBuilder;
-import de.cesr.more.networks.MoreRsNetwork;
-import de.cesr.more.rs.adapter.MRepastEdge;
+import de.cesr.more.building.network.MoreNetworkBuilder;
+import de.cesr.more.rs.edge.MRepastEdge;
+import de.cesr.more.rs.network.MoreRsNetwork;
 
 
 

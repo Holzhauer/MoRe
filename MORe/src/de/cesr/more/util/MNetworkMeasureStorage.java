@@ -27,8 +27,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.networks.MoreNetwork;
 
 /**
  * MORe

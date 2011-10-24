@@ -26,18 +26,18 @@ import repast.simphony.util.collections.IndexedIterable;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
-import de.cesr.more.building.MRsEdgeFactory;
-import de.cesr.more.edges.MoreEdge;
-import de.cesr.more.networks.MoreNetwork;
-import de.cesr.more.networks.MoreRsNetwork;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MMilieuPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
-import de.cesr.more.rs.adapter.MRepastEdge;
-import de.cesr.more.rs.adapter.MRsContextJungNetwork;
-import de.cesr.more.rs.building.geo.MGeographyWrapper;
-import de.cesr.more.util.MMilieuNetworkParameterMap;
+import de.cesr.more.rs.building.edge.MRsEdgeFactory;
+import de.cesr.more.rs.edge.MRepastEdge;
+import de.cesr.more.rs.geo.util.MGeographyWrapper;
+import de.cesr.more.rs.network.MRsContextJungNetwork;
+import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
 
 import de.cesr.more.util.MDefaultMilieuKeysMap;
@@ -88,7 +88,7 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 	 * 
 	 * For each agent: For each potential neighbour in surroundings:
 	 * 
-	 * @see de.cesr.more.building.MoreNetworkBuilder#buildNetwork(java.util.Collection)
+	 * @see de.cesr.more.building.network.MoreNetworkBuilder#buildNetwork(java.util.Collection)
 	 */
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildRsNetwork(

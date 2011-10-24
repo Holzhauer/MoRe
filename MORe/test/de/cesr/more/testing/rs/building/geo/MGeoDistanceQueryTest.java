@@ -40,9 +40,9 @@ import repast.simphony.space.gis.GeographyParameters;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
+import de.cesr.more.geo.MTorusCoordinate;
 import de.cesr.more.param.MBasicPa;
-import de.cesr.more.rs.building.geo.MGeoDistanceQuery;
-import de.cesr.more.util.MTorusCoordinate;
+import de.cesr.more.rs.geo.util.MGeoDistanceQuery;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -87,8 +87,9 @@ public class MGeoDistanceQueryTest {
 	public void setUp() throws Exception {
 		Context<Object> context = new DefaultContext<Object>();
 		this.geoFactory = new GeometryFactory(new PrecisionModel(),
-				new Integer(4326));
+				new Integer(32632)); // WGS84 UTM 32N
 		GeographyParameters<Object> geoParams = new GeographyParameters<Object>();
+		geoParams.setCrs("EPSG:32632");
 		this.geography = GeographyFactoryFinder.createGeographyFactory(null)
 				.createGeography("Geography", context, geoParams);
 
@@ -97,7 +98,11 @@ public class MGeoDistanceQueryTest {
 		a101 = new TestAgent(101);
 		a150 = new TestAgent(150);
 		
+		PmParameterManager.setParameter(MBasicPa.FIELD_UPPER_X,  new Double(100.0));
+		PmParameterManager.setParameter(MBasicPa.FIELD_UPPER_Y,  new Double(100.0));
+		
 		double upper_x = ((Double)PmParameterManager.getParameter(MBasicPa.FIELD_UPPER_X)).doubleValue();
+		
 		geography.move(a100,
 				geoFactory.createPoint(new MTorusCoordinate(upper_x, 1)));
 		geography.move(a101,

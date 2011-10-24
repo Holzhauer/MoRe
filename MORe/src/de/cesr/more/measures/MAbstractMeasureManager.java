@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeSet;
 
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.networks.MoreNetwork;
 
 /**
  * MORe
@@ -117,7 +117,7 @@ public abstract class MAbstractMeasureManager extends MAbstractMeasureSupplier i
 	}
 	
 	/**
-	 * @see de.cesr.more.measures.MMeasureSelectorListener#getAddableMeasures(de.cesr.more.networks.MoreNetwork)
+	 * @see de.cesr.more.measures.MMeasureSelectorListener#getAddableMeasures(de.cesr.more.basic.network.MoreNetwork)
 	 */
 	@Override
 	public Set<MMeasureDescription> getAddableMeasures(MoreNetwork<?, ?> network) {

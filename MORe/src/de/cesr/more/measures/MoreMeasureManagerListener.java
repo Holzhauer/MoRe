@@ -3,7 +3,7 @@
  */
 package de.cesr.more.measures;
 
-import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
 
 
 /**

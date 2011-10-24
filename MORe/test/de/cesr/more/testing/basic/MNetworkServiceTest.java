@@ -30,12 +30,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.more.basic.MNetworkService;
-import de.cesr.more.building.MDefaultEdgeFactory;
-import de.cesr.more.building.MoreEdgeFactory;
-import de.cesr.more.edges.MoreEdge;
-import de.cesr.more.io.GraphMLReaderWithEdges;
-import de.cesr.more.networks.MDirectedNetwork;
-import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MDirectedNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MDefaultEdgeFactory;
+import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.util.io.MGraphMLReaderWithEdges;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -114,8 +114,8 @@ public class MNetworkServiceTest {
 			}
 		};
 		
-		GraphMLReaderWithEdges<Graph<TestAgent, MoreEdge<TestAgent>>, TestAgent, MoreEdge<TestAgent>> graphReader = 
-				new GraphMLReaderWithEdges<Graph<TestAgent, MoreEdge<TestAgent>>, TestAgent, MoreEdge<TestAgent>>(nodeFactory,
+		MGraphMLReaderWithEdges<Graph<TestAgent, MoreEdge<TestAgent>>, TestAgent, MoreEdge<TestAgent>> graphReader = 
+				new MGraphMLReaderWithEdges<Graph<TestAgent, MoreEdge<TestAgent>>, TestAgent, MoreEdge<TestAgent>>(nodeFactory,
 				edgeFactory);
 		
 		graphReader.load(GRAPH_FILENAME, network.getJungGraph());

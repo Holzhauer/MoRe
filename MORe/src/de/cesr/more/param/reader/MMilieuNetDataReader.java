@@ -29,9 +29,9 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MSqlPa;
-import de.cesr.more.util.MMilieuNetworkParameterMap;
 import de.cesr.more.util.MMySqlService;
 import de.cesr.parma.core.PmAbstractParameterReader;
 import de.cesr.parma.core.PmParameterManager;

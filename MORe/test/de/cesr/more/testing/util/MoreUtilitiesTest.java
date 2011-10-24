@@ -9,11 +9,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.more.edges.MoreEdge;
-import de.cesr.more.networks.MoreNetwork;
-import de.cesr.more.testing.MTestGraphs;
-import de.cesr.more.testing.MTestGraphs.TestNode;
-import de.cesr.more.util.MoreUtilities;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.testing.testutils.MTestGraphs;
+import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.util.io.MoreIoUtilities;
 
 public class MoreUtilitiesTest {
 
@@ -32,8 +32,8 @@ public class MoreUtilitiesTest {
 
 	@Test
 	public final void testOutputGraph() {
-		MoreUtilities.outputGraph(network, new File(OUT_DIR));
-		MoreNetwork<TestNode, MoreEdge<TestNode>> in_net = MoreUtilities.inputNetwork(new File(OUT_DIR),
+		MoreIoUtilities.outputGraph(network, new File(OUT_DIR));
+		MoreNetwork<TestNode, MoreEdge<TestNode>> in_net = MoreIoUtilities.inputNetwork(new File(OUT_DIR),
 				new Factory<TestNode>() {
 
 					@Override

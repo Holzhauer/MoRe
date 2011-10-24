@@ -34,9 +34,9 @@ import org.rosuda.JRI.Rengine;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR;
-import de.cesr.more.standalone.MSchedule;
-import de.cesr.more.testing.MTestGraphs;
+import de.cesr.more.testing.testutils.MTestGraphs;
 import de.cesr.more.util.Log4jLogger;
+import de.cesr.more.util.MSchedule;
 import edu.uci.ics.jung.graph.Graph;
 
 /**

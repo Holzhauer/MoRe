@@ -13,7 +13,6 @@ package de.cesr.more.measures;
 
 import java.util.Set;
 
-import de.cesr.more.measures.measures.MoreMeasure;
 
 
 /**

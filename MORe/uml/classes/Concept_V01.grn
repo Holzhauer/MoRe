@@ -8,7 +8,7 @@
       <y="15"/>
    </type>
    <type>
-      <name="=MORe/src<de.cesr.more.rs.adapter{DefaultLRsNetwork.java[DefaultLRsNetwork"/>
+      <name="=MORe/src<de.cesr.more.rs.util{DefaultLRsNetwork.java[DefaultLRsNetwork"/>
       <height="-1"/>
       <width="-1"/>
       <x="618"/>
@@ -16,7 +16,7 @@
    </type>
    <relationship>
       <class="edu.buffalo.cse.green.relationship.realization.RealizationPart"/>
-      <sourceType="=MORe/src<de.cesr.more.rs.adapter{DefaultLRsNetwork.java[DefaultLRsNetwork"/>
+      <sourceType="=MORe/src<de.cesr.more.rs.util{DefaultLRsNetwork.java[DefaultLRsNetwork"/>
       <targetType="=MORe/src<de.cesr.more.networks{MoreNetwork.java[MoreNetwork"/>
       <bendpoints>
       </bendpoints>

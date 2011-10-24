@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import de.cesr.more.measures.measures.MoreMeasure;
 import de.cesr.more.util.Log4jLogger;
 
 

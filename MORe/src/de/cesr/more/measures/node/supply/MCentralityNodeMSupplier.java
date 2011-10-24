@@ -1,11 +1,24 @@
 /**
- * Social Network Analysis and Visualisation Library
- * for RepastJ Models (SoNetA)
+ * This file is part of
  * 
- * [see license.txt in the root directory of this library
- *  for additional important notes]
+ * MORe - Managing Ongoing Relationships
  *
- * @author Sascha Holzhauer
+ * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *  
+ * MORe - Managing Ongoing Relationships is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Center for Environmental Systems Research, Kassel
+ * 
  * @date 17.08.2008
  * 
  */
@@ -15,15 +28,15 @@ package de.cesr.more.measures.node.supply;
 
 import java.util.Map;
 
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
-import de.cesr.more.measures.measures.MAbstractNodeMeasure;
+import de.cesr.more.measures.node.MAbstractNodeMeasure;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.networks.MoreNetwork;
 import edu.uci.ics.jung.algorithms.importance.DegreeDistributionRanker;
 
 

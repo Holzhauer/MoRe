@@ -40,23 +40,23 @@ import org.junit.Test;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
-import de.cesr.more.building.MoreEdgeFactory;
-import de.cesr.more.edges.MEdge;
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MDirectedNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
+import de.cesr.more.measures.network.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.MoreMeasureManagerListener;
-import de.cesr.more.measures.measures.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
 import de.cesr.more.measures.network.supply.MCentralityNetMSupplier;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
-import de.cesr.more.networks.MDirectedNetwork;
-import de.cesr.more.networks.MoreNetwork;
-import de.cesr.more.standalone.MSchedule;
-import de.cesr.more.testing.MTestGraphs;
-import de.cesr.more.testing.MTestGraphs.TestNode;
+import de.cesr.more.testing.testutils.MTestGraphs;
+import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.util.MSchedule;
 
 
 
@@ -119,7 +119,7 @@ public class MNetworkMeasureManagerTest {
 		}
 
 		/**
-		 * @see de.cesr.more.measures.MoreMeasureManagerListener#networkMeasureCalcAdded(de.cesr.more.networks.MoreNetwork,
+		 * @see de.cesr.more.measures.MoreMeasureManagerListener#networkMeasureCalcAdded(de.cesr.more.basic.network.MoreNetwork,
 		 *      de.cesr.more.measures.MMeasureDescription)
 		 */
 		@Override
@@ -128,7 +128,7 @@ public class MNetworkMeasureManagerTest {
 		}
 
 		/**
-		 * @see de.cesr.more.measures.MoreMeasureManagerListener#networkMeasureCalcRemoved(de.cesr.more.networks.MoreNetwork,
+		 * @see de.cesr.more.measures.MoreMeasureManagerListener#networkMeasureCalcRemoved(de.cesr.more.basic.network.MoreNetwork,
 		 *      de.cesr.more.measures.MMeasureDescription)
 		 */
 		@Override
@@ -186,7 +186,7 @@ public class MNetworkMeasureManagerTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#addMeasureCalculation(de.cesr.more.networks.MoreNetwork, de.cesr.more.measures.MMeasureDescription, java.util.Map)}
+	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#addMeasureCalculation(de.cesr.more.basic.network.MoreNetwork, de.cesr.more.measures.MMeasureDescription, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -199,7 +199,7 @@ public class MNetworkMeasureManagerTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#addMeasureCalculation(de.cesr.more.networks.MoreNetwork, de.cesr.more.measures.MMeasureDescription, java.util.Map)}
+	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#addMeasureCalculation(de.cesr.more.basic.network.MoreNetwork, de.cesr.more.measures.MMeasureDescription, java.util.Map)}
 	 * .
 	 */
 	@Test
@@ -239,7 +239,7 @@ public class MNetworkMeasureManagerTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#getMeasureCalculations(de.cesr.more.networks.MoreNetwork)}
+	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#getMeasureCalculations(de.cesr.more.basic.network.MoreNetwork)}
 	 * .
 	 */
 	@Test
@@ -251,7 +251,7 @@ public class MNetworkMeasureManagerTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#removeMeasureCalculation(de.cesr.more.networks.MoreNetwork, de.cesr.more.measures.MMeasureDescription)}
+	 * {@link de.cesr.more.measures.network.MNetworkMeasureManager#removeMeasureCalculation(de.cesr.more.basic.network.MoreNetwork, de.cesr.more.measures.MMeasureDescription)}
 	 * .
 	 */
 	@Test
@@ -309,7 +309,7 @@ public class MNetworkMeasureManagerTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.measures.MAbstractMeasureManager#getRemovableMeasures(de.cesr.more.networks.MoreNetwork)}.
+	 * {@link de.cesr.more.measures.MAbstractMeasureManager#getRemovableMeasures(de.cesr.more.basic.network.MoreNetwork)}.
 	 */
 	@Test
 	public final void testGetRemovableMeasures() {
@@ -319,7 +319,7 @@ public class MNetworkMeasureManagerTest {
 
 	/**
 	 * Test method for
-	 * {@link de.cesr.more.measures.MAbstractMeasureManager#getAddableMeasures(de.cesr.more.networks.MoreNetwork)}.
+	 * {@link de.cesr.more.measures.MAbstractMeasureManager#getAddableMeasures(de.cesr.more.basic.network.MoreNetwork)}.
 	 */
 	@Test
 	public final void testGetAddableMeasures() {

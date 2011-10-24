@@ -25,7 +25,7 @@ package de.cesr.more.util;
 
 /**
  * MORe
- *
+ * Used to request the cuurent runID when data is stored in DB.
  * @author Sascha Holzhauer
  * @date 13.01.2011 
  *
@@ -34,7 +34,6 @@ public interface MoreRunIdProvider {
 
 	/**
 	 * @return the current runID
-	 * Created by Sascha Holzhauer on 13.01.2011
 	 */
 	public int getRunId();
 }

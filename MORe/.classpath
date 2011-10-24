@@ -11,7 +11,12 @@
 	<classpathentry kind="lib" path="libs/jung-graph-impl-2.0.1.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/JUNG_2.0.1/src/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/LARA"/>
-	<classpathentry kind="lib" path="libs/JRI.jar"/>
+	<classpathentry kind="lib" path="libs/gt2-referencing-2.3.3.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/gt2-2.3.3/module/referencing/src"/>
+	<classpathentry kind="lib" path="libs/JRI.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files/R/R-2.13.0/bin/x64"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="libs/jung-algorithms-2.0-beta1.jar"/>
 	<classpathentry kind="lib" path="libs/repast.simphony.bin_and_src.jar"/>
 	<classpathentry kind="lib" path="libs/ParMa.jar"/>
@@ -19,8 +24,8 @@
 	<classpathentry kind="lib" path="libs/jts-1.7.1.jar"/>
 	<classpathentry kind="lib" path="libs/units-0.01.jar"/>
 	<classpathentry kind="lib" path="libs/geoapi-nogenerics-2.1-M2.jar"/>
-	<classpathentry kind="lib" path="libs/gt2-referencing-2.3.3.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/gt2-2.3.3/module/referencing/src"/>
 	<classpathentry kind="lib" path="libs/gt2-main-2.3.3.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/gt2-2.3.3/module/main/src"/>
 	<classpathentry kind="lib" path="libs/Uranus.jar"/>
+	<classpathentry kind="lib" path="libs/gt2-epsg-wkt-2.3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

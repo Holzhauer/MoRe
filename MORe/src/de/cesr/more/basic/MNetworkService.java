@@ -28,8 +28,8 @@ import java.util.Set;
 import org.apache.commons.collections15.IteratorUtils;
 import org.apache.log4j.Logger;
 
-import de.cesr.more.edges.MoreEdge;
-import de.cesr.more.networks.MoreNetwork;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
 
 /**
  * MORe

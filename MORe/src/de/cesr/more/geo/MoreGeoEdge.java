@@ -23,7 +23,7 @@
  */
 package de.cesr.more.geo;
 
-import de.cesr.more.edges.MoreEdge;
+import de.cesr.more.basic.edge.MoreEdge;
 
 /**
  * MORe
