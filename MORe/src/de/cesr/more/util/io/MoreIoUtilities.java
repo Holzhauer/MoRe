@@ -87,7 +87,7 @@ public class MoreIoUtilities {
 				outputFile.getParentFile().mkdirs();
 			}
 			FileWriter fileWriter = new FileWriter(outputFile);
-			GraphMLWriter<V, E> graphWriter = new GraphMLWriter<V, E>();
+			GraphMLWriter<V, E> graphWriter = new MGraphMlWriter<V, E>();
 
 			// <- start logging
 			if (logger.isDebugEnabled()) {
