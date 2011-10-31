@@ -23,7 +23,6 @@
  */
 package de.cesr.more.basic;
 
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -32,16 +31,12 @@ import cern.jet.random.engine.MersenneTwister;
 
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.param.MRandomPa;
-import de.cesr.more.param.MSqlPa;
 import de.cesr.parma.core.PmParameterManager;
-import de.cesr.parma.reader.PmDbXmlParameterReader;
 import de.cesr.uranus.core.URandomService;
 import de.cesr.uranus.core.UranusRandomService;
 
-
-
 /**
- * MORe
+ * MORe Manager
  * 
  * @author Sascha Holzhauer
  * @date 23.12.2010
@@ -49,31 +44,34 @@ import de.cesr.uranus.core.UranusRandomService;
  */
 public class MManager {
 
-	protected static MoreSchedule			schedule;
+	protected static MoreSchedule schedule;
 
-	protected static UranusRandomService	randomService;
+	protected static UranusRandomService randomService;
 
 	/**
 	 * {@link NumberFormat} to format integer numbers
 	 */
-	protected static NumberFormat			integerFormat;
+	protected static NumberFormat integerFormat;
 
 	/**
 	 * {@link NumberFormat} to format floating point numbers
 	 */
-	protected static NumberFormat			floatPointFormat;
-	
-	
+	protected static NumberFormat floatPointFormat;
+
 	/**
 	 * Initialised parameter framework.
 	 */
 	public static void init() {
-		PmParameterManager.registerReader(new PmDbXmlParameterReader(MSqlPa.DB_SETTINGS_FILE));
-		
 		// init random streams
-		getMRandomService().registerDistribution(new Uniform(new MersenneTwister(
-				((Integer)PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue())),
-				(String)PmParameterManager.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING));
+		getMRandomService()
+				.registerDistribution(
+						new Uniform(
+								new MersenneTwister(
+										((Integer) PmParameterManager
+												.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING))
+												.intValue())),
+						(String) PmParameterManager
+								.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING));
 	}
 
 	/**
@@ -84,7 +82,8 @@ public class MManager {
 	}
 
 	/**
-	 * @param the common format for integers
+	 * @param the
+	 *            common format for integers
 	 */
 	public static void setIntegerFormat(NumberFormat format) {
 		integerFormat = format;
@@ -92,6 +91,7 @@ public class MManager {
 
 	/**
 	 * Mainly used for logging purposes.
+	 * 
 	 * @return common format for float numbers
 	 */
 	public static NumberFormat getFloatPointFormat() {
@@ -103,6 +103,7 @@ public class MManager {
 
 	/**
 	 * Mainly used for logging purposes.
+	 * 
 	 * @return common format for integers
 	 */
 	public static NumberFormat getIntegerFormat() {
@@ -113,7 +114,8 @@ public class MManager {
 	}
 
 	/**
-	 * @param schedule the schedule to set
+	 * @param schedule
+	 *            the schedule to set
 	 */
 	public static void setSchedule(MoreSchedule schedule) {
 		MManager.schedule = schedule;
@@ -121,11 +123,13 @@ public class MManager {
 
 	/**
 	 * Used for instance to schedule network measure calculations.
+	 * 
 	 * @return the schedule
 	 */
 	public static MoreSchedule getSchedule() {
 		if (schedule == null) {
-			throw new IllegalStateException("The MoreScheduler has not been set before!");
+			throw new IllegalStateException(
+					"The MoreScheduler has not been set before!");
 		}
 		return MManager.schedule;
 	}
@@ -139,11 +143,14 @@ public class MManager {
 
 	/**
 	 * Return the random manager that is used for random processes.
+	 * 
 	 * @return the random manager
 	 */
 	public static UranusRandomService getMRandomService() {
 		if (randomService == null) {
-			randomService = new URandomService(((Integer)PmParameterManager.getParameter(MRandomPa.RANDOM_SEED)).intValue());
+			randomService = new URandomService(
+					((Integer) PmParameterManager
+							.getParameter(MRandomPa.RANDOM_SEED)).intValue());
 		}
 		return randomService;
 	}

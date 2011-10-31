@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MSmallWorldBetaModelNetworkGenerator;
-import de.cesr.more.building.network.MoreKValueProvider;
 
 import edu.uci.ics.jung.algorithms.generators.GraphGenerator;
 import edu.uci.ics.jung.graph.DirectedGraph;

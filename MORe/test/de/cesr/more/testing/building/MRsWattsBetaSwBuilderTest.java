@@ -31,6 +31,7 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
+import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 
 import de.cesr.more.param.MNetworkBuildingPa;
@@ -69,14 +70,22 @@ public class MRsWattsBetaSwBuilderTest {
 	public void testBuildNetwork() {
 		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(false));
 		MRsWattsBetaSwBuilder<Object, MRepastEdge<Object>> networkBuilder = new MRsWattsBetaSwBuilder<Object, MRepastEdge<Object>>();
-		networkBuilder.setContext(new DefaultContext<Object>());
+		Context<Object> context = new DefaultContext<Object>();
+		for (Object o : agents) {
+			context.add(o);
+		}
+		networkBuilder.setContext(context);
 		MoreRsNetwork<Object, MRepastEdge<Object>> network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());
 		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue() / 2, network.numEdges());
 
 		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(true));
 		networkBuilder = new MRsWattsBetaSwBuilder<Object, MRepastEdge<Object>>();
-		networkBuilder.setContext(new DefaultContext<Object>());
+		context = new DefaultContext<Object>();
+		for (Object o : agents) {
+			context.add(o);
+		}
+		networkBuilder.setContext(context);
 		network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());
 		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue(), network.numEdges());

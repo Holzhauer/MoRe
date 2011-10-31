@@ -26,12 +26,13 @@ package de.cesr.more.param;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import de.cesr.more.util.MDefaultMilieuKeysMap;
 import de.cesr.parma.core.PmParameterDefinition;
 
 /**
- * MORe
+ * Parameter definitions used for MORe's network building
  *
- * @author holzhauer
+ * @author Sascha Holzhauer
  * @date 23.09.2011 
  *
  */
@@ -43,32 +44,57 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	MILIEU_NETWORK_PARAMS(MMilieuNetworkParameterMap.class, new MMilieuNetworkParameterMap()),
 	
 	
+	/**
+	 * The parameter id used to retrieve network preference data
+	 * from tables {@link MSqlPa#TBLNAME_NET_PREFS} and {@link MSqlPa#TBLNAME_NET_PREFS_LINKS}.
+	 * Default: <code>0</code>
+	 */
 	MILIEU_NETPREFS_PARAMID(Integer.class, 0),
 	
 	/**
+	 * Defines the indices for milieus. Given the milieu's short name (i.e. "GLM"),
+	 * the index may be queried from the map.
+	 */
+	MILIEUS(MDefaultMilieuKeysMap.class, new MDefaultMilieuKeysMap()),
+
+	/**
+	 * Number of milieu groups as defined in {@link SqlPa#TBLNAME_MILIEU_GROUPS}.
+	 * Default: <code>4</code>
+	 */
+	NUM_MILIEU_GROUPS(Integer.class, new Integer(4)),
+	
+	
+	/*****************************************************
+	 * Watts-Strogats Small-World network Builder
+	 *****************************************************/
+	
+	/**
 	 * The probability of an edge being rewired randomly; the proportion of randomly
-	 * rewired edges in a graph. Rrange: (0,1)
+	 * rewired edges in a graph. Range: <code>(0,1)</code>; Default: <code>0.1</code>.
 	 */
 	BUILD_WSSM_BETA(Double.class, 0.1),
 	
 	/**
-	 * Initial degree that is used to build to regular network (local ngh size)
-	 * to start from. Must be an even number.
+	 * Initial degree that is used to build to regular network (local neighbourhood size)
+	 * to start from. Must be an even number. Default: <code>4</code>.
 	 */
 	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
 	
+	/**
+	 * "Directedness" of the generated networks. Default:<code>false</code>.
+	 */
 	BUILD_DIRECTED(Boolean.class, false),
 	
 	
+	/**
+	 * If true, edges are added to the geography (adding many edges to the geography is a
+	 * performance issue). Default: <code>true</code>.
+	 */
 	ADD_EDGES_TO_GEOGRAPHY(Boolean.class, true),
 	
-	OUTPUT_NETWORK(Boolean.class, false),
-	
-	NETWORK_TARGET_FILE(String.class, "./MNetwork.graphml"),
-	
 	/**
-	 * TODO check ref id!
-	 * Used to initialize the {@link GeometryFactory}.
+	 * Used to initialize the {@link GeometryFactory} in {@link MGeoRsNetworkService}.
+	 * Default: <code>4326</code> (WGS 84)
 	 */
 	SPATIAL_REFERENCE_ID(Integer.class, new Integer(4326))
 	;
@@ -77,10 +103,17 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	private Class<?>	type;
 	private Object		defaultValue;
 
+	/**
+	 * @param type
+	 */
 	MNetworkBuildingPa(Class<?> type) {
 		this(type, null);
 	}
 
+	/**
+	 * @param type
+	 * @param defaultValue
+	 */
 	MNetworkBuildingPa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
@@ -101,5 +134,4 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	public Object getDefaultValue() {
 		return defaultValue;
 	}
-
 }

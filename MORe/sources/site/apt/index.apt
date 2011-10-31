@@ -1,0 +1,27 @@
+	----------------
+	MoRe
+	----------------
+	Sascha Holzhauer
+	----------------
+	2011-10-28
+	
+Purpose
+
+	The purpose of MoRe- Managing ongoing Relationships is to support representing and analysing social networks in 
+	agent-based modeling.
+	
+How to start
+
+	The {{{./features.html} Features}} gives an overview of MoRe's facilities. The (package) structure
+	is displayed in {{{./concept.html}Concept}}. The {{{./usage.html}Usage Guide}}
+	contains basic information about how to set up a MoRe related project and describes basic configurations.
+	Furthermore, the {{{../apidocs/index.html}JavaDoc}} should be consulted to learn about detailed features like
+	specific network builders or measure calculations. It is also a good idea to inspect the tests to learn about
+	a running configuration.
+	
+	
+Origin
+
+	Some of the features and code is based on ReSoNetA, but more directed to Repast Simphony (RS).
+	Like the network facilities in RS and ReSoNetA it is based on the JUNG library. However, it 
+	is also intended to be used with other network implementations by building wrappers.

@@ -24,7 +24,6 @@
 package de.cesr.more.rs.building;
 
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
@@ -36,24 +35,21 @@ import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.RepastEdge;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.util.Log4jLogger;
-import de.cesr.more.util.io.MoreIoUtilities;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.geo.building.MoreGeoNetworkBuilder;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
- * MORe
+ * Removal and Addition of nodes and agents to geo-referenced networks.
  *
  * @author holzhauer
  * @date 23.09.2011 
@@ -109,6 +105,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	/**
 	 * @param areasGeography
 	 */
+	@SuppressWarnings("unchecked") // risky but not avoidable
 	public MGeoRsNetworkService() {
 		this(null, (MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
 	}
@@ -187,14 +184,6 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	/**
 	 * @param network
 	 */
-	protected void outputNetwork(MoreNetwork<AgentType, EdgeType> network) {
-		File file1 = new File(((String) PmParameterManager.getParameter(MNetworkBuildingPa.NETWORK_TARGET_FILE)));
-		MoreIoUtilities.<AgentType, EdgeType> outputGraph(network, file1);
-	}
-
-	/**
-	 * @param network
-	 */
 	protected void logEdges(MoreRsNetwork<AgentType, EdgeType> network, String prestring) {
 		if (logger.isDebugEnabled()) {
 			Set<MoreEdge<AgentType>> edges = new TreeSet<MoreEdge<AgentType>>(
@@ -203,15 +192,6 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 						@Override
 						public int compare(MoreEdge<AgentType> o1,
 								MoreEdge<AgentType> o2) {
-							// if
-							// (!o1.getStart().getAgentID().equals(o2.getStart().getAgentID()))
-							// {
-							// return
-							// o1.getStart().getAgentID().compareTo(o2.getStart().getAgentID());
-							// } else {
-							// return
-							// o1.getEnd().getAgentID().compareTo(o2.getEnd().getAgentID());
-							// }
 							if (!o1.getEnd().getAgentId()
 									.equals(o2.getEnd().getAgentId())) {
 								return o1.getEnd().getAgentId()

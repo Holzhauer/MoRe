@@ -59,6 +59,9 @@ public class MRsContextJungNetworkTest {
 		node1 = new TestNode();
 		node2 = new TestNode();
 		node3 = new TestNode();
+		context.add(node1);
+		context.add(node2);
+		context.add(node3);
 		network.connect(node2, node1);
 		network.connect(node2, node3);
 	}

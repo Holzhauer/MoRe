@@ -1,0 +1,157 @@
+	----------------
+	MoRe
+	----------------
+	Sascha Holzhauer
+	----------------
+	2011-10-27
+
+MORe Usage
+
+*Installation
+
+	* Make the java code available to your custom project code
+	
+	* Set up a MySQL database in case You want to use it as parameter storage (see ParMa for
+	further information) or to store network and/or node data.
+	
+	* For certain network and node measure calculations there is an efficient R implementation.
+	In order to use these calculations You need to {{{http://cran.r-project.org/}install R}} including a number of R packages.
+	See the R-script <<<installPackages4More.R>>> in the folder <<<config/r>>> for instructions.
+
+*Initialising MoRe
+
+	Consider the following steps to initialise MoRe properly:
+
+    * Copy Your custom parameter data to the MoRe equivalents. 
+    To get an overview of used parameters in MoRe, consult the {{{../apidocs/index.html}JavaDoc}} and see package <<<de.cesr.more.params>>> 
+    for descriptions of parameters. More only defines default values in these enumerations. Further parameter retrieval must be
+    issued in the user code. For details, see the ParMa manual <insert link>. Consider especially:
+    
+    	* <<<MSyQLPa>>> for database setting relevant for storing network and node data
+    
+    	* Parameters for network builders, e.g. <<<MNetBuildBhPa>>> for <<<MBaselineDhhRadiusNetworkBuilder>>>
+    
+    	* Random seeds
+    
+    * Call <<<MManager.getInstance().init()>>> to initialise default random streams (according to parameter settings for random seeds).
+
+
+*Configuring Network Measures
+
+**Adding Measure Definitions
+
+	As default, the <<<MNetworkMeasureManager>>> imports measure definitions from <<<MBasicNetworkMeasureSupplier>>> (see JavaDoc for details).
+	Further measure definitions are added by passing an instance of <<<MoreMeasureSupplier>>> to <<<MNetworkMeasureManager#addMeasureSupplier(supplier)>>>.
+	See Implementing Custom Measures <insert link> for further instructions.
+
+
+*Managing Node Measures
+
+**Basics
+
+	The central class for managing node measures is {{{../apidocs/de/cesr/more/measures/node/MNodeMeasureManager.html}<<<MNodeMeasureManager}}.
+	To obtain an instance of the node measure manager call <<<MNodeMeasureManager.getInstance()>>>.
+	However, make sure to set the schedule before:
+
++---
+MNetworkManager.setSchedule(MoreSchedule schedule)
++---
+
+	To use the Repast Simphony schedule (adapter from RS's <<<ISchedule>>> to <<<MoreSchudule>>>) call
+	
++---
+MNetworkMeasureManager.setSchedule(new MRsSchedule(RunEnvironment.getInstance().getCurrentSchedule()));
++---
+
+**Setting Parameters for Node Measure Calculation
+	
+	Every MoreMeasure has a parameter map. The map contains key - (default)value pairs of parameters. the user may walk through the map and alter
+	parameter values to adjust measure calculations. For instance, to set scheduling parameters: 
+
++---
+// set scheduling parameters:
+Map < String , Object > params = new HashMap < String , Object >();
+params.put(MNetworkMeasureManager.ParameterKeys.START.name(), new Integer(1));
+int interval = (Integer) PmParameterManager.getParameter(SocNetPa.ANALYSE_NETWORKS_INTERVAL);
+params.put(MNetworkMeasureManager.ParameterKeys.INTERVAL.name(), new Integer(interval));
+params.put(MNetworkMeasureManager.ParameterKeys.END.name(), MScheduleParameters.END_TICK);
+params.put(MNetworkMeasureManager.ParameterKeys.PRIORITY.name(), MScheduleParameters.FIRST_PRIORITY);
++---
+
+	NOTE: It is not guaranteed that a MoreMeasure provides a non-empty map!
+	
+
+** Define parameters and trigger measure calculation for nodes
+
++---
+// add measures for overall network:
+MNetworkMeasureManager.getInstance().addMeasureCalculation(ModelManager.SOCNET_NAME,
+		MNetworkStatisticsSupplier.Short.N_STAT_AVGPATH.getName(), params);	
++---
+
+*Managing Network Measures
+
+**Basics
+
+	The central class for managing network measures is {{{../apidocs/de/cesr/more/measures/network/MNetworkMeasureManager.html}<<<MNetworkMeasureManager}}.
+	To obtain an instance of the network manager call <<<MNetworkMeasureManager.getInstance()>>>.
+	However, make sure to set the schedule before: <<<MNetworkManager.setSchedule(MoreSchedule schedule)>>>!
+	
+**Trigger measure calculation for networks
+
++---
+MNetworkManager netMan = MNetworkManager.getInstance();
+netMan.addMeasureCalculation(net, MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName());
++---
+
+**Setting Parameters for Network Measure Calculation
+	see above
+
+
+*Defining subnetworks
+
+	MoRe supports the definition of subnetworks according to criteria that may be derived from Java object properties to calculate network measures
+	for certain network parts, for instance. As a default, subnetworks consist of nodes that fulfill given criteria and all links of the original
+	network between these nodes. To define a subnetwork accomplish the following steps:
+
+    *Define a <<<org.apache.commons.collections15.Predicate>>> whose <<<evaluate(object)>>> methods returns true for all vertices that shall be 
+    included in the subnetwork.
+
++---    
+MNetworkManager.storeVertexSubnetwork(network, predicate, subnetwork_name)
++---
+
+	Network may be the name of a network already registered at the <<<MNetworkManager>>> or an instance of <<<MoreNetwork>>>.
+
+*Implementing Custom Measures
+
+	A <<<MNetworkMeasureSupplier>>> should be implemented as singleton since it does not make sense to have more than one supplier.
+	However, the <<<MAbstractMeasureSupplier>>> overrides <<<equals()>>> and compares regarding the class name but does not prevent subclasses
+	from overriding its <<<equals()>>> method.
+
+	The scheduling parameters (start, interval, end) are defined in the parameter map that is interpreted by <<<MNetworkMeasureManager>>> or 
+	<<<MNodeMeasureManager>>>. Therefore, generating <<<MoreActions>>> do not need to define a <<<MSchedulingParameter>>>.
+	
+	
+*Defining Dynamics of Networks
+
+**Manipulation Agent Components
+
+	With <<<MWeightLinksManipulateAgentComp>>> More provides an agent component that manages the agents links according to differences between
+	partners regarding some node property. The agents need to implement <<<MoreNetStructureManageable>>>. The component takes care of updating link
+	weights and removing and establishing links if required. In case the node properties undergo a certain threshold, weights are increased. 
+	As the opposite, if properties exceed a threshold, weights get decreased. When weights fall below zero, the according links is removed and another
+	one is established. Links removal and establishment is done by a <<<MoreEdgeManager>>>. See JavaDoc for more information.
+
+	In order to activate the structure manager, the component needs to be assigned to node objects:
+
++---
+agent.netStructure = new MWeightLinksManipulateAgentComp<V, MoreEdge<V>(agent, ModelManager.getMan().getNetwork().getName(),
+		MoreNetworkEdgeModifier<A, E> edgeMan);
++---
+
+	The update method then needs to be called every time links weights shall be updated:
+
++---
+this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();
++---

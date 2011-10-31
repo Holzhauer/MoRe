@@ -43,6 +43,9 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MLattice1DGenerator;
+import de.cesr.more.building.util.MoreBetaProvider;
+import de.cesr.more.building.util.MoreKValueProvider;
+import de.cesr.more.building.util.MoreRewireTargetProvider;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.uranus.core.URandomService;
@@ -56,6 +59,17 @@ import edu.uci.ics.jung.graph.Graph;
  * MoRe
  * 
  * Uses {@link MLattice1DGenerator} to produce the underlying regular ring.
+ * 
+ * TODO:
+ * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction. Generally, the small world
+		algorithm considers given k and beta values for the source of a direction. However, in KUBUS we consider the influencer as source and
+		seek to build the network according to the influenced' properties.</p>
+		
+		<p class="text">Since also for rewiring <code>MSmallWorldBetaModelNetworkGenerator</code> considers the beta value of the source vertex,
+		using a custom <code>MoreEdgeFactory</code> as proxy that takes the influenced as source and the influencer as target from the underlying
+		<code>MSmallWorldBetaModelNetworkGenerator</code> and creates the edge the other way around, i.e. from the influenced to the influenced,
+		does not work. Instead, we build up the entire network in the other direction and reverse the direction of every single edge afterwards.
+		For creating the geography edge representative we use the correct direction from influenced to influenced instantaneous.
  * 
  * @author Sascha Holzhauer
  * @author Jung Project

@@ -23,11 +23,12 @@
 package de.cesr.more.param;
 
 
+import de.cesr.more.geo.MTorusCoordinate;
 import de.cesr.parma.core.PmParameterDefinition;
 
 
 /**
- * MORe
+ * Basic parameter definitions for MORe (e.g. Torus boundaries)
  * @author Sascha Holzhauer
  * @date 29.06.2010 
  *
@@ -36,20 +37,29 @@ public enum MBasicPa implements PmParameterDefinition {
 	
 	
 	/**
-	 * ID of used parameter set
+	 * Lower X corner coordinate of the torus
+	 * used in {@link MTorusCoordinate} to calculate distances.
 	 */
-	PARAMS_ID(Integer.class, 1),
+	TORUS_FIELD_LOWER_X(Double.class, new Double(0.0)),
+
+	/**
+	 * Lower Y corner coordinate of the torus
+	 * used in {@link MTorusCoordinate} to calculate distances.
+	 */
+	TORUS_FIELD_LOWER_Y(Double.class, new Double(0.0)),
+
+	/**
+	 * Upper X corner coordinate of the torus
+	 * used in {@link MTorusCoordinate} to calculate distances.
+	 */
+	TORUS_FIELD_UPPER_X(Double.class, new Double(100.0)),
 	
 	/**
-	 * Used to initialise the root geography
+	 * Upper Y corner coordinate of the torus
+	 * used in {@link MTorusCoordinate} to calculate distances.
 	 */
-	//CRS(String.class, DefaultGeographicCRS.WGS84),
+	TORUS_FIELD_UPPER_Y(Double.class, new Double(100.0));
 	
-	FIELD_LOWER_X(Double.class, new Double(0.0)),
-	FIELD_LOWER_Y(Double.class, new Double(0.0)),
-
-	FIELD_UPPER_X(Double.class, new Double(100.0)),
-	FIELD_UPPER_Y(Double.class, new Double(100.0));
 	
 	private Class<?> type;
 	private Object defaultValue;

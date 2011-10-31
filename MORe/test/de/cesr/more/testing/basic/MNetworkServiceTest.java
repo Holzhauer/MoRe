@@ -35,6 +35,7 @@ import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.manipulate.network.MAggregator;
 import de.cesr.more.util.io.MGraphMLReaderWithEdges;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -131,7 +132,7 @@ public class MNetworkServiceTest {
 	
 	@Test
 	public void test() {
-		MNetworkService.aggregateNodes(network, new TestAgent(0), new TestAgent(3));
+		MAggregator.aggregateNodes(network, new TestAgent(0), new TestAgent(3));
 		assertTrue(MNetworkService.isStructurallyEqual(network, resultingNetwork));
 	}
 

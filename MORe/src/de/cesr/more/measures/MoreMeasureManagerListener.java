@@ -1,5 +1,23 @@
 /**
+ * This file is part of
  * 
+ * MORe - Managing Ongoing Relationships
+ *
+ * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *  
+ * MORe - Managing Ongoing Relationships is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Center for Environmental Systems Research, Kassel
  */
 package de.cesr.more.measures;
 
@@ -10,8 +28,6 @@ import de.cesr.more.basic.network.MoreNetwork;
  * Intended for classes that need to be informed of network measure calculation changes, i.e. the measure manager
  * @author holzhauer
  * 
- * TODO parameterize!
- * 
  */
 public interface MoreMeasureManagerListener {
 	
@@ -19,17 +35,15 @@ public interface MoreMeasureManagerListener {
 	 * Invoked every time a network measure calculation routine was added
 	 * @param network the network the measure is associated with
 	 * @param measure the measure that was added
-	 * Created by Sascha Holzhauer on 09.04.2010
 	 */
-	public void networkMeasureCalcAdded(MoreNetwork network,
+	public void networkMeasureCalcAdded(MoreNetwork<?,?> network,
 			MMeasureDescription measure);
 
 	/**
 	 * Invoked every time a network measure calculation routine was removed
 	 * @param network the network the measure is associated with
 	 * @param measure the measure that was removed
-	 * Created by Sascha Holzhauer on 09.04.2010
 	 */
-	public void networkMeasureCalcRemoved(MoreNetwork network,
+	public void networkMeasureCalcRemoved(MoreNetwork<?,?> network,
 			MMeasureDescription measure);
 }

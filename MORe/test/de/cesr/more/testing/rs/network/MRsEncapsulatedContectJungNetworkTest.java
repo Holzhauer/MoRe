@@ -48,6 +48,7 @@ public class MRsEncapsulatedContectJungNetworkTest {
 	TestAgent														center;
 	LaraEnvironment													env;
 	MoreNetwork<TestAgent, MRepastEdge<TestAgent>>					network;
+	Context<TestAgent> 												context;
 
 
 	/**
@@ -98,21 +99,24 @@ public class MRsEncapsulatedContectJungNetworkTest {
 			}
 		});
 		env = new MLaraNetworkEnvironment<TestAgent, MRepastEdge<TestAgent>>();
-		Context<TestAgent> context = new DefaultContext<TestAgent>();
+		context = new DefaultContext<TestAgent>();
 		network = new MRsEncapsulatedContextJungNetwork<TestAgent, MRepastEdge<TestAgent>>(
 				new ContextJungNetwork<TestAgent>(new UndirectedJungNetwork<TestAgent>("network"), context),
 				context);
 
 		// build network (star of max diameter 5):
 		center = new TestAgent(env, 1000);
+		context.add(center);
 		network.addNode(center);
 
 		for (int i = 0; i < 5; i++) {
 			TestAgent next = new TestAgent(env, 200);
+			context.add(next);
 			network.addNode(next);
 			network.connect(center, next);
 			for (int j = 0; j < 5; j++) {
 				TestAgent outer = new TestAgent(env, 30);
+				context.add(outer);
 				network.addNode(outer);
 				network.connect(next, outer);
 			}
@@ -126,6 +130,7 @@ public class MRsEncapsulatedContectJungNetworkTest {
 	@Test
 	public final void testConnect() {
 		TestAgent target = new TestAgent(env, 1);
+		context.add(target);
 		network.connect(center, target);
 		assertEquals("An edge between both agents should exist", true, network.isAdjacent(center, target));
 	}

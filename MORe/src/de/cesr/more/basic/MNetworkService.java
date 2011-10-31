@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.commons.collections15.IteratorUtils;
 import org.apache.log4j.Logger;
 
-import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 
 /**
@@ -46,49 +45,6 @@ public class MNetworkService {
 	 * Logger
 	 */
 	static private Logger logger = Logger.getLogger(MNetworkService.class);
-
-	/**
-	 * Aggregates two node to a single one (the first node given). It aggregates the links of both nodes
-	 * at the surviving node and deletes the other node afterwards.
-	 * 
-	 * @param network
-	 * @param survivingAgent
-	 * @param otherAgent
-	 * @return
-	 */
-	public static <AgentType, EdgeType extends MoreEdge<AgentType>> boolean
-		aggregateNodes(MoreNetwork<AgentType, EdgeType> network, AgentType survivingAgent, AgentType otherAgent) {
-		
-		if (!network.containsNode(otherAgent)) {
-			// <- LOGGING
-			logger.error("Network " + network + " does not contain node to aggregate: " + otherAgent);
-			// LOGGING ->
-			throw new IllegalStateException("Network " + network + " does not contain node to aggregate: " + otherAgent);
-		}
-		if (!network.containsNode(otherAgent)) {
-			// <- LOGGING
-			logger.error("Network " + network + " does not contain node to aggregate: " + survivingAgent);
-			// LOGGING ->
-			throw new IllegalStateException("Network " + network + " does not contain node to aggregate: " + survivingAgent);
-		}
-		
-		if (network.getPredecessors(otherAgent) != null) {
-			for (AgentType partner : network.getPredecessors(otherAgent)) {
-				if (!partner.equals(survivingAgent) && !network.isSuccessor(partner, survivingAgent)) {
-					network.connect(partner, survivingAgent);
-				}
-			}
-		}
-		if (network.getSuccessors(otherAgent) != null) {
-			for (AgentType partner : network.getSuccessors(otherAgent)) {
-				if (!partner.equals(survivingAgent) && !network.isSuccessor(survivingAgent, partner)) {
-					network.connect(survivingAgent, partner);
-				}
-			}
-		}
-		network.removeNode(otherAgent);
-		return true;
-	}
 	
 	/**
 	 * Requires the same set of nodes to be equal (if B is representative of A, A.equals(B) must be true) 

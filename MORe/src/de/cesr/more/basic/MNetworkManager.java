@@ -36,14 +36,14 @@ import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.util.Log4jLogger;
-import de.cesr.more.util.MDbWriter;
+import de.cesr.more.util.MDbNetworkDataWriter;
 import de.cesr.more.util.MNetworkClusterMeasureStorage;
 import de.cesr.more.util.MNetworkMeasureStorage;
 import de.cesr.more.util.MoreRunIdProvider;
 import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 
 /**
- * MORe
+ * Manages networks and network measures
  *
  * @author Sascha Holzhauer
  * @date 16.11.2010 
@@ -106,7 +106,7 @@ public class MNetworkManager {
 	 * Created by Sascha Holzhauer on 16.11.2010
 	 */
 	public static <V, E extends MoreEdge<? super V>> MoreNetwork<V,E> storeVertexSubnetwork(MoreNetwork<V, E> in_network, Predicate<V> predicate, String newname) {		
-		VertexPredicateFilter<V, E> filter = new VertexPredicateFilter(predicate);
+		VertexPredicateFilter<V, E> filter = new VertexPredicateFilter<V, E>(predicate);
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -126,8 +126,8 @@ public class MNetworkManager {
 		return out_network;
 	}
 	
-	public static void writeNetworkMeasuresToDb(String network, String externalVersion, int paramID, MoreRunIdProvider prov, int tick) {
-		MDbWriter dbWriter = new MDbWriter(network, externalVersion, paramID, prov);
+	public static void writeNetworkMeasuresToDb(String network, String externalVersion, MoreRunIdProvider prov, int tick) {
+		MDbNetworkDataWriter dbWriter = new MDbNetworkDataWriter(network, externalVersion, prov);
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -142,8 +142,8 @@ public class MNetworkManager {
 		dbWriter.writeData();
 	}
 
-	public static void writeNetworkClusterMeasuresToDb(String network, String externalVersion, int paramID, MoreRunIdProvider prov, int tick) {
-		MDbWriter dbWriter = new MDbWriter(network, externalVersion, paramID, prov);
+	public static void writeNetworkClusterMeasuresToDb(String network, String externalVersion, MoreRunIdProvider prov, int tick) {
+		MDbNetworkDataWriter dbWriter = new MDbNetworkDataWriter(network, externalVersion, prov);
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -165,8 +165,8 @@ public class MNetworkManager {
 	 * @param predicate
 	 * @param newname
 	 * @return
-	 * Created by Sascha Holzhauer on 03.01.2011
 	 */
+	@SuppressWarnings("unchecked")
 	public static <V, E extends MoreEdge<? super V>> MoreNetwork<V,E> storeVertexSubnetwork(String in_network, Predicate<V> predicate, String newname) {
 		if (!networks.containsKey(in_network)) {
 			throw new IllegalArgumentException("The network \"" + in_network + "\" is not registered at the MNetworkManager!");
@@ -202,10 +202,8 @@ public class MNetworkManager {
 		measureClusterStorage.put(network, desc, value);
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Content of Measure Storage:\n" + measureClusterStorage.toString());
+			logger.debug("Content of Cluster Measure Storage:\n" + measureClusterStorage.toString());
 		}
 		// LOGGING ->
-
 	}
-
 }

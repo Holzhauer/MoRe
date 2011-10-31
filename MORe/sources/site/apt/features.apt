@@ -1,0 +1,42 @@
+	----------------
+	MoRe
+	----------------
+	Sascha Holzhauer
+	----------------
+	2011-10-27
+	
+MoRe's features
+
+  * Network generators
+  
+  * Network Dynamics and Manipulation
+  
+  	* Manipulation Agent Components
+  	
+  		* Manages the agents' links according to differences between partners regarding some node property (<<<MWeightLinksManipulateAgentComp>>>
+  		
+  	* Node Aggregator
+  
+  * Support for advanced edge objects
+  	
+  	* Edge factories
+  
+  * Calculation and management of network an node measures
+  
+  * Subnetworks
+  
+  	* Define subnetworks on given criteria using predicates
+  
+  	* Register resulting subnetworks at the network manager
+  
+  * Input/Ouput
+  
+  	* GraphML import / export (including node/network attributes)
+
+  * Support for geo-referenced nodes and edges
+  
+  	* Adding vertices and edges to (Repast Simphony) geography
+  
+  	* Generating networks based on spatial proximity
+  
+  	* Output of shapefiles containing node/edge attributes

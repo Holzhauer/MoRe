@@ -23,57 +23,67 @@
 package de.cesr.more.param;
 
 
+import de.cesr.more.util.MDbNetworkDataWriter;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.parma.definition.PmFrameworkPa;
 
 /**
- * KUBUS_Proto01
+ * Definition of database related parameters for MoRe
  * 
  * @author Sascha Holzhauer
  * @date 29.06.2010
  * 
  */
 public enum MSqlPa implements PmParameterDefinition {
-
-	/**
-	 * Location of XML file that specifies database settings:
-	 */
-	DB_SETTINGS_FILE(String.class, "./config/DBSettingsMore.xml"), 
 	
+	/**
+	 * Database location used to write data to. Default is {@link PmFrameworkPa#LOCATION}
+	 */
 	LOCATION(String.class, PmParameterManager.getParameter(PmFrameworkPa.LOCATION)),
+	
+	/**
+	 * Database name used to write data to. Default is {@link PmFrameworkPa#DBNAME}
+	 */
 	DBNAME(String.class, PmParameterManager.getParameter(PmFrameworkPa.DBNAME)),
+	
+	/**
+	 * Database user name used to write data. Default is {@link PmFrameworkPa#USER}
+	 */
 	USER(String.class, PmParameterManager.getParameter(PmFrameworkPa.USER)),
+	
+	/**
+	 * (unencrypted) password used to write data. Default is {@link PmFrameworkPa#PASSWORD}
+	 */
 	PASSWORD(String.class, PmParameterManager.getParameter(PmFrameworkPa.PASSWORD)),
 	
 	/**
-	 * 
+	 * Table where MoRe stores <i>network</i> measures. See {@link MDbNetworkDataWriter}.
+	 * Default: <code>more_net_measures</code>
 	 */
 	TBLNAME_NETWORK_MEASURES(String.class, "more_net_measures"),
 
-	
 	/**
-	 * 
-	 */
-	TBLNAME_MILIEU_GROUPS(String.class, "milieus_milieu_groups"),
-	
-	
-	/**
-	 * 
-	 */
-	TBLNAME_MILIEU_GROUPS_NAMES(String.class,
-			"milieu_groups"),
-
-	/**
-	 * 
+	 * Table from which agent network preferences are retrieved
+	 * by {@link MMilieuNetDataReader}. Default: <code>more_netprefs</code>
 	 */
 	TBLNAME_NET_PREFS(String.class, "more_netprefs"),
 	
 	
 	/**
-	 * 
+	 * Table from which agent network link preferences are retrieved
+	 * by {@link MMilieuNetDataReader}.
+	 * Default: <code>more_netprefs_links</code>
 	 */
-	TBLNAME_NET_PREFS_LINKS(String.class, "more_netprefs_links");
+	TBLNAME_NET_PREFS_LINKS(String.class, "more_netprefs_links"),
+	
+	/**
+	 * Location of example XML file that specifies database settings for writing data.
+	 * The reading of these file needs to be issued by the user using ParMa.
+	 * Default: <code>./config/DBSettingsMore.xml"</code>
+	 */
+	DB_SETTINGS_EXAMPLE_FILE(String.class, "./config/DBSettingsMore.xml");
+	
 
 	private Class < ? >	type;
 	private Object		defaultValue;

@@ -33,7 +33,6 @@ import org.junit.Test;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
-import repast.simphony.query.space.gis.ContainsQuery;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.GeographyParameters;
 
@@ -65,7 +64,7 @@ public class MGeoDistanceQueryTest {
 	Geography<Object> geography;
 	GeometryFactory geoFactory ;
 	
-	TestAgent a100, a101, a150;
+	TestAgent a100, a001, a050;
 
 	static class TestAgent {
 		String id;
@@ -95,27 +94,30 @@ public class MGeoDistanceQueryTest {
 
 		
 		a100 = new TestAgent(100);
-		a101 = new TestAgent(101);
-		a150 = new TestAgent(150);
+		a001 = new TestAgent(101);
+		a050 = new TestAgent(150);
 		
-		PmParameterManager.setParameter(MBasicPa.FIELD_UPPER_X,  new Double(100.0));
-		PmParameterManager.setParameter(MBasicPa.FIELD_UPPER_Y,  new Double(100.0));
+		PmParameterManager.setParameter(MBasicPa.TORUS_FIELD_UPPER_X,  new Double(100.0));
+		PmParameterManager.setParameter(MBasicPa.TORUS_FIELD_UPPER_Y,  new Double(100.0));
 		
-		double upper_x = ((Double)PmParameterManager.getParameter(MBasicPa.FIELD_UPPER_X)).doubleValue();
+		PmParameterManager.setParameter(MBasicPa.TORUS_FIELD_LOWER_X,  new Double(0.0));
+		PmParameterManager.setParameter(MBasicPa.TORUS_FIELD_LOWER_Y,  new Double(0.0));
+		
+		double upper_x = ((Double)PmParameterManager.getParameter(MBasicPa.TORUS_FIELD_UPPER_X)).doubleValue();
 		
 		geography.move(a100,
 				geoFactory.createPoint(new MTorusCoordinate(upper_x, 1)));
-		geography.move(a101,
+		geography.move(a001,
 				geoFactory.createPoint(new MTorusCoordinate(1, 1)));
-		geography.move(a150,
+		geography.move(a050,
 				geoFactory.createPoint(new MTorusCoordinate(upper_x/2, 1)));
 	}
 	
 	@Test
 	public void test() {
-		System.out.println(geography.getGeometry(a100).distance(geography.getGeometry(a101)));
-		System.out.println(geography.getGeometry(a100).distance(geography.getGeometry(a150)));
-		System.out.println(geography.getGeometry(a101).distance(geography.getGeometry(a150)));
+		logger.info(geography.getGeometry(a100).distance(geography.getGeometry(a001)));
+		logger.info(geography.getGeometry(a100).distance(geography.getGeometry(a050)));
+		logger.info(geography.getGeometry(a001).distance(geography.getGeometry(a050)));
 	}
 
 	@Test
@@ -123,7 +125,7 @@ public class MGeoDistanceQueryTest {
 		int totalNumObject = 0;
 		MGeoDistanceQuery<Object> containsQuery = new MGeoDistanceQuery<Object>(
 				this.geography, 50, a100);
-		for (Object agent : containsQuery.query()) {
+		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
 			totalNumObject++;
 		}
 		assertEquals(2, totalNumObject);
@@ -131,9 +133,36 @@ public class MGeoDistanceQueryTest {
 		totalNumObject = 0;
 		containsQuery = new MGeoDistanceQuery<Object>(
 				this.geography, 20, a100);
-		for (Object agent : containsQuery.query()) {
+		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
 			totalNumObject++;
 		}
 		assertEquals(1, totalNumObject);
+	}
+	
+	@Test
+	public void queryLowerBoundTest() {
+		int totalNumObject = 0;
+
+		PmParameterManager.setParameter(MBasicPa.TORUS_FIELD_LOWER_X, 50.0);
+		TestAgent a030 = new TestAgent(30);
+		geography.move(a030,
+				geoFactory.createPoint(new MTorusCoordinate(30, 1)));
+
+		
+		MGeoDistanceQuery<Object> containsQuery = new MGeoDistanceQuery<Object>(
+				this.geography, 50, a100);
+		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
+			totalNumObject++;
+		}
+		assertEquals(3, totalNumObject);
+		
+		totalNumObject = 0;
+		containsQuery = new MGeoDistanceQuery<Object>(
+				this.geography, 10, a100);
+		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
+			totalNumObject++;
+		}
+		assertEquals(1, totalNumObject);
+
 	}
 }

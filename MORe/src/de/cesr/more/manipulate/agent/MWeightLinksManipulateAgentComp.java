@@ -37,10 +37,16 @@ import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.util.Log4jLogger;
 
 /**
- * MORe
- *
- * Agent component to alter the agent's links structure according to link weights.
+ * Agent component that manages the agents links according to differences between partners regarding some node property.
+ * The agents need to implement {@link MoreNetStructureManageable}. The component takes care of updating link weights and 
+ * removing and establishing links if required.
+ * In case the node properties undergo a certain threshold, weights are increased. As the opposite, if properties exceed a 
+ * threshold, weights get decreased. When weights fall below zero, the according links is removed and another
+ * one is established. 
+ * For making new connections, transitivity links and common-out-neighbour links are considered and ordered according to
+ * the property difference between the focal node and the potential partner node.
  * 
+ * Thresholds for weight changes and amounts of amount of changed can be defined by setter methods (defaults are given).
  *  
  * @author Sascha Holzhauer
  * @param <A> 

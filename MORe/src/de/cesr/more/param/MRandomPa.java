@@ -26,39 +26,61 @@ package de.cesr.more.param;
 import de.cesr.parma.core.PmParameterDefinition;
 
 /**
- * MORe
+ * Definition of random streams related parameters for MORe
  *
- * @author holzhauer
+ * @author Sascha Holzhauer
  * @date 27.09.2011 
  *
  */
 public enum MRandomPa implements PmParameterDefinition {
 	/**
 	 * Random seed used for all random streams throughout the model
+	 * that not a specialised random stream defined. Default: <code>0</code>.
 	 */
 	RANDOM_SEED(Integer.class, 0),
 	
+	/**
+	 * Random seed used for network building processes.
+	 * Default: <code>0</code>.
+	 */
 	RANDOM_SEED_NETWORK_BUILDING(Integer.class, 0),
 	
+	/**
+	 * The name of the random stream used for network building
+	 * processes. Default: <code>Uniform network-building</code>.
+	 */
 	RND_STREAM_NETWORK_BUILDING(String.class, "Uniform network-building");
 	
 	private Class<?> type;
 	private Object defaultValue;
 	
+	/**
+	 * @param type
+	 */
 	MRandomPa(Class<?> type) {
 		this(type, null);
 	}
 
+	/**
+	 * @param type
+	 * @param defaultValue
+	 */
 	MRandomPa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
 	}
 
+	/**
+	 * @see de.cesr.parma.core.PmParameterDefinition#getType()
+	 */
 	@Override
 	public Class<?> getType() {
 		return type;
 	}
 	
+	/**
+	 * @see de.cesr.parma.core.PmParameterDefinition#getDefaultValue()
+	 */
 	@Override
 	public Object getDefaultValue() {
 		return defaultValue;

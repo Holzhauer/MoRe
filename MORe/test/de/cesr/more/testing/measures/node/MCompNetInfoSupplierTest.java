@@ -77,12 +77,15 @@ public class MCompNetInfoSupplierTest {
 
 		// build network (star of max diameter 5):
 		center = new TestAgent(1000.0f, "center");
+		context.add(center);
 
 		for (int i = 0; i < 5; i++) {
 			TestAgent next = new TestAgent(200.0f, "next" + i);
+			context.add(next);
 			network.connect(center, next);
 			for (int j = 0; j < 5; j++) {
 				TestAgent edge = new TestAgent(30.0f, "edge" + ((i+1)*10)+(j+1));
+				context.add(edge);
 				network.connect(next, edge);
 			}
 		}

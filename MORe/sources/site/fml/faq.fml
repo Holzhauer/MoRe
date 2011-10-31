@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  title="Frequently Asked Questions"
+  toplink="false">
+
+  <part id="general">
+    <title>General</title>
+
+    <faq id="why-more">
+      <question>
+        Why MoRe?
+      </question>
+      <answer>
+        <p>More is meant to be a collection of Java classes that are needed in a number of agent-based simulation models that
+        incorporate representations of social networks. Therefore, it advances the reuse of implemented algorithms and prevents
+        inventing more and more buggy software for the same purpose.</p>
+      </answer>
+    </faq>
+	</part>
+</faqs>

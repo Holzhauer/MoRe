@@ -73,7 +73,7 @@ public class MNetworkMeasureManagerTest {
 	MoreNetwork<TestNode, MoreEdge<TestNode>>	net;
 	MSchedule									schedule;
 	MMeasureDescription							centDesc;
-	MeasureManagerListenerImpl					listener;
+	MMeasureManagerListener						listener;
 	MarkerNetworkMeasureSupplier				supplier;
 
 	protected static boolean					marker	= false;
@@ -108,7 +108,7 @@ public class MNetworkMeasureManagerTest {
 		}
 	}
 
-	public static class MeasureManagerListenerImpl implements MoreMeasureManagerListener {
+	public static class MMeasureManagerListener implements MoreMeasureManagerListener {
 
 		boolean	added	= false;
 		boolean	removed	= false;
@@ -123,7 +123,7 @@ public class MNetworkMeasureManagerTest {
 		 *      de.cesr.more.measures.MMeasureDescription)
 		 */
 		@Override
-		public void networkMeasureCalcAdded(MoreNetwork network, MMeasureDescription measure) {
+		public void networkMeasureCalcAdded(MoreNetwork<?,?> network, MMeasureDescription measure) {
 			added = true;
 		}
 
@@ -132,21 +132,20 @@ public class MNetworkMeasureManagerTest {
 		 *      de.cesr.more.measures.MMeasureDescription)
 		 */
 		@Override
-		public void networkMeasureCalcRemoved(MoreNetwork network, MMeasureDescription measure) {
+		public void networkMeasureCalcRemoved(MoreNetwork<?,?> network, MMeasureDescription measure) {
 			removed = true;
 		}
 	}
 
 	/**
 	 * 
-	 * Created by Sascha Holzhauer on 22.12.2010
 	 */
 	public static void setMarkerTrue() {
 		marker = true;
 	}
 
 	/**
-	 * @throws java.lang.Exception Created by Sascha Holzhauer on 10.12.2010
+	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -163,11 +162,11 @@ public class MNetworkMeasureManagerTest {
 		this.supplier = new MarkerNetworkMeasureSupplier();
 		netMan.addMeasureSupplier(supplier);
 		marker = false;
-		listener = new MeasureManagerListenerImpl();
+		listener = new MMeasureManagerListener();
 	}
 
 	/**
-	 * @throws java.lang.Exception Created by Sascha Holzhauer on 10.12.2010
+	 * @throws java.lang.Exception
 	 */
 	@After
 	public void tearDown() throws Exception {

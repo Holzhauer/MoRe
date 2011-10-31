@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/DECORATION/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd"
+  name="More - Managing ongoing Relationships">
+  <publishDate position="right"/>
+  <version position="right"/>
+  <bannerLeft>
+    <name>MoRe</name> 
+  </bannerLeft>
+  <bannerRight>
+    <src>images/cesr-logo.gif</src>
+    <href>http://www.cesr.de</href>
+  </bannerRight>
+  <body>
+    <links>
+      <item name="Repast Simphony" href="http://repast.sourceforge.net/" />
+    </links>
+
+    <menu name="MoRe">
+      <item name="Introduction" href="index.html"/>
+       <item name="Concept" href="concept.html"/>
+      <item name="Features" href="features.html"/>
+       <item name="Usage" href="usage.html"/>
+        <item name="JavaDoc" href="../apidocs/index.html" target="new"/>
+      <item name="FAQ" href="faq.html"/>
+      <item name="Old Doc" href="xhtml/olddoc.html"/>
+    </menu>
+
+    <menu ref="reports"/>
+
+  </body>
+</project>
+

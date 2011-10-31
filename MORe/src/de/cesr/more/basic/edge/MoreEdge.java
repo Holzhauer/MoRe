@@ -24,7 +24,7 @@
 package de.cesr.more.basic.edge;
 
 /**
- * MORe
+ * MORe edge interface
  *
  * @author Sascha Holzhauer
  * @date 03.12.2010 

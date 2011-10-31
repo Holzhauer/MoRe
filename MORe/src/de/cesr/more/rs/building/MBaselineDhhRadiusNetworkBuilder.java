@@ -29,7 +29,6 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
-import de.cesr.more.param.MMilieuPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
@@ -43,7 +42,27 @@ import de.cesr.parma.core.PmParameterManager;
 import de.cesr.more.util.MDefaultMilieuKeysMap;
 
 /**
- * MoRe
+ * <h3><code>BaslineDhhRadiusNetworkBuilder</code></h3>
+	This network builder considers baseline
+	homophily (McPherson2001). Agents are linked as follows:
+	<ol>
+		<li>Build a collection of all agents from the main context.</li>
+		<li>For every agent in the context
+			<ol>
+				<li>Fetch all agents within a given radius (<code>SEARCH_RADIUS</code>) from the focal agent (do not consider area boundaries).</li>
+				<li>For every potential partner that is not yet connected check according to milieu specific probability
+					if it should be connected with focal agent. The approach to check the agents that are in the surroundings <i>as they come</i>
+					considers the local milieu distribution and reflects <i>baseline homophily</i>. Applying milieu specific tie probabilities reflects
+					<i>inbreeding homophily</i>.</li>
+				<li>If the number of required neighbours is not satisfied but all fetched agents checked, request more agents from geography 
+					within an extended radius (<code>X_SEARCH_RADIUS</code>) until maximum radius (<code>MAX_SEARCH_RADIUS</code>) is reached.</li>
+		</ol>
+		<li>Rewire: For each agent, check if every existing link should be rewired (with probability <code>p_rewire</code>) to a randomly 
+		chosen agent from the whole region that passes the milieu check (applying milieu tie probabilities (<code>p_links</code> for every
+		<code>partnerMilieu</code>). On purpose the new partner's milieu is not the same as that of the original link: The partners within direct
+		surroundings are coined by local milieu distributions (baseline homophly) and therefore do not entirely reflect the focal agent's preferences.
+		Determining the milieu during rewiring anew may correct to milieu distributions of partners towards inbreeeding homophily and is desired. </li>
+	</ol>
  * 
  * @author Sascha Holzhauer
  * @param <AgentT>
@@ -66,7 +85,7 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 	/**
 	 * @param areasGeography
 	 */
-	public MBaselineDhhRadiusNetworkBuilder(MRsEdgeFactory edgeFac) {
+	public MBaselineDhhRadiusNetworkBuilder(MRsEdgeFactory<AgentType, EdgeType> edgeFac) {
 		super(edgeFac);
 		AbstractDistribution abstractDis = MManager
 				.getMRandomService()
@@ -122,10 +141,7 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 		// <- LOGGING
 		logEdges(network, "AfterRewire: ");
 		// LOGGING ->
-		
-		if (((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.OUTPUT_NETWORK))) {
-			outputNetwork(network);
-		}
+
 
 		return network;
 	}
@@ -147,10 +163,10 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 
 		// map milieu ids to range from 0 to (# milieus -1):
 		int[] milieus = new int[((Integer) PmParameterManager
-				.getParameter(MMilieuPa.NUM_MILIEU_GROUPS)).intValue()];
+				.getParameter(MNetworkBuildingPa.NUM_MILIEU_GROUPS)).intValue()];
 		int j = 0;
 		for (Integer i : ((MDefaultMilieuKeysMap) PmParameterManager
-				.getParameter(MMilieuPa.MILIEUS)).values()) {
+				.getParameter(MNetworkBuildingPa.MILIEUS)).values()) {
 			// milieu indices start at 1:
 			milieus[j++] = i.intValue();
 		}

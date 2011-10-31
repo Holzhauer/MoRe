@@ -25,7 +25,7 @@ package de.cesr.more.basic.edge;
 
 
 /**
- * MORe
+ * Default MORe edge
  *
  * @author Sascha Holzhauer
  * @date 03.12.2010 
