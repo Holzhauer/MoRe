@@ -24,8 +24,11 @@
 package de.cesr.more.rs.edge;
 
 import repast.simphony.space.graph.RepastEdge;
-import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MoreTraceableEdge;
 import de.cesr.more.geo.MoreGeoEdge;
+import de.cesr.more.measures.util.MScheduleParameters;
+import de.cesr.more.measures.util.MoreAction;
 
 /**
  * MORe
@@ -34,9 +37,11 @@ import de.cesr.more.geo.MoreGeoEdge;
  * @date Jan 3, 2011 
  *
  */
-public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEdge<AgentT> {
+public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEdge<AgentT>, MoreTraceableEdge<AgentT> {
 
 	protected double length = 0.0;
+	
+	protected boolean active;
 	
 	/**
 	 * @param source
@@ -103,4 +108,28 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 		return this.length;
 	}
 
+	/**
+	 * @see de.cesr.more.basic.edge.MoreTraceableEdge#activate()
+	 */
+	@Override
+	public void activate() {
+		this.active = true;
+		MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(MManager.getSchedule().getCurrentTick() + 1, 
+				MScheduleParameters.END_TICK, 
+				MManager.getSchedule().getCurrentTick() + 1, 
+				MScheduleParameters.FIRST_PRIORITY), new MoreAction() {
+					@Override
+					public void execute() {
+						active = false;
+					}
+				});
+	}
+
+	/**
+	 * @see de.cesr.more.basic.edge.MoreTraceableEdge#isActive()
+	 */
+	@Override
+	public boolean isActive() {
+		return this.active;
+	}
 }

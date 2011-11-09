@@ -114,8 +114,6 @@ public class MRsSchedule implements MoreSchedule {
 	/**
 	 * Returns a string containing all scheduled actions including their schedule parameters.
 	 * @return information about scheduled actions
-	 * 
-	 * Created by Sascha Holzhauer on 23.12.2010
 	 */
 	@Override
 	public String getScheduleInfo() {
@@ -128,6 +126,14 @@ public class MRsSchedule implements MoreSchedule {
 			buffer.append("\n");
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * @see de.cesr.more.measures.util.MoreSchedule#getCurrentTick()
+	 */
+	@Override
+	public double getCurrentTick() {
+		return schedule.getTickCount();
 	}
 
 }

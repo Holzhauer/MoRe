@@ -36,6 +36,8 @@ public interface MoreSchedule {
 	
 	public void removeAction(MoreAction action);
 	
+	public double getCurrentTick();
+	
 	/**
 	 * Lists scheduled actions and according parameters in the returned string.
 	 * @return

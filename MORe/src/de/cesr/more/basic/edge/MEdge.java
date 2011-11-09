@@ -23,6 +23,10 @@
  */
 package de.cesr.more.basic.edge;
 
+import de.cesr.more.basic.MManager;
+import de.cesr.more.measures.util.MScheduleParameters;
+import de.cesr.more.measures.util.MoreAction;
+
 
 /**
  * Default MORe edge
@@ -31,13 +35,15 @@ package de.cesr.more.basic.edge;
  * @date 03.12.2010 
  *
  */
-public class MEdge<V> implements MoreEdge<V> {
+public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V> {
 	
 	private final static double DEFAULT_EDGE_WEIGHT = 1.0;
 	
-	V start, end;
-	double weight;
-	boolean directed;
+	protected V start, end;
+	protected double weight;
+	protected boolean directed;
+	
+	protected boolean active;
 	
 	/**
 	 * Creates an undirected edge.
@@ -124,5 +130,30 @@ public class MEdge<V> implements MoreEdge<V> {
 		result= 31 * result + getStart().hashCode(); 
 		result= 31 * result + getEnd().hashCode();
 		return result;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.edge.MoreTraceableEdge#activate()
+	 */
+	@Override
+	public void activate() {
+		this.active = true;
+		MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(MManager.getSchedule().getCurrentTick() + 1, 
+				MScheduleParameters.END_TICK, 
+				MManager.getSchedule().getCurrentTick() + 1, 
+				MScheduleParameters.FIRST_PRIORITY), new MoreAction() {
+					@Override
+					public void execute() {
+						active = false;
+					}
+				});
+	}
+
+	/**
+	 * @see de.cesr.more.basic.edge.MoreTraceableEdge#isActive()
+	 */
+	@Override
+	public boolean isActive() {
+		return this.active;
 	}
 }

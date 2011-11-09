@@ -36,7 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 
 @RunWith(Suite.class)
-@SuiteClasses( {  MNetworkManagerTest.class, MNetworkServiceTest.class})
+@SuiteClasses( {  MNetworkManagerTest.class, MNetworkServiceTest.class, MEdgeTest.class})
 public class MAllBasicTests {
 
 }

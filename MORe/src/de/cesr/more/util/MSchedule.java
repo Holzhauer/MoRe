@@ -53,6 +53,8 @@ public class MSchedule implements MoreSchedule {
 
 	private Map<MoreAction, MScheduleParameters>	actions	= new HashMap<MoreAction, MScheduleParameters>();
 	
+	protected double currentStep;
+	
 	/**
 	 * Logger
 	 */
@@ -80,14 +82,14 @@ public class MSchedule implements MoreSchedule {
 	 * Execute actions scheduled for the given step.
 	 * 
 	 * @param step
-	 * Created by Sascha Holzhauer on 10.12.2010
 	 */
-	public void step(int step) {
+	public void step(double step) {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug(this.getScheduleInfo());
 		}
 		// LOGGING ->
+		currentStep = step;
 
 		for (MoreAction a : actions.keySet()) {
 			if (actions.get(a).getStart() <= step && actions.get(a).getEnd() >= step) {
@@ -142,5 +144,13 @@ public class MSchedule implements MoreSchedule {
 			buffer.append("\n");
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * @see de.cesr.more.measures.util.MoreSchedule#getCurrentTick()
+	 */
+	@Override
+	public double getCurrentTick() {
+		return currentStep;
 	}
 }

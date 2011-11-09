@@ -63,6 +63,8 @@ public class MoreIoUtilities {
 
 
 	/**
+	 * Allowed values for type in meta data: boolean, int, long, float, double, string
+	 * 
 	 * Write the given network to the given file in GraphML format.
 	 * @param <V> vertex type parameter
 	 * @param <E> edge type parameter
