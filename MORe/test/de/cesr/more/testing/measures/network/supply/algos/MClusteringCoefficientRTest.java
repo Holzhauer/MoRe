@@ -33,8 +33,11 @@ import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 
 import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR;
+import de.cesr.more.measures.util.MRService;
 import de.cesr.more.testing.testutils.MTestGraphs;
+import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
 import de.cesr.more.util.Log4jLogger;
 import de.cesr.more.util.MSchedule;
 import edu.uci.ics.jung.graph.Graph;
@@ -48,13 +51,10 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class MClusteringCoefficientRTest {
 	
-	static private String[] R_ARGS = {""};
-	
 	private Logger logger;
 	
 	/**
 	 * @throws java.lang.Exception
-	 * Created by Sascha Holzhauer on 03.12.2010
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -67,7 +67,6 @@ public class MClusteringCoefficientRTest {
 
 	/**
 	 * @throws java.lang.Exception
-	 * Created by Sascha Holzhauer on 03.12.2010
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -79,7 +78,7 @@ public class MClusteringCoefficientRTest {
 	@Test
 	public final void testGetClusteringCoefficientR() {
 		logger.info("Test calculating clustering coefficient.");
-		Graph g = MTestGraphs.getCompleteUndirectedGraph(5);
+		Graph<TestNode, MoreEdge<TestNode>> g = MTestGraphs.getCompleteUndirectedGraph(5);
 		double result;
 		result = MClusteringCoefficientR.getClusteringCoefficientOverallR(g);
 		
@@ -93,11 +92,11 @@ public class MClusteringCoefficientRTest {
 	@Test
 	public final void testCreateRGraph() {
 		logger.info("Test graph assignment.");
-		Graph g = MTestGraphs.getCompleteUndirectedGraph(5);
+		Graph<TestNode, MoreEdge<TestNode>> g = MTestGraphs.getCompleteUndirectedGraph(5);
 		REXP result;
 		
-		Rengine re = MClusteringCoefficientR.getRengine();
-		MClusteringCoefficientR.assignGraphObject(re, g, "g");
+		Rengine re = MRService.getRengine();
+		MRService.assignGraphObject(re, g, "g");
 		
 		result = re.eval("is.list(g)");
 		assertTrue(result.asBool().isTRUE());

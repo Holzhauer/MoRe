@@ -51,7 +51,7 @@ public class MAggregator {
 	 * @param otherAgent
 	 * @return
 	 */
-	public static <AgentType, EdgeType extends MoreEdge<AgentType>> boolean
+	public static <AgentType, EdgeType extends MoreEdge<? super AgentType>> boolean
 		aggregateNodes(MoreNetwork<AgentType, EdgeType> network, AgentType survivingAgent, AgentType otherAgent) {
 		
 		if (!network.containsNode(otherAgent)) {

@@ -30,6 +30,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.random.RandomHelper;
@@ -62,6 +64,12 @@ import edu.uci.ics.jung.graph.Graph;
 public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> implements
 		MoreNetwork<AgentT, EdgeT> {
 
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger
+			.getLogger(MRsEncapsulatedContextJungNetwork.class);
+	
 	private ContextJungNetwork<AgentT>	network;
 	private Context<AgentT>						context;
 	

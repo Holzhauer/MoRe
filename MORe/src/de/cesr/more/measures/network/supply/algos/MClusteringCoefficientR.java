@@ -23,20 +23,14 @@
  */
 package de.cesr.more.measures.network.supply.algos;
 
-import javax.swing.JFileChooser;
-
 import org.apache.log4j.Logger;
 import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 
-import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
-import de.cesr.more.measures.util.MScheduleParameters;
-import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.measures.util.MRService;
 import de.cesr.more.util.Log4jLogger;
-import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -48,70 +42,16 @@ import edu.uci.ics.jung.graph.Graph;
  * @date Nov 26, 2010 
  *
  */
-public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements RMainLoopCallbacks{
+public class MClusteringCoefficientR extends MAbstractMeasureSupplier {
 
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Log4jLogger.getLogger(MClusteringCoefficientR.class);
 	
-	static private MClusteringCoefficientR instance = null;
-	
-	static private String[] R_ARGS = {"--no-save"};
-
-	
-	private MClusteringCoefficientR() {
-		// Stop R engine:
-		MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(MScheduleParameters.END_TICK, 1,
-				MScheduleParameters.END_TICK, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
-					@Override
-					public void execute() {
-						MClusteringCoefficientR.endEngine();
-					}
-				});
-	}
-	
-	static public MClusteringCoefficientR getInstance() {
-		if (instance == null) {
-			instance = new MClusteringCoefficientR();
-		}
-		return instance;
-	}
-	
-	/**
-	 * Stops REngine.
-	 * 
-	 * Created by Sascha Holzhauer on 10.01.2011
-	 */
-	static public void endEngine() {
-		Rengine re = Rengine.getMainEngine();
-		if (re != null) {
-			re.end();
-		}
-	}
-	
-	public static <V, E extends MoreEdge> void assignGraphObject(Rengine re, Graph<V,E> graph, String targetSymbol) {
-		logger.info("Create R instance of graph: " + graph);
-		
-		REXP x = null;
-		// generate edgelist:
-		StringBuffer edgelist = new StringBuffer();
-		edgelist.append("c(");
-		for (E e : graph.getEdges()) {
-			edgelist.append("\"" + e.getStart() + "\",\"" + e.getEnd() + "\",");
-		}
-		edgelist.deleteCharAt(edgelist.length() - 1);
-		edgelist.append(")");
-		logger.debug("Edgelist: " + edgelist);
-		logger.debug("Load Library igraph...");
-		re.eval("library(igraph)");
-		re.eval("el <- matrix(" + edgelist + ", ncol = 2, byrow = TRUE)");
-		re.eval(targetSymbol + " <- graph.edgelist( el , directed=" + ((graph instanceof DirectedGraph) ? "TRUE" : "FALSE") + ")");
-	}
 	
 	
-	
-	public static <V, E extends MoreEdge> double getClusteringCoefficientOverallR(final Graph<V, E> graph) {
+	public static <V, E extends MoreEdge<? super V>> double getClusteringCoefficientOverallR(final Graph<V, E> graph) {
 		logger.info("Calculate Clustering Coefficient (R) for a graph containing " + graph.getVertexCount() + " nodes.");
 		
 		if (graph.getEdgeCount() == 0)  {
@@ -119,10 +59,10 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 			return Double.NaN;
 		}
 		
-		Rengine re = getRengine();
+		Rengine re = MRService.getRengine();
 		
 		REXP result;
-		assignGraphObject(re, graph, "g");
+		MRService.assignGraphObject(re, graph, "g");
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -133,107 +73,5 @@ public class MClusteringCoefficientR extends MAbstractMeasureSupplier implements
 		result = re.eval("transitivity(g, type=\"global\")");
 		logger.info("Result: " + result);
 		return result.asDouble();
-	}
-
-	/**
-	 * @return
-	 * Created by Sascha Holzhauer on 10.12.2010
-	 */
-	public static Rengine getRengine() {
-		Rengine re = Rengine.getMainEngine();
-		if (re == null) {
-			logger.debug("REngine-Version: " + Rengine.getVersion());
-			re = new Rengine(R_ARGS, false, getInstance());
-			
-			// the engine creates R is a new thread, so we should wait until it's ready
-			logger.debug("Rengine created, waiting for R");
-			if (!re.waitForR()) {
-	        	logger.error("Cannot load R");
-	        	throw new IllegalStateException("Cannot load R");
-	        }
-	        
-		}
-		return re;
-	}
-	
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rBusy(org.rosuda.JRI.Rengine, int)
-	 */
-	@Override
-	public void rBusy(Rengine arg0, int which) {
-		if (which == 1) {
-			logger.info("R Engine works ...");
-		}
-		if (which == 0) {
-			logger.info("... finished.");
-		}
-		assert false;
-	}
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rChooseFile(org.rosuda.JRI.Rengine, int)
-	 */
-	@Override
-	public String rChooseFile(Rengine arg0, int arg1) {
-		JFileChooser fileChooser = new JFileChooser();
-		// TODO fileChooser.
-		return null;
-	}
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rFlushConsole(org.rosuda.JRI.Rengine)
-	 */
-	@Override
-	public void rFlushConsole(Rengine arg0) {
-		logger.warn("Flushed");
-	}
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rLoadHistory(org.rosuda.JRI.Rengine, java.lang.String)
-	 */
-	@Override
-	public void rLoadHistory(Rengine arg0, String arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rReadConsole(org.rosuda.JRI.Rengine, java.lang.String, int)
-	 */
-	@Override
-	public String rReadConsole(Rengine arg0, String arg1, int arg2) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rSaveHistory(org.rosuda.JRI.Rengine, java.lang.String)
-	 */
-	@Override
-	public void rSaveHistory(Rengine arg0, String arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rShowMessage(org.rosuda.JRI.Rengine, java.lang.String)
-	 */
-	@Override
-	public void rShowMessage(Rengine arg0, String message) {
-		logger.warn(message);
-	}
-
-	/**
-	 * @see org.rosuda.JRI.RMainLoopCallbacks#rWriteConsole(org.rosuda.JRI.Rengine, java.lang.String, int)
-	 */
-	@Override
-	public void rWriteConsole(Rengine arg0, String message, int level) {
-		if (level == 0) {
-			logger.info(message);
-		}
-		else if (level == 1) {
-			logger.warn(message);
-		}
 	}
 }
