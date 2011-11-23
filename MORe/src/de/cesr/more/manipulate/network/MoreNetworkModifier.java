@@ -25,23 +25,28 @@ package de.cesr.more.manipulate.network;
 
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
+import de.cesr.more.building.network.MoreNetworkService;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.rs.network.MoreRsNetwork;
 
 /**
  * MORe
  *
- * The  MoreNetworkModeifier interface provides methods to add agents to and remove agents from
+ * The MoreNetworkModifier interface provides methods to consistently add agents to and remove agents from
  * an existing network. It is especially useful in combination with {@link MoreNetworkBuilder}
- * (see) 
+ * and part of the {@link MoreNetworkService} interface.
+ * It goes beyond a {@link MoreNetworkEdgeModifier} and {@link MoreEdgeFactory} and rather uses
+ * {@link MoreNetworkEdgeModifier}s to handle edges.
+ *  
  * @author Sascha Holzhauer
  * @param <AgentType> 
  * @param <EdgeType> 
  * @date 14.06.2011 
  *
  */
-public interface MoreNetworkModifier<AgentType, EdgeType extends MoreEdge<AgentType>> 
+public interface MoreNetworkModifier<AgentType, EdgeType extends MoreEdge<? super AgentType>> 
 	extends MoreNetworkEdgeModifier<AgentType, EdgeType>{
 
 	/**
@@ -62,4 +67,7 @@ public interface MoreNetworkModifier<AgentType, EdgeType extends MoreEdge<AgentT
 	 * @return true if the agent could be added an all additional steps could be performed
 	 */
 	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node);
+	
+	
+	public void setEdgeModifier(MoreNetworkEdgeModifier<AgentType, EdgeType> edgeModifier);
 }

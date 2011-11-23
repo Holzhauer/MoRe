@@ -30,8 +30,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.apache.log4j.Logger;
-
 import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.random.RandomHelper;
@@ -41,7 +39,7 @@ import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.rs.building.edge.MDefaultREdgeFactory;
+import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -64,11 +62,6 @@ import edu.uci.ics.jung.graph.Graph;
 public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> implements
 		MoreNetwork<AgentT, EdgeT> {
 
-	/**
-	 * Logger
-	 */
-	static private Logger logger = Logger
-			.getLogger(MRsEncapsulatedContextJungNetwork.class);
 	
 	private ContextJungNetwork<AgentT>	network;
 	private Context<AgentT>						context;
@@ -85,12 +78,10 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 		this.context = context;
 	}
 
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public EdgeT connect(AgentT source, AgentT target) {
 		if (edgeFac == null) {
-			this.edgeFac = (MoreEdgeFactory<AgentT, EdgeT>) new MDefaultREdgeFactory<AgentT>();
+			this.edgeFac = new MRsEdgeFactory<AgentT, EdgeT>();
 		}
 		EdgeT edge = this.edgeFac.createEdge(source, target, network.isDirected());
 		edge.setWeight(DEFAULT_EDGE_WEIGHT);
@@ -244,7 +235,6 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 	public Graph<AgentT, EdgeT> getJungGraph() {
 		return (Graph<AgentT, EdgeT>) network.getGraph();
 	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public EdgeT getEdge(AgentT source, AgentT target) {
@@ -254,7 +244,7 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 		}
 		
 		if (edgeFac == null) {
-			this.edgeFac = (MoreEdgeFactory<AgentT, EdgeT>) new MDefaultREdgeFactory<AgentT>();
+			this.edgeFac = new MRsEdgeFactory<AgentT, EdgeT>();
 		}
 		EdgeT edge = this.edgeFac.createEdge(source, target, e.isDirected());
 		edge.setWeight(e.getWeight());

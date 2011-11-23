@@ -26,6 +26,10 @@ package de.cesr.more.basic;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import repast.simphony.context.space.gis.GeographyFactoryFinder;
+import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.GeographyParameters;
+
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 

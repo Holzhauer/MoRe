@@ -21,17 +21,12 @@
  * 
  * Created by holzhauer on 28.09.2011
  */
-package de.cesr.more.rs.building;
+package de.cesr.more.rs.building.edge;
 
 import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.OperationNotFoundException;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.spatialschema.geometry.MismatchedDimensionException;
-
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.UTMFinder;
 import repast.simphony.space.graph.RepastEdge;
@@ -41,12 +36,15 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.geo.MoreGeoEdge;
-import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
+import de.cesr.more.geo.building.MoreGeoNetworkEdgeModifier;
+import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -57,8 +55,8 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 28.09.2011 
  *
  */
-public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? super AgentType> & MoreEdge<AgentType>> implements
-		MoreNetworkEdgeModifier<AgentType, EdgeType> {
+public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? super AgentType> & MoreEdge<? super AgentType>> implements
+		MoreGeoNetworkEdgeModifier<AgentType, EdgeType> {
 	
 	/**
 	 * Logger
@@ -82,6 +80,16 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	protected GeometryFactory		geoFactory		= null;
 	
 	protected MoreEdgeFactory<AgentType, EdgeType> edgeFac;
+	
+	public MGeoRsNetworkEdgeModifier() {
+		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
+	}
+	
+	public MGeoRsNetworkEdgeModifier(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this(edgeFac, (Geography)PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), 
+				new GeometryFactory(new PrecisionModel(), 
+						((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.SPATIAL_REFERENCE_ID)).intValue()));
+	}
 	
 	public MGeoRsNetworkEdgeModifier(MoreEdgeFactory<AgentType, EdgeType> edgeFac, Geography<Object> geography,
 			GeometryFactory geoFactory) {
@@ -193,6 +201,7 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	/**
 	 * @return the geography
 	 */
+	@Override
 	public Geography<Object> getGeography() {
 		return geography;
 	}
@@ -200,6 +209,7 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	/**
 	 * @param geography the geography to set
 	 */
+	@Override
 	public void setGeography(Geography<Object> geography) {
 		this.geography = geography;
 	}
@@ -207,6 +217,7 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	/**
 	 * @return the geoFactory
 	 */
+	@Override
 	public GeometryFactory getGeoFactory() {
 		return geoFactory;
 	}
@@ -214,7 +225,16 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	/**
 	 * @param geoFactory the geoFactory to set
 	 */
+	@Override
 	public void setGeoFactory(GeometryFactory geoFactory) {
 		this.geoFactory = geoFactory;
+	}
+
+	/**
+	 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#getEdgeFactory()
+	 */
+	@Override
+	public MoreEdgeFactory<AgentType, EdgeType> getEdgeFactory() {
+		return edgeFac;
 	}
 }

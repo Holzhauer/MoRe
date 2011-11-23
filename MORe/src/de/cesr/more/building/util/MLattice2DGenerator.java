@@ -28,6 +28,12 @@ import java.util.Set;
 
 import org.apache.commons.collections15.BidiMap;
 
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
+import de.cesr.more.manipulate.network.MoreNetworkModifier;
+
 import edu.uci.ics.jung.algorithms.util.Indexer;
 import repast.simphony.context.space.graph.NetworkGenerator;
 import repast.simphony.space.graph.Network;
@@ -43,7 +49,7 @@ import repast.simphony.space.graph.Network;
  * @date 24.08.2011 
  *
  */
-public class MLattice2DGenerator<T> implements NetworkGenerator<T>{
+public class MLattice2DGenerator<T, E extends MoreEdge<T>> {
 
 	  protected boolean isToroidal;
 	  protected int latticeSize;
@@ -65,9 +71,8 @@ public class MLattice2DGenerator<T> implements NetworkGenerator<T>{
    * @param network the network to rewire
    * @return the created network
    */
-	@Override
-	public Network<T> createNetwork(Network<T> network) {
-	    latticeSize = (int) Math.floor(Math.sqrt(network.size()));
+	public MoreNetwork<T, E> createNetwork(MoreNetwork<T, E> network, MoreNetworkEdgeModifier<T, E> edgeModifier) {
+	    latticeSize = (int) Math.floor(Math.sqrt(network.numNodes()));
 	    Set<T> set = new LinkedHashSet<T>();
 	    for (T node : network.getNodes()) {
 	      set.add(node);
@@ -78,7 +83,7 @@ public class MLattice2DGenerator<T> implements NetworkGenerator<T>{
 
 	    BidiMap<T, Integer> map = Indexer.create(set);
 
-	    int numNodes = network.size();
+	    int numNodes = network.numNodes();
 	    boolean isDirected = network.isDirected();
 
 	    for (int i = 0; i < numNodes; i++) {
@@ -95,27 +100,27 @@ public class MLattice2DGenerator<T> implements NetworkGenerator<T>{
 	        T source = map.getKey(i);
 	        T target = map.getKey(upIndex);
 	        if (isDirected)
-	          network.addEdge(source, target);
+	          edgeModifier.createEdge(network, source, target);
 	        else if (!network.isAdjacent(source, target))
-	          network.addEdge(source, target);
+	        	 edgeModifier.createEdge(network, source, target);
 	      }
 
 	      if (currentLatticeColumn != 0 || (currentLatticeColumn == 0 && isToroidal)) {
 	        T source = map.getKey(i);
 	        T target = map.getKey(leftIndex);
 	        if (isDirected)
-	          network.addEdge(source, target);
+	          edgeModifier.createEdge(network, source, target);
 	        else if (!network.isAdjacent(source, target))
-	          network.addEdge(source, target);
+	        	edgeModifier.createEdge(network, source, target);
 	      }
 
 	      if (currentLatticeRow != latticeSize - 1 || (currentLatticeRow == latticeSize - 1 && isToroidal)) {
 	        T source = map.getKey(i);
 	        T target = map.getKey(downIndex);
 	        if (isDirected)
-	          network.addEdge(source, target);
+	        	edgeModifier.createEdge(network, source, target);
 	        else if (!network.isAdjacent(source, target))
-	          network.addEdge(source, target);
+	        	edgeModifier.createEdge(network, source, target);
 	      }
 
 	      if (currentLatticeColumn != latticeSize - 1 ||
@@ -123,9 +128,9 @@ public class MLattice2DGenerator<T> implements NetworkGenerator<T>{
 	        T source = map.getKey(i);
 	        T target = map.getKey(rightIndex);
 	        if (isDirected)
-	          network.addEdge(source, target);
+	        	edgeModifier.createEdge(network, source, target);
 	        else if (!network.isAdjacent(source, target))
-	          network.addEdge(source, target);
+	        	edgeModifier.createEdge(network, source, target);
 	      }
 	    }
 

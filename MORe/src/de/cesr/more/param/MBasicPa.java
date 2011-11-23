@@ -23,6 +23,7 @@
 package de.cesr.more.param;
 
 
+import repast.simphony.space.gis.Geography;
 import de.cesr.more.geo.MTorusCoordinate;
 import de.cesr.parma.core.PmParameterDefinition;
 
@@ -58,7 +59,12 @@ public enum MBasicPa implements PmParameterDefinition {
 	 * Upper Y corner coordinate of the torus
 	 * used in {@link MTorusCoordinate} to calculate distances.
 	 */
-	TORUS_FIELD_UPPER_Y(Double.class, new Double(100.0));
+	TORUS_FIELD_UPPER_Y(Double.class, new Double(100.0)),
+	
+	/**
+	 * Geography in the RS root context
+	 */
+	ROOT_GEOGRAPHY(Geography.class, null);
 	
 	
 	private Class<?> type;

@@ -29,7 +29,7 @@ import org.apache.commons.collections15.Factory;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.cesr.more.basic.MNetworkService;
+import de.cesr.more.basic.MNetworkTools;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
@@ -126,14 +126,14 @@ public class MNetworkServiceTest {
 
 	@Test
 	public void testStructurallyEqual() {
-		assertTrue(MNetworkService.isStructurallyEqual(network, network));
-		assertTrue(MNetworkService.isStructurallyEqual(resultingNetwork, resultingNetwork));
+		assertTrue(MNetworkTools.isStructurallyEqual(network, network));
+		assertTrue(MNetworkTools.isStructurallyEqual(resultingNetwork, resultingNetwork));
 	}
 	
 	@Test
 	public void test() {
 		MAggregator.aggregateNodes(network, new TestAgent(0), new TestAgent(3));
-		assertTrue(MNetworkService.isStructurallyEqual(network, resultingNetwork));
+		assertTrue(MNetworkTools.isStructurallyEqual(network, resultingNetwork));
 	}
 
 }

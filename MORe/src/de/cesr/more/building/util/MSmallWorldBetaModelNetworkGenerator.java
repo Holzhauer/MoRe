@@ -21,7 +21,7 @@
  * 
  * Created by Sascha Holzhauer on 17.01.2011
  */
-package de.cesr.more.building.network;
+package de.cesr.more.building.util;
 
 
 import java.util.ArrayList;
@@ -42,10 +42,7 @@ import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.building.util.MLattice1DGenerator;
-import de.cesr.more.building.util.MoreBetaProvider;
-import de.cesr.more.building.util.MoreKValueProvider;
-import de.cesr.more.building.util.MoreRewireTargetProvider;
+import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.uranus.core.URandomService;
@@ -54,22 +51,25 @@ import edu.uci.ics.jung.graph.Graph;
 
 
 
-
 /**
  * MoRe
  * 
  * Uses {@link MLattice1DGenerator} to produce the underlying regular ring.
  * 
+ * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction.
+ * Generally, the small world algorithm considers given k and beta values for the source of a direction.
+ * However, in some models we consider the influencer as source and seek to build the network according
+ * to the influenced' properties.
+ * 
  * TODO:
- * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction. Generally, the small world
-		algorithm considers given k and beta values for the source of a direction. However, in KUBUS we consider the influencer as source and
-		seek to build the network according to the influenced' properties.</p>
-		
-		<p class="text">Since also for rewiring <code>MSmallWorldBetaModelNetworkGenerator</code> considers the beta value of the source vertex,
-		using a custom <code>MoreEdgeFactory</code> as proxy that takes the influenced as source and the influencer as target from the underlying
-		<code>MSmallWorldBetaModelNetworkGenerator</code> and creates the edge the other way around, i.e. from the influenced to the influenced,
-		does not work. Instead, we build up the entire network in the other direction and reverse the direction of every single edge afterwards.
-		For creating the geography edge representative we use the correct direction from influenced to influenced instantaneous.
+ * - new Parameter BUILD_WNSM_CONSIDER_SOURCES(Boolean.class, Boolean.TRUE),
+ * 
+ * Since this class considers the beta value of the source vertex also for rewiring, using a custom
+ * {@link MoreEdgeFactory} as proxy that takes the influenced as source and the influencer as target from
+ * this class and creates the edge the other way around, i.e. from the influenced to the influenced, does
+ * <i>not</i> work. Instead, we build up the entire network in the other direction and reverse the direction
+ * of every single edge afterwards. 
+ * For creating the geography edge representative we use the correct direction from influenced to influenced instantaneous.
  * 
  * @author Sascha Holzhauer
  * @author Jung Project
@@ -82,28 +82,22 @@ import edu.uci.ics.jung.graph.Graph;
 public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<AgentType>>
 	implements MoreNetworkBuilder<AgentType, E>{
 
+	/**
+	 * MORe
+	 * 
+	 * Parameter provider for {@link MSmallWorldBetaModelNetworkGenerator}.
+	 *
+	 * @author Sascha Holzhauer
+	 * @date 23.11.2011 
+	 *
+	 * @param <AgentType>
+	 * @param <E>
+	 */
 	public static class MSmallWorldBetaModelNetworkGeneratorParams<AgentType, E extends MoreEdge<AgentType>> {
 
 		MoreNetwork<AgentType,E>				network;
 		
 		boolean									isSymmetrical = false;
-
-		/**
-		 * @return the isSymmetrical
-		 */
-		public boolean isSymmetrical() {
-			return isSymmetrical;
-		}
-
-		/**
-		 * Whether or not the generated edges will be symmetrical (if an edge goes from A to B there
-		 * is also and edge that goes from B to A). This has no effect on a non-directed network.
-		 * Default: false;
-		 * @param isSymmetrical
-		 */
-		public void setSymmetrical(boolean isSymmetrical) {
-			this.isSymmetrical = isSymmetrical;
-		}
 
 		MoreEdgeFactory<AgentType, E>			edgeFactory;
 		
@@ -113,27 +107,25 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		
 		Uniform 								randomDist;
 		
-		/**
-		 * @return the randomDist
-		 */
-		public Uniform getRandomDist() {
-			return randomDist;
-		}
-
+		
 		/**
 		 * If random distribution has not been set, it uses
 		 * URandomService.getURandomService().getUniform().
 		 * 
+		 * @return the randomDist
+		 */
+		public Uniform getRandomDist() {
+			if (this.randomDist== null) {
+				this.randomDist = URandomService.getURandomService().getUniform();
+			}
+			return randomDist;
+		}
+
+		/**
 		 * @param randomDist the randomDist to set
 		 */
 		public void setRandomDist(Uniform randomDist) {
-			if (randomDist== null) {
-				randomDist = URandomService.getURandomService().getUniform();
-			}
 			this.randomDist = randomDist;
-		}
-
-		public MSmallWorldBetaModelNetworkGeneratorParams() {
 		}
 		
 		/**
@@ -141,7 +133,8 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		 */
 		public MoreNetwork<AgentType, E> getNetwork() {
 			if (network == null) {
-				network = new MDirectedNetwork<AgentType, E>(getEdgeFactory(), "Network generated by MSmallWorldBetaModelNetworkGenerator");
+				network = new MDirectedNetwork<AgentType, E>(getEdgeFactory(), 
+						"Network generated by MSmallWorldBetaModelNetworkGenerator");
 			}
 			return network;
 		}
@@ -249,9 +242,35 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 				MoreRewireTargetProvider<AgentType, E> rewireManager) {
 			this.rewireManager = rewireManager;
 		}
+		
+
+		/**
+		 * @return the isSymmetrical
+		 */
+		public boolean isSymmetrical() {
+			return isSymmetrical;
+		}
+
+		/**
+		 * Whether or not the generated edges will be symmetrical (if an edge goes from A to B there
+		 * is also and edge that goes from B to A). This has no effect on a non-directed network.
+		 * Default: false;
+		 * @param isSymmetrical
+		 */
+		public void setSymmetrical(boolean isSymmetrical) {
+			this.isSymmetrical = isSymmetrical;
+		}
 	}
 	
 	
+	/**
+	 * MORe
+	 * 
+	 * Helper class to use agent collections with a vertex factory.
+	 * @author Sascha Holzhauer
+	 * @date 23.11.2011 
+	 *
+	 */
 	protected class SWVertexFactory implements Factory <AgentType> {
 		Iterator <AgentType>		agentIterator;
 
@@ -334,14 +353,12 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 					new IllegalArgumentException(
 							"Number of nodes must be greater than 10"));
 
-		Set<AgentType> set = new HashSet<AgentType>();
-		for (AgentType node : network.getNodes()) {
-			set.add(node);
-		}
-		BidiMap<AgentType, Integer> map = Indexer.create(set);
+		ArrayList<AgentType> list = new ArrayList<AgentType>(agents);
 
 
 		// create the lattice
+		
+		// TODO change here for direction change: reverse!
 		MLattice1DGenerator<AgentType, E> latticeGen = new MLattice1DGenerator<AgentType, E>(
 				new Factory<Graph<AgentType, E>>() {
 					@Override
@@ -376,12 +393,17 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 
 		for (E edge : edges) {
 			if (!removedEdges.contains(edge)) {
+				// TODO change here for direction change: edge.getTarget()
 				if (betaProvider.getBetaValue(edge.getStart()) > randomDist.nextDouble()) {
 					int rndIndex = randomDist.nextIntFromTo(0, numNodes - 1);
-					AgentType randomNode = map.getKey(rndIndex);
+					AgentType randomNode = list.get(rndIndex);
+					
+					// TODO change here for direction change: edge.getTarget()
 					AgentType source = edge.getStart();
 					if (!source.equals(randomNode)
 							&& !network.isSuccessor(randomNode, source)) {
+						
+						// TODO change here for direction change:
 						network.disconnect(source, edge.getEnd());						
 						network.connect(source, randomNode);
 
@@ -390,6 +412,8 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 							AgentType target = edge.getEnd();
 							E otherEdge = network.getEdge(
 									target, source);
+							
+							// TODO change here for direction change: edge.getTarget()
 							network.disconnect(target, source);
 							removedEdges.add(otherEdge);
 

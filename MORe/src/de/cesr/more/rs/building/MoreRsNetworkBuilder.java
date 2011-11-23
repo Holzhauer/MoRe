@@ -25,13 +25,10 @@ package de.cesr.more.rs.building;
 
 
 
-import java.util.Collection;
-
 import repast.simphony.context.Context;
 
 import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.rs.edge.MRepastEdge;
-import de.cesr.more.rs.network.MoreRsNetwork;
 
 
 
@@ -46,18 +43,10 @@ import de.cesr.more.rs.network.MoreRsNetwork;
  */
 public interface MoreRsNetworkBuilder<AgentType, EdgeType extends MRepastEdge<AgentType>> extends
 		MoreNetworkBuilder<AgentType, EdgeType> {
-
-	/**
-	 * @param agents
-	 * @return Created by Sascha Holzhauer on 22.07.2010
-	 */
-	@Override
-	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents);
 	
 	/**
 	 * Set the context the resulting network is embedded within.
 	 * @param context
-	 * Created by Sascha Holzhauer on 23.05.2011
 	 */
 	public void setContext(Context<AgentType> context);
 

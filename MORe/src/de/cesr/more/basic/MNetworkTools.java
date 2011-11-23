@@ -33,18 +33,18 @@ import de.cesr.more.basic.network.MoreNetwork;
 /**
  * MORe
  *
- * The MNetworkService provides some general static methods that are applied to networks.
+ * The MNetworkTools provides some general static methods that are applied to networks.
  * 
  * @author holzhauer
  * @date 11.10.2011 
  *
  */
-public class MNetworkService {
+public class MNetworkTools {
 	
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Logger.getLogger(MNetworkService.class);
+	static private Logger logger = Logger.getLogger(MNetworkTools.class);
 	
 	/**
 	 * Requires the same set of nodes to be equal (if B is representative of A, A.equals(B) must be true) 

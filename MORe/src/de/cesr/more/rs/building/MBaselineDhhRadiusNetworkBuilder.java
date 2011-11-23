@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 import org.apache.log4j.Logger;
 import repast.simphony.context.Context;
+import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.util.collections.IndexedIterable;
 import cern.jet.random.AbstractDistribution;
@@ -28,6 +29,7 @@ import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
@@ -63,6 +65,13 @@ import de.cesr.more.util.MDefaultMilieuKeysMap;
 		surroundings are coined by local milieu distributions (baseline homophly) and therefore do not entirely reflect the focal agent's preferences.
 		Determining the milieu during rewiring anew may correct to milieu distributions of partners towards inbreeeding homophily and is desired. </li>
 	</ol>
+	
+ * <table>
+ * <th>Property</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
+ * <tr><td></td><td></td></tr>
+ * <tr><td>#Edges:</td><td>N*(N-1)</td></tr>
+ * </table>
  * 
  * @author Sascha Holzhauer
  * @param <AgentT>
@@ -80,13 +89,29 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 			.getLogger(MBaselineDhhRadiusNetworkBuilder.class);
 
 	private Uniform rand;
+	
+	protected String name;
 
 
+	
+	public MBaselineDhhRadiusNetworkBuilder(MRsEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this(edgeFac, "Network");
+	}
+
+	public MBaselineDhhRadiusNetworkBuilder(MRsEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
+		 this((Geography)PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
+	}
 	/**
+	 * - builder constructor
+	 * - edge modifier
+	 * - builder set
+	 * - parma
+	 * 
 	 * @param areasGeography
 	 */
-	public MBaselineDhhRadiusNetworkBuilder(MRsEdgeFactory<AgentType, EdgeType> edgeFac) {
-		super(edgeFac);
+	public MBaselineDhhRadiusNetworkBuilder(Geography<Object> geography, MRsEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
+		super(geography, edgeFac);
+		this.name = name;
 		AbstractDistribution abstractDis = MManager
 				.getMRandomService()
 				.getDistribution(
@@ -110,8 +135,8 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 	 * @see de.cesr.more.building.network.MoreNetworkBuilder#buildNetwork(java.util.Collection)
 	 */
 	@Override
-	public MoreRsNetwork<AgentType, EdgeType> buildRsNetwork(
-			Collection<AgentType> agents, String name) {
+	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
+			Collection<AgentType> agents) {
 		if (context == null) {
 			throw new IllegalStateException(
 					"Context needs to be set before building the network!");
@@ -126,7 +151,7 @@ public class MBaselineDhhRadiusNetworkBuilder<AgentType extends MoreMilieuAgent,
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
-				new DirectedJungNetwork<AgentType>(name), context);
+				new DirectedJungNetwork<AgentType>(this.name), context);
 
 		addAgents(network, agents);
 

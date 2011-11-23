@@ -32,7 +32,6 @@ import org.apache.commons.collections15.Factory;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.building.network.MSmallWorldBetaModelNetworkGenerator;
 
 import edu.uci.ics.jung.algorithms.generators.GraphGenerator;
 import edu.uci.ics.jung.graph.DirectedGraph;

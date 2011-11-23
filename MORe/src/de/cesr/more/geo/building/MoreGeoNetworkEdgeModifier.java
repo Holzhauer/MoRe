@@ -19,27 +19,41 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 27.09.2011
+ * Created by holzhauer on 20.11.2011
  */
-package de.cesr.more.rs.building.edge;
+package de.cesr.more.geo.building;
 
-import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.rs.edge.MRepastEdge;
+import repast.simphony.space.gis.Geography;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
+
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
+
 /**
  * MORe
  *
  * @author holzhauer
- * @date 27.09.2011 
+ * @date 20.11.2011 
  *
  */
-public class MDefaultREdgeFactory<V> implements MoreEdgeFactory<V, MRepastEdge<V>> {
+public interface MoreGeoNetworkEdgeModifier<AgentType, EdgeType extends MoreEdge<? super AgentType>> extends MoreNetworkEdgeModifier<AgentType, EdgeType> {
+	
+	/**
+	 * @return the geography
+	 */
+	public Geography<Object> getGeography();
 
 	/**
-	 * @see de.cesr.more.building.edge.MoreEdgeFactory#createEdge(java.lang.Object, java.lang.Object, boolean)
+	 * @param geography the geography to set
 	 */
-	@Override
-	public MRepastEdge<V> createEdge(V source, V target, boolean directed) {
-		return new MRepastEdge<V>(source, target, directed);
-	}
-
+	public void setGeography(Geography<Object> geography);
+	/**
+	 * @return the geoFactory
+	 */
+	public GeometryFactory getGeoFactory();
+	/**
+	 * @param geoFactory the geoFactory to set
+	 */
+	public void setGeoFactory(GeometryFactory geoFactory);
 }

@@ -17,7 +17,7 @@
 	<classpathentry kind="lib" path="libs/jscience.jar"/>
 	<classpathentry kind="lib" path="libs/jts-1.7.1.jar"/>
 	<classpathentry kind="lib" path="libs/jung-algorithms-2.0-beta1.jar"/>
-	<classpathentry kind="lib" path="libs/jung-algorithms-2.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jung-algorithms-2.0.1.jar" sourcepath="C:/Users/holzhauer/Software/jung/jung-algorithms-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-api-2.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/jung-graph-impl-2.0.1.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/JUNG_2.0.1/src/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-io-2.0.1.jar"/>

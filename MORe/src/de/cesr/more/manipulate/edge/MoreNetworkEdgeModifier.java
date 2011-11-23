@@ -25,9 +25,16 @@ package de.cesr.more.manipulate.edge;
 
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
 
 /**
  * MORe
+ * 
+ * The {@link MoreNetworkEdgeModifier} provides features to consistently add and remove
+ * edges to or from a network. This is particularly important when using networks within
+ * a geography (see {@link MGeoRsNetworkEdgeModifier}). It thus goes beyond a 
+ * {@link MoreEdgeFactory} and rather uses {@link MoreEdgeFactory}s to create edges.
  *
  * @author Sascha Holzhauer
  * @date 03.05.2011 
@@ -35,7 +42,31 @@ import de.cesr.more.basic.network.MoreNetwork;
  */
 public interface MoreNetworkEdgeModifier<AgentType, EdgeType extends MoreEdge<? super AgentType>> {
 	
+	/**
+	 * Creates a new edge from source node to target node within the given
+	 * network and takes care for additional work in the particular context, e.g.
+	 * adding links in a geography.
+	 * 
+	 * @param network
+	 * @param source
+	 * @param target
+	 * @return the (new) edge
+	 */
 	public EdgeType createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target);
+	
+	/**
+	 * Removes an edge from source node to target node within the given
+	 * network and takes care for additional work in the particular context, e.g.
+	 * removing links in a geography.
+	 * @param network
+	 * @param source
+	 * @param target
+	 * @return true if the deletion process was successful.
+	 */
 	public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target);
-
+	
+	/**
+	 * @return the underlying edge factory
+	 */
+	public MoreEdgeFactory<AgentType, EdgeType> getEdgeFactory();
 }

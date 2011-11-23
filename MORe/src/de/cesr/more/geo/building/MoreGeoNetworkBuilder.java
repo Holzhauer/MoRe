@@ -42,6 +42,6 @@ public interface MoreGeoNetworkBuilder<AgentType, EdgeType extends MoreEdge<? su
 	 * Sets the geography that defines the spatial proximity of nodes.
 	 * @param geography
 	 */
-	public void setGeograpy(Geography<Object> geography);
+	public void setGeography(Geography<Object> geography);
 
 }

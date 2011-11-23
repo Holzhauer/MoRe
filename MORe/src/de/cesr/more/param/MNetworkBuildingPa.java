@@ -80,11 +80,22 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 */
 	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
 	
+	
+	
+	/*****************************************************
+	 * General network Settings
+	 *****************************************************/
+	
 	/**
 	 * "Directedness" of the generated networks. Default:<code>false</code>.
 	 */
 	BUILD_DIRECTED(Boolean.class, false),
 	
+	
+	
+	/*****************************************************
+	 * General Geography Settings
+	 *****************************************************/
 	
 	/**
 	 * If true, edges are added to the geography (adding many edges to the geography is a

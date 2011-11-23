@@ -23,7 +23,6 @@
  */
 package de.cesr.more.building.util;
 
-import de.cesr.more.building.network.MSmallWorldBetaModelNetworkGenerator;
 import edu.uci.ics.jung.graph.Graph;
 
 /**

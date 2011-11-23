@@ -38,9 +38,9 @@ import de.cesr.more.basic.network.MoreNetwork;
 public interface MoreNetworkBuilder<AgentType, EdgeType extends MoreEdge<? super AgentType>> {
 	
 	/**
+	 * Links the given collection of agents and thus generates the network.
 	 * @param agents
 	 * @return
-	 * Created by Sascha Holzhauer on 22.07.2010
 	 */
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents);
 

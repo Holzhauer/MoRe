@@ -21,22 +21,20 @@
  * 
  * Created by holzhauer on 23.09.2011
  */
-package de.cesr.more.rs.building;
+package de.cesr.more.building.network;
 
-import repast.simphony.space.graph.RepastEdge;
 import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.manipulate.network.MoreNetworkModifier;
 
 /**
  * MORe
- * Interface for repast network builder that also support dynamics of networks
+ * Interface for network builders that also support dynamics of networks
  *
  * @author holzhauer
  * @date 23.09.2011 
  *
  */
-public interface MoreRsNetworkService<AgentType, EdgeType extends RepastEdge<AgentType> & MoreEdge<AgentType>> extends
+public interface MoreNetworkService<AgentType, EdgeType extends MoreEdge<? super AgentType>> extends
 		MoreNetworkBuilder<AgentType, EdgeType>,
 		MoreNetworkModifier<AgentType, EdgeType> {
 }

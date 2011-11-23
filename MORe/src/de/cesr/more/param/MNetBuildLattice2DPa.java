@@ -19,23 +19,57 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 28.09.2011
+ * Created by holzhauer on 22.11.2011
  */
-package de.cesr.more.rs.building;
+package de.cesr.more.param;
+
+import de.cesr.parma.core.PmParameterDefinition;
 
 /**
  * MORe
- * 
- * Used especially for RS network building
  *
  * @author holzhauer
- * @date 28.09.2011 
+ * @date 22.11.2011 
  *
  */
-public interface MoreMilieuAgent {
-	
-	public int getMilieuGroup();
-	
-	public String getAgentId();
+public enum MNetBuildLattice2DPa implements PmParameterDefinition {
 
+	
+	TOROIDAL(Boolean.class, Boolean.TRUE);
+	
+	
+	private Class<?>	type;
+	private Object		defaultValue;
+
+	/**
+	 * @param type
+	 */
+	MNetBuildLattice2DPa(Class<?> type) {
+		this(type, null);
+	}
+
+	/**
+	 * @param type
+	 * @param defaultValue
+	 */
+	MNetBuildLattice2DPa(Class<?> type, Object defaultValue) {
+		this.type = type;
+		this.defaultValue = defaultValue;
+	}
+	
+	/**
+	 * @see de.cesr.parma.core.PmParameterDefinition#getType()
+	 */
+	@Override
+	public Class<?> getType() {
+		return this.type;
+	}
+
+	/**
+	 * @see de.cesr.parma.core.PmParameterDefinition#getDefaultValue()
+	 */
+	@Override
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
 }

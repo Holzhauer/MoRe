@@ -25,7 +25,7 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
-import de.cesr.more.rs.building.edge.MDefaultREdgeFactory;
+import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.util.Log4jLogger;
 import de.cesr.more.util.exception.MIllegalValueTypeException;
@@ -92,11 +92,10 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 	 * Tries to use the {@link MDefaultEdgeFactory} in case no {@link MoreEdgeFactory} has been
 	 * set before. This fails if EdgeT is not {@link MoreEdge<AgentT}.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public EdgeT connect(AgentT source, AgentT target) {
 		if (edgeFac == null) {
-			this.edgeFac = (MoreEdgeFactory<AgentT, EdgeT>) new MDefaultREdgeFactory<AgentT>();
+			this.edgeFac = new MRsEdgeFactory<AgentT, EdgeT>();
 		}
 		EdgeT edge = this.edgeFac.createEdge(source, target, isDirected());
 		this.connect(edge);
@@ -293,7 +292,6 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 	 * Tries to use the {@link MDefaultEdgeFactory} in case no {@link MoreEdgeFactory} has been
 	 * set before. This fails if EdgeT is not {@link MoreEdge<AgentT}.
 	 */
-	@SuppressWarnings("unchecked") // ContextJungNetworks do not support edge parameters
 	@Override
 	public void reverseNetwork() {
 		if (this.isDirected()) {
@@ -302,7 +300,7 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 				this.removeEdge(edge);
 			}
 			if (edgeFac == null) {
-				this.edgeFac = (MoreEdgeFactory<AgentT, EdgeT>) new MDefaultREdgeFactory<AgentT>();
+				this.edgeFac = new MRsEdgeFactory<AgentT, EdgeT>();
 			}
 			for (EdgeT edge :orgEdges) {
 				this.addEdge(edgeFac.createEdge(edge.getTarget(),  edge.getSource(), this.isDirected()));
