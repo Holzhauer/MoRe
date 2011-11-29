@@ -32,6 +32,8 @@ import org.apache.commons.collections15.Factory;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.parma.core.PmParameterManager;
 
 import edu.uci.ics.jung.algorithms.generators.GraphGenerator;
 import edu.uci.ics.jung.graph.DirectedGraph;
@@ -41,6 +43,9 @@ import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe
+ * 
+ * Considers {@link MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES} (this class is mainly used by 
+ * {@link MSmallWorldBetaModelNetworkGenerator}).
  * 
  * @author Sascha Holzhauer
  * @date 24.01.2011
@@ -55,6 +60,7 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 	protected Factory<? extends Graph<V, E>>	graph_factory;
 	protected Factory<V>						vertex_factory;
 	protected MoreEdgeFactory<V,E>				edge_factory;
+	protected boolean							considerSource;
 	private List<V>								v_array;
 	
 	/**
@@ -67,7 +73,7 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 	 * Constructs a generator of square lattices of size {@code latticeSize} with the specified parameters.
 	 * 
 	 * @param graph_factory used to create the {@code Graph} for the lattice
-	 * @param vertex_factory used to create the lattice vertices
+	 * @param vertex_factory used to create the lattice vertices (also defines order of vertices)
 	 * @param edge_factory used to create the lattice edges
 	 * @param lattice_size
 	 * @param kProvider
@@ -88,6 +94,7 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 		this.edge_factory = edge_factory;
 		this.is_directed = (graph_factory.create() instanceof DirectedGraph);
 		this.is_symmetrical = is_symmetrical;
+		this.considerSource = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES);
 	}
 
 	/**
@@ -107,6 +114,8 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 		// int start = is_toroidal ? 0 : 1;
 		// int end_row = is_toroidal ? lattice_size : lattice_size - 1;
 
+		int start, end;
+
 		// fill in edges
 		// clockwise:
 		for (int i = 1; i <= numVertices; i++) {
@@ -120,8 +129,10 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 			}
 			for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)) * 0.5; j++) {
 				if (is_toroidal || (!is_toroidal && i + j <= numVertices)) {
-					graph.addEdge(edge_factory.createEdge(getVertex(getIndex(i)), getVertex(getIndex(i + j)), this.is_directed), 
-							getVertex(getIndex(i)), getVertex(getIndex(i + j)));
+					start = this.considerSource ? i : i + j;
+					end = this.considerSource ? i + j : i;
+					graph.addEdge(edge_factory.createEdge(getVertex(getIndex(start)), getVertex(getIndex(end)), this.is_directed), 
+							getVertex(getIndex(start)), getVertex(getIndex(end)));
 				}
 			}
 		}
@@ -132,11 +143,13 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 			for (int i = 1; i <= numVertices; i++) {
 				for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)) * 0.5; j++) {
 					if (is_toroidal || (!is_toroidal && i - j >= 0)) {
-						graph.addEdge(edge_factory.createEdge(getVertex(getIndex(i)), getVertex(getIndex(i - j)), this.is_directed), 
-								getVertex(getIndex(i)), getVertex(getIndex(i - j)));
+						start = this.considerSource ? i : i - j;
+						end = this.considerSource ? i - j : i;
+						graph.addEdge(edge_factory.createEdge(getVertex(getIndex(start)), getVertex(getIndex(end)), this.is_directed), 
+								getVertex(getIndex(start)), getVertex(getIndex(end)));
 						if (is_symmetrical) {
-							graph.addEdge(edge_factory.createEdge( getVertex(getIndex(i - j)), getVertex(getIndex(i)), this.is_directed), 
-									getVertex(getIndex(i - j)), getVertex(getIndex(i)));
+							graph.addEdge(edge_factory.createEdge( getVertex(getIndex(end)), getVertex(getIndex(start)), this.is_directed), 
+									getVertex(getIndex(end)), getVertex(getIndex(start)));
 						}
 					}
 				}

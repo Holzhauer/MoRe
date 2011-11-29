@@ -81,6 +81,15 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
 	
 	
+	/**
+	 * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction.
+	 * Generally, the small world algorithm considers given k and beta values for the source of a direction.
+	 * However, in some models we consider the influencer as source and seek to build the network according
+	 * to the influenced' properties. In this case, set this parameter to FALSE.
+	 */
+	BUILD_WSSM_CONSIDER_SOURCES(Boolean.class, Boolean.TRUE),
+	
+	
 	
 	/*****************************************************
 	 * General network Settings

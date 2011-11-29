@@ -28,6 +28,8 @@ import de.cesr.parma.core.PmParameterManager;
  * See {@link MCompleteNetworkBuilder} forinformation about properties and
  * considered {@link PmParameterDefinition}s.
  * 
+ * TODO tests 
+ * 
  * @author Sascha Holzhauer
  *
  */

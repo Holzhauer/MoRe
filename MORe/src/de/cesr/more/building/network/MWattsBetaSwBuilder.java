@@ -27,8 +27,6 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-import cern.jet.random.Uniform;
-
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MUndirectedNetwork;
@@ -40,7 +38,6 @@ import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWor
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
-import de.cesr.uranus.core.URandomService;
 
 /**
  * MORe

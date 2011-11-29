@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
-import repast.simphony.space.graph.RepastEdge;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
@@ -42,10 +41,10 @@ import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MNetworkService;
-import de.cesr.more.geo.building.MoreGeoNetworkBuilder;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
+import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -56,8 +55,8 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 23.09.2011 
  *
  */
-public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends RepastEdge<AgentType> & MoreEdge<AgentType>>
-	extends MNetworkService<AgentType, EdgeType> implements	MoreGeoNetworkBuilder<AgentType, EdgeType> {
+public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+	extends MNetworkService<AgentType, EdgeType> implements	MoreGeoRsNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
@@ -93,8 +92,9 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	/**
 	 * @param areasGeography
 	 */
+	@SuppressWarnings("unchecked")
 	public MGeoRsNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
-		this((Geography)PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac);
+		this((Geography<Object>)PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac);
 	}
 	
 	/**
@@ -153,6 +153,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 * 
 	 * @param context
 	 */
+	@Override
 	public void setContext(Context<AgentType> context) {
 		this.context = context;
 	}

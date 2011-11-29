@@ -19,41 +19,21 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 20.11.2011
+ * Created by Sascha Holzhauer on 28.11.2011
  */
-package de.cesr.more.geo.building;
+package de.cesr.more.rs.building;
 
-import repast.simphony.space.gis.Geography;
-
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
+import de.cesr.more.geo.building.MoreGeoNetworkBuilder;
+import de.cesr.more.rs.edge.MRepastEdge;
 
 /**
  * MORe
  *
- * @author holzhauer
- * @date 20.11.2011 
+ * @author Sascha Holzhauer
+ * @date 28.11.2011 
  *
  */
-public interface MoreGeoNetworkEdgeModifier<AgentType, EdgeType extends MoreEdge<? super AgentType>> extends MoreNetworkEdgeModifier<AgentType, EdgeType> {
-	
-	/**
-	 * @return the geography
-	 */
-	public Geography<Object> getGeography();
+public interface MoreGeoRsNetworkBuilder<AgentType, EdgeType extends MRepastEdge<AgentType>> extends MoreGeoNetworkBuilder<AgentType, EdgeType>,
+		MoreRsNetworkBuilder<AgentType, EdgeType> {
 
-	/**
-	 * @param geography the geography to set
-	 */
-	public void setGeography(Geography<Object> geography);
-	/**
-	 * @return the geoFactory
-	 */
-	public GeometryFactory getGeoFactory();
-	/**
-	 * @param geoFactory the geoFactory to set
-	 */
-	public void setGeoFactory(GeometryFactory geoFactory);
 }

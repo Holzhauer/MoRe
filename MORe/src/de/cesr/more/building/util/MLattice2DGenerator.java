@@ -30,13 +30,8 @@ import org.apache.commons.collections15.BidiMap;
 
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
-import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
-import de.cesr.more.manipulate.network.MoreNetworkModifier;
-
 import edu.uci.ics.jung.algorithms.util.Indexer;
-import repast.simphony.context.space.graph.NetworkGenerator;
-import repast.simphony.space.graph.Network;
 
 /**
  * MORe

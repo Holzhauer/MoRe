@@ -115,8 +115,5 @@ public class MRsWattsBetaSwBuilder<AgentType, EdgeType extends MRepastEdge<Agent
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(params);
 		
 		return (MoreRsNetwork<AgentType, EdgeType>) gen.buildNetwork(agents);
-
-
-
 	}
 }

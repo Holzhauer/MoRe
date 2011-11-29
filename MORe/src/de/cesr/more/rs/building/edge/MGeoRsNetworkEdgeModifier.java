@@ -43,7 +43,7 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.geo.MoreGeoEdge;
-import de.cesr.more.geo.building.MoreGeoNetworkEdgeModifier;
+import de.cesr.more.geo.manipulate.MoreGeoNetworkEdgeModifier;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;

@@ -155,3 +155,8 @@ agent.netStructure = new MWeightLinksManipulateAgentComp<V, MoreEdge<V>(agent, M
 +---
 this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();
 +---
+
+**Manipulating Repast Simphony networks
+
+  The RS networks usually deal with changes of edges in the geography via <<<MoreGeoNetworkEdgeModifier>>>, but do not care about adding and removing
+  nodes to and from contexts and geographies. The reason is that these node objects are expected to survive even if they are deleted from the network.
