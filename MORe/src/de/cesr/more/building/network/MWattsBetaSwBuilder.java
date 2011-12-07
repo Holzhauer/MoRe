@@ -23,6 +23,7 @@
  */
 package de.cesr.more.building.network;
 
+
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
@@ -39,8 +40,11 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
+
 /**
  * MORe
+ * 
+ * @formatter:off
  * 
  * <table>
  * <th>Parameter</th><th>Value</th>
@@ -64,72 +68,75 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 22.11.2011 
  *
  */
-public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> extends MNetworkService<AgentType, EdgeType> {
+public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> 
+	extends MNetworkService<AgentType, EdgeType> {
 
 		/**
+		 * @formatter:on
 		 * Logger
 		 */
-		static private Logger logger = Logger
-				.getLogger(MWattsBetaSwBuilder.class);
-		
-		protected String name;
-		
-		/**
+	static private Logger	logger	= Logger.getLogger(MWattsBetaSwBuilder.class);
+
+	protected String		name;
+
+	/**
 		 * 
 		 */
-		@SuppressWarnings("unchecked")
-		public MWattsBetaSwBuilder() {
-			this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
-		}
-
-		public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
-			this(eFac, "Network");
-		}
-		
-		/**
-		 * @param eFac
-		 */
-		public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
-			super(eFac);
-			this.name = name;
-		}
-
-		/**
-		 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection)
-		 *      Parameters are assigned through the parameter framework to allow
-		 *      network builders to be initialises automatically.
-		 */
-		@Override
-		public MoreNetwork<AgentType, EdgeType> buildNetwork(
-				Collection<AgentType> agents) {
-			
-			if (context == null) {
-				logger.error("Context not set!");
-				throw new IllegalStateException("Context not set!");
-			}
-			
-			MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ? 
-					new MDirectedNetwork<AgentType, EdgeType>(getEdgeFactory(),
-							name) : new MUndirectedNetwork<AgentType, EdgeType>(getEdgeFactory(), name);
-			
-			MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params = 
-				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>();
-			
-			params.setNetwork(network);
-			params.setEdgeFactory(getEdgeFactory());
-			
-			MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(params);
-			
-			return gen.buildNetwork(agents);
-		}
-
-		/**
-		 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork, java.lang.Object)
-		 */
-		@Override
-		public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network,
-				AgentType node) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+	@SuppressWarnings("unchecked")
+	public MWattsBetaSwBuilder() {
+		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
 	}
+
+	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+		this(eFac, "Network");
+	}
+
+	/**
+	 * @param eFac
+	 */
+	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+		super(eFac);
+		this.name = name;
+	}
+
+	/**
+	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection) Parameters are assigned
+	 *      through the parameter framework to allow network builders to be initialises automatically.
+	 */
+	@Override
+	public MoreNetwork<AgentType, EdgeType> buildNetwork(
+			Collection<AgentType> agents) {
+
+		if (context == null) {
+			logger.error("Context not set!");
+			throw new IllegalStateException("Context not set!");
+		}
+
+		MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager
+				.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
+				new MDirectedNetwork<AgentType, EdgeType>(getEdgeFactory(),
+						name) : new MUndirectedNetwork<AgentType, EdgeType>(getEdgeFactory(), name);
+
+		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
+				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>();
+
+		params.setNetwork(network);
+		params.setEdgeFactory(getEdgeFactory());
+
+		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
+				params);
+
+		return gen.buildNetwork(agents);
+	}
+
+	/**
+	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network,
+			AgentType node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+}

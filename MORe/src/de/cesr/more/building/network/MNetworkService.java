@@ -95,7 +95,7 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 		protected void addAgents(MoreNetwork<AgentType, EdgeType> network, Collection<AgentType> agents) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug("Adding agents to collection.");
+				logger.debug("Adding agents to network: " + agents);
 			}
 			// LOGGING ->
 
@@ -146,7 +146,7 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 		/**
 		 * @param network
 		 */
-		protected void logEdges(MoreNetwork<AgentType, EdgeType> network, String prestring) {
+		protected void logEdges(Logger logger, MoreNetwork<AgentType, EdgeType> network, String prestring) {
 			if (logger.isDebugEnabled()) {
 				Set<MoreEdge<? super AgentType>> edges = new TreeSet<MoreEdge<? super AgentType>>(
 						new Comparator<MoreEdge<? super AgentType>>() {

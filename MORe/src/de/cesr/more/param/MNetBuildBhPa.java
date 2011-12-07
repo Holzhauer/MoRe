@@ -80,7 +80,34 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 	 * Weight for milieu regarding partner homophily.
 	 * Default: <code>0.5</code>
 	 */
-	DIM_WEIGHTS_MILIEU(Double.class, new Double(0.5));
+	DIM_WEIGHTS_MILIEU(Double.class, new Double(0.5)),
+	
+	
+	/********************************************************
+	 * MGeoRsBaselineNumberNetworkService:
+	 *******************************************************/
+	
+	/**
+	 * How many times the required number of neighbors 
+	 * shall be fetched to satisfy milieu distribution?
+	 */
+	NUM_NEIGHBORS_FETCH_FACTOR(Double.class, 2.0),
+	
+	/**
+	 * Used when number of required partners of a 
+	 * milieu could not be satisfied:
+	 */
+	X_NUM_NEIGHBORS_FETCH_FACTOR(Double.class, 2.0),
+	
+	/**
+	 * Radius within to search for potential partners in m:
+	 */
+	NUMBER_SEARCH_RADIUS(Double.class, 5000.0),
+	
+	/**
+	 * Area type to request area in {@link MGeoRsBaselineNumberNetworkService}
+	 */
+	AREA_CONTEXT_CLASS(Class.class, Object.class);
 
 	private Class<?> type;
 	private Object defaultValue;

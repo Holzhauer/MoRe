@@ -39,10 +39,10 @@
       <stereoType></stereoType>
       <name>de.cesr.more.manipulate.network.MoreNetworkModifier&lt;AgentType, EdgeType&gt;</name>
       <constraint>
+        <height>-1</height>
+        <width>-1</width>
         <x>437</x>
         <y>714</y>
-        <width>-1</width>
-        <height>-1</height>
       </constraint>
       <sourceConnections>
         <net.java.amateras.uml.classdiagram.model.DependencyModel>
@@ -84,10 +84,10 @@
             <stereoType></stereoType>
             <name>de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier&lt;AgentType, EdgeType extends MoreEdge&lt;? super AgentType&gt;&gt;</name>
             <constraint>
+              <height>-1</height>
+              <width>-1</width>
               <x>445</x>
               <y>824</y>
-              <width>-1</width>
-              <height>-1</height>
             </constraint>
             <sourceConnections>
               <net.java.amateras.uml.classdiagram.model.AssociationModel>
@@ -131,10 +131,10 @@
                   <stereoType></stereoType>
                   <name>de.cesr.more.building.edge.MoreEdgeFactory&lt;V, E&gt;</name>
                   <constraint>
+                    <height>-1</height>
+                    <width>-1</width>
                     <x>1024</x>
                     <y>836</y>
-                    <width>-1</width>
-                    <height>-1</height>
                   </constraint>
                   <sourceConnections>
                     <net.java.amateras.uml.classdiagram.model.AggregationModel>
@@ -184,10 +184,10 @@
                         <stereoType></stereoType>
                         <name>de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier&lt;AgentType, EdgeType&gt;</name>
                         <constraint>
+                          <height>-1</height>
+                          <width>-1</width>
                           <x>253</x>
                           <y>943</y>
-                          <width>-1</width>
-                          <height>-1</height>
                         </constraint>
                         <sourceConnections>
                           <net.java.amateras.uml.classdiagram.model.RealizationModel>
@@ -228,10 +228,10 @@
                               <stereoType></stereoType>
                               <name>de.cesr.more.geo.manipulate.MoreGeoNetworkEdgeModifier&lt;AgentType, EdgeType&gt;</name>
                               <constraint>
+                                <height>-1</height>
+                                <width>-1</width>
                                 <x>101</x>
                                 <y>802</y>
-                                <width>-1</width>
-                                <height>-1</height>
                               </constraint>
                               <sourceConnections>
                                 <net.java.amateras.uml.classdiagram.model.GeneralizationModel>
@@ -404,10 +404,10 @@
                                     <stereoType></stereoType>
                                     <name>de.cesr.more.building.network.MoreNetworkBuilder&lt;AgentType, EdgeType&gt;</name>
                                     <constraint>
+                                      <height>-1</height>
+                                      <width>-1</width>
                                       <x>103</x>
                                       <y>626</y>
-                                      <width>-1</width>
-                                      <height>-1</height>
                                     </constraint>
                                     <sourceConnections/>
                                     <targetConnections>
@@ -448,10 +448,10 @@
                                           <stereoType></stereoType>
                                           <name>de.cesr.more.building.network.MoreNetworkService&lt;AgentType, EdgeType&gt;</name>
                                           <constraint>
+                                            <height>-1</height>
+                                            <width>-1</width>
                                             <x>569</x>
                                             <y>637</y>
-                                            <width>-1</width>
-                                            <height>-1</height>
                                           </constraint>
                                           <sourceConnections>
                                             <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../.."/>
@@ -509,10 +509,10 @@
                                                 <stereoType></stereoType>
                                                 <name>de.cesr.more.rs.building.MoreRsNetworkService&lt;AgentType, EdgeType&gt;</name>
                                                 <constraint>
+                                                  <height>-1</height>
+                                                  <width>-1</width>
                                                   <x>362</x>
                                                   <y>495</y>
-                                                  <width>-1</width>
-                                                  <height>-1</height>
                                                 </constraint>
                                                 <sourceConnections>
                                                   <net.java.amateras.uml.classdiagram.model.GeneralizationModel>
@@ -553,10 +553,10 @@
                                                       <stereoType></stereoType>
                                                       <name>de.cesr.more.rs.building.MoreRsNetworkBuilder&lt;AgentType, EdgeType extends MRepastEdge&gt;</name>
                                                       <constraint>
+                                                        <height>-1</height>
+                                                        <width>-1</width>
                                                         <x>102</x>
                                                         <y>562</y>
-                                                        <width>-1</width>
-                                                        <height>-1</height>
                                                       </constraint>
                                                       <sourceConnections/>
                                                       <targetConnections>
@@ -598,10 +598,10 @@
                                                             <stereoType></stereoType>
                                                             <name>de.cesr.more.rs.building.MoreGeoRsNetworkBuilder&lt;AgentType, EdgeType&gt;</name>
                                                             <constraint>
-                                                              <x>151</x>
-                                                              <y>434</y>
-                                                              <width>-1</width>
                                                               <height>-1</height>
+                                                              <width>-1</width>
+                                                              <x>89</x>
+                                                              <y>430</y>
                                                             </constraint>
                                                             <sourceConnections>
                                                               <net.java.amateras.uml.classdiagram.model.GeneralizationModel>
@@ -642,10 +642,10 @@
                                                                   <stereoType></stereoType>
                                                                   <name>de.cesr.more.geo.building.MoreGeoNetworkBuilder&lt;AgentType, EdgeType&gt;</name>
                                                                   <constraint>
+                                                                    <height>-1</height>
+                                                                    <width>-1</width>
                                                                     <x>799</x>
                                                                     <y>568</y>
-                                                                    <width>-1</width>
-                                                                    <height>-1</height>
                                                                   </constraint>
                                                                   <sourceConnections/>
                                                                   <targetConnections>
@@ -686,10 +686,10 @@
                                                                         <stereoType></stereoType>
                                                                         <name>de.cesr.more.geo.manipulate.MoreGeoNetworkService&lt;AgentType, EdgeType&gt;</name>
                                                                         <constraint>
+                                                                          <height>-1</height>
+                                                                          <width>-1</width>
                                                                           <x>704</x>
                                                                           <y>495</y>
-                                                                          <width>-1</width>
-                                                                          <height>-1</height>
                                                                         </constraint>
                                                                         <sourceConnections>
                                                                           <net.java.amateras.uml.classdiagram.model.GeneralizationModel>
@@ -747,10 +747,10 @@
                                                                               <stereoType></stereoType>
                                                                               <name>de.cesr.more.rs.building.MoreGeoRsNetworkService&lt;AgentType, EdgeType&gt;</name>
                                                                               <constraint>
+                                                                                <height>-1</height>
+                                                                                <width>-1</width>
                                                                                 <x>523</x>
                                                                                 <y>431</y>
-                                                                                <width>-1</width>
-                                                                                <height>-1</height>
                                                                               </constraint>
                                                                               <sourceConnections>
                                                                                 <net.java.amateras.uml.classdiagram.model.GeneralizationModel>
@@ -769,6 +769,21 @@
                                                                                   </listeners>
                                                                                 </net.java.amateras.uml.classdiagram.model.GeneralizationModel>
                                                                                 <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../.."/>
+                                                                                <net.java.amateras.uml.classdiagram.model.GeneralizationModel>
+                                                                                  <source class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../.."/>
+                                                                                  <target class="net.java.amateras.uml.classdiagram.model.InterfaceModel" reference="../../../../../../../../../../../.."/>
+                                                                                  <bendpoints/>
+                                                                                  <showIcon>true</showIcon>
+                                                                                  <listeners serialization="custom">
+                                                                                    <java.beans.PropertyChangeSupport>
+                                                                                      <default>
+                                                                                        <propertyChangeSupportSerializedDataVersion>2</propertyChangeSupportSerializedDataVersion>
+                                                                                        <source class="net.java.amateras.uml.classdiagram.model.GeneralizationModel" reference="../../../.."/>
+                                                                                      </default>
+                                                                                      <null/>
+                                                                                    </java.beans.PropertyChangeSupport>
+                                                                                  </listeners>
+                                                                                </net.java.amateras.uml.classdiagram.model.GeneralizationModel>
                                                                               </sourceConnections>
                                                                               <targetConnections>
                                                                                 <net.java.amateras.uml.classdiagram.model.RealizationModel>
@@ -814,10 +829,10 @@
                                                                                     <stereoType></stereoType>
                                                                                     <name>de.cesr.more.rs.building.MGeoRsNetworkService&lt;AgentType, EdgeType&gt;</name>
                                                                                     <constraint>
+                                                                                      <height>-1</height>
+                                                                                      <width>-1</width>
                                                                                       <x>406</x>
                                                                                       <y>155</y>
-                                                                                      <width>-1</width>
-                                                                                      <height>-1</height>
                                                                                     </constraint>
                                                                                     <sourceConnections>
                                                                                       <net.java.amateras.uml.classdiagram.model.RealizationModel reference="../../.."/>
@@ -866,10 +881,10 @@
                                                                                           <stereoType></stereoType>
                                                                                           <name>de.cesr.more.rs.building.MBaselineDhhRadiusNetworkBuilder&lt;AgentTypet, EdgeType&gt;</name>
                                                                                           <constraint>
+                                                                                            <height>-1</height>
+                                                                                            <width>-1</width>
                                                                                             <x>355</x>
                                                                                             <y>20</y>
-                                                                                            <width>-1</width>
-                                                                                            <height>-1</height>
                                                                                           </constraint>
                                                                                           <sourceConnections>
                                                                                             <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../.."/>
@@ -2179,7 +2194,9 @@
                                                               </net.java.amateras.uml.classdiagram.model.GeneralizationModel>
                                                               <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../.."/>
                                                             </sourceConnections>
-                                                            <targetConnections/>
+                                                            <targetConnections>
+                                                              <net.java.amateras.uml.classdiagram.model.GeneralizationModel reference="../../sourceConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/target/targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/targetConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel/source/sourceConnections/net.java.amateras.uml.classdiagram.model.GeneralizationModel[3]"/>
+                                                            </targetConnections>
                                                             <children/>
                                                             <filterProperty/>
                                                             <backgroundColor>

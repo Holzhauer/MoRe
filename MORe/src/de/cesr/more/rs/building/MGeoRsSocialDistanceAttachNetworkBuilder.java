@@ -357,4 +357,11 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 		}
 		return totalDistance;
 	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "MGeoRsSocialDistanceAttachNetworkBuilder";
+	}
 }

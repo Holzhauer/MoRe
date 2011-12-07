@@ -35,6 +35,6 @@ import de.cesr.more.rs.edge.MRepastEdge;
  */
 public interface MoreGeoRsNetworkService <AgentType, EdgeType extends MRepastEdge<AgentType>> extends
 	MoreRsNetworkService<AgentType, EdgeType>,
-	MoreGeoNetworkService<AgentType, EdgeType> {
-
+	MoreGeoNetworkService<AgentType, EdgeType>,
+	MoreGeoRsNetworkBuilder<AgentType, EdgeType>{
 }

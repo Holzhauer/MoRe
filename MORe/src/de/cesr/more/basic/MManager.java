@@ -67,7 +67,7 @@ public class MManager {
 	 */
 	public static void init() {
 		// init random streams
-		getMRandomService()
+		getURandomService()
 				.registerDistribution(
 						new Uniform(
 								new MersenneTwister(
@@ -150,7 +150,7 @@ public class MManager {
 	 * 
 	 * @return the random manager
 	 */
-	public static UranusRandomService getMRandomService() {
+	public static UranusRandomService getURandomService() {
 		if (randomService == null) {
 			randomService = new URandomService(
 					((Integer) PmParameterManager

@@ -40,6 +40,8 @@ import repast.simphony.space.gis.Geography;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import de.cesr.more.geo.MTorusCoordinate;
+
 /**
  * MoRe
  * 
@@ -81,7 +83,12 @@ public class MGeographyWrapper<AgentType> {
 		@Override
 		public Query<AgentType> initQuery(Geography<AgentType> geography,
 				double distance, AgentType sourceObject) {
-			return new MGeoDistanceQuery<AgentType>(geography, distance, sourceObject);
+			// TODO test!
+			if (geography.getLayer(MTorusCoordinate.class) != null) {
+				return new MGeoTorusDistanceQuery<AgentType>(geography, distance, sourceObject);
+			} else {
+				return new GeographyWithin<AgentType>(geography, distance, sourceObject);
+			}
 		}
 	}
 	
@@ -98,6 +105,9 @@ public class MGeographyWrapper<AgentType> {
 	 * area. Starting with a radius of <code>radius</code> the radius is
 	 * expanded by <code>radius</code> until enough agents are found or the
 	 * number of total objects within the geography is reached.
+	 * 
+	 * Checks if the the number of all agents within the given area is
+	 * larger or equal to the requested number.
 	 * 
 	 * @param focus
 	 * @param numAgents
@@ -334,8 +344,11 @@ public class MGeographyWrapper<AgentType> {
 			logger.debug("Current radius: " + radius + " / Found agents: "
 					+ agents.size());
 		}
+		
+		
 		Query<AgentType> queryWithin = this.queryFac.initQuery(
 				this.geography, radius, focus);
+		
 		for (AgentType agent : queryWithin.query()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Query yielded " + agent + "("
@@ -354,13 +367,15 @@ public class MGeographyWrapper<AgentType> {
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.info("Retrun agents: " + agents);
+			logger.info("Return agents: " + agents);
 		}
 		return agents;
 	}
 
 	/**
-	 * @return Created by Sascha Holzhauer on 28.07.2010
+	 * @param area
+	 * @param returnClass
+	 * @return sum of agents of type return type in area
 	 */
 	public <ReturnType> int getMaxNumAgents(Geometry area, Class<ReturnType> returnClass) {
 		int totalNumObject = 0;
@@ -375,7 +390,8 @@ public class MGeographyWrapper<AgentType> {
 	}
 
 	/**
-	 * @return Created by Sascha Holzhauer on 28.07.2010
+	 * @param returnClass
+	 * @return sum of agents of type return type in the entire geography
 	 */
 	public <ReturnType> int getMaxNumAgents(Class<ReturnType> returnClass) {
 		int totalNumObject = 0;
@@ -390,10 +406,10 @@ public class MGeographyWrapper<AgentType> {
 	/**
 	 * @param geography
 	 * @param agent
-	 * @return Created by Sascha Holzhauer on 28.07.2010
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public <AreaType> AreaType getContainingAreaContext(Geography<AgentType> geography,
+	public <AreaType> AreaType getContainingAreaContext(
 			AgentType agent, Class<AreaType> areaClass) {
 		WithinQuery<AgentType> withinQuery = new WithinQuery<AgentType>(
 				geography, geography.getGeometry(agent));

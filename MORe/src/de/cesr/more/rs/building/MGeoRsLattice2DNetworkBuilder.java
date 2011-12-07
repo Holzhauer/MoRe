@@ -46,6 +46,8 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
+ * 
+ * TODO parameter description
  *
  * @author holzhauer
  * @date 22.11.2011 
@@ -128,5 +130,12 @@ MLattice2DNetworkBuilder<AgentType, EdgeType> implements MoreGeoRsNetworkBuilder
 	@Override
 	public void setContext(Context<AgentType> context) {
 		this.context = context;
+	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "MGeoRsLattice2DNetworkBuilder";
 	}
 }

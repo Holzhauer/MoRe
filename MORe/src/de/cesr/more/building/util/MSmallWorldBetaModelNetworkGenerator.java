@@ -222,7 +222,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 					@Override
 					public AgentType getRewireTarget(Graph<AgentType,E> graph, AgentType source) {
 						return new ArrayList<AgentType>(graph.getVertices()).get(
-								MManager.getMRandomService().getUniform().nextIntFromTo(0, graph.getVertexCount() - 1));
+								MManager.getURandomService().getUniform().nextIntFromTo(0, graph.getVertexCount() - 1));
 					}
 				};
 			}

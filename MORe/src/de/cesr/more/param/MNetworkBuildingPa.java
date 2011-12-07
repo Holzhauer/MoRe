@@ -39,7 +39,7 @@ import de.cesr.parma.core.PmParameterDefinition;
 public enum MNetworkBuildingPa implements PmParameterDefinition {
 	
 	/**
-	 * The milieu parameter map is usually read by {@link sql.MilieuNetDataReader}
+	 * The milieu network parameter map is usually read by {@link MMilieuNetDataReader}
 	 */
 	MILIEU_NETWORK_PARAMS(MMilieuNetworkParameterMap.class, new MMilieuNetworkParameterMap()),
 	
@@ -89,7 +89,11 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 */
 	BUILD_WSSM_CONSIDER_SOURCES(Boolean.class, Boolean.TRUE),
 	
+	/*****************************************************
+	 * Restore network Builder
+	 *****************************************************/
 	
+	RESTORE_NETWORK_SOURCE_FILE(String.class, "network"),
 	
 	/*****************************************************
 	 * General network Settings

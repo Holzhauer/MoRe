@@ -33,7 +33,7 @@ MORe Usage
     
     	* Random seeds
     
-    * Call <<<MManager.getInstance().init()>>> to initialise default random streams (according to parameter settings for random seeds).
+    * Call <<<MManager.init()>>> to initialise default random streams (according to parameter settings for random seeds).
 
 
 *Configuring Network Measures

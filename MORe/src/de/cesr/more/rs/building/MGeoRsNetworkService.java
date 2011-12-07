@@ -72,11 +72,6 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	protected GeometryFactory		geoFactory		= null;
 	
 	protected MoreEdgeFactory<AgentType, EdgeType> edgeFac = null;
-
-	/**
-	 * The context the network belongs to.
-	 */
-	protected Context<AgentType>						   context;
 	
 
 	/**
@@ -101,6 +96,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 * @param areasGeography
 	 */
 	@SuppressWarnings("unchecked") // risky but not avoidable
+	@Deprecated
 	public MGeoRsNetworkService() {
 		this(null, (MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
 	}
@@ -110,7 +106,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 * Specify super type method for MilieuAgents
 	 * @param network
 	 */
-	protected void logEdges(MoreRsNetwork<AgentType, EdgeType> network, String prestring) {
+	protected void logEdges(Logger logger, MoreRsNetwork<AgentType, EdgeType> network, String prestring) {
 		if (logger.isDebugEnabled()) {
 			Set<MoreEdge<AgentType>> edges = new TreeSet<MoreEdge<AgentType>>(
 					new Comparator<MoreEdge<AgentType>>() {
@@ -118,13 +114,13 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 						@Override
 						public int compare(MoreEdge<AgentType> o1,
 								MoreEdge<AgentType> o2) {
-							if (!o1.getEnd().getAgentId()
-									.equals(o2.getEnd().getAgentId())) {
-								return o1.getEnd().getAgentId()
-										.compareTo(o2.getEnd().getAgentId());
-							} else {
+							if (!o1.getStart().getAgentId()
+									.equals(o2.getStart().getAgentId())) {
 								return o1.getStart().getAgentId()
 										.compareTo(o2.getStart().getAgentId());
+							} else {
+								return o1.getEnd().getAgentId()
+										.compareTo(o2.getEnd().getAgentId());
 							}
 						}
 					});

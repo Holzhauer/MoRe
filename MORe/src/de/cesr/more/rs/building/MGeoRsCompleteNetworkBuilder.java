@@ -25,7 +25,7 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  * Generates a complete network (all possible edges are created).
  * 
- * See {@link MCompleteNetworkBuilder} forinformation about properties and
+ * See {@link MCompleteNetworkBuilder} for information about properties and
  * considered {@link PmParameterDefinition}s.
  * 
  * TODO tests 
@@ -42,7 +42,6 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 	static private Logger logger = Logger
 			.getLogger(MGeoRsCompleteNetworkBuilder.class);
 
-	Context<AgentType> context;
 	MoreEdgeFactory<AgentType, EdgeType> eFac;
 	
 	String name;
@@ -106,14 +105,6 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 
 
 	/**
-	 * @see de.cesr.more.rs.building.MGeoRsNetworkService#setContext(repast.simphony.context.Context)
-	 */
-	@Override
-	public void setContext(Context<AgentType> context) {
-		this.context = context;	
-	}
-
-	/**
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork, java.lang.Object)
 	 */
 	@Override
@@ -133,5 +124,12 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "MGeoRsCompleteNetworkBuilder";
 	}
 }

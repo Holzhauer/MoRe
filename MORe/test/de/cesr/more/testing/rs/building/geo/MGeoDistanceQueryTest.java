@@ -41,7 +41,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.geo.MTorusCoordinate;
 import de.cesr.more.param.MBasicPa;
-import de.cesr.more.rs.geo.util.MGeoDistanceQuery;
+import de.cesr.more.rs.geo.util.MGeoTorusDistanceQuery;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -123,7 +123,7 @@ public class MGeoDistanceQueryTest {
 	@Test
 	public void queryTest() {
 		int totalNumObject = 0;
-		MGeoDistanceQuery<Object> containsQuery = new MGeoDistanceQuery<Object>(
+		MGeoTorusDistanceQuery<Object> containsQuery = new MGeoTorusDistanceQuery<Object>(
 				this.geography, 50, a100);
 		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
 			totalNumObject++;
@@ -131,7 +131,7 @@ public class MGeoDistanceQueryTest {
 		assertEquals(2, totalNumObject);
 		
 		totalNumObject = 0;
-		containsQuery = new MGeoDistanceQuery<Object>(
+		containsQuery = new MGeoTorusDistanceQuery<Object>(
 				this.geography, 20, a100);
 		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
 			totalNumObject++;
@@ -149,7 +149,7 @@ public class MGeoDistanceQueryTest {
 				geoFactory.createPoint(new MTorusCoordinate(30, 1)));
 
 		
-		MGeoDistanceQuery<Object> containsQuery = new MGeoDistanceQuery<Object>(
+		MGeoTorusDistanceQuery<Object> containsQuery = new MGeoTorusDistanceQuery<Object>(
 				this.geography, 50, a100);
 		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
 			totalNumObject++;
@@ -157,7 +157,7 @@ public class MGeoDistanceQueryTest {
 		assertEquals(3, totalNumObject);
 		
 		totalNumObject = 0;
-		containsQuery = new MGeoDistanceQuery<Object>(
+		containsQuery = new MGeoTorusDistanceQuery<Object>(
 				this.geography, 10, a100);
 		for (@SuppressWarnings("unused") Object agent : containsQuery.query()) {
 			totalNumObject++;

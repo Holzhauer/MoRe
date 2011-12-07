@@ -31,6 +31,7 @@ import cern.jet.random.Uniform;
 import repast.simphony.context.Context;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
@@ -45,6 +46,9 @@ import de.cesr.uranus.core.URandomService;
 /**
  * MORe
  * 
+ * TODO implement MoreGeoRsNetworkService
+ * TODO parameter description
+ * 
  * @author holzhauer
  * @author Jung Project
  * @author Nick Collier (Repast Simphony)
@@ -52,31 +56,32 @@ import de.cesr.uranus.core.URandomService;
  * @date 24.06.2011
  * 
  */
-public class MRsWattsBetaSwBuilder<AgentType, EdgeType extends MRepastEdge<AgentType>>
-		implements MoreRsNetworkBuilder<AgentType, EdgeType> {
+public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
+		extends MGeoRsNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Logger
-			.getLogger(MRsWattsBetaSwBuilder.class);
+			.getLogger(MGeoRsWattsBetaSwBuilder.class);
 
 	private Context<AgentType> context;
 	private MoreEdgeFactory<AgentType, EdgeType> eFac;
-
 	
 	protected Uniform randomDist;
+	
 	/**
 	 * 
 	 */
-	public MRsWattsBetaSwBuilder() {
+	public MGeoRsWattsBetaSwBuilder() {
 		this(new MRsEdgeFactory<AgentType, EdgeType>());
 	}
 
 	/**
 	 * @param eFac
 	 */
-	public MRsWattsBetaSwBuilder(MRsEdgeFactory<AgentType, EdgeType> eFac) {
+	public MGeoRsWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+		super(eFac);
 		this.eFac = eFac;
 		this.randomDist = URandomService.getURandomService().getUniform();
 	}
@@ -115,5 +120,36 @@ public class MRsWattsBetaSwBuilder<AgentType, EdgeType extends MRepastEdge<Agent
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(params);
 		
 		return (MoreRsNetwork<AgentType, EdgeType>) gen.buildNetwork(agents);
+	}
+
+	/**
+	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork, java.lang.Object)
+	 */
+	@Override
+	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @return random distribution
+	 */
+	public Uniform getRandomDist() {
+		return randomDist;
+	}
+
+	/**
+	 * Sets the random distribution for this network builder (uniform)
+	 * @param randomDist
+	 */
+	public void setRandomDist(Uniform randomDist) {
+		this.randomDist = randomDist;
+	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "MGeoRsWattsBetaSwBuilder";
 	}
 }

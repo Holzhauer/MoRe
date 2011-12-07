@@ -24,14 +24,10 @@
 package de.cesr.more.lara.agent;
 
 
-
-import java.util.Collection;
-
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.LaraAgentComponent;
 import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.basic.network.MoreNetwork;
 
 
 

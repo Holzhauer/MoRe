@@ -23,6 +23,8 @@
  */
 package de.cesr.more.rs.building;
 
+import repast.simphony.context.Context;
+
 /**
  * MORe
  * 
@@ -34,8 +36,22 @@ package de.cesr.more.rs.building;
  */
 public interface MoreMilieuAgent {
 	
+	/**
+	 * Return the milieu group index (starting with 1)
+	 * @return
+	 */
 	public int getMilieuGroup();
 	
+	/**
+	 * Mostly the group context this agent belongs to
+	 * @return the parent context
+	 */
+	public Context<?> getParentContext();
+	
+	/**
+	 * The agent's ID
+	 * @return id
+	 */
 	public String getAgentId();
 
 }

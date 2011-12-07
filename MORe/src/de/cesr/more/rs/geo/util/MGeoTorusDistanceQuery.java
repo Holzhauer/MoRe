@@ -46,17 +46,21 @@ import repast.simphony.util.collections.FilteredIterator;
 /**
  * MORe
  * 
+ * Deals with toroidal spaces.
+ * Requires much more computational time since it
+ * does not perform a pre-selection.
+ * 
  * @author holzhauer
  * @date 06.10.2011
  * 
  */
-public class MGeoDistanceQuery<AgentType> extends
+public class MGeoTorusDistanceQuery<AgentType> extends
 		AbstractGeometryQuery<AgentType> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Logger.getLogger(MGeoDistanceQuery.class);
+	static private Logger logger = Logger.getLogger(MGeoTorusDistanceQuery.class);
 
 	private static DefaultCoordinateOperationFactory cFactory = new DefaultCoordinateOperationFactory();
 
@@ -68,7 +72,7 @@ public class MGeoDistanceQuery<AgentType> extends
 	 * @param geography
 	 * @param sourceObject
 	 */
-	public MGeoDistanceQuery(Geography<AgentType> geography, double distance,
+	public MGeoTorusDistanceQuery(Geography<AgentType> geography, double distance,
 			AgentType sourceObject) {
 		super(geography, sourceObject);
 		init(geography, distance, geography.getGeometry(sourceObject));
