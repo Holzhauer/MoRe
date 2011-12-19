@@ -212,7 +212,26 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 		return neighbours.get(RandomHelper.nextIntFromTo(0, neighbours.size() - 1));
 	}
 
-
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#getRandomPredecessor(java.lang.Object)
+	 */
+	@Override
+	public AgentT getRandomPredecessor(AgentT ego) {
+		// TODO look for reason why normal random successor does not work (see Lara-task)!
+		ArrayList<AgentT> neighbours = new ArrayList<AgentT>();
+		for (AgentT a : network.getPredecessors(ego)) {
+			neighbours.add(a);
+		}
+		Collections.sort(neighbours, new Comparator<AgentT>() {
+			@Override
+			public int compare(AgentT a1, AgentT a2) {
+				return a1.toString().compareTo(a2.toString());
+			}
+		});
+		return neighbours.get(RandomHelper.nextIntFromTo(0, neighbours.size() - 1));
+	}
+	
+	
 	/**
 	 * @see de.cesr.more.basic.network.MoreNetwork#isSuccessor(java.lang.Object, java.lang.Object)
 	 */

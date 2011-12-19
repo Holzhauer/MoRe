@@ -71,8 +71,6 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	
 	protected GeometryFactory		geoFactory		= null;
 	
-	protected MoreEdgeFactory<AgentType, EdgeType> edgeFac = null;
-	
 
 	/**
 	 * @param areasGeography

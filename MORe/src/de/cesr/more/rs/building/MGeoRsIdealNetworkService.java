@@ -45,6 +45,8 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
+ * 
+ * Based on {@link MGeoRsBaselineRadiusNetworkService}
  *
  *
  * @formatter:off

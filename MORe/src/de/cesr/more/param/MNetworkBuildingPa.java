@@ -24,6 +24,8 @@
 package de.cesr.more.param;
 
 
+import org.apache.commons.collections15.BidiMap;
+
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.cesr.more.util.MDefaultMilieuKeysMap;
@@ -55,7 +57,7 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * Defines the indices for milieus. Given the milieu's short name (i.e. "GLM"),
 	 * the index may be queried from the map.
 	 */
-	MILIEUS(MDefaultMilieuKeysMap.class, new MDefaultMilieuKeysMap()),
+	MILIEUS(BidiMap.class, new MDefaultMilieuKeysMap()),
 
 	/**
 	 * Number of milieu groups as defined in {@link SqlPa#TBLNAME_MILIEU_GROUPS}.

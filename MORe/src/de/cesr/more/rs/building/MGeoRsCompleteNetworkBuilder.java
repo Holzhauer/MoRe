@@ -13,6 +13,7 @@ import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MCompleteNetworkBuilder;
+import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
@@ -29,6 +30,12 @@ import de.cesr.parma.core.PmParameterManager;
  * considered {@link PmParameterDefinition}s.
  * 
  * TODO tests 
+ * TODO document params
+ * 
+ *  * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * </ul>
  * 
  * @author Sascha Holzhauer
  *

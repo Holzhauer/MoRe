@@ -345,7 +345,6 @@ public class MGeographyWrapper<AgentType> {
 					+ agents.size());
 		}
 		
-		
 		Query<AgentType> queryWithin = this.queryFac.initQuery(
 				this.geography, radius, focus);
 		

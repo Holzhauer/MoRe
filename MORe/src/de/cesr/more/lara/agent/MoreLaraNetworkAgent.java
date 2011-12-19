@@ -27,30 +27,25 @@ package de.cesr.more.lara.agent;
 import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.LaraAgentComponent;
+import de.cesr.more.basic.agent.MoreAgentNetworkComp;
+import de.cesr.more.basic.agent.MoreNetworkAgent;
 import de.cesr.more.basic.edge.MoreEdge;
 
 
 
 /**
  * Interface for agents with network support that allows to directly call the {@link LaraAgentComponent} and
- * {@link MoreLaraAgentNetworkComp} methods at the agent.
+ * {@link MoreAgentNetworkComp} methods at the agent.
  * 
  * @author Sascha Holzhauer
  * @param <A> the common type (of agents) that is contained as nodes in the networks this agent refers to
  * @param <E> edge type
  * @param <BO> behavioural option type
  * @date 19.01.2010
+ * 
+ * TODO rename (/Lara)
  */
-public interface MoreLaraNetworkAgent<A extends LaraAgent<A, BO>, E extends MoreEdge<? super A>, BO extends LaraBehaviouralOption<?, ? extends BO>>
-		extends LaraAgent<A, BO>, MoreLaraAgentNetworkComp<A, E> {
-
-	/**
-	 * @return LARA Network Component
-	 */
-	public void setLNetworkComp(MoreLaraAgentNetworkComp<A, E> netComp); 
-	/**
-	 * @return LARA Network Component
-	 */
-	public abstract MoreLaraAgentNetworkComp<A, E> getLNetworkComp();
-
+public interface MoreLaraNetworkAgent<A extends LaraAgent<A, BO>, E extends MoreEdge<? super A>, BO extends 
+	LaraBehaviouralOption<?, ? extends BO>> extends LaraAgent<A, BO>, MoreAgentNetworkComp<A, E>,
+	 MoreNetworkAgent<A, E>{
 }

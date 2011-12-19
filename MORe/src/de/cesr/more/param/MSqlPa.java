@@ -40,22 +40,22 @@ public enum MSqlPa implements PmParameterDefinition {
 	/**
 	 * Database location used to write data to. Default is {@link PmFrameworkPa#LOCATION}
 	 */
-	LOCATION(String.class, PmParameterManager.getParameter(PmFrameworkPa.LOCATION)),
+	LOCATION(String.class, PmFrameworkPa.LOCATION),
 	
 	/**
 	 * Database name used to write data to. Default is {@link PmFrameworkPa#DBNAME}
 	 */
-	DBNAME(String.class, PmParameterManager.getParameter(PmFrameworkPa.DBNAME)),
+	DBNAME(String.class, PmFrameworkPa.DBNAME),
 	
 	/**
 	 * Database user name used to write data. Default is {@link PmFrameworkPa#USER}
 	 */
-	USER(String.class, PmParameterManager.getParameter(PmFrameworkPa.USER)),
+	USER(String.class, PmFrameworkPa.USER),
 	
 	/**
 	 * (unencrypted) password used to write data. Default is {@link PmFrameworkPa#PASSWORD}
 	 */
-	PASSWORD(String.class, PmParameterManager.getParameter(PmFrameworkPa.PASSWORD)),
+	PASSWORD(String.class, PmFrameworkPa.PASSWORD),
 	
 	/**
 	 * Table where MoRe stores <i>network</i> measures. See {@link MDbNetworkDataWriter}.
@@ -95,6 +95,12 @@ public enum MSqlPa implements PmParameterDefinition {
 	MSqlPa(Class < ? > type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
+	}
+	
+	MSqlPa(Class<?> type, PmParameterDefinition defaultDefinition) {
+		this.type = type;
+		this.defaultValue = defaultDefinition.getDefaultValue();
+		PmParameterManager.setDefaultParameterDef(this, defaultDefinition);
 	}
 
 	@Override

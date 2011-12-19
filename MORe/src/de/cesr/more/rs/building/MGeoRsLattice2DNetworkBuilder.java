@@ -42,12 +42,19 @@ import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
  * 
  * TODO parameter description
+ * 
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>...</li>
+ * </ul>
  *
  * @author holzhauer
  * @date 22.11.2011 

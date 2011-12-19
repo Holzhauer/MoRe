@@ -62,6 +62,11 @@ public enum MBasicPa implements PmParameterDefinition {
 	TORUS_FIELD_UPPER_Y(Double.class, new Double(100.0)),
 	
 	/**
+	 * Used to initialise the {@link GeometryFactory}. Should be UTM
+	 */
+	SPATIALREFERENCEID(Integer.class, new Integer(32632 )),
+	
+	/**
 	 * Geography in the RS root context
 	 */
 	ROOT_GEOGRAPHY(Geography.class, null);

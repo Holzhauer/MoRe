@@ -37,11 +37,13 @@ import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.io.MGraphMLReader2NodeMap;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -51,6 +53,12 @@ import edu.uci.ics.jung.graph.Graph;
  * 
  * TODO test
  * TODO make description
+ * 
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>...</li>
+ * </ul>
  *
  * @author Sascha Holzhauer
  * @date 29.11.2011 

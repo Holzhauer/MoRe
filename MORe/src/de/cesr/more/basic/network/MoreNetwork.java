@@ -122,9 +122,17 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * Return a random neighbour. For directed networks,
 	 * this is a successor.
 	 * @param ego
-	 * @return alter the randomly chosen neighbour
+	 * @return alter the randomly chosen successor
 	 */
 	public AgentType getRandomSuccessor(AgentType ego);
+	
+	/**
+	 * Return a random neighbour. For directed networks,
+	 * this is a predecessor.
+	 * @param ego
+	 * @return alter the randomly chosen predecessor
+	 */
+	public AgentType getRandomPredecessor(AgentType ego);
 	
 	/**
 	 * @param ego

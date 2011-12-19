@@ -214,13 +214,17 @@ public class MMilieuNetworkParameterMap extends
 	 * @return true if no value is defined in the map
 	 */
 	protected boolean warnDefault(PmParameterDefinition definition, int milieu) {
-		if (this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.K.name()) == null) {
-			logger.warn("No value for " + definition.toString() + "(milieu: " + milieu + ") defined. Using default (" + 
-					PmParameterManager.getParameter(definition) + ")!");
-			return true;
+		if (this.size() < milieu) {
+			logger.warn("There are less milieus in the map the reqested (map size: " + this.size() + " / requested milieu: " +
+					milieu + "; parameter: " + definition.toString() + ")");
 		} else {
-			return false;
-		}
+			if (this.get(new Integer(milieu)).get(
+					MNetBuildBhPa.K.name()) == null) {
+				logger.warn("No value for " + definition.toString() + "(milieu: " + milieu + ") defined. Using default (" + 
+						PmParameterManager.getParameter(definition) + ")!");
+				return true;
+			}
+		} 
+		return false;
 	}
 }

@@ -20,21 +20,24 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.DirectedJungNetwork;
+import repast.simphony.space.graph.UndirectedJungNetwork;
 import repast.simphony.util.collections.IndexedIterable;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
-import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
@@ -42,9 +45,10 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
-import de.cesr.more.util.MDefaultMilieuKeysMap;
+import org.apache.commons.collections15.BidiMap;
 
 
 /**
@@ -83,6 +87,14 @@ import de.cesr.more.util.MDefaultMilieuKeysMap;
  * <tr><td></td><td></td></tr>
  * <tr><td>#Edges:</td><td>N*(N-1)</td></tr>
  * </table> 
+ * 
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>{@link MNetworkBuildingPa.MILIEU_NETWORK_PARAMS}</li>
+ * <li>...</li>
+ * </ul>
+ * 
  * 
  * @author Sascha Holzhauer
  * @param <AgentT>
@@ -139,8 +151,11 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		MMilieuNetworkParameterMap paraMap = (MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 
-		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
-				new DirectedJungNetwork<AgentType>(this.name), context);
+		
+		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
+				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
+						new DirectedJungNetwork<AgentType>(name) :
+						new UndirectedJungNetwork<AgentType>(name), context);
 
 		addAgents(network, agents);
 
@@ -206,7 +221,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		int[] milieus = new int[((Integer) PmParameterManager
 				.getParameter(MNetworkBuildingPa.NUM_MILIEU_GROUPS)).intValue()];
 		int j = 0;
-		for (Integer i : ((MDefaultMilieuKeysMap) PmParameterManager
+		for (Integer i : ((BidiMap<String, Integer>) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEUS)).values()) {
 			// milieu indices start at 1:
 			milieus[j++] = i.intValue();
@@ -499,6 +514,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "MGeoRsBaselineRadiusNetworkService";
 	}

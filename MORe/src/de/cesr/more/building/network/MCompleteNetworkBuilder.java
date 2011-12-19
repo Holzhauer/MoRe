@@ -40,6 +40,7 @@ import de.cesr.parma.core.PmParameterManager;
 /**
  * MORe
  * 
+ * @formatter:off
  * <table>
  * <th>Parameter</th><th>Value</th>
  * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>

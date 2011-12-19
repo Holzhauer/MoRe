@@ -2,7 +2,7 @@
 <!-- excludes example models; excludes java runtime classes from UML; display only operations -->
 <project default="MoRe-jar-creation">
 	
-	<property name="dir_target" value="C:/Sascha/Workspace37/SonoMode/lib" />
+	<property name="dir_target" value="${basedir}/../../../SonoMode/lib" />
 	
 	<!-- ================================= 
           target: Fetch SVN Revision Number        

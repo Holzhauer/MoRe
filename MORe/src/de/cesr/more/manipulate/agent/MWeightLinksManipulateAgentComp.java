@@ -87,7 +87,7 @@ public class MWeightLinksManipulateAgentComp<A extends MoreLinkManipulatableAgen
 	public MWeightLinksManipulateAgentComp(A agent, String network, MoreNetworkEdgeModifier<A, E> edgeMan) {
 		this.agent = agent;
 		this.network = network;
-		this.net = agent.getLNetworkComp().getNetwork(network);
+		this.net = agent.getNetworkComp().getNetwork(network);
 		this.edgeMan = edgeMan;
 	}
 	

@@ -47,7 +47,7 @@ public class MTestUtilsLara {
 
 
 		/**
-		 * @see de.cesr.more.lara.agent.MoreLaraAgentNetworkComp#perceiveNetworks()
+		 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#perceiveNetworks()
 		 */
 		@Override
 		public void perceiveNetworks() {

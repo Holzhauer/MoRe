@@ -26,19 +26,18 @@ package de.cesr.more.util;
 import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 
 
-
 /**
  * MORe
  * 
  * @author holzhauer
  * @date 15.01.2009
  * 
- * Defines the indices for milieus used in database and java code. In contrast to an enumeration this implementation enables edition of indices
- * when reading DB.
+ *       Defines the indices for milieus used in database and java code. In contrast to an enumeration this
+ *       implementation enables edition of indices when reading DB.
  * 
- * Default map for milieu identifiers
+ *       Default map for milieu identifiers
  */
-public class MDefaultMilieuKeysMap extends DualHashBidiMap < String , Integer > {
+public class MDefaultMilieuKeysMap extends DualHashBidiMap<String, Integer> {
 
 	/**
 	 * 

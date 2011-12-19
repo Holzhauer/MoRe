@@ -33,6 +33,8 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.agents.LaraAgent;
 import de.cesr.lara.components.agents.impl.LAbstractAgent;
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.more.basic.agent.MAgentNetworkComp;
+import de.cesr.more.basic.agent.MoreAgentNetworkComp;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MMeasureDescription;
@@ -54,8 +56,8 @@ import de.cesr.more.util.Log4jLogger;
 public abstract class MAbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>, E extends MoreEdge<? super A>>
 		extends LAbstractAgent<A, BO> implements MoreLaraNetworkAgent<A, E, BO>, MoreNodeMeasureSupport {
 
-	MoreLaraAgentNetworkComp<A, E>	netComp;
-	MNodeMeasures				measures	= new MNodeMeasures();
+	protected MoreAgentNetworkComp<A, E>	netComp;
+	protected MNodeMeasures					measures	= new MNodeMeasures();
 
 	/**
 	 * Logger
@@ -69,7 +71,7 @@ public abstract class MAbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO e
 	 */
 	public MAbstractLaraNetworkAgent(LaraEnvironment env) {
 		super(env);
-		netComp = new MLaraAgentNetworkComp<A, BO, E>(this);
+		netComp = new MAgentNetworkComp<A, E>(getThis());
 	}
 
 	/**
@@ -80,28 +82,28 @@ public abstract class MAbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO e
 	 */
 	public MAbstractLaraNetworkAgent(LaraEnvironment env, String name) {
 		super(env, name);
-		netComp = new MLaraAgentNetworkComp<A, BO, E>(this);
+		netComp = new MAgentNetworkComp<A, E>(getThis());
 	}
 
 	/**
 	 * @see de.cesr.lara.components.agents.LaraAgent#getLaraComp()
 	 */
 	@Override
-	public MoreLaraAgentNetworkComp<A, E> getLNetworkComp() {
+	public MoreAgentNetworkComp<A, E> getNetworkComp() {
 		return netComp;
 	}
 
 	/**
-	 * @see de.cesr.more.lara.agent.LaraSimpleNetworkAgent#setLaraNetworkComp(de.cesr.more.lara.agent.MoreLaraAgentNetworkComp)
+	 * @see de.cesr.more.lara.agent.LaraSimpleNetworkAgent#setLaraNetworkComp(de.cesr.more.basic.agent.MoreAgentNetworkComp)
 	 */
 	@Override
-	public void setLNetworkComp(MoreLaraAgentNetworkComp<A, E> component) {
+	public void setNetworkComp(MoreAgentNetworkComp<A, E> component) {
 		this.netComp = component;
 	}
 	
 	
 	/**
-	 * @see de.cesr.more.lara.agent.MoreLaraAgentNetworkComp#getNetwork(java.lang.String)
+	 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#getNetwork(java.lang.String)
 	 */
 	@Override
 	public MoreNetwork<A, E> getNetwork(String name) {
@@ -109,7 +111,7 @@ public abstract class MAbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO e
 	}
 	
 	/**
-	 * @see de.cesr.more.lara.agent.MoreLaraAgentNetworkComp#setNetwork(de.cesr.more.basic.network.MoreNetwork)
+	 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#setNetwork(de.cesr.more.basic.network.MoreNetwork)
 	 */
 	@Override
 	public void setNetwork(MoreNetwork<A, E> network) {
@@ -117,11 +119,30 @@ public abstract class MAbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO e
 	}
 	
 	/**
-	 * @see de.cesr.more.lara.agent.MoreLaraAgentNetworkComp#getNetworks()
+	 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#getNetworks()
 	 */
 	@Override
 	public Collection<MoreNetwork<A, E>> getNetworks() {
 		return this.netComp.getNetworks();
+	}
+	
+
+
+	/**
+	 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#setMainNetwork(de.cesr.more.basic.network.MoreNetwork)
+	 */
+	@Override
+	public void setMainNetwork(MoreNetwork<A, E> network) {
+		getNetworkComp().setMainNetwork(network);
+	}
+
+
+	/**
+	 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#getMainNetwork()
+	 */
+	@Override
+	public MoreNetwork<A,E> getMainNetwork() {
+		return getNetworkComp().getMainNetwork();
 	}
 
 	/**********************************************************
