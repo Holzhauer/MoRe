@@ -43,7 +43,9 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
+import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.uranus.core.URandomService;
 import edu.uci.ics.jung.graph.Graph;
@@ -61,6 +63,23 @@ import edu.uci.ics.jung.graph.Graph;
  * However, in some models we consider the influencer as source and seek to build the network according
  * to the influenced' properties. In these cases,set {@link MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES}
  * to Boolean.FALSE!
+ * 
+ * @formatter:off
+ * <table>
+ * <th>Property</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
+ * <tr><td></td><td></td></tr>
+ * <tr><td>#Edges:</td><td>Undirected: N*K</td></tr>
+ * </table> 
+ * 
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>{@link MNetworkBuildingPa.BUILD_WSSM_BETA} (as default for param object)</li>
+ * <li>{@link MNetworkBuildingPa.MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG} (as default for param object)</li>
+ * <li>{@link MNetworkBuildingPa.MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES}</li>
+ * <li>...</li>
+ * </ul>
  * 
  * @author Sascha Holzhauer
  * @author Jung Project
@@ -86,17 +105,17 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 	 */
 	public static class MSmallWorldBetaModelNetworkGeneratorParams<AgentType, E extends MoreEdge<AgentType>> {
 
-		MoreNetwork<AgentType,E>				network;
+		protected MoreNetwork<AgentType,E>					network;
 		
-		boolean									isSymmetrical = false;
+		protected boolean									isSymmetrical = false;
 
-		MoreEdgeFactory<AgentType, E>			edgeFactory;
+		protected MoreEdgeFactory<AgentType, E>				edgeFactory;
 		
-		MoreBetaProvider<AgentType>				betaProvider;
-		MoreKValueProvider<AgentType>			kProvider;
-		MoreRewireTargetProvider<AgentType, E> 	rewireManager;
+		protected MoreBetaProvider<AgentType>				betaProvider;
+		protected MoreKValueProvider<AgentType>				kProvider;
+		protected MoreRewireTargetProvider<AgentType, E> 	rewireManager;
 		
-		Uniform 								randomDist;
+		protected Uniform 									randomDist;
 		
 		
 		/**
@@ -353,8 +372,6 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 
 
 		// create the lattice
-		
-		// TODO change here for direction change: reverse!
 		MLattice1DGenerator<AgentType, E> latticeGen = new MLattice1DGenerator<AgentType, E>(
 				new Factory<Graph<AgentType, E>>() {
 					@Override
@@ -367,7 +384,6 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		for (E edge : network.getEdgesCollection()) {
 			edges.add(edge);
 		}
-
 		
 		int numOfExpectedEdges = 0;
 		for (AgentType agent : agents) {
@@ -394,7 +410,6 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 				AgentType end = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ?
 						edge.getEnd() : edge.getStart();
 
-						
 				if (betaProvider.getBetaValue(start) > randomDist.nextDouble()) {
 					int rndIndex = randomDist.nextIntFromTo(0, numNodes - 1);
 					AgentType randomNode = list.get(rndIndex);
@@ -413,8 +428,6 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 							// remove the t -> s edge
 							E otherEdge = network.getEdge(
 									end, start);
-							
-							// TODO change here for direction change: edge.getTarget()
 							network.disconnect(end, start);
 							removedEdges.add(otherEdge);
 

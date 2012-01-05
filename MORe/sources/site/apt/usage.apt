@@ -17,6 +17,31 @@ MORe Usage
 	* For certain network and node measure calculations there is an efficient R implementation.
 	In order to use these calculations You need to {{{http://cran.r-project.org/}install R}} including a number of R packages.
 	See the R-script <<<installPackages4More.R>>> in the folder <<<config/r>>> for instructions.
+	
+*Quick Start for Repast Simphony models
+
+	Adapt and call the following method from your <<<build(context)>>> method after initialisation of agents:
+	
++---
+// Define your social context if it is not the main context
+Context<YourAgent> socialContext = context.getSubContext(socialContextId);
+
+// Instantiate your edge factory in case you want to use custom edge objects.
+// Otherwise, use MRepastEdge<AgentType> as edge type parameter and use new MRsEdgeFactory<AgentType, MRepastEdge<AgentType>() 
+MRsEdgeFactory<YourAgent, YourEdge> eFac = new YourEdgeFactory();
+
+MoreRsNetworkBuilder<YourAgent, YourEdge> networkBuilder = new MGeoRsWattsBetaSwBuilder(eFac,
+			socialNetworkName);
+MoreRsNetwork<YourAgent, YourEdge> network = networkBuilder.buildNetwork(agents);
+socialContext.addProjection(network);
+
+// init More
+MManager.init();
+MManager.setSchedule(new MRsSchedule(RunEnvironment.getInstance().getCurrentSchedule()));
+// Register network at MoRe
+MNetworkManager.setNetwork(network, socialNetworkName);
++---
+	 
 
 *Initialising MoRe
 

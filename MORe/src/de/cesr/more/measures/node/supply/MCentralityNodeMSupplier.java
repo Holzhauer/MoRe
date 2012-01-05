@@ -51,6 +51,34 @@ import edu.uci.ics.jung.algorithms.importance.DegreeDistributionRanker;
  */
 public class MCentralityNodeMSupplier extends MAbstractMeasureSupplier {
 
+	/**
+	 * MORe Short descriptions for measures defined in this class
+	 * 
+	 * @author Sascha Holzhauer
+	 * @date 22.12.2010
+	 * 
+	 */
+	public enum Short {
+		/**
+		 * Network Measure: Degree-based centrality
+		 */
+		NODE_CEN_INDEGREE_NN("IDCnn");
+
+		String	name;
+
+		private Short(String name) {
+			this.name = name;
+		}
+
+		/**
+		 * @return the short name Created by Sascha Holzhauer on 22.12.2010
+		 */
+		public String getName() {
+			return name;
+		}
+
+	}
+	
 	MMeasureDescription	description;
 
 	public MCentralityNodeMSupplier() {

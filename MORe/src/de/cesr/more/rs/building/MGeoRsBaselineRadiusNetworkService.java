@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
@@ -37,9 +36,9 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
-import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
+import de.cesr.more.param.MSqlPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
@@ -150,6 +149,14 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 		MMilieuNetworkParameterMap paraMap = (MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
+		
+		PmParameterManager.logParameterValues(MNetworkBuildingPa.values());
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Milieu Network Parameter: " + paraMap);
+		}
+		// LOGGING ->
+
 
 		
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
@@ -218,8 +225,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				super.geography);
 
 		// map milieu ids to range from 0 to (# milieus -1):
-		int[] milieus = new int[((Integer) PmParameterManager
-				.getParameter(MNetworkBuildingPa.NUM_MILIEU_GROUPS)).intValue()];
+		int[] milieus = new int[paraMap.size()];
 		int j = 0;
 		for (Integer i : ((BidiMap<String, Integer>) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEUS)).values()) {

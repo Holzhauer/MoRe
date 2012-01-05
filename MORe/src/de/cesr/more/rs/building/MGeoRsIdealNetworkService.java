@@ -144,8 +144,7 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 		shuffleCollection(neighbourslist);
 
 		// calculate number of required partners per milieu:
-		int[] numMilieuPartners = new int[((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.NUM_MILIEU_GROUPS))
-				.intValue()];
+		int[] numMilieuPartners = new int[paraMap.size()];
 		double[] remainder = new double[numMilieuPartners.length];
 		int sum = 0;
 		for (int i = 0; i < numMilieuPartners.length; i++) {

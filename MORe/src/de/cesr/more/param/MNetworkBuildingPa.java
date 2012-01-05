@@ -41,9 +41,10 @@ import de.cesr.parma.core.PmParameterDefinition;
 public enum MNetworkBuildingPa implements PmParameterDefinition {
 	
 	/**
-	 * The milieu network parameter map is usually read by {@link MMilieuNetDataReader}
+	 * The milieu network parameter map is usually read by {@link MMilieuNetDataReader}.
+	 * Default is <code>null</code>.
 	 */
-	MILIEU_NETWORK_PARAMS(MMilieuNetworkParameterMap.class, new MMilieuNetworkParameterMap()),
+	MILIEU_NETWORK_PARAMS(MMilieuNetworkParameterMap.class, null),
 	
 	
 	/**
@@ -58,12 +59,6 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * the index may be queried from the map.
 	 */
 	MILIEUS(BidiMap.class, new MDefaultMilieuKeysMap()),
-
-	/**
-	 * Number of milieu groups as defined in {@link SqlPa#TBLNAME_MILIEU_GROUPS}.
-	 * Default: <code>4</code>
-	 */
-	NUM_MILIEU_GROUPS(Integer.class, new Integer(4)),
 	
 	
 	/*****************************************************

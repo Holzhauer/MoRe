@@ -78,6 +78,7 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 	 * @param lattice_size
 	 * @param kProvider
 	 * @param isToroidal if true, the created lattice wraps from top to bottom and left to right
+	 * @param is_symmetrical if true, for every link another link of reverse direction is created 
 	 */
 	public MLattice1DGenerator(Factory<? extends Graph<V, E>> graph_factory, Factory<V> vertex_factory,
 			MoreEdgeFactory<V,E> edge_factory, int lattice_size, MoreKValueProvider<V> kProvider, boolean isToroidal,
@@ -133,6 +134,10 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 					end = this.considerSource ? i + j : i;
 					graph.addEdge(edge_factory.createEdge(getVertex(getIndex(start)), getVertex(getIndex(end)), this.is_directed), 
 							getVertex(getIndex(start)), getVertex(getIndex(end)));
+					if (is_symmetrical) {
+						graph.addEdge(edge_factory.createEdge( getVertex(getIndex(end)), getVertex(getIndex(start)), this.is_directed), 
+								getVertex(getIndex(end)), getVertex(getIndex(start)));
+					}
 				}
 			}
 		}

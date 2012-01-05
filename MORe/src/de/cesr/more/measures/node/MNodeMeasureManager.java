@@ -40,6 +40,7 @@ import de.cesr.more.util.Log4jLogger;
 
 
 /**
+ * 
  * The <code>NetworkMeasureUtilites</code> manage network measure calculation. {@link NetworkMeasureSupplier}s are
  * registered here. This class also implements the {@link MMeasureSelectorListener} interface for adding measures for
  * computation via the {@link MeasureChooser}. It holds all scheduled actions that calculate measures.
@@ -165,7 +166,7 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 			measureActions.get(network).put(measure.getMeasureDescription(), action);
 			
 			Double interval = null;
-			if (params != null & params.containsKey(ParameterKeys.INTERVAL.name())) {
+			if (params != null && params.containsKey(ParameterKeys.INTERVAL.name())) {
 				Object o = params.get(ParameterKeys.INTERVAL.name());
 				if (o instanceof Number) {
 					interval = ((Number)o).doubleValue();
@@ -173,7 +174,7 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 			}
 			
 			Double start = null;
-			if (params != null & params.containsKey(ParameterKeys.START.name())) {
+			if (params != null && params.containsKey(ParameterKeys.START.name())) {
 				Object s = params.get(ParameterKeys.START.name());
 				if (s instanceof Number) {
 					start = ((Number)s).doubleValue();
@@ -202,18 +203,45 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 		}
 	}
 	
+	/**
+	 * 
+	 * @see MNodeMeasureManager#addMeasureCalculation(MoreNetwork<T, E>,
+	 *      de.cesr.more.measures.MMeasureDescription, Map)
+	 * 
+	 * @param <T> agent type
+	 * @param <E> edge type
+	 * @param network 
+	 * @param measureDesc measure description to add
+	 * @param params parameter map
+	 * @return true if measure could be added
+	 */
 	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean addMeasureCalculation(String network, MMeasureDescription measureDesc,
 			Map<String, Object> params) {
 		return addMeasureCalculation((MoreNetwork<T, E>) MNetworkManager.getNetwork(network), measureDesc, params);
+	}
+	
+	/**
+	 * Takes a short description instead of a {@link MeasureDescription} and uses default parameter map.
+	 * 
+	 * @see MNodeMeasureManager#addMeasureCalculation(MoreNetwork<T, E>,
+	 *      de.cesr.more.measures.MMeasureDescription, Map)
+	 *      
+	 * @param <T> agent type
+	 * @param <E> edge type
+	 * @param network 
+	 * @param measureDesc measure description to add
+	 * @return true if measure could be added
+	 */
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean addMeasureCalculation(MoreNetwork<T, E> network, String shortname) {
+		return addMeasureCalculation(network, new MMeasureDescription(shortname), null);
 	}
 
 	
 	/**
 	 * Takes a short description instead of a {@link MeasureDescription}.
 	 * 
-	 * @see MNodeMeasureManager#addMeasureCalculation(ContextContextJungNetwork,
-	 *      de.cesr.more.measures.node.MNodeMeasureManager.sh.soneta.measures.NetworkMeasureUtilities.MeasureDescription,
-	 *      Map)
+	 * @see MNodeMeasureManager#addMeasureCalculation(MoreNetwork<T, E>,
+	 *      de.cesr.more.measures.MMeasureDescription, Map)
 	 */
 	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean addMeasureCalculation(String network, String shortname,
 			Map<String, Object> params) {
@@ -256,6 +284,21 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 			listener.networkMeasureCalcRemoved(network, key);
 		}
 		return removed;
+	}
+	
+	/**
+	 * @see MNodeMeasureManager#removeMeasureCalculation(MoreNetwork, MMeasureDescription)
+	 * 
+	 * @param <T> Type of elements in the given <code>ContextContextContextJungNetwork</code> that should implement
+	 *            <code>NetworkMeasureSupport</code>
+	 * @param network The network the measure is associated with
+	 * @param key The key for the measure to remove from calculation
+	 * 
+	 * @return true, if there was a measure that could be removed
+	 */
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean removeMeasureCalculation(MoreNetwork<T, E> network,
+			String key) {
+		return this.removeMeasureCalculation(network, new MMeasureDescription(key));
 	}
 
 	/**

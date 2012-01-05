@@ -27,6 +27,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import de.cesr.more.testing.rs.building.geo.MGeoRsWattsBetaSwBuilderTest;
+
 
 /**
  * MORe
@@ -36,7 +38,7 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({MRsWattsBetaSwBuilderTest.class})
+@SuiteClasses({MGeoRsWattsBetaSwBuilderTest.class})
 public class MAllBuildingTests {
 
 }

@@ -34,7 +34,10 @@ import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
+import de.cesr.more.building.util.MoreBetaProvider;
+import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
+import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
@@ -58,6 +61,70 @@ import de.cesr.uranus.core.URandomService;
  */
 public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
 		extends MGeoRsNetworkService<AgentType, EdgeType> {
+	
+	
+	/**
+	 * MORe
+	 *
+	 * Uses providers that use the milieu network parameter map.
+	 * 
+	 * @author Sascha Holzhauer
+	 * @date 29.12.2011 
+	 *
+	 * @param <AgentT>
+	 * @param <EdgeT>
+	 */
+	static class MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentT extends MoreMilieuAgent, EdgeT extends MRepastEdge<AgentT>>
+		extends MSmallWorldBetaModelNetworkGeneratorParams<AgentT, EdgeT>{
+		
+		/**
+		 * If the k provider has not been set yet, it assign a provider
+		 * usingMNetworkBuildingPa.MILIEU_NETWORK_PARAMS or calls super.getKValueProvider() if 
+		 * MNetworkBuildingPa.MILIEU_NETWORK_PARAMS is null.
+		 * 
+		 * @return the kProvider
+		 */
+		public MoreKValueProvider<AgentT> getkProvider() {
+			if (kProvider == null) {
+				if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
+					final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) PmParameterManager.getParameter(
+							MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
+					kProvider =  new MoreKValueProvider<AgentT>() {
+						@Override
+						public int getKValue(AgentT node) {
+							return netParams.getK(node.getMilieuGroup());
+						}};
+				} else {
+					super.getkProvider();
+				}
+			}
+			return kProvider;
+		}
+
+		/**
+		 * If the beta provider has not been set yet, it assign a provider
+		 * using MNetworkBuildingPa.MILIEU_NETWORK_PARAMS or calls super.getBetaProvider() if 
+		 * MNetworkBuildingPa.MILIEU_NETWORK_PARAMS is null.
+		 * @return the betaProvider
+		 */
+		public MoreBetaProvider<AgentT> getBetaProvider() {
+			if (betaProvider == null) {
+				if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
+					final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) PmParameterManager.getParameter(
+							MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
+					betaProvider = new MoreBetaProvider<AgentT>() {
+						@Override
+						public double getBetaValue(AgentT node) {
+							return netParams.getP_Rewire(node.getMilieuGroup());
+						}
+					};
+				} else {
+					super.getBetaProvider();
+				}
+			}
+			return betaProvider;
+		}
+	}
 
 	/**
 	 * Logger
@@ -69,6 +136,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	private MoreEdgeFactory<AgentType, EdgeType> eFac;
 	
 	protected Uniform randomDist;
+	protected String name;
 	
 	/**
 	 * 
@@ -86,6 +154,16 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		this.randomDist = URandomService.getURandomService().getUniform();
 	}
 
+	/**
+	 * @param eFac
+	 */
+	public MGeoRsWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+		super(eFac);
+		this.eFac = eFac;
+		this.name = name;
+		this.randomDist = URandomService.getURandomService().getUniform();
+	}
+	
 	@Override
 	public void setContext(Context<AgentType> context) {
 		this.context = context;
@@ -107,11 +185,11 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ? new DirectedJungNetwork<AgentType>(
-						"Network") : new UndirectedJungNetwork<AgentType>(
-						"Network"), context);
+						this.name) : new UndirectedJungNetwork<AgentType>(
+						this.name), context);
 		
 		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params = 
-			new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>();
+			new MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentType, EdgeType>();
 		
 		params.setNetwork(network);
 		params.setEdgeFactory(eFac);

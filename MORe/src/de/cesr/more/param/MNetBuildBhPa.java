@@ -24,6 +24,9 @@
 package de.cesr.more.param;
 
 
+import java.util.Map;
+
+
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -50,7 +53,8 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 	 * Probability to connect to a specific milieu. Actually a map with double for each milieu.
 	 * Default: <code>1.0/MNetworkBuildingPa.NUM_MILIEU_GROUPS</code>
 	 */
-	P_MILIEUS(Double.class, new Double(1.0 / ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.NUM_MILIEU_GROUPS)).intValue())),
+	P_MILIEUS(Double.class, new Double(1.0 / ((Map<Integer, Map<String, Object>>)PmParameterManager.
+			getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).size())),
 	
 	/**
 	 * Initial radius to search for local partner agents within in meters.

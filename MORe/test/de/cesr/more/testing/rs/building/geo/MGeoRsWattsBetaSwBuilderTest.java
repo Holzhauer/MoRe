@@ -21,7 +21,7 @@
  * 
  * Created by holzhauer on 27.09.2011
  */
-package de.cesr.more.testing.building;
+package de.cesr.more.testing.rs.building.geo;
 
 import static org.junit.Assert.*;
 
@@ -48,7 +48,7 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 27.09.2011 
  *
  */
-public class MRsWattsBetaSwBuilderTest {
+public class MGeoRsWattsBetaSwBuilderTest {
 
 	static final int NUM_AGENTS = 20;
 	protected Collection<MoreMilieuAgent> agents;
@@ -105,5 +105,16 @@ public class MRsWattsBetaSwBuilderTest {
 		network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());
 		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue(), network.numEdges());
+	}
+	
+	@Test
+	public void testKProvider() {
+		MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> networkBuilder = new MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>>();
+		Context<MoreMilieuAgent> context = new DefaultContext<MoreMilieuAgent>();
+		for (MoreMilieuAgent o : agents) {
+			context.add(o);
+		}
+		networkBuilder.setContext(context);
+		MoreRsNetwork<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> network = networkBuilder.buildNetwork(agents);
 	}
 }

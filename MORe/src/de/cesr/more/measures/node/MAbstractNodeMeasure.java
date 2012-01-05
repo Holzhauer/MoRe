@@ -23,6 +23,7 @@
  */
 package de.cesr.more.measures.node;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import de.cesr.more.basic.edge.MoreEdge;
@@ -68,7 +69,7 @@ public abstract class MAbstractNodeMeasure implements MoreMeasure{
 	 * @param measureType the measure's type
 	 */
 	public MAbstractNodeMeasure(MMeasureDescription description, Class<?> measureType) {
-		this(description, measureType, null);
+		this(description, measureType, new HashMap<String, Object>());
 	}
 	
 	/**
