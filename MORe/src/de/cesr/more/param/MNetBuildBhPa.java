@@ -51,10 +51,13 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 	
 	/**
 	 * Probability to connect to a specific milieu. Actually a map with double for each milieu.
-	 * Default: <code>1.0/MNetworkBuildingPa.NUM_MILIEU_GROUPS</code>
+	 * Default: <code>1.0/MNetworkBuildingPa.MILIEUS</code> (if not null- 0.5 otherwise)
 	 */
-	P_MILIEUS(Double.class, new Double(1.0 / ((Map<Integer, Map<String, Object>>)PmParameterManager.
-			getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).size())),
+	P_MILIEUS(Double.class, new Double(1.0 / 
+			(PmParameterManager.
+			getParameter(MNetworkBuildingPa.MILIEUS) != null ? 
+					((Map<Integer, Map<String, Object>>)PmParameterManager.
+			getParameter(MNetworkBuildingPa.MILIEUS)).size() : 2))),
 	
 	/**
 	 * Initial radius to search for local partner agents within in meters.
