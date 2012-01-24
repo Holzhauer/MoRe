@@ -24,6 +24,7 @@
 package de.cesr.more.param;
 
 import de.cesr.parma.core.PmParameterDefinition;
+import de.cesr.parma.core.PmParameterManager;
 
 /**
  * Definition of random streams related parameters for MORe
@@ -70,6 +71,16 @@ public enum MRandomPa implements PmParameterDefinition {
 		this.defaultValue = defaultValue;
 	}
 
+	MRandomPa(Class<?> type, PmParameterDefinition defaultDefinition) {
+		this.type = type;
+		if (defaultDefinition != null) {
+			this.defaultValue = defaultDefinition.getDefaultValue();
+			PmParameterManager.setDefaultParameterDef(this, defaultDefinition);
+		} else {
+			this.defaultValue = null;
+		}
+	}
+	
 	/**
 	 * @see de.cesr.parma.core.PmParameterDefinition#getType()
 	 */

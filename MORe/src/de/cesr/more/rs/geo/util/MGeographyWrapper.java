@@ -118,14 +118,14 @@ public class MGeographyWrapper<AgentType> {
 	 * @return Collection of agents in the area
 	 */
 	@SuppressWarnings("unchecked")
-	public <ReturnType> Collection<ReturnType> getSurroundingNAgents(
+	public <ReturnType> List<ReturnType> getSurroundingNAgents(
 			AgentType focus, int numAgents, Geometry area, double radius,
 			Class<ReturnType> returnClass) {
 
 		
 		logger.info("Number of requested objects within area: " + numAgents);
 
-		Collection<ReturnType> agents = new ArrayList<ReturnType>(numAgents);
+		List<ReturnType> agents = new ArrayList<ReturnType>(numAgents);
 		int totalNumObject = 0;
 
 		ContainsQuery<AgentType> containsQuery = new ContainsQuery<AgentType>(
@@ -352,7 +352,7 @@ public class MGeographyWrapper<AgentType> {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Query yielded " + agent + "("
 						+ geography.getGeometry(agent) + ")" + " within "
-						+ radius + " from focus "
+						+ radius + " from focus " 
 						+ geography.getGeometry(focus));
 				logger.debug("Return class: " + returnClass
 						+ " / current class " + agent.getClass());

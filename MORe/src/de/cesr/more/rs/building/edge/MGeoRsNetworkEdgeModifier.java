@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.UTMFinder;
 import repast.simphony.space.graph.RepastEdge;
@@ -104,7 +105,7 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	@Override
 	public EdgeType createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
 		EdgeType edge = edgeFac.createEdge(source, target, network.isDirected());
-		
+
 		network.connect(edge);
 
 		// <- LOGGING
@@ -137,13 +138,22 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	 */
 	protected void addEdgeToGeography(AgentType source, AgentType target, EdgeType edge) {
 		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.ADD_EDGES_TO_GEOGRAPHY)) {
-			Coordinate[] coords1 = { geography.getGeometry(target).getCoordinate(),
-					geography.getGeometry(source).getCoordinate() };
-
-			// calculate arc location
-
 			Geometry geoSource = geography.getGeometry(source);
 			Geometry geoTarget = geography.getGeometry(target);
+
+			if (geoSource == null) {
+				logger.error("Geography does not contain geometry for source node " + source);
+				throw new IllegalStateException("Geography does not contain geometry for source node " + source);
+			}
+			if (geoTarget == null) {
+				logger.error("Geography does not contain geometry for target node " + source);
+				throw new IllegalStateException("Geography does not contain geometry for target node " + source);
+			}
+
+			Coordinate[] coords1 = { geoTarget.getCoordinate(),
+					geoSource.getCoordinate() };
+
+			// calculate arc location
 			Coordinate hhCoord = geoTarget.getCoordinate();
 			Coordinate influencerCoord = geoSource.getCoordinate();
 			double arcArrow = Math.atan((influencerCoord.y - hhCoord.y) / (influencerCoord.x - hhCoord.x));

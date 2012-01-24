@@ -24,7 +24,10 @@
 package de.cesr.more.rs.building;
 
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -43,6 +46,7 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MNetworkService;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MoreRsNetwork;
@@ -127,6 +131,21 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 				logger.debug(prestring + edge);
 			}
 		}
+	}
+	
+	/**
+	 * @param neighbourslist
+	 */
+	protected void shuffleCollection(List<AgentType> neighbourslist) {
+		Collections.<AgentType> sort(neighbourslist,
+				new Comparator<AgentType>() {
+					@Override
+					public int compare(AgentType o1, AgentType o2) {
+						return o1.getAgentId().compareTo(o2.getAgentId());
+					}
+				});
+		Collections.shuffle(neighbourslist, new Random(
+				((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 	}
 	
 	/*************************************

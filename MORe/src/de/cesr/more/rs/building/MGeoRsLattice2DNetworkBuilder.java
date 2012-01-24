@@ -31,11 +31,11 @@ import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-import de.cesr.more.geo.manipulate.MoreGeoNetworkEdgeModifier;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MLattice2DNetworkBuilder;
 import de.cesr.more.building.util.MLattice2DGenerator;
+import de.cesr.more.geo.manipulate.MoreGeoNetworkEdgeModifier;
 import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
@@ -101,7 +101,7 @@ MLattice2DNetworkBuilder<AgentType, EdgeType> implements MoreGeoRsNetworkBuilder
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
-		
+
 		if (context == null) {
 			// <- LOGGING
 			logger.error("The context has not been set!");
@@ -142,6 +142,7 @@ MLattice2DNetworkBuilder<AgentType, EdgeType> implements MoreGeoRsNetworkBuilder
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "MGeoRsLattice2DNetworkBuilder";
 	}

@@ -15,12 +15,8 @@ package de.cesr.more.rs.building;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
@@ -38,7 +34,6 @@ import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
-import de.cesr.more.param.MSqlPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
@@ -109,6 +104,12 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 */
 	static private Logger	logger	= Logger
 											.getLogger(MGeoRsBaselineRadiusNetworkService.class);
+	
+	/**
+	 * The multiplicative of the first retrieved neighbours' list's size
+	 * that is used to initialise the checked neighbours array list. 
+	 */
+	public static final int CHECKED_NEIGHBOURS_CAPACITY_FACTOR = 3;
 
 	protected Uniform		rand;
 
@@ -204,7 +205,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		}
 
 		if (((MMilieuNetworkParameterMap) PmParameterManager
-				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).isEmpty()) {
+				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)) == null) {
 			new MMilieuNetDataReader().initParameters();
 		}
 	}
@@ -266,19 +267,23 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		// fetch potential neighbours from proximity. NumNeighbors should be
 		// large enough to find required number of
 		// parters per milieu
+		
 		// TODO generalise the super class approach to include all agent classes
 		numNeighbors = paraMap.getK(hh.getMilieuGroup());
 		List<AgentType> neighbourslist = (List<AgentType>) geoWrapper
 				.getSurroundingAgents(hh, curRadius, hh.getClass().getSuperclass());
+		
+		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
+				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Found " + neighbourslist.size() + " of class " + hh.getClass().getSuperclass()+ " neighbours within " + curRadius + " meters.");
+			logger.debug("Found " + neighbourslist.size() + " of class " + 
+					hh.getClass().getSuperclass()+ " neighbours within " + curRadius + " meters.");
 		}
 		// LOGGING ->
 
 		// mixing neighbour collection
-		// TODO Check shuffling
 		shuffleCollection(neighbourslist);
 		
 		// <- LOGGING
@@ -290,13 +295,13 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 		boolean anyPartnerAssignable = true;
 
-		Collection<AgentType> linkedNeighbors = new ArrayList<AgentType>(
-				neighbourslist.size());
+		// to check if the required neighbours is satisfied
+		int numLinkedNeighbors = 0;
 
 		Iterator<AgentType> neighbourIter = neighbourslist.iterator();
 		AgentType potPartner;
 
-		while (linkedNeighbors.size() < numNeighbors && anyPartnerAssignable) {
+		while (numLinkedNeighbors < numNeighbors && anyPartnerAssignable) {
 			if (neighbourIter.hasNext()) {
 				potPartner = neighbourIter.next();
 
@@ -305,7 +310,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				if (checkPartner(network, paraMap, hh, potPartner)) {
 					createEdge(network, potPartner, hh);
 
-					linkedNeighbors.add(potPartner);
+					numLinkedNeighbors++;
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
@@ -327,11 +332,13 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					// extending list of potential neighbours:
 					curRadius += paraMap.getXSearchRadius(hh.getMilieuGroup());
 
-					List<AgentType> xNeighbourslist = geoWrapper
+					checkedNeighbours.addAll(neighbourslist);
+					
+					neighbourslist = geoWrapper
 							.<AgentType> getSurroundingAgents(hh, curRadius, (Class<AgentType>) hh.getClass()
 									.getSuperclass());
-					xNeighbourslist.removeAll(neighbourslist);
-					neighbourslist = xNeighbourslist;
+					
+					neighbourslist.removeAll(checkedNeighbours);
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
@@ -340,7 +347,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					}
 					// LOGGING ->
 
-					// mixing neighbour collection
 					shuffleCollection(neighbourslist);
 
 					neighbourIter = neighbourslist.iterator();
@@ -348,36 +354,21 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					anyPartnerAssignable = false;
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug(hh + " > No Partner found!");
+						logger.debug(hh + " > Not enough partners found in max search radius!");
 					}
 					// LOGGING ->
 				}
 			}
 		}
-		numNotConnectedPartners += numNeighbors - linkedNeighbors.size();
+		numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug(hh + " > " + linkedNeighbors.size()
+			logger.debug(hh + " > " + numLinkedNeighbors
 					+ " neighbours found (from " + numNeighbors + ")");
 		}
 		// LOGGING ->
 		return numNotConnectedPartners;
-	}
-
-	/**
-	 * @param neighbourslist
-	 */
-	protected void shuffleCollection(List<AgentType> neighbourslist) {
-		Collections.<AgentType> sort(neighbourslist,
-				new Comparator<AgentType>() {
-					@Override
-					public int compare(AgentType o1, AgentType o2) {
-						return o1.getAgentId().compareTo(o2.getAgentId());
-					}
-				});
-		Collections.shuffle(neighbourslist, new Random(
-				((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 	}
 
 	/**
@@ -390,8 +381,15 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	protected boolean checkPartner(MoreNetwork<AgentType, EdgeType> network,
 			MMilieuNetworkParameterMap paraMap, AgentType ego,
 			AgentType potPartner) {
-		
 		if (network.isSuccessor(ego, potPartner)) {
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(ego + "> " + potPartner + " is already predecessor of " + ego + 
+						" (" + ego + (network.isSuccessor(potPartner, ego) ? " is" : " is not") + 
+						" a predecessor of " + potPartner + ")");
+			}
+			// LOGGING ->
+
 			return false;
 		}
 		// determine if potenialpartner's milieu is probable to link with:

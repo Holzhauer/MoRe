@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.cesr.more.util.MDefaultMilieuKeysMap;
 import de.cesr.parma.core.PmParameterDefinition;
+import de.cesr.parma.core.PmParameterManager;
 
 /**
  * Parameter definitions used for MORe's network building
@@ -97,9 +98,10 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 *****************************************************/
 	
 	/**
-	 * "Directedness" of the generated networks. Default:<code>false</code>.
+	 * "Directedness" of the generated networks.
+	 * Default:<code>true</code>.
 	 */
-	BUILD_DIRECTED(Boolean.class, false),
+	BUILD_DIRECTED(Boolean.class, true),
 	
 	
 	
@@ -138,6 +140,19 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	MNetworkBuildingPa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
+	}
+	
+	/**
+	 * 
+	 */
+	private MNetworkBuildingPa(Class<?> type, PmParameterDefinition defaultDefinition) {
+		this.type = type;
+		if (defaultDefinition != null) {
+			this.defaultValue = defaultDefinition.getDefaultValue();
+			PmParameterManager.setDefaultParameterDef(this, defaultDefinition);
+		} else {
+			this.defaultValue = null;
+		}
 	}
 	
 	/**

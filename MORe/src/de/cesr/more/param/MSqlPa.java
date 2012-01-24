@@ -99,8 +99,12 @@ public enum MSqlPa implements PmParameterDefinition {
 	
 	MSqlPa(Class<?> type, PmParameterDefinition defaultDefinition) {
 		this.type = type;
-		this.defaultValue = defaultDefinition.getDefaultValue();
-		PmParameterManager.setDefaultParameterDef(this, defaultDefinition);
+		if (defaultDefinition != null) {
+			this.defaultValue = defaultDefinition.getDefaultValue();
+			PmParameterManager.setDefaultParameterDef(this, defaultDefinition);
+		} else {
+			this.defaultValue = null;
+		}
 	}
 
 	@Override

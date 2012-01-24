@@ -154,6 +154,7 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	public boolean isAdjacent(AgentType ego, AgentType alter);
 	
 	/**
+	 * 
 	 * Checks whether there is a link from ego to alter.
 	 * @param ego
 	 * @param alter

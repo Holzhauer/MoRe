@@ -27,6 +27,7 @@ package de.cesr.more.rs.building;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -106,27 +107,39 @@ public class MGeoRsBaselineNumberNetworkService<AgentType extends MoreMilieuAgen
 		double fetchFactor = numNeighboursFetchFactor;
 
 		@SuppressWarnings("unchecked")
-		Collection<AgentType> neighbourslist = (Collection<AgentType>) geoWrapper.getSurroundingNAgents(hh,
-				(int) (numNeighbors * fetchFactor), area, searchRadius, hh.getClass());
+		List<AgentType> neighbourslist = geoWrapper.<AgentType>getSurroundingNAgents(hh,
+				(int) (numNeighbors * fetchFactor), area, searchRadius, (Class<AgentType>) hh.getClass());
 
-		// mixing neighbour collection omitted
+		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
+				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
+		
+		shuffleCollection(neighbourslist);
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Shuffled: " + neighbourslist);
+		}
+		// LOGGING ->
+
 
 		boolean anyPartnerAssignable = true;
-		Collection<AgentType> linkedNeighbors = new ArrayList<AgentType>(neighbourslist.size());
 
-		// TODO shuffle neighbours list:
+		// to check if the required neighbours is satisfied
+		int numLinkedNeighbors = 0;
+
 		Iterator<AgentType> neighbourIter = neighbourslist.iterator();
 		AgentType potPartner;
 
-		while (linkedNeighbors.size() < numNeighbors && anyPartnerAssignable) {
+		while (numLinkedNeighbors < numNeighbors && anyPartnerAssignable) {
 			if (neighbourIter.hasNext()) {
 				potPartner = neighbourIter.next();
 
 				// TODO check if potPartner has capacity (new feature)
 
 				if (checkPartner(network, paraMap, hh, potPartner)) {
-					createEdge(network, hh, potPartner);
-					linkedNeighbors.add(potPartner);
+					createEdge(network, potPartner, hh);
+
+					numLinkedNeighbors++;
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
@@ -148,11 +161,18 @@ public class MGeoRsBaselineNumberNetworkService<AgentType extends MoreMilieuAgen
 					// extending list of potential neighbours:
 					// !
 					fetchFactor = fetchFactor * xNumNeighboursFetchFactor;
-					@SuppressWarnings("unchecked")
-					Collection<AgentType> xNeighbourslist = (Collection<AgentType>) geoWrapper.getSurroundingNAgents(hh,
-							(int) (numNeighbors * fetchFactor), area, searchRadius, hh.getClass());
-					xNeighbourslist.removeAll(neighbourslist);
-					neighbourslist = xNeighbourslist;
+					checkedNeighbours.addAll(neighbourslist);
+					
+					neighbourslist = geoWrapper.<AgentType>getSurroundingNAgents(hh,
+							(int) (numNeighbors * fetchFactor), area, searchRadius, (Class<AgentType>) hh.getClass());
+					
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Found " + neighbourslist.size() + " new neighbours");
+					}
+					// LOGGING ->
+					
+					shuffleCollection(neighbourslist);
 					neighbourIter = neighbourslist.iterator();
 				} else {
 					anyPartnerAssignable = false;
@@ -165,11 +185,11 @@ public class MGeoRsBaselineNumberNetworkService<AgentType extends MoreMilieuAgen
 			}
 		}
 		
-		numNotConnectedPartners += numNeighbors - linkedNeighbors.size();
+		numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug(hh + " > " + linkedNeighbors.size() + " neighbours found (from " + numNeighbors + ")");
+			logger.debug(hh + " > " + numLinkedNeighbors + " neighbours found (from " + numNeighbors + ")");
 		}
 		// LOGGING ->
 	
