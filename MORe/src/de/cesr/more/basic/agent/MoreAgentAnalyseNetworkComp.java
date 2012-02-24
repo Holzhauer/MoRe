@@ -24,6 +24,7 @@
 package de.cesr.more.basic.agent;
 
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.rs.building.MoreDistanceAttachableAgent;
 
 /**
  * MORe
@@ -33,7 +34,7 @@ import de.cesr.more.basic.edge.MoreEdge;
  *
  */
 public interface MoreAgentAnalyseNetworkComp<A, E extends MoreEdge<? super A>>
-	extends MoreAgentNetworkComp<A, E> {
+		extends MoreAgentNetworkComp<A, E>, MoreDistanceAttachableAgent {
 	
 	
 	/**
@@ -82,10 +83,11 @@ public interface MoreAgentAnalyseNetworkComp<A, E extends MoreEdge<? super A>>
 	 */
 	public int getNetKDev();
 
-
 	/**
+	 * @param distance
 	 * @param distance
 	 * @return
 	 */
-	public double getNetworkDistanceWeight(double distance);
+	@Override
+	public double getNetworkDistanceWeight(double meanDistance, double distance);
 }

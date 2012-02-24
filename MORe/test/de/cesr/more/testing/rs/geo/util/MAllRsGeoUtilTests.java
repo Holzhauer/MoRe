@@ -19,26 +19,25 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 24.10.2011
+ * Created by Sascha Holzhauer on 25.01.2012
  */
-package de.cesr.more.testing.measures.node;
+package de.cesr.more.testing.rs.geo.util;
+
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-;
+
 
 /**
  * MORe
  *
- * @author holzhauer
- * @date 24.10.2011 
+ * @author Sascha Holzhauer
+ * @date 25.01.2012 
  *
  */
-
 @RunWith(Suite.class)
-@SuiteClasses({ MCompNetInfoSupplierTest.class, MNodeMeasureManagerTest.class,
-		MVertexSimilarityMeasureCalculatorTest.class })
-public class MAllMeasuresNodeTests {
+@SuiteClasses({ MGeographyWrapperTest.class })
+public class MAllRsGeoUtilTests {
 
 }

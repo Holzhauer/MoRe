@@ -23,6 +23,8 @@
  */
 package de.cesr.more.param;
 
+
+import de.cesr.more.building.util.MRandomNetworkGenerator;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -50,7 +52,12 @@ public enum MRandomPa implements PmParameterDefinition {
 	 * The name of the random stream used for network building
 	 * processes. Default: <code>Uniform network-building</code>.
 	 */
-	RND_STREAM_NETWORK_BUILDING(String.class, "Uniform network-building");
+	RND_STREAM_NETWORK_BUILDING(String.class, "Uniform network-building"),
+
+	/**
+	 * Used for {@link MRandomNetworkGenerator}.
+	 */
+	RND_STREAM_RANDOM_NETWORK_BUILDING(String.class, RND_STREAM_NETWORK_BUILDING);
 	
 	private Class<?> type;
 	private Object defaultValue;

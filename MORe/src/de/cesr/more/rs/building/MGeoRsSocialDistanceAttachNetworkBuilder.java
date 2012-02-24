@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.units.SI;
+
 import org.apache.log4j.Logger;
 
 import repast.simphony.space.gis.DefaultGeography;
@@ -36,7 +38,7 @@ import repast.simphony.space.gis.UTMFinder;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
-import de.cesr.lara.components.model.impl.LModel;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
@@ -50,9 +52,6 @@ import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.Log4jLogger;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
-import de.cesr.uranus.core.URandomService;
-
-import javax.units.SI;
 
 /**
  * MORe
@@ -100,20 +99,21 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 												.getLogger(MGeoRsSocialDistanceAttachNetworkBuilder.class);
 
 	MGeographyWrapper<Object>	geoWrapper;
+	Geography<Object> 			utmGeography;
 	MMilieuNetworkParameterMap	paraMap;
 	Uniform						rand;
 
 	Collection<AgentType>		agents;
 
 	String						name;
+	double						meanDistance;
 
 	/**
 	 * @param areGeography
 	 */
 	public MGeoRsSocialDistanceAttachNetworkBuilder(
-			Geography<Object> geography,
 			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
-		super(geography, edgeFac);
+		super(edgeFac);
 		this.name = name;
 
 		// <- LOGGING
@@ -136,7 +136,7 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 		paraMap = (MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 
-		AbstractDistribution abstractDis = URandomService
+		AbstractDistribution abstractDis = MManager
 				.getURandomService()
 				.getDistribution(
 						((String) PmParameterManager
@@ -144,12 +144,57 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 		if (abstractDis instanceof Uniform) {
 			this.rand = (Uniform) abstractDis;
 		} else {
-			this.rand = LModel.getModel().getLRandom().getUniform();
+			this.rand = MManager.getURandomService().getUniform();
 			logger.warn("Use default uniform distribution");
+		}
+		
+		
+		if (!geography.getCRS().getCoordinateSystem().getAxis(0).getUnit()
+				.equals(SI.METER)) {
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Initialising UTM geography...");
+			}
+			// LOGGING ->
+
+			utmGeography = new DefaultGeography<Object>("utmGeography");
+			for (Object o : geography.getAllObjects()) {
+				utmGeography.move(o,
+						geoFactory.createGeometry(geography.getGeometry(o)));
+			}
+			utmGeography.setCRS(UTMFinder.getUTMFor(geography.getGeometry(agents.iterator().next()),
+					geography.getCRS()));
+
+		} else {
+			utmGeography = geography;
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Geography is UTM");
+			}
+			// LOGGING ->
+		}
+
+		if (PmParameterManager.getParameter(MNetBuildSocialAttachment.MEAN_DISTANCE) != null) {
+			meanDistance = ((Double)PmParameterManager.getParameter(MNetBuildSocialAttachment.MEAN_DISTANCE)).doubleValue();
+		} else {
+			double sum = 0.0;
+			for(AgentType outer : agents) {
+				for (AgentType inner : agents) {
+					sum += utmGeography.getGeometry(inner).distance(
+							utmGeography.getGeometry(outer));
+				}
+			}
+			meanDistance = sum / (agents.size() * agents.size());
+
+			// <- LOGGING
+			logger.info("Mean distance is: " + MManager.getFloatPointFormat().format(meanDistance));
+			// LOGGING ->
 		}
 
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
-				new DirectedJungNetwork<AgentType>(name), context);
+				new DirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
 		for (AgentType ego : agents) {
 			network.addNode(ego);
@@ -166,6 +211,7 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 	 * @param ego
 	 * @param agents
 	 */
+	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network,
 			AgentType ego) {
 		// check weights (should sum up to 1):
@@ -227,8 +273,7 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 							+ "(Milieu "
 							+ potPartner.getMilieuGroup()
 							+ "): "
-							+ LModel.getModel()
-									.getFloatPointFormat()
+							+ MManager.getFloatPointFormat()
 									.format(distMap.get(potPartner)
 											/ totalDistance
 											* paraMap.getDimWeightGeo(ego
@@ -242,7 +287,7 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 							+ "(Milieu "
 							+ potPartner.getMilieuGroup()
 							+ "): "
-							+ LModel.getModel().getFloatPointFormat()
+							+ MManager.getFloatPointFormat()
 									.format(normalizedProbability));
 				}
 				// LOGGING ->
@@ -255,7 +300,9 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 		}
 
 		// Add ego to agents in case it was newly inserted in the network.
-		agents.add(ego);
+		if (!agents.contains(ego)) {
+			agents.add(ego);
+		}
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -264,7 +311,7 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 				normProbSum += d;
 			}
 			logger.debug("Probability sum devided by k preference: "
-					+ LModel.getModel().getFloatPointFormat()
+					+ MManager.getFloatPointFormat()
 							.format(normProbSum));
 		}
 		// LOGGING ->
@@ -283,27 +330,26 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 	private double computeTotalWeightedDistance(AgentType ego,
 			Collection<AgentType> agents, Map<AgentType, Double> distMap) {
 
+		// TODO check if utmGeography is still synchronized with geography.
+
 		double totalDistance = 0.0;
-		// geography needs to be requested here in order to shuffle agents
-		// before the loop!
-		Geography<Object> utmGeography;
-		if (!geography.getCRS().getCoordinateSystem().getAxis(0).getUnit()
-				.equals(SI.METER)) {
-			utmGeography = new DefaultGeography<Object>("utmGeography");
-			for (Object o : geography.getAllObjects()) {
-				utmGeography.move(o,
-						geoFactory.createGeometry(geography.getGeometry(o)));
-			}
-			utmGeography.setCRS(UTMFinder.getUTMFor(geography.getGeometry(ego),
-					geography.getCRS()));
-
-		} else {
-			utmGeography = geography;
-		}
-
 		for (AgentType h : agents) {
 
 			if (h != ego) {
+
+				if (utmGeography.getGeometry(ego) == null) {
+					// <- LOGGING
+					logger.error("No geometry for " + ego + " in geography " + utmGeography + "!");
+					// LOGGING ->
+					throw new IllegalStateException("No geometry for " + ego + " in geography " + utmGeography + "!");
+				}
+
+				if (utmGeography.getGeometry(h) == null) {
+					// <- LOGGING
+					logger.error("No geometry for " + h + " in geography " + utmGeography + "!");
+					// LOGGING ->
+					throw new IllegalStateException("No geometry for " + h + " in geography " + utmGeography + "!");
+				}
 
 				double distance = utmGeography.getGeometry(ego).distance(
 						utmGeography.getGeometry(h));
@@ -313,7 +359,7 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 							+ distance);
 				}
 				// LOGGING ->
-				distance = ego.getNetworkDistanceWeight(distance);
+				distance = ego.getNetworkDistanceWeight(meanDistance, distance);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Weighted distance between " + ego + " and "
@@ -361,6 +407,7 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "MGeoRsSocialDistanceAttachNetworkBuilder";
 	}

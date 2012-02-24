@@ -35,9 +35,7 @@ import org.xml.sax.SAXException;
 
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
-
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
@@ -45,7 +43,6 @@ import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.io.MGraphMLReader2NodeMap;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
-
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -88,7 +85,7 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
-						new UndirectedJungNetwork<AgentType>(name), context);
+						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
 		// put agents into map indexed by their indices:
 		BidiMap < AgentType , String > households = new DualHashBidiMap < AgentType , String >();
@@ -123,6 +120,7 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "MGeoRsRestoreNetworkBuilder";
 	}

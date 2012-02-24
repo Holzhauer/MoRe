@@ -37,7 +37,9 @@ import de.cesr.parma.core.PmParameterDefinition;
  */
 public enum MNetBuildSocialAttachment implements PmParameterDefinition {
 	
-	DIM_WEIGHT_DEVIATION_TRESHOLD(Double.class, 0.01);
+	DIM_WEIGHT_DEVIATION_TRESHOLD(Double.class, 0.01),
+
+	MEAN_DISTANCE(Double.class, null);
 	
 	private Class<?> type;
 	private Object defaultValue;

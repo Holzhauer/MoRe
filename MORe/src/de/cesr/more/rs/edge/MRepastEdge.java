@@ -23,12 +23,16 @@
  */
 package de.cesr.more.rs.edge;
 
+
+import org.apache.log4j.Logger;
+
 import repast.simphony.space.graph.RepastEdge;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreTraceableEdge;
 import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.util.exception.MIdentifyCallerException;
 
 /**
  * MORe
@@ -39,21 +43,48 @@ import de.cesr.more.measures.util.MoreAction;
  */
 public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEdge<AgentT>, MoreTraceableEdge<AgentT> {
 
+	/**
+	 * Logger
+	 */
+	static private Logger	logger	= Logger.getLogger(MRepastEdge.class);
+
 	protected double length = 0.0;
 	
 	protected boolean active;
-	
+
 	/**
 	 * @param source
 	 * @param target
 	 * @param directed
+	 * @throws MIdentifyCallerException
 	 */
 	public MRepastEdge(AgentT source, AgentT target, boolean directed) {
 		super(source, target, directed);
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Edge created");
+			try {
+				throw new MIdentifyCallerException();
+			} catch (MIdentifyCallerException e) {
+				e.printStackTrace();
+			}
+		}
+		// LOGGING ->
+
 	}
 
 	public MRepastEdge(AgentT source, AgentT target, boolean directed, double weight) {
 		super(source, target, directed, weight);
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Edge created");
+			try {
+				throw new MIdentifyCallerException();
+			} catch (MIdentifyCallerException e) {
+				e.printStackTrace();
+			}
+		}
+		// LOGGING ->
 	}
 	
 	/**

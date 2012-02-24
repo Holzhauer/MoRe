@@ -36,8 +36,10 @@ import de.cesr.more.measures.node.MAbstractNodeMeasure;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MAbstractAction;
+import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
-import edu.uci.ics.jung.algorithms.importance.DegreeDistributionRanker;
+import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
+import edu.uci.ics.jung.algorithms.scoring.BarycenterScorer;
 
 
 
@@ -100,8 +102,81 @@ public class MCentralityNodeMSupplier extends MAbstractMeasureSupplier {
 			public <V extends MoreNodeMeasureSupport, E extends MoreEdge<? super V>> MoreAction getAction(final MoreNetwork<V, E> network,
 					Map<String, Object> parameters) {
 				return new MAbstractAction() {
-					DegreeDistributionRanker<V, E>	ranker	= new DegreeDistributionRanker<V, E>(
-																	network.getJungGraph(), true);
+					@Override
+					public void execute() {
+						for (V node : network.getNodes()) {
+							node.setNetworkMeasureObject(network, new MMeasureDescription(
+									MNodeMeasureCategory.NODE_CENTRALITY, "IDCnn",
+									"Indegree based centrality (not normalized)"), network.getInDegree(node));
+						}
+					}
+				};
+			}
+		});
+
+		description = new MMeasureDescription(MNodeMeasureCategory.NODE_CENTRALITY, "ODCnn",
+				"Outdegree based centrality (not normalized)");
+
+		measures.put(description, new MAbstractNodeMeasure(description, Double.class) {
+			@Override
+			public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> MoreAction getAction(
+					final MoreNetwork<T, E> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction(MScheduleParameters.getUnboundedRandomMScheduleParameters(
+						(Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
+								.doubleValue())) {
+					@Override
+					public void execute() {
+						for (T node : network.getNodes()) {
+							node.setNetworkMeasureObject(network, new MMeasureDescription(
+									MNodeMeasureCategory.NODE_CENTRALITY, "ODCnn",
+											"Outdegree based centrality (not normalized)"), network.getOutDegree(node));
+						}
+					}
+				};
+			}
+		});
+
+		description = new MMeasureDescription(MNodeMeasureCategory.NODE_CENTRALITY, "CLCnn",
+				"Closeness based centrality (not normalized)");
+
+		measures.put(description, new MAbstractNodeMeasure(description, Double.class) {
+			@Override
+			public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> MoreAction getAction(
+					final MoreNetwork<T, E> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction(MScheduleParameters.getUnboundedRandomMScheduleParameters(
+						(Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
+								.doubleValue())) {
+					BarycenterScorer<T, E>	ranker	= new BarycenterScorer<T, E>(network.getJungGraph());
+
+					@Override
+					public void execute() {
+						for (T node : network.getNodes()) {
+							node.setNetworkMeasureObject(network, new MMeasureDescription(
+									MNodeMeasureCategory.NODE_CENTRALITY, "CLCnn",
+									"Closeness based centrality (not normalized)"),
+									// Closeness-Centrality is inverse of Bary-Center:
+									1.0 / ranker.getVertexScore(node));
+						}
+					}
+				};
+			}
+		});
+
+		description = new MMeasureDescription(MNodeMeasureCategory.NODE_CENTRALITY, "BwCnn",
+				"Betweeness based centrality (not normalized)");
+
+		measures.put(description, new MAbstractNodeMeasure(description, Double.class) {
+			@Override
+			public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> MoreAction getAction(
+					final MoreNetwork<T, E> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction(MScheduleParameters.getUnboundedRandomMScheduleParameters(
+						(Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
+								.doubleValue())) {
+					BetweennessCentrality<T, E>	ranker	= new BetweennessCentrality<T, E>(network.getJungGraph(), true,
+																					false);
 					{
 						ranker.setNormalizeRankings(false);
 					}
@@ -109,142 +184,56 @@ public class MCentralityNodeMSupplier extends MAbstractMeasureSupplier {
 					@Override
 					public void execute() {
 						ranker.step();
-						for (V node : network.getNodes()) {
+						for (T node : network.getNodes()) {
 							node.setNetworkMeasureObject(network, new MMeasureDescription(
-									MNodeMeasureCategory.NODE_CENTRALITY, "IDCnn",
-									"Indegree based centrality (not normalized)"), ranker.getVertexRankScore(node));
+									MNodeMeasureCategory.NODE_CENTRALITY, "BwCnn",
+									"Betweeness based centrality (not normalized)"), ranker
+									.getVertexRankScore(node));
 						}
-
 					}
 				};
 			}
 		});
 
-		// description = new NetworkMeasureUtilities.MeasureDescription(NetworkMeasureUtilities.CENTRALITY, "ODCnn",
-		// "Outdegree based centrality (not normalized)");
-		//
-		// measures.put(description, new NetworkMeasureUtilities.Measure(description, Double.class) {
-		// public <T extends NetworkMeasureSupport> ISchedulableAction getAction(final ContextJungNetwork<T> network,
-		// Map<String, Object> parameters) {
-		// return new AbstractAction(ScheduleParameters.createRepeating(0,
-		// (Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
-		// .doubleValue())) {
-		// DegreeDistributionRanker<T, RepastEdge<T>> ranker = new DegreeDistributionRanker<T, RepastEdge<T>>(
-		// network.getGraph(), false);
-		// {
-		// ranker.setNormalizeRankings(false);
-		// }
-		//
-		// public void execute() {
-		// ranker.step();
-		// for (T node : network.getNodes()) {
-		// node
-		// .setNetworkMeasureObject(network, new NetworkMeasureUtilities.MeasureDescription(
-		// NetworkMeasureUtilities.CENTRALITY, "ODCnn",
-		// "Outdegree based centrality (not normalized)"), ranker
-		// .getVertexRankScore((T) node));
-		// }
-		// }
-		// };
-		// }
-		// });
-		//
-		// description = new NetworkMeasureUtilities.MeasureDescription(NetworkMeasureUtilities.CENTRALITY, "CLCnn",
-		// "Closeness based centrality (not normalized)");
-		//
-		// measures.put(description, new NetworkMeasureUtilities.Measure(description, Double.class) {
-		// public <T extends NetworkMeasureSupport> ISchedulableAction getAction(final ContextJungNetwork<T> network,
-		// Map<String, Object> parameters) {
-		// return new AbstractAction(ScheduleParameters.createRepeating(0,
-		// (Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
-		// .doubleValue())) {
-		// BarycenterScorer<T, RepastEdge<T>> ranker = new BarycenterScorer<T,
-		// // rank vertices, don't rank edges:
-		// RepastEdge<T>>(network.getGraph());
-		//
-		// public void execute() {
-		// for (T node : network.getNodes()) {
-		// node.setNetworkMeasureObject(network, new NetworkMeasureUtilities.MeasureDescription(
-		// NetworkMeasureUtilities.CENTRALITY, "CLCnn",
-		// "Closeness based centrality (not normalized)"),
-		// // Closeness-Centrality is inverse of Bary-Center:
-		// 1.0 / ranker.getVertexScore((T) node));
-		// }
-		// }
-		// };
-		// }
-		// });
-		//
-		// description = new NetworkMeasureUtilities.MeasureDescription(NetworkMeasureUtilities.CENTRALITY, "BwCnn",
-		// "Betweeness based centrality (not normalized)");
-		//
-		// measures.put(description, new NetworkMeasureUtilities.Measure(description, Double.class) {
-		// public <T extends NetworkMeasureSupport> ISchedulableAction getAction(final ContextJungNetwork<T> network,
-		// Map<String, Object> parameters) {
-		// return new AbstractAction(ScheduleParameters.createRepeating(0,
-		// (Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
-		// .doubleValue())) {
-		// BetweennessCentrality<T, RepastEdge<T>> ranker = new BetweennessCentrality<T,
-		// // rank vertices, don't rank edges:
-		// RepastEdge<T>>(network.getGraph(), true, false);
-		// {
-		// ranker.setNormalizeRankings(false);
-		// }
-		//
-		// public void execute() {
-		// ranker.step();
-		// for (T node : network.getNodes()) {
-		// node.setNetworkMeasureObject(network, new NetworkMeasureUtilities.MeasureDescription(
-		// NetworkMeasureUtilities.CENTRALITY, "BwCnn",
-		// "Betweeness based centrality (not normalized)"), ranker
-		// .getVertexRankScore((T) node));
-		// }
-		// }
-		// };
-		// }
-		// });
-		//
-		// description = new NetworkMeasureUtilities.MeasureDescription(NetworkMeasureUtilities.CENTRALITY, "BaCnn",
-		// "Bary centrality (not normalized)");
-		//
-		// measures.put(description, new NetworkMeasureUtilities.Measure(description, Double.class) {
-		// public <T extends NetworkMeasureSupport> ISchedulableAction getAction(final ContextJungNetwork<T> network,
-		// Map<String, Object> parameters) {
-		// return new AbstractAction(ScheduleParameters.createRepeating(0,
-		// (Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
-		// .doubleValue())) {
-		// BaryCenter<T, RepastEdge<T>> ranker = new BaryCenter<T,
-		// // rank vertices, don't rank edges:
-		// RepastEdge<T>>(network.getGraph());
-		// {
-		// ranker.setNormalizeRankings(false);
-		// }
-		//
-		// public void execute() {
-		// ranker.step();
-		// for (T node : network.getNodes()) {
-		// node.setNetworkMeasureObject(network, new NetworkMeasureUtilities.MeasureDescription(
-		// NetworkMeasureUtilities.CENTRALITY, "BaCnn", "Bary centrality (not normalized)"),
-		// ranker.getVertexRankScore((T) node));
-		// }
-		// }
-		// };
-		// }
-		// });
-		//
-		// description = new NetworkMeasureUtilities.MeasureDescription(NetworkMeasureUtilities.CENTRALITY, "EccCnn",
+		description = new MMeasureDescription(MNodeMeasureCategory.NODE_CENTRALITY, "BaCnn",
+				"Bary centrality (not normalized)");
+
+		measures.put(description, new MAbstractNodeMeasure(description, Double.class) {
+			@Override
+			public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> MoreAction getAction(
+					final MoreNetwork<T, E> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction(MScheduleParameters.getUnboundedRandomMScheduleParameters(
+						(Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
+								.doubleValue())) {
+					BarycenterScorer<T, E>	ranker	= new BarycenterScorer<T, E>(network.getJungGraph());
+
+					@Override
+					public void execute() {
+						for (T node : network.getNodes()) {
+							node.setNetworkMeasureObject(network, new MMeasureDescription(
+									MNodeMeasureCategory.NODE_CENTRALITY, "BaCnn", "Bary centrality (not normalized)"),
+									ranker.getVertexScore(node));
+						}
+					}
+				};
+			}
+		});
+
+		// description = new MMeasureDescription(MNodeMeasureCategory.NODE_CENTRALITY, "EccCnn",
 		// "Eccentricity centrality (not normalized)");
 		//
-		// measures.put(description, new NetworkMeasureUtilities.Measure(description, Double.class) {
+		// measures.put(description, new MAbstractNodeMeasure(description, Double.class) {
 		// {
 		// parameters = new HashMap<String, Object>();
 		// parameters.put(EccentricityCentrality.PARAM_UNCONNECTEDREP, new Integer(Integer.MAX_VALUE));
 		// parameters.put(EccentricityCentrality.PARAM_USEDIAMETER, true);
 		// }
 		//
-		// public <T extends NetworkMeasureSupport> ISchedulableAction getAction(final ContextJungNetwork<T> network,
+		// public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> MSchedulableAction getAction(
+		// final MoreNetwork<T, E> network,
 		// final Map<String, Object> parameters) {
-		// return new AbstractAction(ScheduleParameters.createRepeating(0,
+		// return new MAbstractAction(MScheduleParameters.getUnboundedRandomMScheduleParameters(
 		// (Double) parameters.get("INTERVAL") == null ? 1.0 : ((Double) parameters.get("INTERVAL"))
 		// .doubleValue())) {
 		// EccentricityCentrality<T, RepastEdge<T>> ranker = new EccentricityCentrality<T, RepastEdge<T>>(

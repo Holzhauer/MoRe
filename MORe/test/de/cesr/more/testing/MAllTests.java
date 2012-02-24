@@ -13,6 +13,7 @@ import de.cesr.more.testing.measures.network.supply.algos.MAllNetworkSupplyAlgos
 import de.cesr.more.testing.measures.node.MAllMeasuresNodeTests;
 import de.cesr.more.testing.networks.MAllNetworkTests;
 import de.cesr.more.testing.rs.building.geo.MAllRsBuildingGeoTests;
+import de.cesr.more.testing.rs.geo.util.MAllRsGeoUtilTests;
 import de.cesr.more.testing.rs.network.MAllRsNetworkTests;
 import de.cesr.more.testing.util.MAllUtilitiesTests;
 
@@ -24,7 +25,7 @@ import de.cesr.more.testing.util.MAllUtilitiesTests;
 @RunWith(Suite.class)
 @SuiteClasses( {MAllBasicTests.class, MAllBuildingTests.class, MAllMeasuresNetworkTests.class,
 		MAllNetworkSupplyAlgosTests.class, MAllMeasuresNodeTests.class, MAllNetworkTests.class,
-		MAllRsBuildingGeoTests.class, MAllRsNetworkTests.class,
+		MAllRsBuildingGeoTests.class, MAllRsNetworkTests.class, MAllRsGeoUtilTests.class,
 		MAllUtilitiesTests.class})
 public class MAllTests {
 }

@@ -47,12 +47,15 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
 
+
 /**
  * MORe
- *
+ * 
+ * TODO simplify!!
+ * 
  * @author Sascha Holzhauer
- * @date 16.12.2011 
- *
+ * @date 16.12.2011
+ * 
  */
 public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMilieuAgent,
 	E extends MoreEdge<? super A>> extends MAgentNetworkComp<A, E> implements MoreAgentAnalyseNetworkComp<A, E> {
@@ -103,7 +106,7 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	 */
 	@Override
 	public int getInDegree() {
-		return agent.getNetworkComp().getMainNetwork().getInDegree(agent);
+		return getMainNetwork().getInDegree(agent);
 	}
 
 	/**
@@ -159,10 +162,9 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	 */
 	@Override
 	public float getNNAvgDeg() {
-		Float value =  agent.getNetworkMeasureObject(getMainNetwork(),
-			new MMeasureDescription(MAvgNearestNeighbourDegree.Short.MC_AVG_NN_DEGREE_UNDIRECTED.getName()))
-				.floatValue();
-		return value != null ? value : Float.NaN;
+		Number value = agent.getNetworkMeasureObject(getMainNetwork(),
+				new MMeasureDescription(MAvgNearestNeighbourDegree.Short.MC_AVG_NN_DEGREE_UNDIRECTED.getName()));
+		return value != null ? value.floatValue() : Float.NaN;
 	}
 
 	/**
@@ -210,14 +212,12 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 		return network.getInDegree(agent) - map.getK(agent.getMilieuGroup());
 	}
 
-
 	/**
-	 * @param distance
-	 * @return
+	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#getNetworkDistanceWeight(double, double)
+	 * @return meanDistance / distance
 	 */
 	@Override
-	public double getNetworkDistanceWeight(double distance) {
-		// TODO adapt
-		return 1000 / distance;
+	public double getNetworkDistanceWeight(double meanDistance, double distance) {
+		return meanDistance / distance;
 	}
 }

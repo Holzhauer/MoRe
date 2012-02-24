@@ -24,19 +24,19 @@
 package de.cesr.more.rs.building;
 
 import java.util.Collection;
-import org.apache.log4j.Logger;
 
-import cern.jet.random.Uniform;
+import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
+import cern.jet.random.Uniform;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
+import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
-import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
@@ -84,6 +84,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		 * 
 		 * @return the kProvider
 		 */
+		@Override
 		public MoreKValueProvider<AgentT> getkProvider() {
 			if (kProvider == null) {
 				if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
@@ -107,6 +108,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		 * MNetworkBuildingPa.MILIEU_NETWORK_PARAMS is null.
 		 * @return the betaProvider
 		 */
+		@Override
 		public MoreBetaProvider<AgentT> getBetaProvider() {
 			if (betaProvider == null) {
 				if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
@@ -186,7 +188,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ? new DirectedJungNetwork<AgentType>(
 						this.name) : new UndirectedJungNetwork<AgentType>(
-						this.name), context);
+								this.name), context, this.edgeModifier.getEdgeFactory());
 		
 		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params = 
 			new MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentType, EdgeType>();
@@ -227,6 +229,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "MGeoRsWattsBetaSwBuilder";
 	}

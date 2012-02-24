@@ -39,7 +39,6 @@ import repast.simphony.space.gis.Geography;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import de.cesr.more.util.Log4jLogger;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
@@ -50,6 +49,7 @@ import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.Log4jLogger;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -84,6 +84,11 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 		this.geography = areasGeography;
 		this.geoFactory = new GeometryFactory(new PrecisionModel(),
 				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.SPATIAL_REFERENCE_ID)).intValue());
+		this.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(edgeFac);
+
+		// <- LOGGING
+		logger.info("Initialised " + this + " with edge factory " + edgeFac);
+		// LOGGING ->
 	}
 
 	/**
@@ -157,6 +162,12 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 */
 	@Override
 	public void setGeography(Geography<Object> geography) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Set geography: " + geography);
+		}
+		// LOGGING ->
+
 		this.geography = geography;
 		this.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(this.edgeFac, geography, geoFactory);
 	}

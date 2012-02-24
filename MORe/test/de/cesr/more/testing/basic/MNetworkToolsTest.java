@@ -23,7 +23,7 @@
  */
 package de.cesr.more.testing.basic;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.collections15.Factory;
 import org.junit.Before;
@@ -46,7 +46,7 @@ import edu.uci.ics.jung.graph.Graph;
  * @date 12.10.2011 
  *
  */
-public class MNetworkServiceTest {
+public class MNetworkToolsTest {
 	
 	static final String GRAPH_FILENAME = "./test/res/MergeTestNetwork01yn.graphml";
 	static final String GRAPH_FILENAME_RESULTING = "./test/res/MergeTestNetwork02yn.graphml";
@@ -103,7 +103,7 @@ public class MNetworkServiceTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		MoreEdgeFactory<TestAgent, MoreEdge<TestAgent>> edgeFactory = new MDefaultEdgeFactory<MNetworkServiceTest.TestAgent>();
+		MoreEdgeFactory<TestAgent, MoreEdge<TestAgent>> edgeFactory = new MDefaultEdgeFactory<MNetworkToolsTest.TestAgent>();
 		network = new MDirectedNetwork<TestAgent, MoreEdge<TestAgent>>(edgeFactory, "TestNetwork");
 		
 		resultingNetwork = new MDirectedNetwork<TestAgent, MoreEdge<TestAgent>>(edgeFactory, "TestNetwork");
@@ -133,7 +133,7 @@ public class MNetworkServiceTest {
 	@Test
 	public void test() {
 		MAggregator.aggregateNodes(network, new TestAgent(0), new TestAgent(3));
+		network.removeNode(new TestAgent(3));
 		assertTrue(MNetworkTools.isStructurallyEqual(network, resultingNetwork));
 	}
-
 }

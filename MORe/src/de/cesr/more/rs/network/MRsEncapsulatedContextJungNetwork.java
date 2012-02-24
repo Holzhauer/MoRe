@@ -63,19 +63,23 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 		MoreNetwork<AgentT, EdgeT> {
 
 	
-	private ContextJungNetwork<AgentT>	network;
-	private Context<AgentT>						context;
+	private final ContextJungNetwork<AgentT>	network;
+	private final Context<AgentT>						context;
 	
 	protected MoreEdgeFactory<AgentT, EdgeT> edgeFac;
 	
 	public static double DEFAULT_EDGE_WEIGHT = 1.0;
 
 	/**
-	 * @param network the network that is going to be wrapped
+	 * Adds the encapsulated network as projection to the given context.
+	 * 
+	 * @param network
+	 *        the network that is going to be wrapped
 	 */
 	public MRsEncapsulatedContextJungNetwork(ContextJungNetwork<AgentT> network, Context<AgentT> context) {
 		this.network = network;
 		this.context = context;
+		this.context.addProjection(network);
 	}
 
 	@Override

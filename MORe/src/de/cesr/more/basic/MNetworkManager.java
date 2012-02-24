@@ -93,17 +93,23 @@ public class MNetworkManager {
 		}
 		return networks.get(name);
 	}
-	
+
 	/**
-	 * TODO test!
+	 * Creates a new MoreNetwork from the given network that contains only the vertices the given predicate renders
+	 * true. The resulting network (the given network is not altered) is stored at this network manager using the given
+	 * name.
 	 * 
 	 * @param <V>
+	 *        vertex type
 	 * @param <E>
+	 *        edge type
 	 * @param in_network
+	 *        original network
 	 * @param predicate
-	 * @param newname an identifier for the new subnetwork
-	 * @return
-	 * Created by Sascha Holzhauer on 16.11.2010
+	 *        needs to return true for vertices the resulting network shall contain
+	 * @param newname
+	 *        an identifier for the new subnetwork (used to store and as network name)
+	 * @return the resulting network
 	 */
 	public static <V, E extends MoreEdge<? super V>> MoreNetwork<V,E> storeVertexSubnetwork(MoreNetwork<V, E> in_network, Predicate<V> predicate, String newname) {		
 		VertexPredicateFilter<V, E> filter = new VertexPredicateFilter<V, E>(predicate);

@@ -23,6 +23,10 @@
  */
 package de.cesr.more.manipulate.network;
 
+
+import java.util.Collection;
+import java.util.HashSet;
+
 import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.edge.MoreEdge;
@@ -43,8 +47,9 @@ public class MAggregator {
 	static private Logger logger = Logger.getLogger(MAggregator.class);
 
 	/**
-	 * Aggregates two node to a single one (the first node given). It aggregates the links of both nodes
-	 * at the surviving node and deletes the other node afterwards.
+	 * Aggregates two node to a single one (the first node given). It aggregates the links of both nodes at the
+	 * surviving node. The other node is not deleted since this would cause trouble when RS tries to delete the agent
+	 * from context and thus network projection.
 	 * 
 	 * @param network
 	 * @param survivingAgent
@@ -67,8 +72,12 @@ public class MAggregator {
 			throw new IllegalStateException("Network " + network + " does not contain node to aggregate: " + survivingAgent);
 		}
 		
+		Collection<AgentType> successors = new HashSet<AgentType>();
+		Collection<AgentType> predecessors = new HashSet<AgentType>();
+
 		if (network.getPredecessors(otherAgent) != null) {
 			for (AgentType partner : network.getPredecessors(otherAgent)) {
+				predecessors.add(partner);
 				if (!partner.equals(survivingAgent) && !network.isSuccessor(partner, survivingAgent)) {
 					network.connect(partner, survivingAgent);
 				}
@@ -76,12 +85,22 @@ public class MAggregator {
 		}
 		if (network.getSuccessors(otherAgent) != null) {
 			for (AgentType partner : network.getSuccessors(otherAgent)) {
+				successors.add(partner);
 				if (!partner.equals(survivingAgent) && !network.isSuccessor(survivingAgent, partner)) {
 					network.connect(survivingAgent, partner);
+
 				}
 			}
 		}
-		network.removeNode(otherAgent);
+
+		for (AgentType partner : successors) {
+			network.disconnect(otherAgent, partner);
+		}
+
+		for (AgentType partner : predecessors) {
+			network.disconnect(partner, otherAgent);
+		}
+
 		return true;
 	}
 }

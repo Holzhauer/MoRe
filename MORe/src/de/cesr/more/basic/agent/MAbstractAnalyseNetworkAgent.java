@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import repast.simphony.space.gis.Geography;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.param.MBasicPa;
+import de.cesr.more.rs.building.MoreDistanceAttachableAgent;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -40,7 +41,7 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public abstract class MAbstractAnalyseNetworkAgent<A extends MoreNetworkAgent<A,E> & MoreMilieuAgent, 
 	E extends MoreEdge<? super A>> extends MAbstractNetworkAgent<A, E> implements
-		MoreAgentAnalyseNetworkComp<A, E> {
+		MoreAgentAnalyseNetworkComp<A, E>, MoreDistanceAttachableAgent {
 	
 	/**
 	 * Logger
@@ -137,10 +138,10 @@ public abstract class MAbstractAnalyseNetworkAgent<A extends MoreNetworkAgent<A,
 	}
 
 	/**
-	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#getNetworkDistanceWeight(double)
+	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#getNetworkDistanceWeight(double, double)
 	 */
 	@Override
-	public double getNetworkDistanceWeight(double distance) {
-		return netComp.getNetworkDistanceWeight(distance);
+	public double getNetworkDistanceWeight(double meanDistance, double distance) {
+		return netComp.getNetworkDistanceWeight(meanDistance, distance);
 	}
 }

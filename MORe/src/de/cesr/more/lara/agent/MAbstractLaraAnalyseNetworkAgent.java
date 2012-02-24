@@ -140,12 +140,4 @@ public abstract class MAbstractLaraAnalyseNetworkAgent<A extends MoreLaraNetwork
 	public int getNetKDev() {
 		return netComp.getNetKDev();
 	}
-
-	/**
-	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#getNetworkDistanceWeight(double)
-	 */
-	@Override
-	public double getNetworkDistanceWeight(double distance) {
-		return netComp.getNetworkDistanceWeight(distance);
-	}
 }

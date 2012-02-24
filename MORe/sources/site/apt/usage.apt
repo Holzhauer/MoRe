@@ -59,6 +59,13 @@ MNetworkManager.setNetwork(network, socialNetworkName);
     	* Random seeds
     
     * Call <<<MManager.init()>>> to initialise default random streams (according to parameter settings for random seeds).
+    
+** Using Logging
+
+	MoRe incorporates the {{{http://logging.apache.org/}Apache Log4J}} framework. See the website for configuring the logging framework 
+	properly in order to achieve the desired output. This is especially important to get meaningful	warnings and error messages. 
+	Two basic configuration file can be found in <<<config/log4j>>> (with specific settings mostly out-commented). Note that the
+	configuration file needs to be within the Java classpath.  
 
 
 *Configuring Network Measures

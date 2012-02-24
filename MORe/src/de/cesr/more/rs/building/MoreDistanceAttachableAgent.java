@@ -31,15 +31,20 @@ package de.cesr.more.rs.building;
  *
  */
 public interface MoreDistanceAttachableAgent {
-	
+
 	/**
-	 * Provides a weight for the given distance.
-	 * I.e., some agents might prefer distant links, others might solely
-	 * like local links.
+	 * Provides a weight regarding the given distance. I.e., some agents might prefer distant links, others might solely
+	 * like local links. High weights promote agents that are the given distance away, low weights discriminate such
+	 * agents.
 	 * 
+	 * Since such a preference may not only depend on the agent's milieu but also on its geographical embeddedness (in
+	 * urban context the perception of distance is potentially different from rural contexts) the weight can be provided
+	 * on an individual level instead by milieu preferences.
+	 * 
+	 * @param meanDistance
+	 *        mean distance between all agents (by default only computed at initialisation of network service)
 	 * @param distance
 	 * @return the distance weight for the given distance
 	 */
-	public double getNetworkDistanceWeight(double distance);
-
+	public double getNetworkDistanceWeight(double meanDistance, double distance);
 }

@@ -7,13 +7,11 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-import repast.simphony.context.Context;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MCompleteNetworkBuilder;
-import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
@@ -85,7 +83,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
-						new UndirectedJungNetwork<AgentType>(name), context);
+						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 		for (AgentType agent : context) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
@@ -136,6 +134,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "MGeoRsCompleteNetworkBuilder";
 	}

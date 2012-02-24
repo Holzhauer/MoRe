@@ -28,6 +28,8 @@ import org.apache.commons.collections15.BidiMap;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import de.cesr.more.param.reader.MMilieuNetDataReader;
+import de.cesr.more.rs.building.MGeoRsNetworkService;
 import de.cesr.more.util.MDefaultMilieuKeysMap;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
@@ -60,7 +62,15 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * the index may be queried from the map.
 	 */
 	MILIEUS(BidiMap.class, new MDefaultMilieuKeysMap()),
+
+	/*****************************************************
+	 * Random network Builder
+	 *****************************************************/
 	
+	/**
+	 * The average degree of a node in the resulting network. Determines p ( 1/#agents * AVG_DEGREE).
+	 */
+	BUILD_RANDOM_AVG_DEGREE(Integer.class, 6),
 	
 	/*****************************************************
 	 * Watts-Strogats Small-World network Builder

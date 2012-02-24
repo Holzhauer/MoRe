@@ -23,7 +23,7 @@
  */
 package de.cesr.more.measures.node;
 
-import java.util.HashMap;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -59,28 +59,21 @@ public class MVertexSimilarityMeasureCalculator {
 	 * @param graph
 	 * @return
 	 */
-	public static <V, E extends MoreEdge<? super V>> Map<V, Map<V, Double>> getVertexSimilaritiesR(
-			final Graph<V, E> graph, String version, String mode) {
-		logger.info("Calculate Average Path Length (R) for clusters in a graph containing " + graph.getVertexCount() + " nodes.");
+	public static <V, E extends MoreEdge<? super V>> double[][] getVertexSimilaritiesR(
+			final Graph<V, E> graph, String version, String mode, Map<V, Integer> vertices) {
+		logger.info("Calculate vertex similarities in a graph containing " + graph.getVertexCount() + " nodes.");
 		
-		Map<V, Map<V, Double>> similarities = new HashMap<V, Map<V, Double>>();
+		double[][] similarities;
 		
 		if (graph.getEdgeCount() == 0)  {
 			logger.warn("Graph " + graph + " does not contain any edges");
 			return null;
 		}
 		
-		// create id map
-		Map<V, Integer> idMap = new HashMap<V, Integer>();
-		int i = 0;
-		for (V vertex : graph.getVertices()) {
-			idMap.put(vertex, new Integer(i++));
-		}
-
 		Rengine re = MRService.getRengine();
         
 		REXP result;
-		MRService.assignGraphObject(re, graph, "g", idMap);
+		MRService.assignGraphObject(re, graph, "g", vertices);
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -90,21 +83,12 @@ public class MVertexSimilarityMeasureCalculator {
 		
 		result = re.eval("similarity." + version + "(g, mode=\"" + mode + "\")");
 	
-		double[][] results = result.asDoubleMatrix();
+		similarities = result.asDoubleMatrix();
 		logger.info("Result: " + result);		
-		
-		for (V outerVertex : idMap.keySet()) {
-			for (V innerVertex : idMap.keySet()) {
-					if (similarities.get(outerVertex) == null) {
-						similarities.put(outerVertex, new HashMap<V, Double>());
-					}
-					similarities.get(outerVertex).put(innerVertex, new Double(results[idMap.get(outerVertex)][idMap.get(innerVertex)]));
-			}
-		}
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Similarities: " + similarities);
+			logger.debug("Similarities length: " + similarities.length + " * " + similarities[0].length);
 		}
 		// LOGGING ->
 
@@ -120,9 +104,29 @@ public class MVertexSimilarityMeasureCalculator {
 	 * @param mode
 	 * @return
 	 */
-	public static <V, E extends MoreEdge<? super V>> Map<V, Map<V, Double>> getVertexDiceSimilaritiesR(
-			final Graph<V, E> graph, String mode) {
-		return getVertexSimilaritiesR(graph, "dice", mode);
+	public static <V, E extends MoreEdge<? super V>> double[][] getVertexDiceSimilaritiesR(
+			final Graph<V, E> graph, String mode, Map<V, Integer> vertices) {
+		return getVertexSimilaritiesR(graph, "dice", mode, vertices);
+	}
+
+	/**
+	 * Calculates Dice dissimilarities between vertices. Mode gives the type of neighboring vertices to use for the
+	 * calculation, possible values: ‘out’, ‘in’, ‘all’.
+	 * 
+	 * @param graph
+	 * @param mode
+	 * @return
+	 */
+	public static <V, E extends MoreEdge<? super V>> double[][] getVertexDiceDissimilaritiesR(
+			final Graph<V, E> graph, String mode, Map<V, Integer> vertices) {
+		double[][] similarities = getVertexSimilaritiesR(graph, "dice", mode, vertices);
+		double[][] dissimilarities = new double[similarities.length][similarities.length];
+		for (int i = 0; i < similarities.length; i++) {
+			for (int j = 0; j < similarities.length; j++) {
+				dissimilarities[i][j] = 1.0 - similarities[i][j];
+			}
+		}
+		return dissimilarities;
 	}
 	
 	/**
@@ -134,8 +138,8 @@ public class MVertexSimilarityMeasureCalculator {
 	 * @param mode
 	 * @return
 	 */
-	public static <V, E extends MoreEdge<? super V>> Map<V, Map<V, Double>> getVertexJaccardSimilaritiesR(
-			final Graph<V, E> graph, String mode) {
-		return getVertexSimilaritiesR(graph, "jaccard", mode);
+	public static <V, E extends MoreEdge<? super V>> double[][] getVertexJaccardSimilaritiesR(
+			final Graph<V, E> graph, String mode, Map<V, Integer> vertices) {
+		return getVertexSimilaritiesR(graph, "jaccard", mode, vertices);
 	}
 }
