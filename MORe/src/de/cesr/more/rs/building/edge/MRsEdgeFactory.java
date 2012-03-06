@@ -43,5 +43,4 @@ public class MRsEdgeFactory<V, E> implements MoreEdgeFactory<V, E> {
 	public E createEdge(V source, V target, boolean directed) {
 		return (E) new MRepastEdge<V>(source, target, directed);
 	} 
-
 }

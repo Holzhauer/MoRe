@@ -237,9 +237,17 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 
 				if (checkPartner(network, numMilieuPartners, hh, potPartner)) {
 					edgeModifier.createEdge(network, potPartner, hh);
+					
 					numMilieuPartners[potPartner.getMilieuGroup() - 1]--;
 
 					linkedNeighbors.add(potPartner);
+					
+					// substitutes rewiring:
+					AgentType target = distantLinking(paraMap, network, hh, requestClass);
+					if (target != null && 
+							linkedNeighbors.size() < numNeighbors) {
+						numMilieuPartners[target.getMilieuGroup() - 1]--;
+					}
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {

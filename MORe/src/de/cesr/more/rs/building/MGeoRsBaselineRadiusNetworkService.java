@@ -119,8 +119,9 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		this(edgeFac, "Network");
 	}
 
+	@SuppressWarnings("unchecked") // geography needs to be parameterised with Object
 	public MGeoRsBaselineRadiusNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
-		this((Geography) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
+		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
 	}
 
 	/**
@@ -173,7 +174,8 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		logEdges(logger, network, "");
 		// LOGGING ->
 
-		rewire(agents, paraMap, network);
+		// TODO
+		//rewire(agents, paraMap, network);
 
 		// <- LOGGING
 		logEdges(logger, network, "AfterRewire: ");
@@ -254,7 +256,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 * @param hh
 	 * @return the number of _not_ connected partners
 	 */
-	@SuppressWarnings("unchecked") // handled by try/catch
 	protected int connectAgent(MMilieuNetworkParameterMap paraMap,
 			MoreNetwork<AgentType, EdgeType> network,
 			int numNotConnectedPartners, MGeographyWrapper<Object> geoWrapper,
@@ -264,17 +265,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 		int numNeighbors = 0;
 
-		Class<? extends AgentType> requestClass;
-		if (geoRequestClass == null) {
-			try {
-				requestClass = (Class<AgentType>) hh.getClass().getSuperclass();
-			} catch (ClassCastException e) {
-				logger.error("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
-				throw new ClassCastException("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
-			}
-		} else {
-			requestClass = geoRequestClass;
-		}
+		Class<? extends AgentType> requestClass = getRequestClass(hh);
 			
 
 		double curRadius = paraMap.getSearchRadius(hh.getMilieuGroup());
@@ -324,6 +315,12 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					createEdge(network, potPartner, hh);
 
 					numLinkedNeighbors++;
+					
+					// substitutes rewiring:
+					if (distantLinking(paraMap, network, hh, requestClass) != null && 
+							numLinkedNeighbors < numNeighbors) {
+						numLinkedNeighbors++;
+					}
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
@@ -381,6 +378,27 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		}
 		// LOGGING ->
 		return numNotConnectedPartners;
+	}
+
+	/**
+	 * @param hh
+	 * @param requestClass
+	 * @return
+	 */
+	@SuppressWarnings("unchecked") // handled by try/catch
+	protected Class<? extends AgentType> getRequestClass(AgentType hh) {
+		Class<? extends AgentType> requestClass;
+		if (geoRequestClass == null) {
+			try {
+				requestClass = (Class<AgentType>) hh.getClass().getSuperclass();
+			} catch (ClassCastException e) {
+				logger.error("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
+				throw new ClassCastException("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
+			}
+		} else {
+			requestClass = geoRequestClass;
+		}
+		return requestClass;
 	}
 
 	/**
@@ -452,44 +470,17 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		}
 		// LOGGING ->
 		
-		boolean rewired;
+		Class<? extends AgentType> requestClass = getRequestClass(focus);
+		
+		// In JUNG predecessors are copied to a new set, so new predecessors
+		// do not do any harm:
 		for (AgentType oldInfluencer : network.getPredecessors(focus)) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug(focus + "> Check link to " + oldInfluencer);
 			}
 			// LOGGING ->
-			
-			// TODO check for side effects because new edges are added during
-			// scanning!
-			// check rewiring probability for each (old) partner:
-			if (networkParams.getP_Rewire(focus.getMilieuGroup()) > this.rand
-					.nextDouble()) {
-				
-				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(focus + "> Rewire link to " + oldInfluencer);
-				}
-				rewired = false;
-				// fetch random partner:
-				
-				do {
-					// TODO generalise use of super class (sometimes not the superclass but super super class is required!)
-					Object random = getRandomFromContext(context, (Class<AgentType>) focus.getClass().getSuperclass());
-
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug(focus + "> Random object from context: "
-								+ random);
-					}
-					// LOGGING ->
-
-					if (checkPartner(network, networkParams, focus,
-							(AgentType) random)) {
-						createEdge(network, (AgentType) random, focus);
-						rewired = true;
-					}
-				} while (!rewired);
+			if (distantLinking(networkParams, network, focus, requestClass) != null) {
 				context.remove(network.getEdge(oldInfluencer, focus));
 				network.disconnect(oldInfluencer, focus);
 			}
@@ -497,10 +488,58 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	}
 
 	/**
+	 * @param networkParams
+	 * @param network
+	 * @param focus
+	 * @param requestClass
+	 * @param oldInfluencer
+	 */
+	@SuppressWarnings("unchecked")
+	protected AgentType distantLinking(MMilieuNetworkParameterMap networkParams, MoreNetwork<AgentType, EdgeType> network,
+			AgentType focus, Class<? extends AgentType> requestClass) {
+		boolean rewired;
+		
+		if (networkParams.getP_Rewire(focus.getMilieuGroup()) > this.rand
+				.nextDouble()) {
+			
+			rewired = false;
+			Object random = null;
+			
+			// fetch random partner:
+			do {
+				random = getRandomFromContext(context, requestClass);
+
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug(focus + "> Random object from context: "
+							+ random);
+				}
+				// LOGGING ->
+
+				if (checkPartner(network, networkParams, focus,
+						(AgentType) random)) {
+					createEdge(network, (AgentType) random, focus);
+					rewired = true;
+	
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug(focus + "> Rewire link to " + random);
+					}
+					// LOGGING ->
+				}
+			} while (!rewired);
+			
+			return (AgentType) random;
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * @param context
 	 * @return
 	 */
-	protected AgentType getRandomFromContext(Context<AgentType> context, Class<AgentType> clazz) {
+	protected AgentType getRandomFromContext(Context<AgentType> context, Class<? extends AgentType> clazz) {
 		IndexedIterable<AgentType> iter = context.getObjects(clazz);
 		return iter.get(rand.nextIntFromTo(0, iter.size() - 1));
 	}

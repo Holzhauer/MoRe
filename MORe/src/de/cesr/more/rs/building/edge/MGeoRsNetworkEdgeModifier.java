@@ -114,7 +114,9 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 		}
 		// LOGGING ->
 
-		addEdgeToGeography(source, target, edge);
+		if (geography != null) {
+			addEdgeToGeography(source, target, edge);
+		}
 		return edge;
 	}
 
@@ -125,7 +127,9 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
 		EdgeType edge = network.disconnect(source, target);
 		if (edge != null) {
-			geography.move(edge, null);
+			if (geography != null) {
+				geography.move(edge, null);
+			}
 			return true;
 		}
 		return false;
@@ -217,7 +221,10 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	}
 
 	/**
-	 * @param geography the geography to set
+	 * Set geometry = null to omit dealing whit geography.
+	 * 
+	 * @param geography
+	 *        the geography to set
 	 */
 	@Override
 	public void setGeography(Geography<Object> geography) {

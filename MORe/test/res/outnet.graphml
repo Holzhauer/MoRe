@@ -10,18 +10,18 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <data key="id">TestNet</data>
 <node id="TestNode127"/>
 <node id="TestNode125"/>
-<node id="TestNode128"/>
 <node id="TestNode124"/>
+<node id="TestNode128"/>
 <node id="TestNode126"/>
-<edge source="TestNode126" target="TestNode128"/>
-<edge source="TestNode125" target="TestNode127"/>
-<edge source="TestNode124" target="TestNode128"/>
-<edge source="TestNode126" target="TestNode127"/>
-<edge source="TestNode125" target="TestNode128"/>
 <edge source="TestNode124" target="TestNode127"/>
 <edge source="TestNode127" target="TestNode128"/>
-<edge source="TestNode125" target="TestNode126"/>
+<edge source="TestNode126" target="TestNode128"/>
+<edge source="TestNode125" target="TestNode127"/>
 <edge source="TestNode124" target="TestNode125"/>
+<edge source="TestNode125" target="TestNode126"/>
 <edge source="TestNode124" target="TestNode126"/>
+<edge source="TestNode126" target="TestNode127"/>
+<edge source="TestNode125" target="TestNode128"/>
+<edge source="TestNode124" target="TestNode128"/>
 </graph>
 </graphml>

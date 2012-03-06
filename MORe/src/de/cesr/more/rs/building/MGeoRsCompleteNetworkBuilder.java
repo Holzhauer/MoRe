@@ -13,7 +13,6 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MCompleteNetworkBuilder;
 import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
@@ -55,14 +54,14 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 	 * Uses "Network" as name.
 	 * @param eFac
 	 */
-	public MGeoRsCompleteNetworkBuilder(MRsEdgeFactory<AgentType, EdgeType> eFac) {
+	public MGeoRsCompleteNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		this(eFac, "Network");
 	}
 	
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsCompleteNetworkBuilder(MRsEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MGeoRsCompleteNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		super(eFac);
 		this.name = name;
 	}
