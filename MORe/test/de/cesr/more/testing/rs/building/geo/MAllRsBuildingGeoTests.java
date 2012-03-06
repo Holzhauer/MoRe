@@ -36,7 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 
 @RunWith(Suite.class)
-@SuiteClasses( {MGeoDistanceQueryTest.class})
+@SuiteClasses({ MGeoDistanceQueryTest.class, MGeoRsWattsBetaSwBuilderTest.class })
 public class MAllRsBuildingGeoTests {
-
 }

@@ -41,7 +41,7 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  */
 public class MMilieuNetworkParameterMap extends
-		HashMap<Integer, Map<String, Object>> {
+		HashMap<Integer, Map<PmParameterDefinition, Object>> {
 	
 	/**
 	 * Logger
@@ -59,14 +59,14 @@ public class MMilieuNetworkParameterMap extends
 		return warnDefault(MNetBuildBhPa.K, milieu) ? 
 				((Integer)PmParameterManager.getParameter(MNetBuildBhPa.K)).intValue() :
 		((Integer) this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.K.name())).intValue();
+						MNetBuildBhPa.K)).intValue();
 	}
 
 	public void setK(int milieu, int k) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<String, Object>());
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
-		this.get(new Integer(milieu)).put(MNetBuildBhPa.K.name(),
+		this.get(new Integer(milieu)).put(MNetBuildBhPa.K,
 				new Integer(k));
 	}
 
@@ -74,30 +74,30 @@ public class MMilieuNetworkParameterMap extends
 		return warnDefault(MNetBuildBhPa.P_REWIRE, milieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.P_REWIRE)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.P_REWIRE.name())).doubleValue();
+						MNetBuildBhPa.P_REWIRE)).doubleValue();
 	}
 
 	public void setP_Rewire(int milieu, double p) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<String, Object>());
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.P_REWIRE.name(), new Double(p));
+				MNetBuildBhPa.P_REWIRE, new Double(p));
 	}
 
 	public double getSearchRadius(int milieu) {
 		return warnDefault(MNetBuildBhPa.SEARCH_RADIUS, milieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.SEARCH_RADIUS)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.SEARCH_RADIUS.name())).doubleValue();
+						MNetBuildBhPa.SEARCH_RADIUS)).doubleValue();
 	}
 
 	public void setSearchRadius(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<String, Object>());
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.SEARCH_RADIUS.name(),
+				MNetBuildBhPa.SEARCH_RADIUS,
 				new Double(radius));
 	}
 
@@ -105,16 +105,16 @@ public class MMilieuNetworkParameterMap extends
 		return warnDefault(MNetBuildBhPa.X_SEARCH_RADIUS, milieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.X_SEARCH_RADIUS)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.X_SEARCH_RADIUS.name()))
+						MNetBuildBhPa.X_SEARCH_RADIUS))
 				.doubleValue();
 	}
 
 	public void setXSearchRadius(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<String, Object>());
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.X_SEARCH_RADIUS.name(),
+				MNetBuildBhPa.X_SEARCH_RADIUS,
 				new Double(radius));
 	}
 
@@ -122,16 +122,16 @@ public class MMilieuNetworkParameterMap extends
 		return warnDefault(MNetBuildBhPa.MAX_SEARCH_RADIUS, milieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.MAX_SEARCH_RADIUS)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.MAX_SEARCH_RADIUS.name()))
+						MNetBuildBhPa.MAX_SEARCH_RADIUS))
 				.doubleValue();
 	}
 
 	public void setMaxSearchRadius(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<String, Object>());
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.MAX_SEARCH_RADIUS.name(),
+				MNetBuildBhPa.MAX_SEARCH_RADIUS,
 				new Double(radius));
 	}
 
@@ -139,16 +139,16 @@ public class MMilieuNetworkParameterMap extends
 		return warnDefault(MNetBuildBhPa.DIM_WEIGHTS_GEO, milieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.DIM_WEIGHTS_GEO)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.DIM_WEIGHTS_GEO.name()))
+						MNetBuildBhPa.DIM_WEIGHTS_GEO))
 				.doubleValue();
 	}
 
 	public void setDimWeightGeo(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<String, Object>());
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.DIM_WEIGHTS_GEO.name(),
+				MNetBuildBhPa.DIM_WEIGHTS_GEO,
 				new Double(weight));
 	}
 
@@ -156,16 +156,16 @@ public class MMilieuNetworkParameterMap extends
 		return warnDefault(MNetBuildBhPa.DIM_WEIGHTS_MILIEU, milieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.DIM_WEIGHTS_MILIEU)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-				MNetBuildBhPa.DIM_WEIGHTS_MILIEU.name()))
+						MNetBuildBhPa.DIM_WEIGHTS_MILIEU))
 				.doubleValue();
 	}
 
 	public void setDimWeightMilieu(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<String, Object>());
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.DIM_WEIGHTS_MILIEU.name(),
+				MNetBuildBhPa.DIM_WEIGHTS_MILIEU,
 				new Double(weight));
 	}
 
@@ -181,7 +181,7 @@ public class MMilieuNetworkParameterMap extends
 		return warnDefault(MNetBuildBhPa.P_MILIEUS, ownMilieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.P_MILIEUS)).doubleValue() :
 			((Map<Integer, Double>) this.get(new Integer(ownMilieu)).get(
-				MNetBuildBhPa.P_MILIEUS.name())).get(
+						MNetBuildBhPa.P_MILIEUS)).get(
 				new Integer(otherMilieu)).doubleValue();
 	}
 
@@ -193,16 +193,16 @@ public class MMilieuNetworkParameterMap extends
 	@SuppressWarnings("unchecked")
 	public void setP_Milieu(int ownMilieu, int otherMilieu, double p) {
 		if (!this.containsKey(new Integer(ownMilieu))) {
-			this.put(new Integer(ownMilieu), new HashMap<String, Object>());
+			this.put(new Integer(ownMilieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		if (!this.get(new Integer(ownMilieu)).containsKey(
-				MNetBuildBhPa.P_MILIEUS.name())) {
+				MNetBuildBhPa.P_MILIEUS)) {
 			this.get(new Integer(ownMilieu)).put(
-					MNetBuildBhPa.P_MILIEUS.name(),
+					MNetBuildBhPa.P_MILIEUS,
 					new HashMap<Integer, Double>());
 		}
 		((Map<Integer, Double>) this.get(new Integer(ownMilieu)).get(
-				MNetBuildBhPa.P_MILIEUS.name())).put(new Integer(
+				MNetBuildBhPa.P_MILIEUS)).put(new Integer(
 				otherMilieu), new Double(p));
 	}
 	
@@ -219,7 +219,7 @@ public class MMilieuNetworkParameterMap extends
 					milieu + "; parameter: " + definition.toString() + ")");
 		} else {
 			if (this.get(new Integer(milieu)).get(
-					MNetBuildBhPa.K.name()) == null) {
+					definition) == null) {
 				logger.warn("No value for " + definition.toString() + "(milieu: " + milieu + ") defined. Using default (" + 
 						PmParameterManager.getParameter(definition) + ")!");
 				return true;

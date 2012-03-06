@@ -216,6 +216,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 * @param paraMap
 	 * @param network
 	 */
+	@SuppressWarnings("unchecked") // parameter MNetworkBuildingPa.MILIEUS is of type BidiMap<String, Integer>
 	protected void createRadiusNetwork(Collection<AgentType> agents,
 			MMilieuNetworkParameterMap paraMap,
 			MoreRsNetwork<AgentType, EdgeType> network) {
@@ -253,6 +254,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 * @param hh
 	 * @return the number of _not_ connected partners
 	 */
+	@SuppressWarnings("unchecked") // handled by try/catch
 	protected int connectAgent(MMilieuNetworkParameterMap paraMap,
 			MoreNetwork<AgentType, EdgeType> network,
 			int numNotConnectedPartners, MGeographyWrapper<Object> geoWrapper,
@@ -262,16 +264,27 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 		int numNeighbors = 0;
 
+		Class<? extends AgentType> requestClass;
+		if (geoRequestClass == null) {
+			try {
+				requestClass = (Class<AgentType>) hh.getClass().getSuperclass();
+			} catch (ClassCastException e) {
+				logger.error("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
+				throw new ClassCastException("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
+			}
+		} else {
+			requestClass = geoRequestClass;
+		}
+			
+
 		double curRadius = paraMap.getSearchRadius(hh.getMilieuGroup());
 
 		// fetch potential neighbours from proximity. NumNeighbors should be
 		// large enough to find required number of
 		// parters per milieu
-		
-		// TODO generalise the super class approach to include all agent classes
 		numNeighbors = paraMap.getK(hh.getMilieuGroup());
-		List<AgentType> neighbourslist = (List<AgentType>) geoWrapper
-				.getSurroundingAgents(hh, curRadius, hh.getClass().getSuperclass());
+		List<AgentType> neighbourslist = geoWrapper
+				.<AgentType>getSurroundingAgents(hh, curRadius, requestClass);
 		
 		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
 				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
@@ -335,8 +348,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					checkedNeighbours.addAll(neighbourslist);
 					
 					neighbourslist = geoWrapper
-							.<AgentType> getSurroundingAgents(hh, curRadius, (Class<AgentType>) hh.getClass()
-									.getSuperclass());
+							.<AgentType> getSurroundingAgents(hh, curRadius, requestClass);
 					
 					neighbourslist.removeAll(checkedNeighbours);
 

@@ -334,7 +334,7 @@ public class MGeographyWrapper<AgentType> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <ReturnType> List<ReturnType> getSurroundingAgents(
-			AgentType focus, double radius, Class<ReturnType> returnClass) {
+			AgentType focus, double radius, Class<? extends ReturnType> returnClass) {
 
 		logger.info("Requested radius: " + radius);
 

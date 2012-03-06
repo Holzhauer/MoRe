@@ -181,7 +181,23 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 		} else {
 			double sum = 0.0;
 			for(AgentType outer : agents) {
+				if (utmGeography.getGeometry(outer) == null) {
+					// <- LOGGING
+					logger.error("No geometry for " + outer + " in geography " + utmGeography + "!");
+					// LOGGING ->
+					throw new IllegalStateException("No geometry for " + outer + " in geography " + utmGeography + "!");
+				}
+
 				for (AgentType inner : agents) {
+
+					if (utmGeography.getGeometry(inner) == null) {
+						// <- LOGGING
+						logger.error("No geometry for " + inner + " in geography " + utmGeography + "!");
+						// LOGGING ->
+						throw new IllegalStateException("No geometry for " + inner + " in geography " + utmGeography
+								+ "!");
+					}
+
 					sum += utmGeography.getGeometry(inner).distance(
 							utmGeography.getGeometry(outer));
 				}

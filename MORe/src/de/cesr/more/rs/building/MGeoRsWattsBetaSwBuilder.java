@@ -76,11 +76,10 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	 */
 	static class MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentT extends MoreMilieuAgent, EdgeT extends MRepastEdge<AgentT>>
 		extends MSmallWorldBetaModelNetworkGeneratorParams<AgentT, EdgeT>{
-		
+
 		/**
-		 * If the k provider has not been set yet, it assign a provider
-		 * usingMNetworkBuildingPa.MILIEU_NETWORK_PARAMS or calls super.getKValueProvider() if 
-		 * MNetworkBuildingPa.MILIEU_NETWORK_PARAMS is null.
+		 * If the k provider has not been set yet, it assigns a provider using MNetworkBuildingPa.MILIEU_NETWORK_PARAMS
+		 * or calls super.getKValueProvider() if MNetworkBuildingPa.MILIEU_NETWORK_PARAMS is null.
 		 * 
 		 * @return the kProvider
 		 */

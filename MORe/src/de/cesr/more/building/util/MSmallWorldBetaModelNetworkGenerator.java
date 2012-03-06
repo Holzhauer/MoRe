@@ -33,8 +33,8 @@ import java.util.Set;
 
 import org.apache.commons.collections15.Factory;
 import org.apache.log4j.Logger;
-import cern.jet.random.Uniform;
 
+import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
@@ -43,7 +43,6 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
-import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
@@ -178,7 +177,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		}
 
 		/**
-		 * If the beta provider has not been set yet, it assign a general provider
+		 * If the beta provider has not been set yet, it assigns a general provider
 		 * using MNetworkBuildingPa.BUILD_WSSM_BETA.
 		 * @return the betaProvider
 		 */
@@ -205,7 +204,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		}
 
 		/**
-		 * If the k provider has not been set yet, it assign a general provider
+		 * If the k provider has not been set yet, it assigns a general provider
 		 * using MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG.
 		 * @return the kProvider
 		 */
@@ -230,7 +229,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		}
 
 		/**
-		 * If the rewire target provider was not set yet, it assign a provider
+		 * If the rewire target provider was not set yet, it assigns a provider
 		 * that selects a target vertex randomly (using MManager.getMRandomService().getUniform()).
 		 * 
 		 * @return the rewireManager
@@ -363,10 +362,11 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		this.isDirected = network.isDirected();
 		numNodes = network.numNodes();
 		
-		if (numNodes < 10)
+		if (numNodes < 10) {
 			logger.error("Error creating Watts beta small world network",
 					new IllegalArgumentException(
 							"Number of nodes must be greater than 10"));
+		}
 
 		ArrayList<AgentType> list = new ArrayList<AgentType>(agents);
 

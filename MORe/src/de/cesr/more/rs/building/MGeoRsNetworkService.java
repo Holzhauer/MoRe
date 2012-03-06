@@ -75,6 +75,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	
 	protected GeometryFactory		geoFactory		= null;
 	
+	protected Class<? extends AgentType>	geoRequestClass	= null;
 
 	/**
 	 * @param areasGeography
@@ -180,5 +181,23 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	@Override
 	public void setContext(Context<AgentType> context) {
 		this.context = context;
+	}
+
+	/**
+	 * @return the geoRequestClass
+	 */
+	public Class<? extends AgentType> getGeoRequestClass() {
+		return geoRequestClass;
+	}
+
+	/**
+	 * Set the class of which the geography wrapper requests agents. Default is the agent's superclass (in case geo
+	 * request class is null).
+	 * 
+	 * @param geoRequestClass
+	 *        the geoRequestClass to set
+	 */
+	public void setGeoRequestClass(Class<? extends AgentType> geoRequestClass) {
+		this.geoRequestClass = geoRequestClass;
 	}
 }

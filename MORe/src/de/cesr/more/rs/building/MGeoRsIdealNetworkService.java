@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import repast.simphony.space.gis.Geography;
@@ -124,6 +125,7 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 	 * @return the number of _not_ connected partners
 	 */
 	@Override
+	@SuppressWarnings("unchecked") // handled by try/catch
 	protected int connectAgent(MMilieuNetworkParameterMap paraMap,
 			MoreNetwork<AgentType, EdgeType> network,
 			int numNotConnectedPartners, MGeographyWrapper<Object> geoWrapper,
@@ -136,9 +138,22 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 		// fetch potential neighbours from proximity. NumNeighbors should be large enough to find required number of
 		// parters per milieu
 		int numNeighbors = paraMap.getK(hh.getMilieuGroup());
-		@SuppressWarnings("unchecked")
-		List<AgentType> neighbourslist = (List<AgentType>) geoWrapper.getSurroundingAgents(hh, curRadius,
-				hh.getClass());
+		
+		Class<? extends AgentType> requestClass;
+		if (geoRequestClass == null) {
+			try {
+				requestClass = (Class<AgentType>) hh.getClass().getSuperclass();
+			} catch (ClassCastException e) {
+				logger.error("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
+				throw new ClassCastException("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
+			}
+		} else {
+			requestClass = geoRequestClass;
+		}
+		
+		
+		List<AgentType> neighbourslist = geoWrapper.getSurroundingAgents(hh, curRadius,
+				requestClass);
 
 		// mixing neighbour collection
 		shuffleCollection(neighbourslist);
@@ -243,10 +258,9 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 
 					// extending list of potential neighbours:
 					curRadius += paraMap.getXSearchRadius(hh.getMilieuGroup());
-					@SuppressWarnings("unchecked")
-					List<AgentType> xNeighbourslist = (List<AgentType>) geoWrapper.getSurroundingAgents(hh,
+					List<AgentType> xNeighbourslist = geoWrapper.getSurroundingAgents(hh,
 							curRadius,
-							hh.getClass());
+							requestClass);
 					xNeighbourslist.removeAll(neighbourslist);
 					neighbourslist = xNeighbourslist;
 
