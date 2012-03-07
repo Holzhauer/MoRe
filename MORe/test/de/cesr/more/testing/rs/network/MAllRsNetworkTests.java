@@ -35,6 +35,6 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({MRsContextJungNetworkTest.class, MRsEncapsulatedContectJungNetworkTest.class})
+@SuiteClasses({MRsContextJungNetworkTest.class, MRsEncapsulatedContextJungNetworkTest.class})
 public class MAllRsNetworkTests {
 }

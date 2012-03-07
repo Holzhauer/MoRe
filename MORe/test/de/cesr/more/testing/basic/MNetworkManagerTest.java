@@ -36,7 +36,7 @@ import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.testing.testutils.MTestGraphs;
-import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 
 
 
@@ -49,8 +49,8 @@ import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
  */
 public class MNetworkManagerTest {
 
-	MoreNetwork<TestNode, MoreEdge<TestNode>>	network;
-	Predicate<TestNode>							predicate;
+	MoreNetwork<MTestNode, MoreEdge<MTestNode>>	network;
+	Predicate<MTestNode>							predicate;
 
 	/**
 	 * @throws java.lang.Exception Created by Sascha Holzhauer on 03.01.2011
@@ -60,10 +60,10 @@ public class MNetworkManagerTest {
 
 		network = MTestGraphs.getCompleteDirectedMNetwork(6);
 
-		predicate = new Predicate<TestNode>() {
+		predicate = new Predicate<MTestNode>() {
 
 			@Override
-			public boolean evaluate(TestNode object) {
+			public boolean evaluate(MTestNode object) {
 				return object.getId() % 2 == 0;
 			}
 		};

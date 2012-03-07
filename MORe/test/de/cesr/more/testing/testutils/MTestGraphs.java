@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.collections15.Factory;
 import org.xml.sax.SAXException;
 
+import repast.simphony.context.Context;
 import de.cesr.more.basic.edge.MEdge;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
@@ -38,7 +39,7 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MNodeMeasures;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
-
+import de.cesr.more.rs.building.MoreMilieuAgent;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -59,7 +60,7 @@ public class MTestGraphs {
 	
 	static int TestAgentId = 0;
 	
-	public static class TestNode implements MoreNodeMeasureSupport{
+	public static class MTestNode implements MoreNodeMeasureSupport, MoreMilieuAgent {
 		
 		int id = MTestGraphs.TestAgentId++;
 		
@@ -67,7 +68,7 @@ public class MTestGraphs {
 		
 		@Override
 		public String toString() {
-			return "TestNode" + this.id;
+			return "MTestNode" + this.id;
 		}
 
 		public int getId() {
@@ -91,6 +92,32 @@ public class MTestGraphs {
 				MMeasureDescription key, Number value) {
 			measures.setNetworkMeasureObject(network, key, value);
 		}
+
+		/**
+		 * @see de.cesr.more.rs.building.MoreMilieuAgent#getMilieuGroup()
+		 */
+		@Override
+		public int getMilieuGroup() {
+			return 1;
+		}
+
+		/**
+		 * @see de.cesr.more.rs.building.MoreMilieuAgent#getParentContext()
+		 */
+		@Override
+		public Context<?> getParentContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/**
+		 * @see de.cesr.more.rs.building.MoreMilieuAgent#getAgentId()
+		 */
+		@Override
+		public String getAgentId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	/**
@@ -100,37 +127,37 @@ public class MTestGraphs {
 	 * @return
 	 * Created by Sascha Holzhauer on 03.12.2010
 	 */
-	public static UndirectedGraph<TestNode, MoreEdge<TestNode>> getCompleteUndirectedGraph(int num_nodes) {	
-		UndirectedGraph<TestNode, MoreEdge<TestNode>> completeG = new UndirectedSparseGraph<TestNode, MoreEdge<TestNode>>();
+	public static UndirectedGraph<MTestNode, MoreEdge<MTestNode>> getCompleteUndirectedGraph(int num_nodes) {	
+		UndirectedGraph<MTestNode, MoreEdge<MTestNode>> completeG = new UndirectedSparseGraph<MTestNode, MoreEdge<MTestNode>>();
 	
 		// Build complete graph:
-		TestNode[] agents = new TestNode[num_nodes];
+		MTestNode[] agents = new MTestNode[num_nodes];
 		for (int i = 0; i < num_nodes; i++) {
-			agents[i] = new MTestGraphs.TestNode();
+			agents[i] = new MTestGraphs.MTestNode();
 		}
 		for (int i = 0; i < agents.length; i++) {
 			for (int j = i; j < agents.length; j++) {
 				if (i != j) {
-					completeG.addEdge(new MEdge<TestNode>(agents[i], agents[j]), agents[i], agents[j]);
+					completeG.addEdge(new MEdge<MTestNode>(agents[i], agents[j]), agents[i], agents[j]);
 				}
 			}
 		}
 		return completeG;
 	}
 	
-	public static MoreNetwork<TestNode, MoreEdge<TestNode>> getCompleteDirectedMNetwork(int num_nodes) {	
-		MoreNetwork<TestNode, MoreEdge<TestNode>> completeG = new MDirectedNetwork(new MoreEdgeFactory<TestNode, MoreEdge<TestNode>>() {
+	public static MoreNetwork<MTestNode, MoreEdge<MTestNode>> getCompleteDirectedMNetwork(int num_nodes) {	
+		MoreNetwork<MTestNode, MoreEdge<MTestNode>> completeG = new MDirectedNetwork(new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
 
 			@Override
-			public MoreEdge<TestNode> createEdge(TestNode source, TestNode target, boolean directed) {
-				return new MEdge<TestNode>(source, target);
+			public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
+				return new MEdge<MTestNode>(source, target);
 			}
 		}, "TestNet");
 	
 		// Build complete graph:
-		TestNode[] agents = new TestNode[num_nodes];
+		MTestNode[] agents = new MTestNode[num_nodes];
 		for (int i = 0; i < num_nodes; i++) {
-			agents[i] = new MTestGraphs.TestNode();
+			agents[i] = new MTestGraphs.MTestNode();
 		}
 		for (int i = 0; i < agents.length; i++) {
 			for (int j = i; j < agents.length; j++) {
@@ -150,19 +177,19 @@ public class MTestGraphs {
 	 * @return
 	 * Created by Sascha Holzhauer on 03.12.2010
 	 */
-	public static DirectedGraph<TestNode, MoreEdge<TestNode>> getCompleteDirectedGraph(int num_nodes) {	
-		DirectedGraph<TestNode, MoreEdge<TestNode>> completeG = new DirectedSparseGraph<TestNode, MoreEdge<TestNode>>();
+	public static DirectedGraph<MTestNode, MoreEdge<MTestNode>> getCompleteDirectedGraph(int num_nodes) {	
+		DirectedGraph<MTestNode, MoreEdge<MTestNode>> completeG = new DirectedSparseGraph<MTestNode, MoreEdge<MTestNode>>();
 	
 		// Build complete graph:
-		TestNode[] agents = new TestNode[num_nodes];
+		MTestNode[] agents = new MTestNode[num_nodes];
 		for (int i = 0; i < num_nodes; i++) {
-			agents[i] = new MTestGraphs.TestNode();
+			agents[i] = new MTestGraphs.MTestNode();
 		}
 		for (int i = 0; i < agents.length; i++) {
 			for (int j = i; j < agents.length; j++) {
 				if (i != j) {
-					completeG.addEdge(new MEdge<TestNode>(agents[i], agents[j]), agents[i], agents[j]);
-					completeG.addEdge(new MEdge<TestNode>(agents[j], agents[i]), agents[j], agents[i]);
+					completeG.addEdge(new MEdge<MTestNode>(agents[i], agents[j]), agents[i], agents[j]);
+					completeG.addEdge(new MEdge<MTestNode>(agents[j], agents[i]), agents[j], agents[i]);
 				}
 			}
 		}

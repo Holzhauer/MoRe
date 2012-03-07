@@ -35,7 +35,7 @@ import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.testing.testutils.MTestGraphs;
-import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 
 /**
  * MORe
@@ -51,23 +51,23 @@ public class MDirectedNetworkTest {
 	 */
 	static private Logger logger = Logger.getLogger(MDirectedNetworkTest.class);
 	
-	MoreNetwork<TestNode, MoreEdge<TestNode>> network;
+	MoreNetwork<MTestNode, MoreEdge<MTestNode>> network;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		network = MDirectedNetwork.getNewNetwork(new MoreEdgeFactory<TestNode, MoreEdge<TestNode>>() {
+		network = MDirectedNetwork.getNewNetwork(new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
 			@Override
-			public MoreEdge<TestNode> createEdge(TestNode source, TestNode target, boolean directed) {
+			public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
 					logger.debug("Edge created...");
 				}
 				// LOGGING ->
 
-				return new MEdge<TestNode>(source, target, true, 3.0);
+				return new MEdge<MTestNode>(source, target, true, 3.0);
 			}
 		}, MTestGraphs.getCompleteDirectedGraph(4), "TestNet");
 	}
@@ -78,14 +78,14 @@ public class MDirectedNetworkTest {
 	@Test
 	public void testNormalizeWeights() {
 		double sum = 0.0;
-		for (MoreEdge<TestNode> edge : network.getEdgesCollection()) {
+		for (MoreEdge<MTestNode> edge : network.getEdgesCollection()) {
 			sum += edge.getWeight();
 		}
 		assertEquals(3.0, sum / network.numEdges(), 0.01);
 		
 		network.normalizeWeights();
 		sum = 0.0;
-		for (MoreEdge<TestNode> edge : network.getEdgesCollection()) {
+		for (MoreEdge<MTestNode> edge : network.getEdgesCollection()) {
 			sum += edge.getWeight();
 		}
 		assertEquals(1.0, sum / network.numEdges(), 0.01);

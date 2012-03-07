@@ -310,8 +310,9 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					numLinkedNeighbors++;
 					
 					// substitutes rewiring:
-					if (distantLinking(paraMap, network, hh, requestClass) != null && 
-							numLinkedNeighbors < numNeighbors) {
+					
+					if (numLinkedNeighbors < numNeighbors &&
+							distantLinking(paraMap, network, hh, requestClass) != null) {
 						numLinkedNeighbors++;
 					}
 

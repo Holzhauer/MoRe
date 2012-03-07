@@ -83,7 +83,8 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
-		for (AgentType agent : context) {
+
+		for (AgentType agent : agents) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug("Add agent " + agent + " to network.");
@@ -96,9 +97,14 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 			for (AgentType other : network.getNodes()) {
 				if (other != agent) {
 					createEdge(network, agent, other);
+
+					if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) {
+						createEdge(network, other, agent);
+					}
+
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug(agent + "> connect to " + other);
+						logger.debug(agent + "> connect to (and from if directed): " + other);
 					}
 					// LOGGING ->
 				}
@@ -120,9 +126,14 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 		for (AgentType other : network.getNodes()) {
 			if (other != node) {
 				createEdge(network, node, other);
+
+				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) {
+					createEdge(network, other, node);
+				}
+
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug(node + "> connect to " + other);
+					logger.debug(node + "> connect to (and from if directed): " + other);
 				}
 				// LOGGING ->
 			}

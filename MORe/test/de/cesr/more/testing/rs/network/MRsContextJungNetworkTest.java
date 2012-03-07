@@ -34,7 +34,7 @@ import repast.simphony.space.graph.DirectedJungNetwork;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
-import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 
 /**
  * MORe
@@ -45,20 +45,20 @@ import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
  */
 public class MRsContextJungNetworkTest {
 	
-	MoreRsNetwork<TestNode, MRepastEdge<TestNode>> network;
-	TestNode node1, node2, node3;
+	MoreRsNetwork<MTestNode, MRepastEdge<MTestNode>> network;
+	MTestNode node1, node2, node3;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		Context<TestNode> context = new DefaultContext<TestNode>();
-		this.network = new MRsContextJungNetwork<TestNode, MRepastEdge<TestNode>>(
-				 new DirectedJungNetwork<TestNode>("Network"), context);
-		node1 = new TestNode();
-		node2 = new TestNode();
-		node3 = new TestNode();
+		Context<MTestNode> context = new DefaultContext<MTestNode>();
+		this.network = new MRsContextJungNetwork<MTestNode, MRepastEdge<MTestNode>>(
+				 new DirectedJungNetwork<MTestNode>("Network"), context);
+		node1 = new MTestNode();
+		node2 = new MTestNode();
+		node3 = new MTestNode();
 		context.add(node1);
 		context.add(node2);
 		context.add(node3);

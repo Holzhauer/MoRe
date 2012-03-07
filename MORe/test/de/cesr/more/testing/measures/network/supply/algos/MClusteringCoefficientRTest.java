@@ -37,7 +37,7 @@ import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.measures.network.supply.algos.MClusteringCoefficientR;
 import de.cesr.more.measures.util.MRService;
 import de.cesr.more.testing.testutils.MTestGraphs;
-import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 import de.cesr.more.util.Log4jLogger;
 import de.cesr.more.util.MSchedule;
 import edu.uci.ics.jung.graph.Graph;
@@ -78,7 +78,7 @@ public class MClusteringCoefficientRTest {
 	@Test
 	public final void testGetClusteringCoefficientR() {
 		logger.info("Test calculating clustering coefficient.");
-		Graph<TestNode, MoreEdge<TestNode>> g = MTestGraphs.getCompleteUndirectedGraph(5);
+		Graph<MTestNode, MoreEdge<MTestNode>> g = MTestGraphs.getCompleteUndirectedGraph(5);
 		double result;
 		result = MClusteringCoefficientR.getClusteringCoefficientOverallR(g);
 		
@@ -92,7 +92,7 @@ public class MClusteringCoefficientRTest {
 	@Test
 	public final void testCreateRGraph() {
 		logger.info("Test graph assignment.");
-		Graph<TestNode, MoreEdge<TestNode>> g = MTestGraphs.getCompleteUndirectedGraph(5);
+		Graph<MTestNode, MoreEdge<MTestNode>> g = MTestGraphs.getCompleteUndirectedGraph(5);
 		REXP result;
 		
 		Rengine re = MRService.getRengine();

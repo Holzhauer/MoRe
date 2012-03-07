@@ -50,7 +50,7 @@ import de.cesr.more.measures.node.supply.MCentralityNodeMSupplier;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.testing.testutils.MTestGraphs;
-import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 import de.cesr.more.util.MSchedule;
 
 /**
@@ -63,8 +63,8 @@ import de.cesr.more.util.MSchedule;
 public class MNodeMeasureManagerTest {
 	
 	MNodeMeasureManager							nodeMan;
-	MoreNetwork<TestNode, MoreEdge<TestNode>>	net;
-	TestNode									node;
+	MoreNetwork<MTestNode, MoreEdge<MTestNode>>	net;
+	MTestNode									node;
 	MSchedule									schedule;
 	MMeasureDescription							centDesc;
 	MMeasureManagerListener						listener;
@@ -147,10 +147,10 @@ public class MNodeMeasureManagerTest {
 		MManager.setSchedule(new MSchedule());
 		schedule = (MSchedule) MManager.getSchedule();
 		nodeMan = MNodeMeasureManager.getInstance();
-		net = MDirectedNetwork.getNetwork(new MoreEdgeFactory<TestNode, MoreEdge<TestNode>>() {
+		net = MDirectedNetwork.getNetwork(new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
 			@Override
-			public MoreEdge<TestNode> createEdge(TestNode source, TestNode target, boolean directed) {
-				return new MEdge<TestNode>(source, target);
+			public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
+				return new MEdge<MTestNode>(source, target);
 			}
 		}, MTestGraphs.getCompleteDirectedGraph(4), "TestNet");
 		node = net.getNodes().iterator().next();
@@ -254,7 +254,7 @@ public class MNodeMeasureManagerTest {
 		schedule.step(step++);
 		nodeMan.removeMeasureCalculation(net, new MMeasureDescription(centDesc.getShort()));
 		schedule.step(step++);
-		Iterator<TestNode> iter = net.getNodes().iterator();
+		Iterator<MTestNode> iter = net.getNodes().iterator();
 		assertNull("centrality-degree is wrong for node1", iter.next().getNetworkMeasureObject(net,
 				new MMeasureDescription(centDesc.getShort())));
 	}

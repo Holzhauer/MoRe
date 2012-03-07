@@ -36,7 +36,7 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.measures.node.MVertexSimilarityMeasureCalculator;
 import de.cesr.more.testing.testutils.MTestGraphs;
-import de.cesr.more.testing.testutils.MTestGraphs.TestNode;
+import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 import de.cesr.more.util.MSchedule;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -60,11 +60,11 @@ public class MVertexSimilarityMeasureCalculatorTest {
 	@Test
 	public void test() {
 		// build up a complete network
-		Graph<TestNode, MoreEdge<TestNode>> g = MTestGraphs.getCompleteDirectedGraph(5);
+		Graph<MTestNode, MoreEdge<MTestNode>> g = MTestGraphs.getCompleteDirectedGraph(5);
 		
-		Map<TestNode, Integer> nodes = new LinkedHashMap<TestNode, Integer>();
+		Map<MTestNode, Integer> nodes = new LinkedHashMap<MTestNode, Integer>();
 		int h = 0;
-		for (TestNode node : g.getVertices()) {
+		for (MTestNode node : g.getVertices()) {
 			nodes.put(node, new Integer(h++));
 		}
 
@@ -93,9 +93,9 @@ public class MVertexSimilarityMeasureCalculatorTest {
 		}
 		
 		// remove edges between 0 to 1:
-		Iterator<TestNode> iterator = nodes.keySet().iterator();
-		TestNode one = iterator.next();
-		TestNode two = iterator.next();
+		Iterator<MTestNode> iterator = nodes.keySet().iterator();
+		MTestNode one = iterator.next();
+		MTestNode two = iterator.next();
 
 		g.removeEdge(g.findEdge(one, two));
 		g.removeEdge(g.findEdge(two, one));

@@ -43,7 +43,7 @@ import de.cesr.more.testing.testutils.MTestUtilsLara.MTestNetworkAgent;
  * @date 15.01.2010
  * 
  */
-public class MRsEncapsulatedContectJungNetworkTest {
+public class MRsEncapsulatedContextJungNetworkTest {
 
 	TestAgent														center;
 	LaraEnvironment													env;
