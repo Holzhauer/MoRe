@@ -25,13 +25,13 @@ package de.cesr.more.rs.building;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import repast.simphony.space.gis.Geography;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.cesr.more.basic.network.MoreNetwork;
@@ -89,6 +89,7 @@ public class MGeoRsBaselineNumberNetworkService<AgentType extends MoreMilieuAgen
 	 * @param hh
 	 * @return the number of _not_ connected partners
 	 */
+	@Override
 	protected int connectAgent(MMilieuNetworkParameterMap paraMap,
 		MoreNetwork<AgentType, EdgeType> network,
 		int numNotConnectedPartners, MGeographyWrapper<Object> geoWrapper,
@@ -136,7 +137,7 @@ public class MGeoRsBaselineNumberNetworkService<AgentType extends MoreMilieuAgen
 
 				// TODO check if potPartner has capacity (new feature)
 
-				if (checkPartner(network, paraMap, hh, potPartner)) {
+				if (checkPartner(network, paraMap, hh, potPartner, 0)) {
 					createEdge(network, potPartner, hh);
 
 					numLinkedNeighbors++;

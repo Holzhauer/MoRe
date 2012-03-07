@@ -16,9 +16,11 @@ package de.cesr.more.rs.building;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.collections15.BidiMap;
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
@@ -34,6 +36,7 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
@@ -218,7 +221,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 * @param paraMap
 	 * @param network
 	 */
-	@SuppressWarnings("unchecked") // parameter MNetworkBuildingPa.MILIEUS is of type BidiMap<String, Integer>
 	protected void createRadiusNetwork(Collection<AgentType> agents,
 			MMilieuNetworkParameterMap paraMap,
 			MoreRsNetwork<AgentType, EdgeType> network) {
@@ -228,20 +230,11 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		MGeographyWrapper<Object> geoWrapper = new MGeographyWrapper<Object>(
 				super.geography);
 
-		// map milieu ids to range from 0 to (# milieus -1):
-		int[] milieus = new int[paraMap.size()];
-		int j = 0;
-		for (Integer i : ((BidiMap<String, Integer>) PmParameterManager
-				.getParameter(MNetworkBuildingPa.MILIEUS)).values()) {
-			// milieu indices start at 1:
-			milieus[j++] = i.intValue();
-		}
-
 		for (AgentType hh : agents) {
 			numNotConnectedPartners = connectAgent(paraMap, network,
 					numNotConnectedPartners, geoWrapper, hh);
-
 		}
+		
 		// <- LOGGING
 		logger.info("Number of not connected partners: "
 				+ numNotConnectedPartners);
@@ -311,7 +304,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 				// TODO check if potPartner has capacity (new feature)
 
-				if (checkPartner(network, paraMap, hh, potPartner)) {
+				if (checkPartner(network, paraMap, hh, potPartner, 0)) {
 					createEdge(network, potPartner, hh);
 
 					numLinkedNeighbors++;
@@ -410,7 +403,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 */
 	protected boolean checkPartner(MoreNetwork<AgentType, EdgeType> network,
 			MMilieuNetworkParameterMap paraMap, AgentType ego,
-			AgentType potPartner) {
+			AgentType potPartner, int desiredMilieu) {
 		if (network.isSuccessor(ego, potPartner)) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
@@ -422,23 +415,38 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 			return false;
 		}
-		// determine if potenialpartner's milieu is probable to link with:
-		double rand_float = rand.nextDoubleFromTo(0.0, 1.0);
-		boolean pass = paraMap.getP_Milieu(ego.getMilieuGroup(),
-				potPartner.getMilieuGroup()) > rand_float;
-
-		if (logger.isDebugEnabled()) {
-			logger.debug((pass ? ego + "> " + potPartner + "'s mileu ("
-					+ potPartner.getMilieuGroup() + ") accepted" : ego + "> "
-					+ potPartner + "'s mileu (" + potPartner.getMilieuGroup()
-					+ ") rejected")
-					+ " (probability: "
-					+ paraMap.getP_Milieu(ego.getMilieuGroup(),
-							potPartner.getMilieuGroup())
-					+ " / random: "
-					+ rand_float);
+		// find agent that belongs to the milieu
+		if ((Boolean)PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
+			if ((potPartner).getMilieuGroup() == desiredMilieu) {
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug(ego + "> Link with distant partner");
+				}
+				// LOGGING ->
+				
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// determine if potenialpartner's milieu is probable to link with:
+			double rand_float = rand.nextDoubleFromTo(0.0, 1.0);
+			boolean pass = paraMap.getP_Milieu(ego.getMilieuGroup(),
+					potPartner.getMilieuGroup()) > rand_float;
+		
+			if (logger.isDebugEnabled()) {
+				logger.debug((pass ? ego + "> " + potPartner + "'s mileu ("
+						+ potPartner.getMilieuGroup() + ") accepted" : ego + "> "
+						+ potPartner + "'s mileu (" + potPartner.getMilieuGroup()
+						+ ") rejected")
+						+ " (probability: "
+						+ paraMap.getP_Milieu(ego.getMilieuGroup(),
+								potPartner.getMilieuGroup())
+						+ " / random: "
+						+ rand_float);
+			}
+			return pass;
 		}
-		return pass;
 	}
 
 	/**
@@ -505,6 +513,13 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 			rewired = false;
 			Object random = null;
 			
+			int desiredMilieu = 0;
+			if ((Boolean)PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU)) {
+				// choose milieu to connect with
+				desiredMilieu = getProbabilisticMilieu(networkParams, focus);
+			}
+			
+			
 			// fetch random partner:
 			do {
 				random = getRandomFromContext(context, requestClass);
@@ -515,15 +530,14 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 							+ random);
 				}
 				// LOGGING ->
-
-				if (checkPartner(network, networkParams, focus,
-						(AgentType) random)) {
+			
+				if (checkPartner(network, networkParams, focus, (AgentType) random, desiredMilieu)) {
 					createEdge(network, (AgentType) random, focus);
 					rewired = true;
 	
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug(focus + "> Rewire link to " + random);
+						logger.debug(focus + "> Link with " + random);
 					}
 					// LOGGING ->
 				}
@@ -566,6 +580,29 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		return true;
 	}
 
+	protected int getProbabilisticMilieu(MMilieuNetworkParameterMap networkParams, AgentType focus) {
+		Map<Integer, Double> roulette_wheel = new LinkedHashMap<Integer, Double>();
+
+		for (int i = 1; i <= networkParams.size(); i++) {
+			roulette_wheel.put(new Integer(i), networkParams.getP_Milieu(focus.getMilieuGroup(), i));
+		}
+
+		double randFloat = rand.nextDouble();
+		if (randFloat < 0.0 || randFloat > 1.0) {
+			throw new IllegalStateException(rand
+					+ "> Make sure min = 0.0 and max = 1.0");
+		}
+
+		float pointer = 0.0f;
+		for (Entry<Integer, Double> entry : roulette_wheel.entrySet()) {
+			pointer += entry.getValue().doubleValue();
+			if (pointer >= randFloat) {
+				return entry.getKey().intValue();
+			}
+		}
+		throw new IllegalStateException("This code should never be reached!");
+	}
+	
 	/**
 	 * @see java.lang.Object#toString()
 	 */

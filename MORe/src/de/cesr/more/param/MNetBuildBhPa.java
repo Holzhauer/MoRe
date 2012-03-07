@@ -26,7 +26,7 @@ package de.cesr.more.param;
 
 import java.util.Map;
 
-
+import de.cesr.more.rs.building.MGeoRsBaselineNumberNetworkService;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -38,7 +38,13 @@ import de.cesr.parma.core.PmParameterManager;
  *
  */
 public enum MNetBuildBhPa implements PmParameterDefinition {
-	
+
+	/**
+	 * If true, a milieu is selected according to focal agent's milieu network preferences and a distant target of that
+	 * milieu is requested for distant linking.
+	 */
+	DISTANT_FORCE_MILIEU(Boolean.class, true),
+
 	/**
 	 * (In-) Degree. Default: <code>4</code>
 	 */
