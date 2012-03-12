@@ -40,6 +40,7 @@ import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
+import de.cesr.more.rs.building.analyse.MoreBaselineNetworkServiceAnalysableAgent;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
@@ -257,6 +258,9 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		logger.info(hh + " > Connect... (mileu: " + hh.getMilieuGroup() + ")");
 
 		int numNeighbors = 0;
+		
+		int numRadiusExtensions = 0;
+		double finalRadius = 0.0;
 
 		Class<? extends AgentType> requestClass = getRequestClass(hh);
 			
@@ -329,12 +333,13 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
 						logger.debug(hh
-								+ " > No Partner found, but max number of surrounding agents NOT reached!");
+								+ " > No Partner found, but max search radius NOT reached!");
 					}
 					// LOGGING ->
 
 					// extending list of potential neighbours:
 					curRadius += paraMap.getXSearchRadius(hh.getMilieuGroup());
+					numRadiusExtensions++;
 
 					checkedNeighbours.addAll(neighbourslist);
 					
@@ -363,6 +368,13 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				}
 			}
 		}
+		
+		if (hh instanceof MoreBaselineNetworkServiceAnalysableAgent) {
+			MoreBaselineNetworkServiceAnalysableAgent agent = (MoreBaselineNetworkServiceAnalysableAgent) hh;
+			agent.setFinalRadius(curRadius);
+			agent.setNumRadiusExtensions(numRadiusExtensions);
+		}
+		
 		numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 
 		// <- LOGGING

@@ -39,6 +39,7 @@ import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildSocialAttachment;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
+import de.cesr.more.rs.building.analyse.MoreBaselineNetworkServiceAnalysableAgent;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.parma.core.PmParameterDefinition;
@@ -229,6 +230,8 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 		Iterator<AgentType> neighbourIter = neighbourslist.iterator();
 		AgentType potPartner;
 
+		int numRadiusExtensions = 0;
+		
 		while (linkedNeighbors.size() < numNeighbors && anyPartnerAssignable) {
 			if (neighbourIter.hasNext()) {
 				potPartner = neighbourIter.next();
@@ -267,6 +270,7 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 
 					// extending list of potential neighbours:
 					curRadius += paraMap.getXSearchRadius(hh.getMilieuGroup());
+					numRadiusExtensions++;
 					List<AgentType> xNeighbourslist = geoWrapper.getSurroundingAgents(hh,
 							curRadius,
 							requestClass);
@@ -287,6 +291,13 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 				}
 			}
 		}
+		
+		if (hh instanceof MoreBaselineNetworkServiceAnalysableAgent) {
+			MoreBaselineNetworkServiceAnalysableAgent agent = (MoreBaselineNetworkServiceAnalysableAgent) hh;
+			agent.setFinalRadius(curRadius);
+			agent.setNumRadiusExtensions(numRadiusExtensions);
+		}
+		
 		numNotConnectedPartners += numNeighbors - linkedNeighbors.size();
 
 		// <- LOGGING
