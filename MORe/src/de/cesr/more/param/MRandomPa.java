@@ -52,7 +52,12 @@ public enum MRandomPa implements PmParameterDefinition {
 	 * The name of the random stream used for network building
 	 * processes. Default: <code>Uniform network-building</code>.
 	 */
-	RND_STREAM_NETWORK_BUILDING(String.class, "Uniform network-building"),
+	RND_UNIFORM_DIST_NETWORK_BUILDING(String.class, "Uniform network-building"),
+
+	/**
+	 * The name of the random stream used for network building processes. Default: <code>Network-building stream</code>.
+	 */
+	RND_STREAM_NETWORK_BUILDING(String.class, "Network-building Stream"),
 
 	/**
 	 * Used for {@link MRandomNetworkGenerator}.

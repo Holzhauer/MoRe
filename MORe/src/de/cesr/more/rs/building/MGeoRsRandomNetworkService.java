@@ -16,7 +16,6 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MRandomNetworkGenerator;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
-import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
@@ -45,14 +44,14 @@ public class MGeoRsRandomNetworkService<AgentType extends MoreMilieuAgent, EdgeT
 	 * 
 	 * @param eFac
 	 */
-	public MGeoRsRandomNetworkService(MRsEdgeFactory<AgentType, EdgeType> eFac) {
+	public MGeoRsRandomNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		this(eFac, "Network");
 	}
 	
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsRandomNetworkService(MRsEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MGeoRsRandomNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		super(eFac);
 		this.name = name;
 	}

@@ -32,9 +32,9 @@ import org.apache.log4j.Logger;
 
 import repast.simphony.space.graph.Network;
 import cern.jet.random.Uniform;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.parma.core.PmParameterManager;
-import de.cesr.uranus.core.URandomService;
 import edu.uci.ics.jung.algorithms.util.Indexer;
 
 
@@ -86,9 +86,10 @@ public class MRandomNetworkGenerator<AgentType> {
 					new IllegalArgumentException("Density must be between 0 and 1."));
 		}
 
-		this.uniform = URandomService.getURandomService().getNewUniformDistribution(
-				URandomService.getURandomService().getGenerator(
+		this.uniform = MManager.getURandomService().getNewUniformDistribution(
+				MManager.getURandomService().getGenerator(
 						((String) PmParameterManager.getParameter(MRandomPa.RND_STREAM_RANDOM_NETWORK_BUILDING))));
+		logger.warn(uniform);
 	}
 
 	/**

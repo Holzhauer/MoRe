@@ -26,13 +26,8 @@ package de.cesr.more.basic;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import repast.simphony.context.space.gis.GeographyFactoryFinder;
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.gis.GeographyParameters;
-
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
-
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.parma.core.PmParameterManager;
@@ -66,16 +61,26 @@ public class MManager {
 	 * Initialised parameter framework.
 	 */
 	public static void init() {
-		// init random streams
-		getURandomService()
-				.registerDistribution(
-						new Uniform(
-								new MersenneTwister(
-										((Integer) PmParameterManager
-												.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING))
-												.intValue())),
-						(String) PmParameterManager
-								.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING));
+		// init random stream if not done before:
+		if (!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
+				MRandomPa.RND_STREAM_NETWORK_BUILDING))) {
+			getURandomService()
+			.registerGenerator((String) PmParameterManager
+					.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING), new MersenneTwister(
+									((Integer) PmParameterManager
+											.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING))
+											.intValue()));
+		}
+		
+		// init random distribution if not done before:
+		if (!getURandomService().isDistributionRegistered((String) PmParameterManager
+									.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING))) {
+			getURandomService()
+					.registerDistribution(new Uniform(getURandomService().getGenerator((String) PmParameterManager
+									.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING))),
+							(String) PmParameterManager
+									.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING));
+		}
 	}
 
 	/**

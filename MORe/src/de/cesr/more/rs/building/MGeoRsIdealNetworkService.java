@@ -247,6 +247,7 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 					if (target != null && 
 							linkedNeighbors.size() < numNeighbors) {
 						numMilieuPartners[target.getMilieuGroup() - 1]--;
+						linkedNeighbors.add(target);
 					}
 
 					// <- LOGGING

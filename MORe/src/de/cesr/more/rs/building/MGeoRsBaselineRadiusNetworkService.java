@@ -200,7 +200,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				.getURandomService()
 				.getDistribution(
 						(String) PmParameterManager
-								.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING));
+								.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING));
 
 		if (abstractDis instanceof Uniform) {
 			this.rand = (Uniform) abstractDis;
