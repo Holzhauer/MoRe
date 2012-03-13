@@ -34,7 +34,7 @@ public interface MoreBaselineNetworkServiceAnalysableAgent {
 
 	public void setNumRadiusExtensions(int num);
 
-	public int getNumRadiusExtension();
+	public int getNumRadiusExtensions();
 
 	public void setFinalRadius(double finalRadius);
 
