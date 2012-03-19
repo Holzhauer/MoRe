@@ -34,7 +34,6 @@ import org.apache.log4j.Logger;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterManager;
-
 import edu.uci.ics.jung.algorithms.generators.GraphGenerator;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -75,19 +74,19 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 	 * @param graph_factory used to create the {@code Graph} for the lattice
 	 * @param vertex_factory used to create the lattice vertices (also defines order of vertices)
 	 * @param edge_factory used to create the lattice edges
-	 * @param lattice_size
+	 * @param numVertices
 	 * @param kProvider
 	 * @param isToroidal if true, the created lattice wraps from top to bottom and left to right
 	 * @param is_symmetrical if true, for every link another link of reverse direction is created 
 	 */
 	public MLattice1DGenerator(Factory<? extends Graph<V, E>> graph_factory, Factory<V> vertex_factory,
-			MoreEdgeFactory<V,E> edge_factory, int lattice_size, MoreKValueProvider<V> kProvider, boolean isToroidal,
+			MoreEdgeFactory<V,E> edge_factory, int numVertices, MoreKValueProvider<V> kProvider, boolean isToroidal,
 			boolean is_symmetrical) {
-		if (lattice_size < 2) {
+		if (numVertices < 2) {
 			throw new IllegalArgumentException("Lattice size counts must each be at least 2.");
 		}
 
-		this.numVertices = lattice_size;
+		this.numVertices = numVertices;
 		this.kProvider = kProvider;
 		this.is_toroidal = isToroidal;
 		this.graph_factory = graph_factory;
@@ -128,7 +127,7 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 				logger.error(msg);
 				throw new IllegalStateException(msg);
 			}
-			for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)) * 0.5; j++) {
+			for (int j = 1; j <= Math.ceil(kProvider.getKValue(v_array.get(i - 1)) * 0.5); j++) {
 				if (is_toroidal || (!is_toroidal && i + j <= numVertices)) {
 					start = this.considerSource ? i : i + j;
 					end = this.considerSource ? i + j : i;

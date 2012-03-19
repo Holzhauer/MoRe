@@ -63,9 +63,17 @@ public class MTestGraphs {
 	public static class MTestNode implements MoreNodeMeasureSupport, MoreMilieuAgent {
 		
 		int id = MTestGraphs.TestAgentId++;
+		int						milieu		= 1;
 		
 		protected MNodeMeasures measures = new MNodeMeasures();
 		
+		public MTestNode() {
+		}
+
+		public MTestNode(int milieu) {
+			this.milieu = milieu;
+		}
+
 		@Override
 		public String toString() {
 			return "MTestNode" + this.id;
@@ -98,7 +106,7 @@ public class MTestGraphs {
 		 */
 		@Override
 		public int getMilieuGroup() {
-			return 1;
+			return this.milieu;
 		}
 
 		/**

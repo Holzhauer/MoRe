@@ -133,8 +133,8 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	static private Logger logger = Logger
 			.getLogger(MGeoRsWattsBetaSwBuilder.class);
 
-	private Context<AgentType> context;
-	private MoreEdgeFactory<AgentType, EdgeType> eFac;
+	protected Context<AgentType>					context;
+	protected MoreEdgeFactory<AgentType, EdgeType>	eFac;
 	
 	protected Uniform randomDist;
 	protected String name;

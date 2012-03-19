@@ -44,6 +44,7 @@ import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.rs.building.MorePartnerFinder;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.uranus.core.URandomService;
@@ -115,6 +116,9 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		protected MoreRewireTargetProvider<AgentType, E> 	rewireManager;
 		
 		protected Uniform 									randomDist;
+		
+		
+		protected MorePartnerFinder<AgentType>				partnerFinder = null;
 		
 		
 		/**
@@ -272,6 +276,20 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		public void setSymmetrical(boolean isSymmetrical) {
 			this.isSymmetrical = isSymmetrical;
 		}
+
+		/**
+		 * @param partnerFinder the partnerFinder to set
+		 */
+		public void setPartnerFinder(MorePartnerFinder<AgentType> partnerFinder) {
+			this.partnerFinder = partnerFinder;
+		}
+
+		/**
+		 * @return the partnerFinder
+		 */
+		public MorePartnerFinder<AgentType> getPartnerFinder() {
+			return partnerFinder;
+		}
 	}
 	
 	
@@ -317,6 +335,8 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 	protected boolean 									isDirected;
 	
 	Uniform 											randomDist;
+		
+	protected MorePartnerFinder<AgentType>				partnerFinder = null;
 
 
 	public MSmallWorldBetaModelNetworkGenerator(
@@ -331,6 +351,8 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		this.rewireManager 	= params.getRewireManager();
 		
 		this.randomDist		= params.getRandomDist();
+		
+		this.partnerFinder 	= params.getPartnerFinder();
 	}
 	
 	
@@ -411,17 +433,39 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 						edge.getEnd() : edge.getStart();
 
 				if (betaProvider.getBetaValue(start) > randomDist.nextDouble()) {
-					int rndIndex = randomDist.nextIntFromTo(0, numNodes - 1);
-					AgentType randomNode = list.get(rndIndex);
 					
-					if (!start.equals(randomNode)
-							&& !network.isSuccessor(randomNode, start)) {
+					AgentType randomNode;
+					
+					if (this.partnerFinder != null) {
+						randomNode = this.partnerFinder.findPartner(start);
+					} else {
+						int rndIndex = randomDist.nextIntFromTo(0, numNodes - 1);
+						randomNode = list.get(rndIndex);
+					}
+					
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("randomNode: " + randomNode);
+					}
+					// LOGGING ->
+
+					boolean condition;
+					if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) { 
+						condition = !start.equals(randomNode)
+						&& !network.isSuccessor(randomNode, start);
+					} else {
+						condition = !start.equals(randomNode)
+						&& !network.isSuccessor(start, randomNode);
+					}
+					
+					
+					if (randomNode != null && condition) {
 						
 						network.disconnect(start, end);
 						if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) { 
 							network.connect(start, randomNode);
 						} else {
-							network.connect(randomNode,end);
+							network.connect(randomNode, start);
 						}
 
 						if (this.isDirected && isSymmetrical) {
@@ -435,7 +479,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 							if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) { 
 								network.connect(randomNode, start);
 							} else {
-								network.connect(end, randomNode);
+								network.connect(start, randomNode);
 							}							
 						}
 					}

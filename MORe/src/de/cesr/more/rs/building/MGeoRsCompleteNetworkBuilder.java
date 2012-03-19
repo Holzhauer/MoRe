@@ -92,6 +92,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 			// LOGGING ->
 
 			network.addNode(agent);
+			context.add(agent);
 			
 			// connect this agent with every already added other (undirected):
 			for (AgentType other : network.getNodes()) {
@@ -121,6 +122,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network,
 			AgentType node) {
 		network.addNode(node);
+		context.add(node);
 		
 		// connect this agent with every already added other (undirected):
 		for (AgentType other : network.getNodes()) {

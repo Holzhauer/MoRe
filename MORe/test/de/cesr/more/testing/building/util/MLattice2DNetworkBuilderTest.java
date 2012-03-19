@@ -21,7 +21,7 @@
  * 
  * Created by holzhauer on 22.11.2011
  */
-package de.cesr.more.testing.building;
+package de.cesr.more.testing.building.util;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -19,26 +19,19 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 27.09.2011
+ * Created by Sascha Holzhauer on 16.03.2012
  */
-package de.cesr.more.testing.building;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import de.cesr.more.testing.rs.building.geo.MGeoRsWattsBetaSwBuilderTest;
-
+package de.cesr.more.rs.building;
 
 /**
  * MORe
  *
- * @author holzhauer
- * @date 27.09.2011 
+ * @author Sascha Holzhauer
+ * @date 16.03.2012 
  *
  */
-@RunWith(Suite.class)
-@SuiteClasses({ MGeoRsWattsBetaSwBuilderTest.class, MLattice1DGeneratorTest.class })
-public class MAllBuildingTests {
+public interface MorePartnerFinder<AgentType> {
+
+	public AgentType findPartner(AgentType focal);
 
 }
