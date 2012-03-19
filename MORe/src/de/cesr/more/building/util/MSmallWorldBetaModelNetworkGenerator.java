@@ -410,6 +410,8 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		int numOfExpectedEdges = 0;
 		for (AgentType agent : agents) {
 			numOfExpectedEdges +=kProvider.getKValue(agent);
+			assert kProvider.getKValue(agent) == ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ? 
+					network.getOutDegree(agent) : network.getInDegree(agent));
 		}
 		
 		// <- LOGGING
@@ -461,7 +463,8 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 					
 					if (randomNode != null && condition) {
 						
-						network.disconnect(start, end);
+						network.disconnect(edge.getStart(), edge.getEnd());
+						
 						if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) { 
 							network.connect(start, randomNode);
 						} else {
@@ -472,7 +475,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 							// remove the t -> s edge
 							E otherEdge = network.getEdge(
 									end, start);
-							network.disconnect(end, start);
+							network.disconnect( edge.getEnd(), edge.getStart());
 							removedEdges.add(otherEdge);
 
 							// add the randomNode -> s edge

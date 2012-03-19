@@ -23,12 +23,15 @@
  */
 package de.cesr.more.rs.building;
 
+
 /**
  * MORe
- *
+ * 
+ * TODO merge with MoreRewireTargetProvider!
+ * 
  * @author Sascha Holzhauer
- * @date 16.03.2012 
- *
+ * @date 16.03.2012
+ * 
  */
 public interface MorePartnerFinder<AgentType> {
 
