@@ -25,7 +25,6 @@ package de.cesr.more.rs.building;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -224,15 +223,18 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 		}
 
 		boolean anyPartnerAssignable = true;
-
-		Collection<AgentType> linkedNeighbors = new ArrayList<AgentType>(neighbourslist.size());
+		
+		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
+				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
+		// to check if the required neighbours is satisfied
+		int numLinkedNeighbors = 0;
 
 		Iterator<AgentType> neighbourIter = neighbourslist.iterator();
 		AgentType potPartner;
 
 		int numRadiusExtensions = 0;
 		
-		while (linkedNeighbors.size() < numNeighbors && anyPartnerAssignable) {
+		while (numLinkedNeighbors < numNeighbors && anyPartnerAssignable) {
 			if (neighbourIter.hasNext()) {
 				potPartner = neighbourIter.next();
 
@@ -243,14 +245,14 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 					
 					numMilieuPartners[potPartner.getMilieuGroup() - 1]--;
 
-					linkedNeighbors.add(potPartner);
+					numLinkedNeighbors++;
 					
 					// substitutes rewiring:
 					AgentType target = distantLinking(paraMap, network, hh, requestClass);
 					if (target != null && 
-							linkedNeighbors.size() < numNeighbors) {
+							numLinkedNeighbors < numNeighbors) {
 						numMilieuPartners[target.getMilieuGroup() - 1]--;
-						linkedNeighbors.add(target);
+						numLinkedNeighbors++;
 					}
 
 					// <- LOGGING
@@ -271,11 +273,13 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 					// extending list of potential neighbours:
 					curRadius += paraMap.getXSearchRadius(hh.getMilieuGroup());
 					numRadiusExtensions++;
-					List<AgentType> xNeighbourslist = geoWrapper.getSurroundingAgents(hh,
-							curRadius,
-							requestClass);
-					xNeighbourslist.removeAll(neighbourslist);
-					neighbourslist = xNeighbourslist;
+					
+					checkedNeighbours.addAll(neighbourslist);
+					
+					neighbourslist = geoWrapper
+							.<AgentType> getSurroundingAgents(hh, curRadius, requestClass);
+					
+					neighbourslist.removeAll(checkedNeighbours);
 
 					// mixing neighbour collection
 					shuffleCollection(neighbourslist);
@@ -298,11 +302,11 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 			agent.setNumRadiusExtensions(numRadiusExtensions);
 		}
 		
-		numNotConnectedPartners += numNeighbors - linkedNeighbors.size();
+		numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug(hh + " > " + linkedNeighbors.size() + " neighbours found (from " + numNeighbors + ")");
+			logger.debug(hh + " > " + numLinkedNeighbors + " neighbours found (from " + numNeighbors + ")");
 		}
 		// LOGGING ->
 		

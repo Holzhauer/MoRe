@@ -39,12 +39,16 @@ import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
 
 
-
 /**
  * MORe
  * 
- * Considers {@link MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES} (this class is mainly used by 
+ * Considers {@link MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES} (this class is mainly used by
  * {@link MSmallWorldBetaModelNetworkGenerator}).
+ * 
+ * NOTE: For undirected networks, the k provider values are not fully respected (because of links from other nodes that
+ * increase in-degree)
+ * 
+ * TODO (see NOTE, also check if it is possible to distribute links across nodes to satisfy k provider values)
  * 
  * @author Sascha Holzhauer
  * @date 24.01.2011
@@ -118,17 +122,17 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 
 		// fill in edges
 		// clockwise:
-		for (int i = 1; i <= numVertices; i++) {
+		for (int i = 0; i < numVertices; i++) {
 			// degree <= |nodes| !
-			if (kProvider.getKValue(v_array.get(i - 1)) > graph.getVertexCount()) {
-				String msg = "Degree/K value (" + kProvider.getKValue(v_array.get(i - 1))
+			if (kProvider.getKValue(v_array.get(i)) > graph.getVertexCount()) {
+				String msg = "Degree/K value (" + kProvider.getKValue(v_array.get(i))
 						+ ") may not exceed the number of nodes ("
 						+ graph.getVertexCount() + ")";
 				logger.error(msg);
 				throw new IllegalStateException(msg);
 			}
-			for (int j = 1; j <= Math.ceil(kProvider.getKValue(v_array.get(i - 1)) * 0.5); j++) {
-				if (is_toroidal || (!is_toroidal && i + j <= numVertices)) {
+			for (int j = 1; j <= Math.ceil(kProvider.getKValue(v_array.get(i)) * 0.5); j++) {
+				if (is_toroidal || (!is_toroidal && i + j < numVertices)) {
 					start = this.considerSource ? i : i + j;
 					end = this.considerSource ? i + j : i;
 					graph.addEdge(edge_factory.createEdge(getVertex(getIndex(start)), getVertex(getIndex(end)), this.is_directed), 
@@ -144,8 +148,8 @@ public class MLattice1DGenerator<V, E> implements GraphGenerator<V, E> {
 		// if the graph is directed, fill in the edges going the other direction...
 		if (graph instanceof DirectedGraph) {
 			// counter-clockwise
-			for (int i = 1; i <= numVertices; i++) {
-				for (int j = 1; j <= kProvider.getKValue(v_array.get(i - 1)) * 0.5; j++) {
+			for (int i = 0; i < numVertices; i++) {
+				for (int j = 1; j <= kProvider.getKValue(v_array.get(i)) * 0.5; j++) {
 					if (is_toroidal || (!is_toroidal && i - j >= 0)) {
 						start = this.considerSource ? i : i - j;
 						end = this.considerSource ? i - j : i;

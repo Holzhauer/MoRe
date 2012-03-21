@@ -41,6 +41,7 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
+import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
@@ -53,10 +54,12 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
- *
+ * 
+ * - uses MSmallWorldBetaModelNetworkGeneratorMilieuParams from MGeoRsWattsBetaSwBuilder
+ * 
  * @author Sascha Holzhauer
- * @date 16.03.2012 
- *
+ * @date 16.03.2012
+ * 
  */
 public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
 		extends MGeoRsWattsBetaSwBuilder<AgentType, EdgeType> {
@@ -106,6 +109,14 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 
 		final MMilieuNetworkParameterMap paraMap = (MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
+
+		// TODO Check if required
+		params.setkProvider(new MoreKValueProvider<AgentType>() {
+			@Override
+			public int getKValue(AgentType node) {
+				return paraMap.getK(node.getMilieuGroup());
+			}
+		});
 
 		AbstractDistribution abstractDis = MManager
 				.getURandomService()

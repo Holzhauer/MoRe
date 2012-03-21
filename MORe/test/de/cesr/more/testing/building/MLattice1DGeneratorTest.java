@@ -27,6 +27,7 @@ package de.cesr.more.testing.building;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.collections15.Factory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cesr.more.basic.edge.MEdge;
@@ -49,8 +50,8 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
  */
 public class MLattice1DGeneratorTest {
 
-	static final int	NUM_AGENTS	= 10;
-	static final int	K_VALUE		= 4;
+	static final int	NUM_AGENTS	= 6;
+	static final int	K_VALUE		= 2;
 
 
 	@Test
@@ -171,7 +172,24 @@ public class MLattice1DGeneratorTest {
 	}
 
 	@Test
+	@Ignore
+	// not yet implemented - see note in MLattice1DGenerator
 	public void testBuildingVariousKNodes() {
+
+		MoreKValueProvider<MTestNode> kProvider = new MoreKValueProvider<MTestNode>() {
+			@Override
+			public int getKValue(MTestNode node) {
+				switch (node.getMilieuGroup()) {
+					case 1:
+						return K_VALUE - 2;
+					case 2:
+						return K_VALUE + 2;
+					default:
+						return K_VALUE;
+				}
+			}
+		};
+
 		GraphGenerator<MTestNode, MoreEdge<MTestNode>> networkBuilder = new MLattice1DGenerator<MTestNode, MoreEdge<MTestNode>>(
 				new Factory<Graph<MTestNode, MoreEdge<MTestNode>>>() {
 					@Override
@@ -200,19 +218,7 @@ public class MLattice1DGeneratorTest {
 					}
 				},
 				NUM_AGENTS,
-				new MoreKValueProvider<MTestNode>() {
-					@Override
-					public int getKValue(MTestNode node) {
-						switch (node.getMilieuGroup()) {
-							case 1:
-								return K_VALUE - 2;
-							case 2:
-								return K_VALUE + 2;
-							default:
-								return K_VALUE;
-						}
-					}
-				},
+				kProvider,
 				true,
 				false);
 
@@ -220,5 +226,9 @@ public class MLattice1DGeneratorTest {
 
 		assertEquals(NUM_AGENTS, graph.getVertexCount());
 		assertEquals(NUM_AGENTS * K_VALUE / 2, graph.getEdgeCount());
+
+		for (MTestNode node : graph.getVertices()) {
+			assertEquals(kProvider.getKValue(node), graph.degree(node));
+		}
 	}
 }

@@ -260,7 +260,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		int numNeighbors = 0;
 		
 		int numRadiusExtensions = 0;
-		double finalRadius = 0.0;
 
 		Class<? extends AgentType> requestClass = getRequestClass(hh);
 			
