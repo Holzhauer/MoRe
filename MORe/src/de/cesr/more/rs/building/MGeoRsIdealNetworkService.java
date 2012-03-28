@@ -248,13 +248,19 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 					numLinkedNeighbors++;
 					
 					// substitutes rewiring:
-					AgentType target = distantLinking(paraMap, network, hh, requestClass);
-					if (target != null && 
-							numLinkedNeighbors < numNeighbors) {
-						numMilieuPartners[target.getMilieuGroup() - 1]--;
+					if (numLinkedNeighbors < numNeighbors &&
+							distantLinking(paraMap, network, hh, requestClass) != null) {
 						numLinkedNeighbors++;
 					}
-
+					
+					if (numLinkedNeighbors < numNeighbors) {
+						AgentType target = distantLinking(paraMap, network, hh, requestClass);
+						if (target != null) {
+							numMilieuPartners[target.getMilieuGroup() - 1]--;
+							numLinkedNeighbors++;
+						}
+					}
+					
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
 						logger.debug(hh + " > Found partner: " + potPartner);

@@ -410,14 +410,25 @@ public class MGeographyWrapper<AgentType> {
 	@SuppressWarnings("unchecked")
 	public <AreaType> AreaType getContainingAreaContext(
 			AgentType agent, Class<AreaType> areaClass) {
-		WithinQuery<AgentType> withinQuery = new WithinQuery<AgentType>(
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent + "> getContainingAreaContext - area class: " + areaClass);
+		}
+		// LOGGING ->
+		Query<AgentType> withinQuery = new WithinQuery<AgentType>(
 				geography, geography.getGeometry(agent));
 		Iterator<AgentType> iterator = withinQuery.query().iterator();
 
-		Object o = iterator.next();
+		Object o = null;
 
-		while (!(areaClass.isInstance(o)) && iterator.hasNext()) {
+		while ((!areaClass.isInstance(o)) && iterator.hasNext()) {
 			o = iterator.next();
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Object in WithinQuery: " + o);
+			}
+			// LOGGING ->
+
 		}
 		if (areaClass.isInstance(o)) {
 			return (AreaType) o; // unchecked cast - o is assignable to a Class<AreaType>
