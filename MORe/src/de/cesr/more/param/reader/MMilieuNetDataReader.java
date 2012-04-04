@@ -62,7 +62,9 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 
 		// fetch number of households along milieu groups (not milieus!):
 		String sql = "SELECT milieu, " + "k, " + "p_rewire, " + "SEARCH_RADIUS, " + "X_SEARCH_RADIUS, "
-				+ "MAX_SEARCH_RADIUS, " + "DIM_WEIGHT_GEO, " + "DIM_WEIGHT_MILIEU " + "FROM " + t1 + " AS t1 " + "WHERE paramID ="
+				+ "MAX_SEARCH_RADIUS, " + "DIM_WEIGHT_GEO, " + "DIM_WEIGHT_MILIEU, " + "DYN_DECREASE_AMOUNT, " +
+				"DYN_INTERVAL_LINK_MANAGEMENT, " + "DYN_INTERVAL_EDGE_UPDATING "
+				+ "FROM " + t1 + " AS t1 " + "WHERE paramID ="
 				+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + ";";
 
 		if (logger.isDebugEnabled()) {
@@ -90,6 +92,9 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 				map.setMaxSearchRadius(milieu, result.getDouble("MAX_SEARCH_RADIUS"));
 				map.setDimWeightGeo(milieu, result.getDouble("DIM_WEIGHT_GEO"));
 				map.setDimWeightMilieu(milieu, result.getDouble("DIM_WEIGHT_MILIEU"));
+				map.setDynDecreaseAmount(milieu, result.getDouble("DYN_DECREASE_AMOUNT"));
+				map.setDynEdgeUpdatingInverval(milieu, result.getInt("DYN_INTERVAL_EDGE_UPDATING"));
+				map.setDynLinkManagementInverval(milieu, result.getInt("DYN_INTERVAL_LINK_MANAGEMENT"));
 
 				String sql2 = "SELECT partnerMilieu, " + "p_links " + "FROM " + t2 + " AS t2 " + "WHERE paramID="
 						+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + " AND " + "milieu=" + milieu

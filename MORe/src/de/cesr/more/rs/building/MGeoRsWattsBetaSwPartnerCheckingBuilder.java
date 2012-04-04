@@ -50,6 +50,7 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
+import edu.uci.ics.jung.graph.Graph;
 
 
 /**
@@ -131,10 +132,10 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 			logger.warn("Use default uniform distribution");
 		}
 
-		params.setPartnerFinder(new MorePartnerFinder<AgentType>() {
+		params.setRewireManager(new MDefaultPartnerFinder<AgentType, EdgeType>() {
 
 			@Override
-			public AgentType findPartner(AgentType focus) {
+			public AgentType findPartner(Graph<AgentType, EdgeType> graph, AgentType focus) {
 				Class<? extends AgentType> requestClass = getRequestClass(focus);
 
 				return findDistantTarget(paraMap, network, focus, requestClass);

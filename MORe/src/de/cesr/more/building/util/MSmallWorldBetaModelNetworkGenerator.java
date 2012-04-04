@@ -44,6 +44,7 @@ import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.rs.building.MDefaultPartnerFinder;
 import de.cesr.more.rs.building.MorePartnerFinder;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
@@ -113,12 +114,9 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		
 		protected MoreBetaProvider<AgentType>				betaProvider;
 		protected MoreKValueProvider<AgentType>				kProvider;
-		protected MoreRewireTargetProvider<AgentType, E> 	rewireManager;
+		protected MorePartnerFinder<AgentType, E> 			rewireManager;
 		
 		protected Uniform 									randomDist;
-		
-		
-		protected MorePartnerFinder<AgentType>				partnerFinder = null;
 		
 		
 		/**
@@ -238,11 +236,11 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		 * 
 		 * @return the rewireManager
 		 */
-		public MoreRewireTargetProvider<AgentType, E> getRewireManager() {
+		public MorePartnerFinder<AgentType, E> getRewireManager() {
 			if (rewireManager == null) {
-				rewireManager = new MoreRewireTargetProvider<AgentType, E>() {
+				rewireManager = new  MDefaultPartnerFinder<AgentType, E>() {
 					@Override
-					public AgentType getRewireTarget(Graph<AgentType,E> graph, AgentType source) {
+					public AgentType findPartner(Graph<AgentType,E> graph, AgentType source, boolean incoming) {
 						return new ArrayList<AgentType>(graph.getVertices()).get(
 								MManager.getURandomService().getUniform().nextIntFromTo(0, graph.getVertexCount() - 1));
 					}
@@ -255,7 +253,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		 * @param rewireManager the rewireManager to set
 		 */
 		public void setRewireManager(
-				MoreRewireTargetProvider<AgentType, E> rewireManager) {
+				MorePartnerFinder<AgentType, E> rewireManager) {
 			this.rewireManager = rewireManager;
 		}
 		
@@ -275,20 +273,6 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		 */
 		public void setSymmetrical(boolean isSymmetrical) {
 			this.isSymmetrical = isSymmetrical;
-		}
-
-		/**
-		 * @param partnerFinder the partnerFinder to set
-		 */
-		public void setPartnerFinder(MorePartnerFinder<AgentType> partnerFinder) {
-			this.partnerFinder = partnerFinder;
-		}
-
-		/**
-		 * @return the partnerFinder
-		 */
-		public MorePartnerFinder<AgentType> getPartnerFinder() {
-			return partnerFinder;
 		}
 	}
 	
@@ -329,14 +313,12 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 	
 	protected MoreBetaProvider<AgentType>				betaProvider;
 	protected MoreKValueProvider<AgentType>				kProvider;
-	protected MoreRewireTargetProvider<AgentType, E> 	rewireManager;
+	protected MorePartnerFinder<AgentType, E> 			rewireManager;
 	
 	protected int 										numNodes;
 	protected boolean 									isDirected;
 	
 	Uniform 											randomDist;
-		
-	protected MorePartnerFinder<AgentType>				partnerFinder = null;
 
 
 	public MSmallWorldBetaModelNetworkGenerator(
@@ -351,8 +333,6 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		this.rewireManager 	= params.getRewireManager();
 		
 		this.randomDist		= params.getRandomDist();
-		
-		this.partnerFinder 	= params.getPartnerFinder();
 	}
 	
 	
@@ -438,8 +418,8 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 					
 					AgentType randomNode;
 					
-					if (this.partnerFinder != null) {
-						randomNode = this.partnerFinder.findPartner(start);
+					if (this.rewireManager != null) {
+						randomNode = this.rewireManager.findPartner(network.getJungGraph(), start);
 					} else {
 						int rndIndex = randomDist.nextIntFromTo(0, numNodes - 1);
 						randomNode = list.get(rndIndex);

@@ -19,27 +19,26 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 21.04.2011
+ * Created by Sascha Holzhauer on 29.03.2012
  */
-package de.cesr.more.manipulate.agent;
+package de.cesr.more.basic.agent;
+
+
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.manipulate.agent.MoreEgoNetworkManagerComp;
+
 
 /**
  * MORe
  *
- * Interface for agent classes that shall use a link manipulation component like
- * {@link MEgoNetworkManagerComp}
- * 
  * @author Sascha Holzhauer
- * @date 21.04.2011 
+ * @date 29.03.2012 
  *
  */
-public interface MoreLinkManipulatableAgent<A> {
+public interface MoreEgoNetworkManagingAgent<A, E extends MoreEdge<? super A>> {
 
-	
-	/**
-	 * Get the difference in a certain value to another agent from this agent.
-	 * @param agent
-	 * @return
-	 */
-	public double getValueDifference(A agent);
+	public MoreEgoNetworkManagerComp<A, E> getEgoNetworkManager();
+
+	public void setEgoNetworkManager(MoreEgoNetworkManagerComp<A, E> egoNetworkManager);
+
 }

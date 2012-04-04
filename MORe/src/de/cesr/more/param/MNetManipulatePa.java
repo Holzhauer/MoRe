@@ -19,60 +19,39 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 27.09.2011
+ * Created by Sascha Holzhauer on 28.03.2012
  */
 package de.cesr.more.param;
 
-
-import de.cesr.more.building.util.MRandomNetworkGenerator;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
- * Definition of random streams related parameters for MORe
+ * MORe
  *
  * @author Sascha Holzhauer
- * @date 27.09.2011 
+ * @date 28.03.2012 
  *
  */
-public enum MRandomPa implements PmParameterDefinition {
-	/**
-	 * Random seed used for all random streams throughout the model
-	 * that not a specialised random stream defined. Default: <code>0</code>.
-	 */
-	RANDOM_SEED(Integer.class, 0),
-	
-	/**
-	 * Random seed used for network building processes.
-	 * Default: <code>0</code>.
-	 */
-	RANDOM_SEED_NETWORK_BUILDING(Integer.class, 0),
-	
-	/**
-	 * The name of the random stream used for network building
-	 * processes. Default: <code>Uniform network-building</code>.
-	 */
-	RND_UNIFORM_DIST_NETWORK_BUILDING(String.class, "Uniform network-building"),
+public enum MNetManipulatePa implements PmParameterDefinition {
 
-	RND_UNIFORM_DIST_NETWORK_DYNAMICS(String.class, RND_UNIFORM_DIST_NETWORK_BUILDING),
+	INCREASE_THRESHOLD(Double.class, 0.1),
+	DECREASE_THRESHOLD(Double.class, 0.5),
 
-	/**
-	 * The name of the random stream used for network building processes. Default: <code>Network-building stream</code>.
-	 */
-	RND_STREAM_NETWORK_BUILDING(String.class, "Network-building Stream"),
+	INCREASE_AMOUNT(Double.class, 0.1),
 
-	/**
-	 * Used for {@link MRandomNetworkGenerator}.
-	 */
-	RND_STREAM_RANDOM_NETWORK_BUILDING(String.class, RND_STREAM_NETWORK_BUILDING);
-	
-	private Class<?> type;
-	private Object defaultValue;
-	
+	DYN_DECREASE_AMOUNT(Double.class, 0.1),
+
+	DYN_INTERVAL_EDGE_UPDATING(Integer.class, 0),
+	DYN_INTERVAL_LINK_MANAGEMENT(Integer.class, 0);
+
+	private Class<?>	type;
+	private Object		defaultValue;
+
 	/**
 	 * @param type
 	 */
-	MRandomPa(Class<?> type) {
+	MNetManipulatePa(Class<?> type) {
 		this(type, null);
 	}
 
@@ -80,12 +59,15 @@ public enum MRandomPa implements PmParameterDefinition {
 	 * @param type
 	 * @param defaultValue
 	 */
-	MRandomPa(Class<?> type, Object defaultValue) {
+	MNetManipulatePa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
 	}
 
-	MRandomPa(Class<?> type, PmParameterDefinition defaultDefinition) {
+	/**
+	 * 
+	 */
+	private MNetManipulatePa(Class<?> type, PmParameterDefinition defaultDefinition) {
 		this.type = type;
 		if (defaultDefinition != null) {
 			this.defaultValue = defaultDefinition.getDefaultValue();
@@ -94,15 +76,15 @@ public enum MRandomPa implements PmParameterDefinition {
 			this.defaultValue = null;
 		}
 	}
-	
+
 	/**
 	 * @see de.cesr.parma.core.PmParameterDefinition#getType()
 	 */
 	@Override
 	public Class<?> getType() {
-		return type;
+		return this.type;
 	}
-	
+
 	/**
 	 * @see de.cesr.parma.core.PmParameterDefinition#getDefaultValue()
 	 */
@@ -110,4 +92,5 @@ public enum MRandomPa implements PmParameterDefinition {
 	public Object getDefaultValue() {
 		return defaultValue;
 	}
+
 }

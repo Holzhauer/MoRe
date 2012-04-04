@@ -24,17 +24,49 @@
 package de.cesr.more.rs.building;
 
 
+import java.util.Collection;
+
+import edu.uci.ics.jung.graph.Graph;
+
+
 /**
  * MORe
- * 
- * TODO merge with MoreRewireTargetProvider!
  * 
  * @author Sascha Holzhauer
  * @date 16.03.2012
  * 
  */
-public interface MorePartnerFinder<AgentType> {
+public interface MorePartnerFinder<AgentType, EdgeType> {
 
-	public AgentType findPartner(AgentType focal);
+	/**
+	 * Finds a partner for the given focal agent in the given graph. Sets incoming to true.
+	 * 
+	 * @param graph
+	 * @param focal
+	 * @return
+	 */
+	public AgentType findPartner(Graph<AgentType, EdgeType> graph, AgentType focal);
 
+	/**
+	 * Finds a partner for the given focal agent in the given graph.
+	 * 
+	 * @param graph
+	 * @param focal
+	 * @param incoming
+	 *        true if a predecessor is requested, false for successor
+	 * @return
+	 */
+	public AgentType findPartner(Graph<AgentType, EdgeType> graph, AgentType focal, boolean incoming);
+
+	/**
+	 * Selects a partner for the given focal agent from the given list of potential partners. Checks whether the focal
+	 * agent is already linked to the potential partner.
+	 * 
+	 * @param agents
+	 * @param graph
+	 * @param focal
+	 * @return
+	 */
+	public AgentType findPartner(Collection<AgentType> agents, Graph<AgentType, EdgeType> graph, AgentType focal,
+			boolean incoming);
 }

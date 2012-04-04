@@ -26,8 +26,11 @@ package de.cesr.more.rs.building;
 
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.DirectedJungNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
@@ -93,6 +96,11 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public class MGroupBaselineRadiusNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
 		extends MGeoRsBaselineRadiusNetworkService<AgentType, EdgeType> {
+	
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger.getLogger(MGroupBaselineRadiusNetworkService.class);
 
 	public MGroupBaselineRadiusNetworkService(Geography<Object> geography,
 			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
@@ -130,6 +138,51 @@ public class MGroupBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		return network;
 	}
 
+	/**
+	 * NOTE: Make sure that the order of agents in agents is defined and consistent for equal random seeds!
+	 * 
+	 * @param network
+	 * @param agents
+	 * @param networkParams
+	 */
+	public void rewire(Collection<AgentType> agents,
+			MMilieuNetworkParameterMap networkParams,
+			MoreRsNetwork<AgentType, EdgeType> network) {
+		for (AgentType agent : agents) {
+			rewireNode(networkParams, network, agent);
+		}
+	}
+	
+	/**
+	 * @param networkParams
+	 * @param network
+	 * @param focus
+	 */
+	private void rewireNode(MMilieuNetworkParameterMap networkParams,
+			MoreNetwork<AgentType, EdgeType> network, AgentType focus) {
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(focus + "> Rewire");
+		}
+		// LOGGING ->
+		
+		Class<? extends AgentType> requestClass = getRequestClass(focus);
+		
+		// In JUNG predecessors are copied to a new set, so new predecessors
+		// do not do any harm:
+		for (AgentType oldInfluencer : network.getPredecessors(focus)) {
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(focus + "> Check link to " + oldInfluencer);
+			}
+			// LOGGING ->
+			if (distantLinking(networkParams, network, focus, requestClass) != null) {
+				context.remove(network.getEdge(oldInfluencer, focus));
+				network.disconnect(oldInfluencer, focus);
+			}
+		}
+	}
 	/**
 	 * Connect each agent with every other agent within the same group context.
 	 * 

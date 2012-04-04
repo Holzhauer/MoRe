@@ -36,7 +36,6 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
-import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
@@ -118,6 +117,10 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	protected Uniform		rand;
 
 	protected String		name;
+	
+	protected MMilieuNetworkParameterMap paraMap;
+	
+	protected MMilieuPartnerFinder<AgentType, EdgeType> partnerFinder;
 
 	public MGeoRsBaselineRadiusNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this(edgeFac, "Network");
@@ -137,6 +140,9 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
 		super(geography, edgeFac);
 		this.name = name;
+		this.paraMap = (MMilieuNetworkParameterMap) PmParameterManager
+			.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
+		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
 	}
 
 	/**
@@ -152,9 +158,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 			Collection<AgentType> agents) {
 
 		checkParameter();
-
-		MMilieuNetworkParameterMap paraMap = (MMilieuNetworkParameterMap) PmParameterManager
-				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 		
 		PmParameterManager.logParameterValues(MNetworkBuildingPa.values());
 		// <- LOGGING
@@ -172,14 +175,11 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 		addAgents(network, agents);
 
-		createRadiusNetwork(agents, paraMap, network);
+		createRadiusNetwork(agents, this.paraMap, network);
 
 		// <- LOGGING
 		logEdges(logger, network, "");
 		// LOGGING ->
-
-		// TODO
-		//rewire(agents, paraMap, network);
 
 		// <- LOGGING
 		logEdges(logger, network, "AfterRewire: ");
@@ -307,7 +307,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 				// TODO check if potPartner has capacity (new feature)
 
-				if (checkPartner(network, paraMap, hh, potPartner, 0)) {
+				if (partnerFinder.checkPartner(network.getJungGraph(), paraMap, hh, potPartner, 0)) {
 					createEdge(network, potPartner, hh);
 
 					numLinkedNeighbors++;
@@ -406,106 +406,8 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		return requestClass;
 	}
 
-	/**
-	 * Returns false if source is already a successor of target. Otherwise, the milieu is checked based on paraMap.
-	 * 
-	 * @param paraMap
-	 * @param partnerMilieu
-	 * @return true if the check was positive
-	 */
-	protected boolean checkPartner(MoreNetwork<AgentType, EdgeType> network,
-			MMilieuNetworkParameterMap paraMap, AgentType ego,
-			AgentType potPartner, int desiredMilieu) {
-		if (network.isSuccessor(ego, potPartner)) {
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(ego + "> " + potPartner + " is already predecessor of " + ego + 
-						" (" + ego + (network.isSuccessor(potPartner, ego) ? " is" : " is not") + 
-						" a predecessor of " + potPartner + ")");
-			}
-			// LOGGING ->
 
-			return false;
-		}
-		// find agent that belongs to the milieu
-		if ((Boolean)PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
-			if ((potPartner).getMilieuGroup() == desiredMilieu) {
-				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(ego + "> Link with distant partner");
-				}
-				// LOGGING ->
-				
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			// determine if potenialpartner's milieu is probable to link with:
-			double rand_float = rand.nextDoubleFromTo(0.0, 1.0);
-			boolean pass = paraMap.getP_Milieu(ego.getMilieuGroup(),
-					potPartner.getMilieuGroup()) > rand_float;
-		
-			if (logger.isDebugEnabled()) {
-				logger.debug((pass ? ego + "> " + potPartner + "'s mileu ("
-						+ potPartner.getMilieuGroup() + ") accepted" : ego + "> "
-						+ potPartner + "'s mileu (" + potPartner.getMilieuGroup()
-						+ ") rejected")
-						+ " (probability: "
-						+ paraMap.getP_Milieu(ego.getMilieuGroup(),
-								potPartner.getMilieuGroup())
-						+ " / random: "
-						+ rand_float);
-			}
-			return pass;
-		}
-	}
 
-	/**
-	 * NOTE: Make sure that the order of agents in agents is defined and consistent for equal random seeds!
-	 * 
-	 * @param network
-	 * @param agents
-	 * @param networkParams
-	 */
-	public void rewire(Collection<AgentType> agents,
-			MMilieuNetworkParameterMap networkParams,
-			MoreRsNetwork<AgentType, EdgeType> network) {
-		for (AgentType agent : agents) {
-			rewireNode(networkParams, network, agent);
-		}
-	}
-
-	/**
-	 * @param networkParams
-	 * @param network
-	 * @param focus
-	 */
-	private void rewireNode(MMilieuNetworkParameterMap networkParams,
-			MoreNetwork<AgentType, EdgeType> network, AgentType focus) {
-		
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug(focus + "> Rewire");
-		}
-		// LOGGING ->
-		
-		Class<? extends AgentType> requestClass = getRequestClass(focus);
-		
-		// In JUNG predecessors are copied to a new set, so new predecessors
-		// do not do any harm:
-		for (AgentType oldInfluencer : network.getPredecessors(focus)) {
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(focus + "> Check link to " + oldInfluencer);
-			}
-			// LOGGING ->
-			if (distantLinking(networkParams, network, focus, requestClass) != null) {
-				context.remove(network.getEdge(oldInfluencer, focus));
-				network.disconnect(oldInfluencer, focus);
-			}
-		}
-	}
 
 	/**
 	 * @param networkParams
@@ -521,41 +423,11 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		
 		if (networkParams.getP_Rewire(focus.getMilieuGroup()) > this.rand
 				.nextDouble()) {
-			
-			rewired = false;
-			Object random = null;
-			
-			int desiredMilieu = 0;
-			if ((Boolean)PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU)) {
-				// choose milieu to connect with
-				desiredMilieu = getProbabilisticMilieu(networkParams, focus);
+	ArrayList<AgentType> agents = new ArrayList<AgentType>();
+			for (AgentType agent : context.getObjects(requestClass)) {
+				agents.add(agent);
 			}
-			
-			
-			// fetch random partner:
-			do {
-				random = getRandomFromContext(context, requestClass);
-
-				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(focus + "> Random object from context: "
-							+ random);
-				}
-				// LOGGING ->
-			
-				if (checkPartner(network, networkParams, focus, (AgentType) random, desiredMilieu)) {
-					createEdge(network, (AgentType) random, focus);
-					rewired = true;
-	
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug(focus + "> Link with " + random);
-					}
-					// LOGGING ->
-				}
-			} while (!rewired);
-			
-			return (AgentType) random;
+			return partnerFinder.findPartner(agents, network.getJungGraph(), focus, true);
 		} else {
 			return null;
 		}
@@ -587,8 +459,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		logger.info("Number of not connected partners: "
 				+ numNotConnectedPartners);
 		// LOGGING ->
-
-		rewireNode(networkParams, network, node);
+		
 		return true;
 	}
 

@@ -41,6 +41,7 @@ import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.parma.core.PmParameterManager;
+import edu.uci.ics.jung.graph.Graph;
 
 
 /**
@@ -137,7 +138,7 @@ public class MGeoRsBaselineNumberNetworkService<AgentType extends MoreMilieuAgen
 
 				// TODO check if potPartner has capacity (new feature)
 
-				if (checkPartner(network, paraMap, hh, potPartner, 0)) {
+				if (checkPartner(network.getJungGraph(), paraMap, hh, potPartner, 0)) {
 					createEdge(network, potPartner, hh);
 
 					numLinkedNeighbors++;
@@ -195,5 +196,60 @@ public class MGeoRsBaselineNumberNetworkService<AgentType extends MoreMilieuAgen
 		// LOGGING ->
 	
 		return numNotConnectedPartners;
+	}
+
+	/**
+	 * Returns false if source is already a successor of target. Otherwise, the milieu is checked based on paraMap.
+	 * 
+	 * @param paraMap
+	 * @param partnerMilieu
+	 * @return true if the check was positive
+	 */
+	public boolean checkPartner(Graph<AgentType, EdgeType> network,
+			MMilieuNetworkParameterMap paraMap, AgentType ego,
+			AgentType potPartner, int desiredMilieu) {
+		if (network.isSuccessor(ego, potPartner)) {
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(ego + "> " + potPartner + " is already predecessor of " + ego +
+						" (" + ego + (network.isSuccessor(potPartner, ego) ? " is" : " is not") +
+						" a predecessor of " + potPartner + ")");
+			}
+			// LOGGING ->
+
+			return false;
+		}
+		// find agent that belongs to the milieu
+		if ((Boolean) PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
+			if ((potPartner).getMilieuGroup() == desiredMilieu) {
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug(ego + "> Link with distant partner");
+				}
+				// LOGGING ->
+
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// determine if potenialpartner's milieu is probable to link with:
+			double rand_float = rand.nextDoubleFromTo(0.0, 1.0);
+			boolean pass = paraMap.getP_Milieu(ego.getMilieuGroup(),
+					potPartner.getMilieuGroup()) > rand_float;
+
+			if (logger.isDebugEnabled()) {
+				logger.debug((pass ? ego + "> " + potPartner + "'s mileu ("
+						+ potPartner.getMilieuGroup() + ") accepted" : ego + "> "
+						+ potPartner + "'s mileu (" + potPartner.getMilieuGroup()
+						+ ") rejected")
+						+ " (probability: "
+						+ paraMap.getP_Milieu(ego.getMilieuGroup(),
+								potPartner.getMilieuGroup())
+						+ " / random: "
+						+ rand_float);
+			}
+			return pass;
+		}
 	}
 }

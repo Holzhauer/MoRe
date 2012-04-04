@@ -19,27 +19,29 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 25.01.2011
+ * Created by Sascha Holzhauer on 29.03.2012
  */
-package de.cesr.more.building.util;
+package de.cesr.more.manipulate.agent.events;
 
-import edu.uci.ics.jung.graph.Graph;
+import de.cesr.more.manipulate.agent.MoreEgoNetworkEvent;
 
 /**
  * MORe
- * Interface for clients to provide a vertex as rewiring target.
- * Used for {@link MSmallWorldBetaModelNetworkGenerator}, for instance. 
  *
  * @author Sascha Holzhauer
- * @date 25.01.2011 
+ * @date 29.03.2012 
  *
  */
-public interface MoreRewireTargetProvider<V, E> {
+public class MLinkWeightUpdatingEvent implements MoreEgoNetworkEvent {
+	static private MLinkWeightUpdatingEvent	event;
 
-	/**
-	 * @param graph
-	 * @param source source of the new link
-	 * @return a vertex as target of the new link
-	 */
-	public V getRewireTarget(Graph<V,E> graph, V source);
+	private MLinkWeightUpdatingEvent() {
+	};
+
+	static public MoreEgoNetworkEvent getInstance() {
+		if (event == null) {
+			event = new MLinkWeightUpdatingEvent();
+		}
+		return event;
+	}
 }

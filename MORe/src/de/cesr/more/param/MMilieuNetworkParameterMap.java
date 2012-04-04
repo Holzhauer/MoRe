@@ -206,6 +206,57 @@ public class MMilieuNetworkParameterMap extends
 				otherMilieu), new Double(p));
 	}
 	
+	public int getDynEdgeUpdatingInverval(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING, milieu) ?
+				((Integer) PmParameterManager.getParameter(MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING)).intValue() :
+				((Integer) this.get(new Integer(milieu)).get(
+						MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING))
+						.intValue();
+	}
+
+	public void setDynEdgeUpdatingInverval(int milieu, int interval) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING,
+				new Integer(interval));
+	}
+
+	public int getDynLinkManagementInverval(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT, milieu) ?
+				((Integer) PmParameterManager.getParameter(MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT)).intValue() :
+					((Integer) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT))
+							.intValue();
+	}
+
+	public void setDynLinkManagementInverval(int milieu, int interval) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT,
+				new Integer(interval));
+	}
+
+	public double getDynDecreaseAmount(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_DECREASE_AMOUNT, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_DECREASE_AMOUNT)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_DECREASE_AMOUNT))
+							.doubleValue();
+	}
+
+	public void setDynDecreaseAmount(int milieu, double amount) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_DECREASE_AMOUNT,
+				new Double(amount));
+	}
+
 	/**
 	 * Checks if the requested value is defined in the map and
 	 * issues a warning otherwise
