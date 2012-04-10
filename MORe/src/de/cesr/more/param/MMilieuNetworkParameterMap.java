@@ -257,15 +257,15 @@ public class MMilieuNetworkParameterMap extends
 				new Double(amount));
 	}
 
-	public double getFadeOutAmount(int milieu) {
+	public double getDynFadeOutAmount(int milieu) {
 		return warnDefault(MNetManipulatePa.DYN_FADE_OUT_AMOUNT, milieu) ?
 				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT)).doubleValue() :
 					((Double) this.get(new Integer(milieu)).get(
 							MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
 							.doubleValue();
 	}
-
-	public void setFadeOutAmount(int milieu, double amount) {
+	
+	public void setDynFadeOutAmount(int milieu, double amount) {
 		if (!this.containsKey(new Integer(milieu))) {
 			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
@@ -273,6 +273,25 @@ public class MMilieuNetworkParameterMap extends
 				MNetManipulatePa.DYN_FADE_OUT_AMOUNT,
 				new Double(amount));
 	}
+	
+	public void setDynFadeOutInterval(int milieu, double amount) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_FADE_OUT_INTERVAL,
+				new Double(amount));
+	}
+
+	public double getDynFadeOutInterval(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_FADE_OUT_INTERVAL, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_INTERVAL)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_FADE_OUT_INTERVAL))
+							.doubleValue();
+	}
+	
+
 
 	/**
 	 * Checks if the requested value is defined in the map and

@@ -26,7 +26,10 @@ package de.cesr.more.basic.edge;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
 
 
@@ -79,7 +82,11 @@ public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V>, MoreFadingWe
 		this.weight = weight;
 
 		// schedule fading out:
-		this.fadeAmount = ((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
+		Object agent = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ? this.start : this.end; 
+		this.fadeAmount = (agent instanceof MoreMilieuAgent && PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) ? 
+				((MMilieuNetworkParameterMap)PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).
+				getDynFadeOutAmount(((MoreMilieuAgent) agent).getMilieuGroup()) :
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
 				.doubleValue();
 		if (fadeAmount > 0.0) {
 			MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(1.0,
