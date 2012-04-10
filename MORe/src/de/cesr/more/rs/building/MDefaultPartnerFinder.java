@@ -80,7 +80,7 @@ public class MDefaultPartnerFinder<AgentType, EdgeType> implements MorePartnerFi
 		ArrayList<AgentType> list = new ArrayList<AgentType>(agents);
 		AgentType partner = null;
 		do {
-			partner = list.get(rand.nextIntFromTo(0, list.size() - 1));
+			partner = list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
 		} while (partner == focal || incoming && graph.isPredecessor(partner, focal) || !incoming
 				&& graph.isSuccessor(partner, partner));
 		return partner;

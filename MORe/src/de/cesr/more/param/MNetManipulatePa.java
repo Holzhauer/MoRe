@@ -42,6 +42,9 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 
 	DYN_DECREASE_AMOUNT(Double.class, 0.1),
 
+	DYN_FADE_OUT_AMOUNT(Double.class, 0.000),
+	DYN_FADE_OUT_INTERVAL(Double.class, 1.0),
+
 	DYN_INTERVAL_EDGE_UPDATING(Integer.class, 0),
 	DYN_INTERVAL_LINK_MANAGEMENT(Integer.class, 0);
 

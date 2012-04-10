@@ -257,6 +257,23 @@ public class MMilieuNetworkParameterMap extends
 				new Double(amount));
 	}
 
+	public double getFadeOutAmount(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_FADE_OUT_AMOUNT, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
+							.doubleValue();
+	}
+
+	public void setFadeOutAmount(int milieu, double amount) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_FADE_OUT_AMOUNT,
+				new Double(amount));
+	}
+
 	/**
 	 * Checks if the requested value is defined in the map and
 	 * issues a warning otherwise

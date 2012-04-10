@@ -28,11 +28,14 @@ import org.apache.log4j.Logger;
 
 import repast.simphony.space.graph.RepastEdge;
 import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MoreFadingWeightEdge;
 import de.cesr.more.basic.edge.MoreTraceableEdge;
 import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.param.MNetManipulatePa;
 import de.cesr.more.util.exception.MIdentifyCallerException;
+import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
@@ -41,7 +44,8 @@ import de.cesr.more.util.exception.MIdentifyCallerException;
  * @date Jan 3, 2011 
  *
  */
-public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEdge<AgentT>, MoreTraceableEdge<AgentT> {
+public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEdge<AgentT>, MoreTraceableEdge<AgentT>,
+		MoreFadingWeightEdge {
 
 	/**
 	 * Logger
@@ -50,6 +54,8 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 
 	protected double length = 0.0;
 	
+	protected double		fadeAmount	= 0.0;
+
 	protected boolean active;
 
 	/**
@@ -59,18 +65,8 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	 * @throws MIdentifyCallerException
 	 */
 	public MRepastEdge(AgentT source, AgentT target, boolean directed) {
-		super(source, target, directed);
+		this(source, target, directed, 1.0);
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Edge created");
-			try {
-				throw new MIdentifyCallerException();
-			} catch (MIdentifyCallerException e) {
-				e.printStackTrace();
-			}
-		}
-		// LOGGING ->
-
 	}
 
 	public MRepastEdge(AgentT source, AgentT target, boolean directed, double weight) {
@@ -85,6 +81,21 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 			}
 		}
 		// LOGGING ->
+
+		// schedule fading out:
+		this.fadeAmount = ((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
+				.doubleValue();
+		if (fadeAmount > 0.0) {
+			MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(1.0,
+					((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_INTERVAL)).doubleValue(),
+					Double.POSITIVE_INFINITY, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
+
+				@Override
+				public void execute() {
+					MRepastEdge.this.fadeWeight();
+				}
+			});
+		}
 	}
 	
 	/**
@@ -162,5 +173,13 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	@Override
 	public boolean isActive() {
 		return this.active;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.edge.MoreFadingWeightEdge#fadeWeight()
+	 */
+	@Override
+	public void fadeWeight() {
+		this.setWeight(this.getWeight() - fadeAmount);
 	}
 }

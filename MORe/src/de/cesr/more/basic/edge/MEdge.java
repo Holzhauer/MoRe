@@ -26,6 +26,8 @@ package de.cesr.more.basic.edge;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.parma.core.PmParameterManager;
 
 
 /**
@@ -35,7 +37,7 @@ import de.cesr.more.measures.util.MoreAction;
  * @date 03.12.2010 
  *
  */
-public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V> {
+public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V>, MoreFadingWeightEdge {
 	
 	private final static double DEFAULT_EDGE_WEIGHT = 1.0;
 	
@@ -45,6 +47,7 @@ public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V> {
 	
 	protected boolean active;
 	
+	protected double			fadeAmount			= 0.0;
 	/**
 	 * Creates an undirected edge.
 	 * @param start
@@ -74,6 +77,21 @@ public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V> {
 		this.end = end;
 		this.directed = directed;
 		this.weight = weight;
+
+		// schedule fading out:
+		this.fadeAmount = ((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
+				.doubleValue();
+		if (fadeAmount > 0.0) {
+			MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(1.0,
+					((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_INTERVAL)).doubleValue(),
+					Double.POSITIVE_INFINITY, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
+
+				@Override
+				public void execute() {
+					MEdge.this.fadeWeight();
+				}
+			});
+		}
 	}
 	
 	/**
@@ -155,5 +173,13 @@ public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V> {
 	@Override
 	public boolean isActive() {
 		return this.active;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.edge.MoreFadingWeightEdge#fadeWeight()
+	 */
+	@Override
+	public void fadeWeight() {
+		this.weight -= fadeAmount;
 	}
 }

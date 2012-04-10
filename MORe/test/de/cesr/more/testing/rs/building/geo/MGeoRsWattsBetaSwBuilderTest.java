@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MGeoRsWattsBetaSwBuilder;
@@ -58,6 +59,7 @@ public class MGeoRsWattsBetaSwBuilderTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		MManager.init();
 		agents = new ArrayList<MoreMilieuAgent>(NUM_AGENTS);
 		for (int i=0; i < NUM_AGENTS; i++) {
 			agents.add(new MoreMilieuAgent(){

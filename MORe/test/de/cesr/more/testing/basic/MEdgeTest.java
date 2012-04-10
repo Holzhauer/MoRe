@@ -23,17 +23,20 @@
  */
 package de.cesr.more.testing.basic;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import de.cesr.more.basic.MManager;
-import de.cesr.more.basic.edge.MEdge;
-import de.cesr.more.basic.edge.MoreTraceableEdge;
-import de.cesr.more.util.MSchedule;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MEdge;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.edge.MoreTraceableEdge;
+import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.util.MSchedule;
+import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
@@ -78,6 +81,23 @@ public class MEdgeTest {
 		assertEquals(0, checkActivatedEdges());
 	}
 	
+	/**
+	 * Test method for {@link de.cesr.more.basic.edge.MEdge#fadeWeight()}.
+	 */
+	@Test
+	public void testfadingWeight() {
+		PmParameterManager.setParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT, 0.1);
+		MoreEdge<Object> edge = new MEdge<Object>(new Object(), new Object());
+		edge.setWeight(1.0);
+		assertEquals(1.0, edge.getWeight(), 0.001);
+		schedule.step(1);
+		assertEquals(0.9, edge.getWeight(), 0.001);
+		schedule.step(1);
+		assertEquals(0.8, edge.getWeight(), 0.001);
+		schedule.step(1);
+		assertEquals(0.7, edge.getWeight(), 0.001);
+	}
+
 	public int checkActivatedEdges() {
 		int counter = 0;
 		for (MoreTraceableEdge<Object> edge : edges) {
