@@ -272,6 +272,13 @@ public class MMilieuNetworkParameterMap extends
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_FADE_OUT_AMOUNT,
 				new Double(amount));
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Set fade out amount: " + amount);
+		}
+		// LOGGING ->
+
 	}
 	
 	public void setDynFadeOutInterval(int milieu, double amount) {

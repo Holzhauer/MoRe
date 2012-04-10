@@ -63,7 +63,7 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 		// fetch number of households along milieu groups (not milieus!):
 		String sql = "SELECT milieu, " + "k, " + "p_rewire, " + "SEARCH_RADIUS, " + "X_SEARCH_RADIUS, "
 				+ "MAX_SEARCH_RADIUS, " + "DIM_WEIGHT_GEO, " + "DIM_WEIGHT_MILIEU, " + "DYN_DECREASE_AMOUNT, " +
-				"DYN_INTERVAL_LINK_MANAGEMENT, " + "DYN_INTERVAL_EDGE_UPDATING " + "DYN_FADE_OUT_AMOUNT " + "DYN_FADE_OUT_INTERVAL "
+				"DYN_INTERVAL_LINK_MANAGEMENT, " + "DYN_INTERVAL_EDGE_UPDATING, " + "DYN_FADE_OUT_AMOUNT, " + "DYN_FADE_OUT_INTERVAL "
 				+ "FROM " + t1 + " AS t1 " + "WHERE paramID ="
 				+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + ";";
 
@@ -96,8 +96,8 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 				map.setDynEdgeUpdatingInverval(milieu, result.getInt("DYN_INTERVAL_EDGE_UPDATING"));
 				map.setDynLinkManagementInverval(milieu, result.getInt("DYN_INTERVAL_LINK_MANAGEMENT"));
 				
-				map.setDynFadeOutAmount(milieu, result.getInt("DYN_FADE_OUT_AMOUNT"));
-				map.setDynFadeOutInterval(milieu, result.getInt("DYN_FADE_OUT_INTERVAL"));
+				map.setDynFadeOutAmount(milieu, result.getDouble("DYN_FADE_OUT_AMOUNT"));
+				map.setDynFadeOutInterval(milieu, result.getDouble("DYN_FADE_OUT_INTERVAL"));
 
 				String sql2 = "SELECT partnerMilieu, " + "p_links " + "FROM " + t2 + " AS t2 " + "WHERE paramID="
 						+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + " AND " + "milieu=" + milieu

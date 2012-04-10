@@ -74,6 +74,35 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 
 	public MRepastEdge(AgentT source, AgentT target, boolean directed, double weight) {
 		super(source, target, directed, weight);
+
+		// schedule fading out:
+		Object agent = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ? 
+				this.getStart() : this.getEnd(); 
+		this.fadeAmount = (agent instanceof MoreMilieuAgent && PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) ? 
+				((MMilieuNetworkParameterMap)PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).
+				getDynFadeOutAmount(((MoreMilieuAgent) agent).getMilieuGroup()) :
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
+				.doubleValue();
+				
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(agent + "> Fading amount: " + fadeAmount + " Net params: " + PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
+		}
+		// LOGGING ->
+				
+		if (fadeAmount > 0.0) {
+
+			
+			MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(1.0,
+					((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_INTERVAL)).doubleValue(),
+					Double.POSITIVE_INFINITY, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
+				@Override
+				public void execute() {
+					MRepastEdge.this.fadeWeight();
+				}
+			});
+		}
+		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("Edge created");
@@ -84,26 +113,6 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 			}
 		}
 		// LOGGING ->
-
-		// schedule fading out:
-		Object agent = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ? 
-				this.getStart() : this.getEnd(); 
-		this.fadeAmount = (agent instanceof MoreMilieuAgent && PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) ? 
-				((MMilieuNetworkParameterMap)PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).
-				getDynFadeOutAmount(((MoreMilieuAgent) agent).getMilieuGroup()) :
-				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
-				.doubleValue();
-		if (fadeAmount > 0.0) {
-			MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(1.0,
-					((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_INTERVAL)).doubleValue(),
-					Double.POSITIVE_INFINITY, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
-
-				@Override
-				public void execute() {
-					MRepastEdge.this.fadeWeight();
-				}
-			});
-		}
 	}
 	
 	/**
