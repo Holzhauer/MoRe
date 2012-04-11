@@ -227,8 +227,8 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	 */
 	@Override
 	public V getRandomPredecessor(V ego) {
-		return new ArrayList<V>(getPredecessors(ego)).get(randomNodeSelectionStream.nextIntFromTo(0, 
-				getPredecessorCount(ego)));
+		return getPredecessorCount(ego) > 0 ? new ArrayList<V>(getPredecessors(ego)).get(randomNodeSelectionStream.nextIntFromTo(0, 
+				getPredecessorCount(ego))): null;
 	}
 	
 	/**

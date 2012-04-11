@@ -69,8 +69,6 @@ public class MNetworkManager {
 	 * Add a new {@link MoreNetwork} to the network manager
 	 * @param network the network to add
 	 * @param name the network's identifier
-	 * 
-	 * Created by Sascha Holzhauer on 03.01.2011
 	 */
 	public static void setNetwork(MoreNetwork<?, ?> network, String name) {
 		networks.put(name, network);
@@ -85,7 +83,6 @@ public class MNetworkManager {
 	/**
 	 * @param name name of requested network
 	 * @return
-	 * Created by Sascha Holzhauer on 24.05.2011
 	 */
 	public static MoreNetwork<?,?> getNetwork(String name) {
 		if (networks.get(name) == null) {

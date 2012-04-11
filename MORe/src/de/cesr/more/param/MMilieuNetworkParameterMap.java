@@ -169,6 +169,58 @@ public class MMilieuNetworkParameterMap extends
 				new Double(weight));
 	}
 
+	
+	public double getDynProbReciprocity(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_PROP_RECIPROCITY, milieu) ?  
+				((Double)PmParameterManager.getParameter(MNetManipulatePa.DYN_PROP_RECIPROCITY)).doubleValue() :
+			((Double) this.get(new Integer(milieu)).get(
+					MNetManipulatePa.DYN_PROP_RECIPROCITY))
+				.doubleValue();
+	}
+
+	public void setDynProbReciprocity(int milieu, double weight) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_PROP_RECIPROCITY,
+				new Double(weight));
+	}
+	
+	public double getDynProbTransitivity(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_PROP_TRANSITIVIY, milieu) ?  
+				((Double)PmParameterManager.getParameter(MNetManipulatePa.DYN_PROP_TRANSITIVIY)).doubleValue() :
+			((Double) this.get(new Integer(milieu)).get(
+					MNetManipulatePa.DYN_PROP_TRANSITIVIY))
+				.doubleValue();
+	}
+
+	public void setDynProbTransitivity(int milieu, double weight) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_PROP_TRANSITIVIY,
+				new Double(weight));
+	}
+
+	public double getDynProbGlobal(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_PROP_GLOBAL, milieu) ?  
+				((Double)PmParameterManager.getParameter(MNetManipulatePa.DYN_PROP_GLOBAL)).doubleValue() :
+			((Double) this.get(new Integer(milieu)).get(
+					MNetManipulatePa.DYN_PROP_GLOBAL))
+				.doubleValue();
+	}
+
+	public void setDynProbGlobal(int milieu, double weight) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_PROP_GLOBAL,
+				new Double(weight));
+	}
+	
 	/**
 	 * @param ownMilieu
 	 *            milieu id (starting with 1!)

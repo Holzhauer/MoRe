@@ -44,9 +44,20 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 
 	DYN_FADE_OUT_AMOUNT(Double.class, 0.000),
 	DYN_FADE_OUT_INTERVAL(Double.class, 1.0),
+	
+	DYN_PROP_RECIPROCITY(Double.class, 1.0),
+	DYN_PROP_TRANSITIVIY(Double.class, 1.0),
+	DYN_PROP_GLOBAL(Double.class, 1.0),
+	
 
 	DYN_INTERVAL_EDGE_UPDATING(Integer.class, 0),
-	DYN_INTERVAL_LINK_MANAGEMENT(Integer.class, 0);
+	DYN_INTERVAL_LINK_MANAGEMENT(Integer.class, 0),
+	
+	/**
+	 * Connect agents only to those the focal agents has
+	 * not been connected before.
+	 */
+	DYN_USE_BLACKLIST(Boolean.class, Boolean.FALSE);
 
 	private Class<?>	type;
 	private Object		defaultValue;
