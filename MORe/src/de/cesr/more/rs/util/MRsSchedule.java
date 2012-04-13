@@ -26,11 +26,14 @@ package de.cesr.more.rs.util;
 
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.AbstractAction;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
@@ -63,10 +66,24 @@ public class MRsSchedule implements MoreSchedule {
 	 * Since RS identifies IActions by identity, theses objects need to be archived:
 	 */
 	Map<MoreAction, ISchedulableAction>	actions;
+	Map<Double, Set<MoreAction>>		actionRemoveTicks;
 
 	public MRsSchedule(ISchedule schedule) {
 		this.schedule = schedule;
 		this.actions = new HashMap<MoreAction, ISchedulableAction>();
+		this.actionRemoveTicks = new HashMap<Double, Set<MoreAction>>();
+
+		this.schedule.schedule(ScheduleParameters.createRepeating(1.0, 1.0, ScheduleParameters.FIRST_PRIORITY), this,
+				"tidyUp");
+	}
+
+	public void tidyUp() {
+		if (actionRemoveTicks.containsKey(RunEnvironment.getInstance().getCurrentSchedule().getTickCount() - 1.0)) {
+			for (MoreAction action : actionRemoveTicks
+					.get(RunEnvironment.getInstance().getCurrentSchedule().getTickCount() - 1.0)) {
+				this.removeAction(action);
+			}
+		}
 	}
 
 	/**
@@ -89,7 +106,9 @@ public class MRsSchedule implements MoreSchedule {
 	 */
 	@Override
 	public void schedule(MScheduleParameters params, final MoreAction action) {
-		ScheduleParameters rSparams = ScheduleParameters.createRepeating(params.getStart(), params
+		ScheduleParameters rSparams = params.getStart() == params.getEnd() ? ScheduleParameters.createOneTime(
+				params.getStart(), params.getPriority()) :
+				ScheduleParameters.createRepeating(params.getStart(), params
 				.getInterval(), params.getPriority());
 		ISchedulableAction newAction = new AbstractAction(rSparams) {
 
@@ -100,13 +119,23 @@ public class MRsSchedule implements MoreSchedule {
 
 			@Override
 			public void execute() {
-				logger.debug("Execute action: " + action );
+				logger.debug("Execute action: " + action + "...");
 				action.execute();
+				if (logger.isDebugEnabled()) {
+					logger.debug("Action: " + action + " executed!");
+					logger.debug(getScheduleInfo());
+					logger.debug("num of Actions: " + schedule.getActionCount());
+				}
 			}
 
 		};
 		actions.put(action, newAction);
-		logger.debug("Schedule MoreAction: " + action + "Parameter: " + params);
+		Double end = params.getEnd();
+		if (!actionRemoveTicks.containsKey(end)) {
+			actionRemoveTicks.put(end, new HashSet<MoreAction>());
+		}
+		actionRemoveTicks.get(end).add(action);
+		logger.debug("Schedule MoreAction: " + action + " - Parameter: " + params);
 		schedule.schedule(rSparams, newAction);
 		logger.debug("Scheduled IAction: " + newAction);
 	}
@@ -118,9 +147,13 @@ public class MRsSchedule implements MoreSchedule {
 	@Override
 	public String getScheduleInfo() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("MSchedule Information:\n");
+		buffer.append("MSchedule Information(next time / priority / order index / key):\n");
 		for (Entry<MoreAction,ISchedulableAction> a : actions.entrySet()) {
 			buffer.append(MManager.getFloatPointFormat().format(a.getValue().getNextTime()));
+			buffer.append("\t: ");
+			buffer.append(MManager.getFloatPointFormat().format(a.getValue().getPriority()));
+			buffer.append("\t: ");
+			buffer.append(MManager.getFloatPointFormat().format(a.getValue().getOrderIndex()));
 			buffer.append("\t: ");
 			buffer.append(a.getKey());
 			buffer.append("\n");

@@ -65,18 +65,21 @@ public class MRService implements RMainLoopCallbacks{
 	 */
 	private MRService() {
 		// Stop R engine:
-		MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(MScheduleParameters.END_TICK, 1,
-				MScheduleParameters.END_TICK, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
-					@Override
-					public void execute() {
-						MRService.endEngine();
-					}
-					
-					@Override
-					public String toString() {
-						return "Stops REngine";
-					}
-				});
+
+		MManager.getSchedule().schedule(
+				MScheduleParameters.getScheduleParameter(MScheduleParameters.END_TICK, 0,
+						MScheduleParameters.END_TICK, Double.POSITIVE_INFINITY), new MoreAction() {
+			@Override
+			public void execute() {
+						logger.debug("Execute action: " + toString());
+						// MRService.endEngine();
+			}
+
+			@Override
+			public String toString() {
+						return "Stops REngine" + new Object();
+			}
+		});
 	}
 	
 	/**
@@ -97,10 +100,22 @@ public class MRService implements RMainLoopCallbacks{
 	 * 
 	 */
 	static public void endEngine() {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Stopp REngine...");
+		}
+		// LOGGING ->
 		Rengine re = Rengine.getMainEngine();
 		if (re != null) {
 			re.end();
 		}
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("REngine stopped!");
+		}
+		// LOGGING ->
+
 	}
 	
 	/**
@@ -133,6 +148,7 @@ public class MRService implements RMainLoopCallbacks{
 		re.eval("library(igraph)");
 		re.eval("el <- matrix(" + edgelist + ", ncol = 2, byrow = TRUE)");
 		re.eval(targetSymbol + " <- graph.edgelist( el , directed=" + ((graph instanceof DirectedGraph) ? "TRUE" : "FALSE") + ")");
+		logger.debug("Graph object assigned.");
 	}
 	
 
@@ -158,6 +174,7 @@ public class MRService implements RMainLoopCallbacks{
 	        }
 	        
 		}
+		logger.debug("Returning Rengine");
 		return re;
 	}
 	

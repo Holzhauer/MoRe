@@ -81,6 +81,7 @@ public class MNetworkStatisticsR {
 		}
 		// LOGGING ->
 
+		logger.info("Calculate AvgPathLength...");
 		result = re.eval("average.path.length(g, directed=" + ((graph instanceof DirectedGraph) ? "TRUE" : "FALSE") + " , " +
 				"unconnected=" + (considerIsolates ? "FALSE" : "TRUE")+ ")");
 		logger.info("Result: " + result);
