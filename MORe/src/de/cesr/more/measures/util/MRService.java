@@ -72,7 +72,7 @@ public class MRService implements RMainLoopCallbacks{
 			@Override
 			public void execute() {
 						logger.debug("Execute action: " + toString());
-						// MRService.endEngine();
+						MRService.endEngine();
 			}
 
 			@Override

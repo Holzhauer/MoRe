@@ -49,6 +49,14 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	DYN_PROP_TRANSITIVIY(Double.class, 1.0),
 	DYN_PROP_GLOBAL(Double.class, 1.0),
 	
+	/**
+	 * Determines the level of perfectionism with which agents
+	 * choose optimal partners. Takes only effect in case
+	 * the instance of {@link MoreEgoNetworkProcessor} considers the parameter.
+	 * The higher the parameter the better the perfectionism. 
+	 * 
+	 */
+	DYN_EDGE_MANAGE_OPTIMUM(Double.class, 1.0),
 
 	DYN_INTERVAL_EDGE_UPDATING(Integer.class, 0),
 	DYN_INTERVAL_LINK_MANAGEMENT(Integer.class, 0),

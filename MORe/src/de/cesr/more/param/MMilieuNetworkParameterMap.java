@@ -350,7 +350,23 @@ public class MMilieuNetworkParameterMap extends
 							.doubleValue();
 	}
 	
+	public void setDynEdgeManageOptimum(int milieu, double amount) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM,
+				new Double(amount));
+	}
 
+	public double getDynEdgeManageOptimum(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM))
+							.doubleValue();
+	}
+	
 
 	/**
 	 * Checks if the requested value is defined in the map and
