@@ -102,9 +102,9 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 				
 				map.setDynProbReciprocity(milieu, result.getDouble("DYN_PROB_RECIPROCITY"));
 				map.setDynProbTransitivity(milieu, result.getDouble("DYN_PROB_TRANSITIVITY"));
-				map.setDynProbGlobal(milieu, result.getDouble("DYN_EDGE_MANAGE_OPTIMUM"));
 				
-				map.setDynEdgeManageOptimum(milieu, result.getDouble("DYN_PROB_GLOBAL"));
+				map.setDynEdgeManageOptimum(milieu, result.getDouble("DYN_EDGE_MANAGE_OPTIMUM"));				
+				map.setDynProbGlobal(milieu, result.getDouble("DYN_PROB_GLOBAL"));
 
 				String sql2 = "SELECT partnerMilieu, " + "p_links " + "FROM " + t2 + " AS t2 " + "WHERE paramID="
 						+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + " AND " + "milieu=" + milieu
