@@ -78,12 +78,18 @@ public class MDefaultPartnerFinder<AgentType, EdgeType> implements MorePartnerFi
 	public AgentType findPartner(Collection<AgentType> agents, Graph<AgentType, EdgeType> graph, AgentType focal,
 			boolean incoming) {
 		ArrayList<AgentType> list = new ArrayList<AgentType>(agents);
-		AgentType partner = null;
-		do {
-			partner = list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
-		} while (partner == focal || incoming && graph.isPredecessor(partner, focal) || !incoming
-				&& graph.isSuccessor(partner, partner));
-		return partner;
+		list.remove(focal);
+		if (incoming) {
+			list.remove(graph.getPredecessors(focal));
+		} else {
+			list.remove(graph.getSuccessors(focal));
+		}
+		
+		if (list.size() > 0) {
+			return list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
+		} else {
+			return null;
+		}
 	}
 
 	protected Uniform getRandomDist() {

@@ -83,12 +83,15 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		}
 
 		AgentType random;
-		ArrayList<AgentType> list;
-		if (agents instanceof ArrayList) {
-			list = (ArrayList<AgentType>) agents;
+		ArrayList<AgentType> list = new ArrayList<AgentType>(agents);
+		
+		list.remove(focal);
+		if (incoming) {
+			list.remove(graph.getPredecessors(focal));
 		} else {
-			list = new ArrayList<AgentType>(agents);
+			list.remove(graph.getSuccessors(focal));
 		}
+		
 		boolean rewired = false;
 		// fetch random partner:
 		do {
