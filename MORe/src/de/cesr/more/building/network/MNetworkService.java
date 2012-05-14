@@ -43,6 +43,8 @@ import de.cesr.more.util.Log4jLogger;
 /**
  * MORe
  * 
+ * TODO extract context property! (maybe create MRsNetworkService)
+ * 
  * Provides basic functionality for network generators
  *
  * @author holzhauer
