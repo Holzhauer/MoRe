@@ -209,4 +209,10 @@ public class MNetworkManager {
 		}
 		// LOGGING ->
 	}
+	
+	public static void reset() {
+		networks = new HashMap<String, MoreNetwork<?,?>>();
+		measureStorage = new MNetworkMeasureStorage();
+		measureClusterStorage = new MNetworkClusterMeasureStorage();
+	}
 }

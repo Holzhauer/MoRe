@@ -73,7 +73,7 @@ public class MRsCompleteNetworkBuilderTest {
 		for (int i = 0; i < NUM_AGENTS; i++) {
 			agents.add(new MTestNode());
 		}
-
+		
 		MRsCompleteNetworkBuilder<MTestNode, MRepastEdge<MTestNode>> netService =
 				new MRsCompleteNetworkBuilder<MTestNode, MRepastEdge<MTestNode>>(
 						new MRsEdgeFactory<MTestNode, MRepastEdge<MTestNode>>());

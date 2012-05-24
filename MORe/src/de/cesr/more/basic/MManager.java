@@ -163,4 +163,12 @@ public class MManager {
 		}
 		return randomService;
 	}
+	
+	public static void reset() {
+		schedule = null;
+		randomService = null;
+		integerFormat = null;
+		floatPointFormat = null;
+		MNetworkManager.reset();
+	}
 }
