@@ -68,6 +68,11 @@ public class MLattice2DGenerator<T, E extends MoreEdge<T>> {
    */
 	public MoreNetwork<T, E> createNetwork(MoreNetwork<T, E> network, MoreNetworkEdgeModifier<T, E> edgeModifier) {
 	    latticeSize = (int) Math.floor(Math.sqrt(network.numNodes()));
+	    
+	    if (network.numNodes() != latticeSize * latticeSize) {
+	    	throw new IllegalArgumentException("Number of nodes must be a square number (but is " + network.numNodes() + ")");
+	    }
+	    
 	    Set<T> set = new LinkedHashSet<T>();
 	    for (T node : network.getNodes()) {
 	      set.add(node);

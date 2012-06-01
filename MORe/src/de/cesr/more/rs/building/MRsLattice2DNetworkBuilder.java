@@ -116,6 +116,7 @@ public class MRsLattice2DNetworkBuilder<AgentType, EdgeType extends MRepastEdge<
 			// LOGGING ->
 
 			network.addNode(agent);
+			context.add(agent);
 		}
 		network = (MoreRsNetwork<AgentType, EdgeType>) latticeGenerator.createNetwork(network, edgeModifier);
 		return  network;

@@ -43,6 +43,6 @@ import de.cesr.more.testing.rs.building.geo.MGeoRsWattsBetaSwBuilderTest;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ MRsCompleteNetworkBuilderTest.class })
+@SuiteClasses({ MRsCompleteNetworkBuilderTest.class, MRsLattice2DNetworkBuilderTest.class })
 public class MAllRsNetworkBuilderTests {
 }
