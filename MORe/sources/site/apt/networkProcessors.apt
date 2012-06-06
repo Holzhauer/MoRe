@@ -1,0 +1,77 @@
+	----------------
+	MoRe
+	----------------
+	Sascha Holzhauer
+	----------------
+	2012-06-04
+
+Using Network Processors
+
+* Introduction
+  
+  Network processors allow to manipulate network links according to differences between partners regarding some node property.
+  There is an agent component (<<<MEgoNetworkManagerComp>>>) that takes care of updating link weights and removing and establishing 
+  links if required.
+  
+  
+* Events and Processors
+
+  Predefined <<<MoreEgoNetworkEvent>>>s:
+  
+  * <<<MLinkManagingEvent>>>: Handles removing and creation of new links.
+  
+  * <<<MLinkWeightUpdatingEvent>>>: Updates link weights.
+  
+  
+  Predefined Processors
+  
+  * <<<MThresholdWeightProcessor>>>: In case the node properties undergo a certain threshold (<<<MNetManipulatePa#DYN_INCREASE_THRESHOLD>>>), 
+  weights are increased by <<<MNetManipulatePa#DYN_INCREASE_AMOUNT>>>. As the opposite, if properties exceed a threshold
+  <<<MNetManipulatePa#DYN_INCREASE_THRESHOLD>>>), weights get decreased by <<<MNetManipulatePa#DYN_DECREASE_THRESHOLD>>>.
+  
+  * <<<MThresholdLinkProcessor>>>:
+  
+  * <<<MMilieuThresholdWeightProcessor>>>: Considers milieu-specific parameter values for thresholds and change amounts.
+  
+  
+* Requirements for using network processors
+
+ * Agents need to be assigned the <<<MEgoNetworkManagerComp>>>.
+ 
+ * Agents need to implement <<<MoreNetStructureManageable>>> that provides access to the <<<MEgoNetworkManagerComp>>>.
+ 
+ * The network processor component is initialised...
+ 
+   +--
+ 	Map<MoreEgoNetworkEvent, MoreEgoNetworkProcessor<V, E>> map = MEgoNetworkManagerComp
+				.getEmptyProcessorMap();
+
+		MoreNetworkEdgeModifier<V, E> edgeModifier = new MDefaultNetworkEdgeModifier<V; E>(new MDefaultEdgeFactory<V>());
+		
+		map.put(MLinkManagingEvent.getInstance(),
+				(Class<MoreEgoNetworkProcessor<V, E>>) DYN_EDGE_MANAGER);
+		map.put(MLinkWeightUpdatingEvent.getInstance(),
+				((Class<MoreEgoNetworkProcessor<V, E>>>) DYN_EDGE_WEIGHT_UPDATER);
+
+		MoreEgoNetworkManagerComp<V, E> egoNetManager = new MEgoNetworkManagerComp<V, E>(map);
+   +--
+  
+ * ... and assigned to all agents:
+ 
+   +--
+	for (V agent : agents) {
+		agent.setEgoNetworkManager(egoNetManager);
+	}
+   +--
+
+ * Agents need to call regularly the agent component's process method for certain events:
+ 
+  +--
+  getEgoNetworkManager().process(MLinkManagingEvent.getInstance(), this, getMainNetwork());
+  +--
+  
+  
+ * Analysis
+ 
+  In case an agent implements <<<MoreLinkManipulationAnalysableAgent>>>, some processors (e.g. <<<MBlacklistThresholdLinkProcessor>>>
+  provide information about link manipulations.

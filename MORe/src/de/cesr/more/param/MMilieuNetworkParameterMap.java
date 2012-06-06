@@ -292,6 +292,43 @@ public class MMilieuNetworkParameterMap extends
 				new Integer(interval));
 	}
 
+	// INCREASE
+	
+	public double getDynIncreaseAmount(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_INCREASE_AMOUNT, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_INCREASE_AMOUNT)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_INCREASE_AMOUNT))
+							.doubleValue();
+	}
+
+	public void setDynIncreaseAmount(int milieu, double amount) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_INCREASE_AMOUNT,
+				new Double(amount));
+	}
+	
+	public double getDynIncreaseThreshold(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_INCREASE_THRESHOLD, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_INCREASE_THRESHOLD)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_INCREASE_THRESHOLD))
+							.doubleValue();
+	}
+
+	public void setDynIncreaseThreshold(int milieu, double threshold) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_INCREASE_THRESHOLD,
+				new Double(threshold));
+	}
+	
+	// DECRESE
 	public double getDynDecreaseAmount(int milieu) {
 		return warnDefault(MNetManipulatePa.DYN_DECREASE_AMOUNT, milieu) ?
 				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_DECREASE_AMOUNT)).doubleValue() :
@@ -307,6 +344,23 @@ public class MMilieuNetworkParameterMap extends
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_DECREASE_AMOUNT,
 				new Double(amount));
+	}
+	
+	public double getDynDecreaseThreshold(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_DECREASE_THRESHOLD, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_DECREASE_THRESHOLD)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(
+							MNetManipulatePa.DYN_DECREASE_THRESHOLD))
+							.doubleValue();
+	}
+
+	public void setDynDecreaseThreshold(int milieu, double threshold) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_DECREASE_THRESHOLD,
+				new Double(threshold));
 	}
 
 	public double getDynFadeOutAmount(int milieu) {

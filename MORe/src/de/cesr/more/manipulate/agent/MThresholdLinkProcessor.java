@@ -39,6 +39,8 @@ import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 
 /**
  * MORe
+ * 
+ * When weights fall below zero, the according links are removed and another one is established.
  *
  * @author Sascha Holzhauer
  * @date 29.03.2012 

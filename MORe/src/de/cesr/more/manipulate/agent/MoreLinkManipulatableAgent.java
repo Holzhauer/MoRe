@@ -26,8 +26,8 @@ package de.cesr.more.manipulate.agent;
 /**
  * MORe
  *
- * Interface for agent classes that shall use a link manipulation component like
- * {@link MEgoNetworkManagerComp}
+ * Interface for agent classes that shall use a link manipulation processor like
+ * {@link MThresholdLinkProcessor}
  * 
  * @author Sascha Holzhauer
  * @date 21.04.2011 

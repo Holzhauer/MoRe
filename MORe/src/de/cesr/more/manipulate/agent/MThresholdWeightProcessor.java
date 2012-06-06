@@ -35,6 +35,10 @@ import de.cesr.parma.core.PmParameterManager;
 /**
  * MORe
  *
+ * In case the node properties undergo a certain threshold ({@link MNetManipulatePa#DYN_INCREASE_THRESHOLD}), weights are
+ * increased by ({@link MNetManipulatePa#DYN_INCREASE_AMOUNT}). As the opposite, if properties exceed a threshold
+ * ({@link MNetManipulatePa#DYN_INCREASE_THRESHOLD}), weights get decreased by ({@link MNetManipulatePa#DYN_DECREASE_THRESHOLD}).
+ * 
  * @author Sascha Holzhauer
  * @date 29.03.2012 
  *
@@ -55,11 +59,11 @@ public class MThresholdWeightProcessor<A extends MoreLinkManipulatableAgent<A>, 
 
 
 	public MThresholdWeightProcessor() {
-		increaseThreshold = (Double) PmParameterManager.getParameter(MNetManipulatePa.INCREASE_THRESHOLD);
-		decreaseThreshold = (Double) PmParameterManager.getParameter(MNetManipulatePa.INCREASE_THRESHOLD);
+		increaseThreshold = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_INCREASE_THRESHOLD);
+		decreaseThreshold = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_DECREASE_THRESHOLD);
 
-		increaseAmount = (Double) PmParameterManager.getParameter(MNetManipulatePa.INCREASE_THRESHOLD);
-		decreaseAmount = (Double) PmParameterManager.getParameter(MNetManipulatePa.INCREASE_THRESHOLD);
+		increaseAmount = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_INCREASE_AMOUNT);
+		decreaseAmount = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_DECREASE_AMOUNT);
 	}
 
 	/**
@@ -90,5 +94,4 @@ public class MThresholdWeightProcessor<A extends MoreLinkManipulatableAgent<A>, 
 			}
 		}
 	}
-
 }

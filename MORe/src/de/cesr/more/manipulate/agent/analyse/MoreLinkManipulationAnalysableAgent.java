@@ -19,27 +19,25 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 29.03.2012
+ * Created by Sascha Holzhauer on 05.06.2012
  */
-package de.cesr.more.manipulate.agent;
-
-
-import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.basic.network.MoreNetwork;
-
+package de.cesr.more.manipulate.agent.analyse;
 
 /**
  * MORe
- *
+ * 
+ * Interface for agents that shall receive information about link manipulation.
+ * 
  * @author Sascha Holzhauer
- * @date 29.03.2012 
+ * @date 05.06.2012 
  *
  */
-public interface MoreEgoNetworkProcessor<A, E extends MoreEdge<? super A>> {
-
+public interface MoreLinkManipulationAnalysableAgent {
+	
+	
 	/**
-	 * @param agent
-	 * @param network
+	 * @param counter
 	 */
-	public void process(A agent, MoreNetwork<A, E> network);
+	public void setNumNewLinks(int counter);
+
 }

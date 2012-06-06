@@ -63,6 +63,7 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 		// fetch number of households along milieu groups (not milieus!):
 		String sql = "SELECT milieu, " + "k, " + "p_rewire, " + "SEARCH_RADIUS, " + "X_SEARCH_RADIUS, "
 				+ "MAX_SEARCH_RADIUS, " + "DIM_WEIGHT_GEO, " + "DIM_WEIGHT_MILIEU, " + "DYN_DECREASE_AMOUNT, " +
+				"DYN_DECREASE_THRESHOLD, " + "DYN_INCREASE_AMOUNT, " + "DYN_INCREASE_THRESHOLD, " +
 				"DYN_INTERVAL_LINK_MANAGEMENT, " + "DYN_INTERVAL_EDGE_UPDATING, " + "DYN_FADE_OUT_AMOUNT, " + "DYN_FADE_OUT_INTERVAL, " +
 				"DYN_PROB_RECIPROCITY, " + "DYN_PROB_TRANSITIVITY, " + "DYN_PROB_GLOBAL, " + "DYN_EDGE_MANAGE_OPTIMUM "
 				+ "FROM " + t1 + " AS t1 " + "WHERE paramID ="
@@ -94,6 +95,10 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 				map.setDimWeightGeo(milieu, result.getDouble("DIM_WEIGHT_GEO"));
 				map.setDimWeightMilieu(milieu, result.getDouble("DIM_WEIGHT_MILIEU"));
 				map.setDynDecreaseAmount(milieu, result.getDouble("DYN_DECREASE_AMOUNT"));
+				map.setDynDecreaseThreshold(milieu, result.getDouble("DYN_DECREASE_THRESHOLD"));
+				map.setDynIncreaseAmount(milieu, result.getDouble("DYN_INCREASE_AMOUNT"));
+				map.setDynIncreaseThreshold(milieu, result.getDouble("DYN_INCREASE_THRESHOLD"));
+				
 				map.setDynEdgeUpdatingInverval(milieu, result.getInt("DYN_INTERVAL_EDGE_UPDATING"));
 				map.setDynLinkManagementInverval(milieu, result.getInt("DYN_INTERVAL_LINK_MANAGEMENT"));
 				

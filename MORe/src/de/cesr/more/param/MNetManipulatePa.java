@@ -35,11 +35,10 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public enum MNetManipulatePa implements PmParameterDefinition {
 
-	INCREASE_THRESHOLD(Double.class, 0.1),
-	DECREASE_THRESHOLD(Double.class, 0.5),
+	DYN_INCREASE_THRESHOLD(Double.class, 0.1),
+	DYN_DECREASE_THRESHOLD(Double.class, 0.5),
 
-	INCREASE_AMOUNT(Double.class, 0.1),
-
+	DYN_INCREASE_AMOUNT(Double.class, 0.1),
 	DYN_DECREASE_AMOUNT(Double.class, 0.1),
 
 	DYN_FADE_OUT_AMOUNT(Double.class, 0.000),
@@ -65,7 +64,9 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	 * Connect agents only to those the focal agents has
 	 * not been connected before.
 	 */
-	DYN_USE_BLACKLIST(Boolean.class, Boolean.FALSE);
+	DYN_USE_BLACKLIST(Boolean.class, Boolean.FALSE),
+	
+	DYN_BLACKLIST_NAME(String.class, "Blacklist Network");
 
 	private Class<?>	type;
 	private Object		defaultValue;

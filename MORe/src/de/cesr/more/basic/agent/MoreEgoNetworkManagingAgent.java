@@ -30,6 +30,8 @@ import de.cesr.more.manipulate.agent.MoreEgoNetworkManagerComp;
 
 /**
  * MORe
+ * 
+ * Provides access to an agent's {@link MoreEgoNetworkManagerComp}.
  *
  * @author Sascha Holzhauer
  * @date 29.03.2012 
