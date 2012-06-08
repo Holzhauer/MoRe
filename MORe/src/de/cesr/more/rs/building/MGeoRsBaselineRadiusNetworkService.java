@@ -140,9 +140,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
 		super(geography, edgeFac);
 		this.name = name;
-		this.paraMap = (MMilieuNetworkParameterMap) PmParameterManager
-			.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
-		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
 	}
 
 	/**
@@ -156,8 +153,9 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
-
+			
 		checkParameter();
+		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
 		
 		PmParameterManager.logParameterValues(MNetworkBuildingPa.values());
 		// <- LOGGING
@@ -213,7 +211,16 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		if (((MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)) == null) {
 			new MMilieuNetDataReader().initParameters();
+			
+			
+			if (this.paraMap == null) {
+				// <- LOGGING
+				logger.warn("Parameter MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has not been set! (Re-)Initialise it.");
+				// LOGGING ->
+			}
 		}
+		this.paraMap = (MMilieuNetworkParameterMap) PmParameterManager
+				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 	}
 
 	/**
