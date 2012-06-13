@@ -50,6 +50,8 @@ import edu.uci.ics.jung.algorithms.util.Indexer;
  * 
  * Uses {@link MRandomPa.RND_STREAM_RANDOM_NETWORK_BUILDING} instead of RS's RandomHelper.
  * 
+ * Uses the {@link MoreLinkProbProvider} if not null. Uses the given density parameter otherwise.
+ * 
  * @author Nick Collier
  * @author Sascha Holzhauer
  * @date 06.02.2012
@@ -67,6 +69,8 @@ public class MRandomNetworkGenerator<AgentType> {
 
 	Uniform								uniform;
 
+	MoreLinkProbProvider<AgentType>		linkProbProvider	= null;
+
 	/**
 	 * Creates a random network.
 	 * 
@@ -76,8 +80,11 @@ public class MRandomNetworkGenerator<AgentType> {
 	 *        whether or not self loops are allowed in the created network
 	 * @param symmetric
 	 *        whether or not ties will be bidirectional in the created network
+	 * @param linkProbProvider
+	 *        Provider of vertex specific link probabilities
 	 */
-	public MRandomNetworkGenerator(double density, boolean allowSelfLoops, boolean symmetric) {
+	public MRandomNetworkGenerator(double density, boolean allowSelfLoops, boolean symmetric,
+			MoreLinkProbProvider<AgentType> linkProbProvider) {
 		this.loops = allowSelfLoops;
 		this.isSymmetric = symmetric;
 		this.density = density;
@@ -89,7 +96,21 @@ public class MRandomNetworkGenerator<AgentType> {
 		this.uniform = MManager.getURandomService().getNewUniformDistribution(
 				MManager.getURandomService().getGenerator(
 						((String) PmParameterManager.getParameter(MRandomPa.RND_STREAM_RANDOM_NETWORK_BUILDING))));
-		logger.warn(uniform);
+		this.linkProbProvider = linkProbProvider;
+	}
+
+	/**
+	 * Creates a random network.
+	 * 
+	 * @param density
+	 *        the approximate density of the network
+	 * @param allowSelfLoops
+	 *        whether or not self loops are allowed in the created network
+	 * @param symmetric
+	 *        whether or not ties will be bidirectional in the created network
+	 */
+	public MRandomNetworkGenerator(double density, boolean allowSelfLoops, boolean symmetric) {
+		this(density, allowSelfLoops, symmetric, null);
 	}
 
 	/**
@@ -122,10 +143,12 @@ public class MRandomNetworkGenerator<AgentType> {
 	}
 
 	private Network<AgentType> symmetricLoops(Network<AgentType> network) {
+		double nodeDensity;
 		for (int i = 0, n = network.size(); i < n; i++) {
 			AgentType source = map.getKey(i);
+			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i; j < n; j++) {
-				if (uniform.nextDouble() < density) {
+				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
 					network.addEdge(source, target);
 					network.addEdge(target, source);
@@ -145,10 +168,12 @@ public class MRandomNetworkGenerator<AgentType> {
 	}
 
 	private Network<AgentType> nonSymmetricNoLoops(Network<AgentType> network) {
+		double nodeDensity;
 		for (int i = 0, n = network.size(); i < n; i++) {
 			AgentType source = map.getKey(i);
+			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i + 1; j < n; j++) {
-				if (uniform.nextDouble() < density) {
+				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
 					network.addEdge(source, target);
 				}
@@ -158,10 +183,12 @@ public class MRandomNetworkGenerator<AgentType> {
 	}
 
 	private Network<AgentType> nonSymmetricLoops(Network<AgentType> network) {
+		double nodeDensity;
 		for (int i = 0, n = network.size(); i < n; i++) {
 			AgentType source = map.getKey(i);
+			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i; j < n; j++) {
-				if (uniform.nextDouble() < density) {
+				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
 					network.addEdge(source, target);
 				}
@@ -171,10 +198,12 @@ public class MRandomNetworkGenerator<AgentType> {
 	}
 
 	private Network<AgentType> symmetricNoLoops(Network<AgentType> network) {
+		double nodeDensity;
 		for (int i = 0, n = network.size(); i < n; i++) {
 			AgentType source = map.getKey(i);
+			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i + 1; j < n; j++) {
-				if (uniform.nextDouble() < density) {
+				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
 					network.addEdge(source, target);
 					network.addEdge(target, source);

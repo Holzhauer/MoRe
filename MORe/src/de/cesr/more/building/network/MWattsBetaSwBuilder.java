@@ -36,6 +36,8 @@ import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
+import de.cesr.more.building.util.MoreBetaProvider;
+import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
@@ -106,11 +108,6 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 	@Override
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
-
-		if (context == null) {
-			logger.error("Context not set!");
-			throw new IllegalStateException("Context not set!");
-		}
 
 		MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager
 				.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?

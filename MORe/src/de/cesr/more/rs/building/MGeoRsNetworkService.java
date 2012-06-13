@@ -42,7 +42,6 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.building.network.MNetworkService;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
@@ -60,7 +59,7 @@ import de.cesr.parma.core.PmParameterManager;
  *
  */
 public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
-	extends MNetworkService<AgentType, EdgeType> implements	MoreGeoRsNetworkService<AgentType, EdgeType> {
+		extends MRsNetworkService<AgentType, EdgeType> implements MoreGeoRsNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger

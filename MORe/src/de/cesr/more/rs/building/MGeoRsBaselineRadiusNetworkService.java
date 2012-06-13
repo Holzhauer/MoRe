@@ -99,7 +99,8 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 22.07.2010
  * 
  */
-public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgent, 
+			EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
 		extends MGeoRsNetworkService<AgentType, EdgeType> {
 
 	/**

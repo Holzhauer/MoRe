@@ -30,8 +30,6 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import repast.simphony.context.Context;
-
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
@@ -42,8 +40,6 @@ import de.cesr.more.util.Log4jLogger;
 
 /**
  * MORe
- * 
- * TODO extract context property! (maybe create MRsNetworkService)
  * 
  * Provides basic functionality for network generators
  *
@@ -61,10 +57,6 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 		
 		protected MoreEdgeFactory<AgentType, EdgeType> edgeFac = null;
 
-		/**
-		 * The context the network belongs to.
-		 */
-		protected Context<AgentType>						   context;
 		
 		/**
 		 * should be accessed via getEdgeModifer...
@@ -191,6 +183,7 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 		/**
 		 * @param edgeModifier the edgeModifier to set
 		 */
+		@Override
 		public void setEdgeModifier(
 				MoreNetworkEdgeModifier<AgentType, EdgeType> edgeModifier) {
 			this.edgeModifier = edgeModifier;
@@ -201,6 +194,7 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 		 * To set a new {@link MoreEdgeFactory}, assign a new {@link MoreNetworkEdgeModifier}!
 		 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#getEdgeFactory()
 		 */
+		@Override
 		public MoreEdgeFactory<AgentType, EdgeType> getEdgeFactory() {
 			return edgeFac;
 		}

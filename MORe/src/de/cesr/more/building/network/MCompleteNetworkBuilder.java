@@ -93,7 +93,7 @@ public class MCompleteNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentT
 		MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED))?
 				new MDirectedNetwork<AgentType, EdgeType >(super.getEdgeFactory(), name) :
 					new MUndirectedNetwork<AgentType, EdgeType >(super.getEdgeFactory(), name);
-		for (AgentType agent : context) {
+		for (AgentType agent : agents) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug("Add agent " + agent + " to network.");
