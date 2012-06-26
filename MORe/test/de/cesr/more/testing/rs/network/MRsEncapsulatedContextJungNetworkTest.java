@@ -23,7 +23,6 @@ import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.lara.components.container.properties.impl.LFloatProperty;
-import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.environment.LaraEnvironment;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
@@ -78,24 +77,8 @@ public class MRsEncapsulatedContextJungNetworkTest {
 		LModel.setNewModel(new LAbstractStandaloneSynchronisedModel() {
 
 			@Override
-			public void finish() {
-			}
-
-			@Override
-			public void createAgents() {
-			}
-
-			@Override
-			protected void execute(LaraDecisionConfiguration dBuilder) {
-			}
-
-			@Override
 			public LaraRandom getLRandom() {
 				return new LRandomService((int) System.currentTimeMillis());
-			}
-
-			@Override
-			public void processStep() {
 			}
 		});
 		env = new MLaraNetworkEnvironment<TestAgent, MRepastEdge<TestAgent>>();

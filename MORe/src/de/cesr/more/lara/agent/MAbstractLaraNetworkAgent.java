@@ -53,7 +53,7 @@ import de.cesr.more.util.Log4jLogger;
  * @date 19.01.2010
  * 
  */
-public abstract class MAbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, ? extends BO>, E extends MoreEdge<? super A>>
+public abstract class MAbstractLaraNetworkAgent<A extends LaraAgent<A, BO>, BO extends LaraBehaviouralOption<?, BO>, E extends MoreEdge<? super A>>
 		extends LAbstractAgent<A, BO> implements MoreLaraNetworkAgent<A, E, BO>, MoreNodeMeasureSupport {
 
 	protected MoreAgentNetworkComp<A, E>	netComp;

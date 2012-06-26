@@ -43,7 +43,7 @@ import de.cesr.parma.core.PmParameterManager;
  *
  */
 public abstract class MAbstractLaraAnalyseNetworkAgent<A extends MoreLaraNetworkAgent<A, E, BO> &  MoreNodeMeasureSupport & 
-		MoreMilieuAgent, BO extends LaraBehaviouralOption<?, ? extends BO>, E extends MoreEdge<? super A>> 
+ MoreMilieuAgent, BO extends LaraBehaviouralOption<?, BO>, E extends MoreEdge<? super A>>
 		extends MAbstractLaraNetworkAgent<A, BO, E> implements MoreAgentAnalyseNetworkComp<A, E>{
 
 	Geography<Object> geography;
