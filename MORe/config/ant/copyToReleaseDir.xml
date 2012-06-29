@@ -6,7 +6,7 @@
 	 -->
  	
  	<property name="dest_dir" location="//Usf/home/holzhauer/Generell/Releases/MoRe" />
- 	<property name="version" value="0.80" />
+ 	<property name="version" value="0.81" />
  	
 	<property name="svn.info.rev" value="Not defined." />
 		
@@ -16,7 +16,7 @@
  	</target>
  	
  	
- 	<target name="copyDocFilesNew" depends="createReleaseDir, javadoc, removeExistingDocFiles">
+ 	<target name="copyDocFilesNew" depends="createReleaseDir">
  		  <copy todir="${dest_dir}/${version}/doc/new">
  		    <fileset dir="${src_dir}/docs/new/" includes="**/*.html"/>
  		  	<fileset dir="${src_dir}/docs/new/" includes="**/*.jpg"/>
@@ -25,7 +25,7 @@
  		  </copy>
  	</target>
  	
-	<target name="copyDocFilesAPI" depends="createReleaseDir, javadoc, removeExistingDocFiles">
+	<target name="copyDocFilesAPI" depends="createReleaseDir">
 		  <copy todir="${dest_dir}/${version}/doc/apidocs">
 		    <fileset dir="${src_dir}/docs/apidocs/" includes="**/*.html"/>
 		  	<fileset dir="${src_dir}/docs/apidocs/" includes="**/*.jpg"/>
@@ -71,7 +71,7 @@
          ================================= -->
     <target name="svn_infos" description="description">
     	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
-    	<svn javahl="false" username="holzhauer" password="holzhauer">
+    	<svn svnkit="true" javahl="false" username="holzhauer" password="holzhauer">
     		<info target="${basedir}/../"/>
     	</svn>
     	<echo>"Last Revision: ${svn.info.rev}"</echo>

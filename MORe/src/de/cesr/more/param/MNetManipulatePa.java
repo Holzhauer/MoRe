@@ -23,6 +23,7 @@
  */
 package de.cesr.more.param;
 
+import de.cesr.more.manipulate.agent.MoreEgoNetworkProcessor;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -47,7 +48,10 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	DYN_PROP_RECIPROCITY(Double.class, 1.0),
 	DYN_PROP_TRANSITIVIY(Double.class, 1.0),
 	DYN_PROP_GLOBAL(Double.class, 1.0),
+	DYN_PROP_LOCAL(Double.class, 1.0),
 	
+	DYN_LOCAL_RADIUS(Double.class, 1000.0),
+
 	/**
 	 * Determines the level of perfectionism with which agents
 	 * choose optimal partners. Takes only effect in case

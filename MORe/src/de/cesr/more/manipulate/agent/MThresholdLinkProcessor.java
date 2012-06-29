@@ -69,7 +69,7 @@ public class MThresholdLinkProcessor<A extends MoreLinkManipulatableAgent<A>, E 
 		int counter = 0;
 		for (A neighbour : net.getPredecessors(agent)) {
 			E edge = net.getEdge(neighbour, agent);
-			if (net.getEdge(neighbour, agent).getWeight() == 0.0) {
+			if (net.getEdge(neighbour, agent).getWeight() <= 0.0) {
 				edgeMan.removeEdge(net, neighbour, agent);
 				counter++;
 

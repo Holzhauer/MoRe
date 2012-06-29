@@ -221,6 +221,40 @@ public class MMilieuNetworkParameterMap extends
 				new Double(weight));
 	}
 	
+	public double getDynProbLocal(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_PROP_LOCAL, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_PROP_LOCAL)).doubleValue() :
+				((Double) this.get(new Integer(milieu)).get(
+						MNetManipulatePa.DYN_PROP_LOCAL))
+						.doubleValue();
+	}
+
+	public void setDynProbLocal(int milieu, double weight) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_PROP_LOCAL,
+				new Double(weight));
+	}
+
+	public double getDynLocalRadius(int milieu) {
+		return warnDefault(MNetManipulatePa.DYN_LOCAL_RADIUS, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_LOCAL_RADIUS)).doubleValue() :
+				((Double) this.get(new Integer(milieu)).get(
+						MNetManipulatePa.DYN_LOCAL_RADIUS))
+						.doubleValue();
+	}
+
+	public void setDynLocalRadius(int milieu, double weight) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetManipulatePa.DYN_LOCAL_RADIUS,
+				new Double(weight));
+	}
+
 	/**
 	 * @param ownMilieu
 	 *            milieu id (starting with 1!)

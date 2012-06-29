@@ -24,6 +24,8 @@
 package de.cesr.more.manipulate.agent;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,6 +34,7 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
+import repast.simphony.space.gis.Geography;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
@@ -47,14 +50,19 @@ import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.MDefaultPartnerFinder;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.rs.building.MorePartnerFinder;
+import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.parma.core.PmParameterManager;
+
 
 /**
  * MORe
- *
+ * 
+ * I assumes that agents have a static GIS location and do not move and caches agent's local potential interaction
+ * partners.
+ * 
  * @author Sascha Holzhauer
- * @date 05.06.2012 
- *
+ * @date 05.06.2012
+ * 
  */
 public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAgent<A> & MoreMilieuAgent, 
 		E extends MoreEdge<? super A>> extends MThresholdLinkProcessor<A, E> {
@@ -78,6 +86,15 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 
 	protected MorePartnerFinder<A, E> partnerFinder = new MDefaultPartnerFinder<A, E>();
 
+	protected MGeographyWrapper<Object>		geoWrapper										= null;
+
+	protected Map<A, Collection<A>>			locals											= new HashMap<A, Collection<A>>();
+
+	public MBlacklistThresholdLinkProcessor(
+			MoreNetworkEdgeModifier<A, E> edgeMan, Geography<Object> geography) {
+		this(edgeMan);
+		this.geoWrapper = new MGeographyWrapper<Object>(geography);
+	}
 	
 	public MBlacklistThresholdLinkProcessor(
 			MoreNetworkEdgeModifier<A, E> edgeMan) {
@@ -106,6 +123,13 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		return this.blacklistNetwork;
 	}
 
+	/**
+	 * Checks whether edge weights are equal/below zero, deletes these edges and add them to the blacklist network.
+	 * Furthermore, the same amount of deleted edges is created anew.
+	 * 
+	 * @see de.cesr.more.manipulate.agent.MThresholdLinkProcessor#process(de.cesr.more.manipulate.agent.MoreLinkManipulatableAgent,
+	 *      de.cesr.more.basic.network.MoreNetwork)
+	 */
 	@Override
 	public void process(A agent,
 			MoreNetwork<A, E> network) {
@@ -141,27 +165,32 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 	protected class TieCounter {
 		public int transitiveTies = 0;
 		public int reciprocalTies = 0;
+		public int	localTies		= 0;
 	}
 
 	/**
 	 * @param numNewConnections
 	 */
+	@Override
 	public void makeNewConnections(int numNewConnections, A agent,
 			MoreNetwork<A, E> net) {
 		Map<Double, Set<A>> potPartners = new TreeMap<Double, Set<A>>();
 
 		int transitiveTiesPool = 0;
 		int reciprocalTiesPool = 0;
+		int localTiesPool = 0;
 
 		TieCounter tieCounter = new TieCounter();
 
 		ArrayList<A> transitiveAgents = null;
 		ArrayList<A> reciprocalAgents = null;
+		ArrayList<A> localAgents = null;
 
 		if (logger.isInfoEnabled()) {
 			transitiveAgents = new ArrayList<A>();
 		}
 		reciprocalAgents = new ArrayList<A>();
+		localAgents = new ArrayList<A>();
 
 		// add reciprocal links:
 		for (A successor : net.getSuccessors(agent)) {
@@ -184,7 +213,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		for (A neighbour : net.getPredecessors(agent)) {
 			for (A third : net.getPredecessors(neighbour)) {
 
-				if (third != agent && !reciprocalAgents.contains(third)) {
+				if (third != agent) { // && !reciprocalAgents.contains(third)
 					if (rand.nextDouble() <= netParams.getDynProbTransitivity(agent.getMilieuGroup())) {
 						Double value = new Double(Math.abs(agent.getValueDifference(third)));
 						if (!potPartners.containsKey(value)) {
@@ -202,9 +231,36 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 			}
 		}
 	
+		// find near-by agents:
+		// check if model supports geography
+		if (geoWrapper != null) {
+			if (!locals.containsKey(agent)) {
+				locals.put(agent, (Collection<A>) geoWrapper.getSurroundingAgents(agent,
+						((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_LOCAL_RADIUS)).doubleValue(),
+						agent.getClass()));
+			}
+
+			for (A local : locals.get(agent)) {
+				if (local != null && !getBlacklistNetwork().isSuccessor(agent, local)) {
+					Double value = new Double(Math.abs(agent.getValueDifference(local)));
+					if (!potPartners.containsKey(value)) {
+						potPartners.put(value, new HashSet<A>());
+					}
+					potPartners.get(value).add(local);
+
+					if (logger.isInfoEnabled()) {
+						localTiesPool++;
+						localAgents.add(local);
+					}
+
+					potentiallyAddGlobalLink(agent, potPartners, net);
+				}
+			}
+		}
+
 		// create new links:
-		int counter = createNewLinks(numNewConnections, agent, net,
-				potPartners, tieCounter, transitiveAgents, reciprocalAgents);
+		int counter = numNewConnections - createNewLinks(numNewConnections, agent, net,
+				potPartners, tieCounter, transitiveAgents, reciprocalAgents, localAgents);
 
 		// fill required links with global ones:
 		int numAgents = net.numNodes();
@@ -213,8 +269,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 					net.getJungGraph(), agent, true);
 
 			if (global != null && !getBlacklistNetwork().isSuccessor(agent, global)) {
-				net.connect(global, agent);
-				edgeMan.createEdge(net, global, agent);
+				net.connect(edgeMan.createEdge(net, global, agent));
 				
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
@@ -244,6 +299,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 					+ "(transitive: " + tieCounter.transitiveTies
 					+ " / reciprocal: " + tieCounter.reciprocalTies + ")"
 					+ "(transitive Pool: " + transitiveTiesPool
+					+ "(local Pool: " + localTiesPool
 					+ " / reciprocal Pool: " + reciprocalTiesPool + ")");
 		}
 		// LOGGING ->
@@ -263,7 +319,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 			MoreNetwork<A, E> net,
 			Map<Double, Set<A>> potPartners,
 			TieCounter tieCounter, ArrayList<A> transitiveAgents,
-			ArrayList<A> reciprocalAgents) {
+			ArrayList<A> reciprocalAgents, ArrayList<A> localAgents) {
 		Iterator<Double> iterator = potPartners.keySet().iterator();
 		int counter = 0;
 		while (iterator.hasNext() && counter < numNewConnections) {
@@ -285,6 +341,9 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 						if (reciprocalAgents.contains(item)) {
 							tieCounter.reciprocalTies++;
 						}
+						if (localAgents.contains(item)) {
+							tieCounter.localTies++;
+						}
 					}
 					counter++;
 					// LOGGING ->
@@ -297,6 +356,14 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		return counter;
 	}
 
+	/**
+	 * For each transitive/reciprocal/local link a global one is added with probability
+	 * MNetManipulatePa.DYN_PROP_GLOBAL.
+	 * 
+	 * @param agent
+	 * @param potPartners
+	 * @param net
+	 */
 	protected void potentiallyAddGlobalLink(A agent,
 			Map<Double, Set<A>> potPartners, MoreNetwork<A, E> net) {
 		if (rand.nextDouble() <= netParams.getDynProbGlobal(agent.getMilieuGroup())) {
