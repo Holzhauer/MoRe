@@ -37,12 +37,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
+import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.supply.MAvgNearestNeighbourDegree;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetManipulatePa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
@@ -219,5 +221,15 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	@Override
 	public double getNetworkDistanceWeight(double meanDistance, double distance) {
 		return meanDistance / distance;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#getBlacklistSize()
+	 */
+	@Override
+	public int getBlacklistSize() {
+		return ((MoreNetwork<A, E>) MNetworkManager.getNetwork((String) PmParameterManager.
+				getParameter(MNetManipulatePa.DYN_BLACKLIST_NAME))).
+				getInDegree((A) this);
 	}
 }

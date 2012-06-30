@@ -39,6 +39,7 @@ import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
+import de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.manipulate.agent.analyse.MoreLinkManipulationAnalysableAgent;
@@ -160,6 +161,15 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 
 			makeNewConnections(counter, agent, network);
 		}		
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			if (agent instanceof MoreAgentAnalyseNetworkComp) {
+				logger.debug("Size of Blacklist: " + ((MoreAgentAnalyseNetworkComp) agent).getBlacklistSize());
+			}
+		}
+		// LOGGING ->
+
 	}
 
 	protected class TieCounter {
@@ -210,30 +220,31 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		}
 
 		// find transitivity links
-		for (A neighbour : net.getPredecessors(agent)) {
-			for (A third : net.getPredecessors(neighbour)) {
+		if (netParams.getDynProbTransitivity(agent.getMilieuGroup()) > 0.0) {
+			for (A neighbour : net.getPredecessors(agent)) {
+				for (A third : net.getPredecessors(neighbour)) {
 
-				if (third != agent) { // && !reciprocalAgents.contains(third)
-					if (rand.nextDouble() <= netParams.getDynProbTransitivity(agent.getMilieuGroup())) {
-						Double value = new Double(Math.abs(agent.getValueDifference(third)));
-						if (!potPartners.containsKey(value)) {
-							potPartners.put(value, new HashSet<A>());
-						}
-						potPartners.get(value).add(third);
+					if (third != agent) { // && !reciprocalAgents.contains(third)
+						if (rand.nextDouble() <= netParams.getDynProbTransitivity(agent.getMilieuGroup())) {
+							Double value = new Double(Math.abs(agent.getValueDifference(third)));
+							if (!potPartners.containsKey(value)) {
+								potPartners.put(value, new HashSet<A>());
+							}
+							potPartners.get(value).add(third);
 
-						if (logger.isInfoEnabled()) {
-							transitiveTiesPool++;
-							transitiveAgents.add(third);
+							if (logger.isInfoEnabled()) {
+								transitiveTiesPool++;
+								transitiveAgents.add(third);
+							}
 						}
+						potentiallyAddGlobalLink(agent, potPartners, net);
 					}
-					potentiallyAddGlobalLink(agent, potPartners, net);
 				}
 			}
 		}
-	
 		// find near-by agents:
 		// check if model supports geography
-		if (geoWrapper != null) {
+		if (geoWrapper != null && netParams.getDynProbLocal(agent.getMilieuGroup()) > 0.0) {
 			if (!locals.containsKey(agent)) {
 				locals.put(agent, (Collection<A>) geoWrapper.getSurroundingAgents(agent,
 						((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_LOCAL_RADIUS)).doubleValue(),
@@ -241,7 +252,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 			}
 
 			for (A local : locals.get(agent)) {
-				if (local != null && !getBlacklistNetwork().isSuccessor(agent, local)) {
+				if (local != null && (rand.nextDouble() <= netParams.getDynProbLocal(agent.getMilieuGroup()))) {
 					Double value = new Double(Math.abs(agent.getValueDifference(local)));
 					if (!potPartners.containsKey(value)) {
 						potPartners.put(value, new HashSet<A>());
@@ -283,7 +294,10 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 
 		
 		if (agent instanceof MoreLinkManipulationAnalysableAgent) {
-			((MoreLinkManipulationAnalysableAgent)agent).setNumNewLinks(counter);
+			((MoreLinkManipulationAnalysableAgent) agent).setNumNewLinks(counter);
+			((MoreLinkManipulationAnalysableAgent) agent).setNumNewTransitiveLinks(tieCounter.transitiveTies);
+			((MoreLinkManipulationAnalysableAgent) agent).setNumNewReciprocalLinks(tieCounter.reciprocalTies);
+			((MoreLinkManipulationAnalysableAgent) agent).setNumNewLocalLinks(tieCounter.localTies);
 		}
 		
 		
@@ -310,6 +324,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 	 * @param agent
 	 * @param net
 	 * @param potPartners
+	 *        order matters (use TreeMap)
 	 * @param tieCounter
 	 * @param transitiveAgents
 	 * @param reciprocalAgents
@@ -334,17 +349,17 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 						logger.debug("Edge created: "
 								+ net.getEdge(item, agent));
 					}
-					if (logger.isInfoEnabled()) {
-						if (transitiveAgents.contains(item)) {
-							tieCounter.transitiveTies++;
-						}
-						if (reciprocalAgents.contains(item)) {
-							tieCounter.reciprocalTies++;
-						}
-						if (localAgents.contains(item)) {
-							tieCounter.localTies++;
-						}
+
+					if (transitiveAgents.contains(item)) {
+						tieCounter.transitiveTies++;
 					}
+					if (reciprocalAgents.contains(item)) {
+						tieCounter.reciprocalTies++;
+					}
+					if (localAgents.contains(item)) {
+						tieCounter.localTies++;
+					}
+
 					counter++;
 					// LOGGING ->
 					if (counter == numNewConnections) {

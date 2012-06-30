@@ -90,4 +90,9 @@ public interface MoreAgentAnalyseNetworkComp<A, E extends MoreEdge<? super A>>
 	 */
 	@Override
 	public double getNetworkDistanceWeight(double meanDistance, double distance);
+
+	/**
+	 * @return number of agents in blacklist (with respect to DofN)
+	 */
+	public int getBlacklistSize();
 }

@@ -9,15 +9,11 @@
               	
          ================================= -->
     <target name="svn_infos" description="description">
-	  	<svnSetting
-	          svnkit="true"
+    	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
+    	<svn svnkit="true"
 	  		  javahl="false"
 	          username="holzhauer"
-	          password="holzhauer"
-	          id="svn.settings"
-      	/>
-    	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
-    	<svn refid="svn.settings">
+	          password="holzhauer">
     		<info target="${basedir}/../../src/de/cesr/more/util/io"/>
     	</svn>
     	<echo>"Last Revision: ${svn.info.rev}"</echo>

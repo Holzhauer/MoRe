@@ -26,8 +26,11 @@ package de.cesr.more.basic.agent;
 import org.apache.log4j.Logger;
 
 import repast.simphony.space.gis.Geography;
+import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.param.MBasicPa;
+import de.cesr.more.param.MNetManipulatePa;
 import de.cesr.more.rs.building.MoreDistanceAttachableAgent;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
@@ -143,5 +146,12 @@ public abstract class MAbstractAnalyseNetworkAgent<A extends MoreNetworkAgent<A,
 	@Override
 	public double getNetworkDistanceWeight(double meanDistance, double distance) {
 		return netComp.getNetworkDistanceWeight(meanDistance, distance);
+	}
+
+	@Override
+	public int getBlacklistSize() {
+		return ((MoreNetwork<A, E>) MNetworkManager.getNetwork((String) PmParameterManager.
+				getParameter(MNetManipulatePa.DYN_BLACKLIST_NAME))).
+				getInDegree((A) this);
 	}
 }
