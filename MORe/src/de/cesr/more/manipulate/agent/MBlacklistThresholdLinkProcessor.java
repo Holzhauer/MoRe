@@ -224,7 +224,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 			for (A neighbour : net.getPredecessors(agent)) {
 				for (A third : net.getPredecessors(neighbour)) {
 
-					if (third != agent) { // && !reciprocalAgents.contains(third)
+					if (third != agent && !reciprocalAgents.contains(third)) {
 						if (rand.nextDouble() <= netParams.getDynProbTransitivity(agent.getMilieuGroup())) {
 							Double value = new Double(Math.abs(agent.getValueDifference(third)));
 							if (!potPartners.containsKey(value)) {
@@ -270,7 +270,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		}
 
 		// create new links:
-		int counter = numNewConnections - createNewLinks(numNewConnections, agent, net,
+		int counter = createNewLinks(numNewConnections, agent, net,
 				potPartners, tieCounter, transitiveAgents, reciprocalAgents, localAgents);
 
 		// fill required links with global ones:
@@ -311,6 +311,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		if (logger.isInfoEnabled()) {
 			logger.info(agent + "> Number of established links: " + counter
 					+ "(transitive: " + tieCounter.transitiveTies
+					+ " / local: " + tieCounter.localTies
 					+ " / reciprocal: " + tieCounter.reciprocalTies + ")"
 					+ "(transitive Pool: " + transitiveTiesPool
 					+ "(local Pool: " + localTiesPool
