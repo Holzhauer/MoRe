@@ -307,6 +307,10 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 			((MoreLinkManipulationAnalysableAgent) agent).setNumNewTransitiveLinks(tieCounter.transitiveTies);
 			((MoreLinkManipulationAnalysableAgent) agent).setNumNewReciprocalLinks(tieCounter.reciprocalTies);
 			((MoreLinkManipulationAnalysableAgent) agent).setNumNewLocalLinks(tieCounter.localTies);
+			
+			((MoreLinkManipulationAnalysableAgent) agent).setNumPotTransitiveLinks(transitiveAgents.size());
+			((MoreLinkManipulationAnalysableAgent) agent).setNumPotReciprocalLinks(reciprocalAgents.size());
+			((MoreLinkManipulationAnalysableAgent) agent).setNumPotLocalLinks(localAgents.size());
 		}
 		
 		

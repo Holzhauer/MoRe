@@ -58,9 +58,24 @@ public class MoreIoUtilities {
 	 * @param outputFile the file to write the network to
 	 */
 	public static <V, E extends MoreEdge<? super V>> void outputGraph( final MoreNetwork<V, E> network, File outputFile) {
-		outputGraph(network, outputFile, null, null);
+		outputGraph(network, outputFile, null, null, null);
 	}
 
+	public static <V, E extends MoreEdge<? super V>> void outputGraph( final MoreNetwork<V, E> network, File outputFile,
+			Transformer<V, String> vertexIdsTransformer) {
+		outputGraph(network, outputFile, null, null, vertexIdsTransformer);
+	}
+	
+	/**
+	 * @param network
+	 * @param outputFile
+	 * @param vertexMetadata
+	 * @param edgeMetadata
+	 */
+	public static <V, E extends MoreEdge<? super V>> void outputGraph( final MoreNetwork<V, E> network, File outputFile,
+			Map<String, GraphMLMetadata<V>> vertexMetadata, Map<String, GraphMLMetadata<E>> edgeMetadata) {
+		outputGraph(network, outputFile, vertexMetadata, edgeMetadata, null);
+	}
 
 	/**
 	 * Allowed values for type in meta data: boolean, int, long, float, double, string
@@ -74,7 +89,8 @@ public class MoreIoUtilities {
 	 * @param edgeMetadata definition of meta-data for edges
 	 */
 	public static <V, E extends MoreEdge<? super V>> void outputGraph(final MoreNetwork<V, E> network, File outputFile,
-			Map<String, GraphMLMetadata<V>> vertexMetadata, Map<String, GraphMLMetadata<E>> edgeMetadata) {
+			Map<String, GraphMLMetadata<V>> vertexMetadata, Map<String, GraphMLMetadata<E>> edgeMetadata, 
+			Transformer<V, String> vertexIdsTransformer) {
 		
 		// <- start logging
 		long startTimeMillis = 0;
@@ -110,6 +126,10 @@ public class MoreIoUtilities {
 			graphMap.put("id", new GraphMLMetadata<Hypergraph<V, E>>("id",
 					"-1", gTransformer));
 			graphWriter.setGraphData(graphMap);
+			
+			if (vertexIdsTransformer != null) {
+				graphWriter.setVertexIDs(vertexIdsTransformer);
+			}
 
 			if (vertexMetadata != null) {
 				graphWriter.setVertexData(vertexMetadata);

@@ -46,4 +46,9 @@ public interface MoreLinkManipulationAnalysableAgent {
 
 	public void setNumNewLocalLinks(int counter);
 
+	public void setNumPotTransitiveLinks(int counter);
+
+	public void setNumPotReciprocalLinks(int counter);
+
+	public void setNumPotLocalLinks(int counter);
 }
