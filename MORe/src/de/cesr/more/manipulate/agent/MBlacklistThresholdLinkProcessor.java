@@ -61,6 +61,11 @@ import de.cesr.parma.core.PmParameterManager;
  * I assumes that agents have a static GIS location and do not move and caches agent's local potential interaction
  * partners.
  * 
+ * NOTE: In order to investigate the number of new transitive/reciprocal/local links the logger
+ * de.cesr.more.manipulate.agent.MBlacklistThresholdLinkProcessor.links must be at least INFO-enabled (but messages are
+ * passed to de.cesr.more.manipulate.agent.MBlacklistThresholdLinkProcessor.links anyway in order to enable
+ * investigation of links without logging)!
+ * 
  * @author Sascha Holzhauer
  * @date 05.06.2012
  * 
@@ -71,6 +76,9 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 	 * Logger
 	 */
 	static protected Logger logger = Logger.getLogger(MBlacklistThresholdLinkProcessor.class);
+	static protected Logger					linkLogger										= Logger.getLogger(MBlacklistThresholdLinkProcessor.class
+																									.getName()
+																									+ ".links");
 
 	static protected final String RANDOM_GENERATOR_PROBABILISTIC_EDGE_CREATION = "RANDOM_GENERATOR_PROBABILISTIC_EDGE_CREATION";
 	static protected final String RANDOM_DIST_PROBABILISTIC_EDGE_CREATION = "RANDOM_DIS_PROBABILISTIC_EDGE_CREATION";
@@ -196,11 +204,11 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		ArrayList<A> reciprocalAgents = null;
 		ArrayList<A> localAgents = null;
 
-		if (logger.isInfoEnabled()) {
+		if (linkLogger.isInfoEnabled()) {
 			transitiveAgents = new ArrayList<A>();
+			reciprocalAgents = new ArrayList<A>();
+			localAgents = new ArrayList<A>();
 		}
-		reciprocalAgents = new ArrayList<A>();
-		localAgents = new ArrayList<A>();
 
 		// add reciprocal links:
 		for (A successor : net.getSuccessors(agent)) {
@@ -213,8 +221,10 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 				}
 				potPartners.get(value).add(successor);
 
-				reciprocalTiesPool++;
-				reciprocalAgents.add(successor);
+				if (linkLogger.isInfoEnabled()) {
+					reciprocalTiesPool++;
+					reciprocalAgents.add(successor);
+				}
 			}
 			potentiallyAddGlobalLink(agent, potPartners, net);
 		}
@@ -232,7 +242,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 							}
 							potPartners.get(value).add(third);
 
-							if (logger.isInfoEnabled()) {
+							if (linkLogger.isInfoEnabled()) {
 								transitiveTiesPool++;
 								transitiveAgents.add(third);
 							}
@@ -259,7 +269,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 					}
 					potPartners.get(value).add(local);
 
-					if (logger.isInfoEnabled()) {
+					if (linkLogger.isInfoEnabled()) {
 						localTiesPool++;
 						localAgents.add(local);
 					}
@@ -292,8 +302,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 			numAgents--;
 		}
 
-		
-		if (agent instanceof MoreLinkManipulationAnalysableAgent) {
+		if (linkLogger.isInfoEnabled() && agent instanceof MoreLinkManipulationAnalysableAgent) {
 			((MoreLinkManipulationAnalysableAgent) agent).setNumNewLinks(counter);
 			((MoreLinkManipulationAnalysableAgent) agent).setNumNewTransitiveLinks(tieCounter.transitiveTies);
 			((MoreLinkManipulationAnalysableAgent) agent).setNumNewReciprocalLinks(tieCounter.reciprocalTies);
@@ -308,7 +317,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		}
 
 		// <- LOGGING
-		if (logger.isInfoEnabled()) {
+		if (linkLogger.isInfoEnabled()) {
 			logger.info(agent + "> Number of established links: " + counter
 					+ "(transitive: " + tieCounter.transitiveTies
 					+ " / local: " + tieCounter.localTies
@@ -351,14 +360,16 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 								+ net.getEdge(item, agent));
 					}
 
-					if (transitiveAgents.contains(item)) {
-						tieCounter.transitiveTies++;
-					}
-					if (reciprocalAgents.contains(item)) {
-						tieCounter.reciprocalTies++;
-					}
-					if (localAgents.contains(item)) {
-						tieCounter.localTies++;
+					if (linkLogger.isInfoEnabled()) {
+						if (transitiveAgents.contains(item)) {
+							tieCounter.transitiveTies++;
+						}
+						if (reciprocalAgents.contains(item)) {
+							tieCounter.reciprocalTies++;
+						}
+						if (localAgents.contains(item)) {
+							tieCounter.localTies++;
+						}
 					}
 
 					counter++;

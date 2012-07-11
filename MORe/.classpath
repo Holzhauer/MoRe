@@ -13,14 +13,17 @@
 	<classpathentry kind="lib" path="libs/gt2-main-2.3.3.jar"/>
 	<classpathentry kind="lib" path="libs/gt2-referencing-2.3.3.jar"/>
 	<classpathentry kind="lib" path="libs/JRI_101015.jar"/>
-	<classpathentry kind="lib" path="libs/JRI.jar"/>
+	<classpathentry kind="lib" path="libs/JRI.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/holzhauer/Documents/R/win-library/2.15/rJava/jri/x64"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="libs/jscience.jar"/>
 	<classpathentry kind="lib" path="libs/jts-1.7.1.jar"/>
 	<classpathentry kind="lib" path="libs/jung-algorithms-2.0.1.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/JUNG_2.0.1/src/jung-algorithms-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-api-2.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/jung-graph-impl-2.0.1.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/JUNG_2.0.1/src/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-io-2.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/Lara.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="libs/ParMa.jar"/>
 	<classpathentry kind="lib" path="libs/repast.simphony.bin_and_src.jar"/>
@@ -30,5 +33,6 @@
 	<classpathentry kind="lib" path="libs/Uranus.jar"/>
 	<classpathentry kind="lib" path="libs/vecmath-1.3.1.jar"/>
 	<classpathentry kind="lib" path="libs/wstx-asl-3.2.6.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LARA_Base"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
