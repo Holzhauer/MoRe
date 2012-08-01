@@ -436,4 +436,20 @@ public class MGeographyWrapper<AgentType> {
 			return null;
 		}
 	}
+
+	/**
+	 * Sums up the area of every given area context within the geography associated with this {@link MGeographyWrapper}.
+	 * 
+	 * @param areaContexts
+	 * @return entire area
+	 */
+	public double getTotalArea(Collection<? extends Object> areaContexts) {
+		double area = 0.0;
+
+		for (Object o : areaContexts) {
+			area += geography.getGeometry(o).getArea();
+		}
+
+		return area;
+	}
 }

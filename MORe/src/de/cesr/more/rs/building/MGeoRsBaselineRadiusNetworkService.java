@@ -278,6 +278,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		// large enough to find required number of
 		// parters per milieu
 		numNeighbors = paraMap.getK(hh.getMilieuGroup());
+		
 		List<AgentType> neighbourslist = geoWrapper
 				.<AgentType>getSurroundingAgents(hh, curRadius, requestClass);
 		

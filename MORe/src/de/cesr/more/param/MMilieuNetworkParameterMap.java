@@ -135,6 +135,23 @@ public class MMilieuNetworkParameterMap extends
 				new Double(radius));
 	}
 
+	public double getExtengingSearchFraction(int milieu) {
+		return warnDefault(MNetBuildBhPa.MAX_SEARCH_RADIUS, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildBhPa.MAX_SEARCH_RADIUS)).doubleValue() :
+				((Double) this.get(new Integer(milieu)).get(
+						MNetBuildBhPa.MAX_SEARCH_RADIUS))
+						.doubleValue();
+	}
+
+	public void setExtengingSearchFraction(int milieu, double radius) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetBuildBhPa.MAX_SEARCH_RADIUS,
+				new Double(radius));
+	}
+
 	public double getDimWeightGeo(int milieu) {
 		return warnDefault(MNetBuildBhPa.DIM_WEIGHTS_GEO, milieu) ?  
 				((Double)PmParameterManager.getParameter(MNetBuildBhPa.DIM_WEIGHTS_GEO)).doubleValue() :

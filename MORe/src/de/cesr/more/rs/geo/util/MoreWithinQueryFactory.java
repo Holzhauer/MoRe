@@ -26,16 +26,29 @@ package de.cesr.more.rs.geo.util;
 
 import repast.simphony.query.Query;
 import repast.simphony.space.gis.Geography;
+import de.cesr.more.geo.MTorusCoordinate;
+import de.cesr.more.rs.geo.util.MGeographyWrapper.MGeoDistanceFactory;
+
 
 /**
  * MORe
- *
+ * 
+ * Introduced in order to allow more flexibility for geographical queries. E.g., {@link MGeoDistanceFactory} uses a
+ * {@link MGeoTorusDistanceQuery} in case {@link MTorusCoordinate} is part of the geography.
+ * 
  * @author holzhauer
- * @date 07.10.2011 
- *
+ * @date 07.10.2011
+ * 
  */
 public interface MoreWithinQueryFactory<AgentType> {
 	
+	/**
+	 * 
+	 * @param geography
+	 * @param distance
+	 * @param sourceObject
+	 * @return
+	 */
 	public Query<AgentType> initQuery(Geography<AgentType> geography, double distance,
 			AgentType sourceObject);
 
