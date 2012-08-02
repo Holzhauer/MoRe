@@ -67,7 +67,9 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 				"DYN_INTERVAL_LINK_MANAGEMENT, " + "DYN_INTERVAL_EDGE_UPDATING, " + "DYN_FADE_OUT_AMOUNT, " + "DYN_FADE_OUT_INTERVAL, " +
 				"DYN_PROB_RECIPROCITY, " + "DYN_PROB_TRANSITIVITY, " + "DYN_PROB_GLOBAL, " + "DYN_PROB_LOCAL, "
 				+ "DYN_LOCAL_RADIUS, "
-				+ "DYN_EDGE_MANAGE_OPTIMUM "
+				+ "DYN_EDGE_MANAGE_OPTIMUM, "
+				+ "DISTANCTE_PROBABILITY_EXPONENT, "
+				+ "EXTENDING_SEARCH_FRACTION "
 				+ "FROM " + t1 + " AS t1 " + "WHERE paramID ="
 				+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + ";";
 
@@ -114,6 +116,9 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 				map.setDynProbGlobal(milieu, result.getDouble("DYN_PROB_GLOBAL"));
 				map.setDynProbLocal(milieu, result.getDouble("DYN_PROB_LOCAL"));
 				map.setDynLocalRadius(milieu, result.getDouble("DYN_PROB_GLOBAL"));
+				
+				map.setDistanceProbExp(milieu, result.getDouble("DISTANCTE_PROBABILITY_EXPONENT"));
+				map.setExtengingSearchFraction(milieu, result.getDouble("EXTENDING_SEARCH_FRACTION"));
 
 				String sql2 = "SELECT partnerMilieu, " + "p_links " + "FROM " + t2 + " AS t2 " + "WHERE paramID="
 						+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + " AND " + "milieu=" + milieu

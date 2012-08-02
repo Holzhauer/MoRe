@@ -89,6 +89,11 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 	EXTENDING_SEARCH_FRACTION(Double.class, new Double(0.1)),
 
 	/**
+	 * To calculate the distance dependent link probability (d_r)^\alpha
+	 */
+	DISTANCTE_PROBABILITY_EXPONENT(Double.class, new Double(1.0)),
+	
+	/**
 	 * Weight for geographical proximity regarding partner homophily. Default: <code>0.5</code>
 	 */
 	DIM_WEIGHTS_GEO(Double.class, new Double(0.5)),

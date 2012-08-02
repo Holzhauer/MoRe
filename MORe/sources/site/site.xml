@@ -4,7 +4,7 @@
   <publishDate position="right"/>
   <version position="right"/>
   <bannerLeft>
-    <name>MoRe</name> 
+    <src>images/more-logo.png</src>
   </bannerLeft>
   <bannerRight>
     <src>images/cesr-logo.gif</src>

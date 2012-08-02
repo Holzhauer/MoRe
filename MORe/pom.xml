@@ -2,9 +2,31 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.cesr</groupId>
   <artifactId>MORe</artifactId>
-  <version>0.5.1-SNAPSHOT</version>
+  <version>0.81</version>
   <name>More - Managing onging Relationships</name>
   <description>More - Managing onging Relationships</description>
+  
+  <developers>
+    <developer>
+      <id>sascha</id>
+      <name>Sascha Holzhauer</name>
+      <email>holzhauer@cesr.de</email>
+      <url>http://www.cesr.de</url>
+      <organization>Center for Environmental Systems Research (CESR)</organization>
+      <organizationUrl>http://www.cesr.de</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+  
+  <licenses>
+  	<license>
+  		<name>GNU General Public License (GPL) 3.0</name>
+  		<url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+  	</license>
+  </licenses>
   
   <build>
   <plugins>

@@ -30,6 +30,7 @@
 		    <fileset dir="${src_dir}/docs/apidocs/" includes="**/*.html"/>
 		  	<fileset dir="${src_dir}/docs/apidocs/" includes="**/*.jpg"/>
 		    <fileset dir="${src_dir}/docs/apidocs/" includes="**/*.png"/>
+		  	<fileset dir="${src_dir}/docs/apidocs/" includes="**/*.gif"/>
 		  	<fileset dir="${src_dir}/docs/apidocs/" includes="**/*.css"/>
 		  </copy>
 	</target>

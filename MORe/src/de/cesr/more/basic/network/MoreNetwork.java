@@ -89,7 +89,6 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	/**
 	 * @param source
 	 * @param target
-	 * Created by Sascha Holzhauer on 15.01.2010
 	 */
 	public EdgeType disconnect(AgentType source, AgentType target);
 

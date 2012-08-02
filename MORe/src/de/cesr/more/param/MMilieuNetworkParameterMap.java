@@ -136,10 +136,10 @@ public class MMilieuNetworkParameterMap extends
 	}
 
 	public double getExtengingSearchFraction(int milieu) {
-		return warnDefault(MNetBuildBhPa.MAX_SEARCH_RADIUS, milieu) ?
-				((Double) PmParameterManager.getParameter(MNetBuildBhPa.MAX_SEARCH_RADIUS)).doubleValue() :
+		return warnDefault(MNetBuildBhPa.EXTENDING_SEARCH_FRACTION, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildBhPa.EXTENDING_SEARCH_FRACTION)).doubleValue() :
 				((Double) this.get(new Integer(milieu)).get(
-						MNetBuildBhPa.MAX_SEARCH_RADIUS))
+						MNetBuildBhPa.EXTENDING_SEARCH_FRACTION))
 						.doubleValue();
 	}
 
@@ -148,7 +148,24 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.MAX_SEARCH_RADIUS,
+				MNetBuildBhPa.EXTENDING_SEARCH_FRACTION,
+				new Double(radius));
+	}
+	
+	public double getDistanceProbExp(int milieu) {
+		return warnDefault(MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT)).doubleValue() :
+				((Double) this.get(new Integer(milieu)).get(
+						MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT))
+						.doubleValue();
+	}
+
+	public void setDistanceProbExp(int milieu, double radius) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(
+				MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT,
 				new Double(radius));
 	}
 
@@ -482,7 +499,7 @@ public class MMilieuNetworkParameterMap extends
 	 */
 	protected boolean warnDefault(PmParameterDefinition definition, int milieu) {
 		if (this.size() < milieu) {
-			logger.warn("There are less milieus in the map the reqested (map size: " + this.size() + " / requested milieu: " +
+			logger.warn("There are less milieus in the map than reqested (map size: " + this.size() + " / requested milieu: " +
 					milieu + "; parameter: " + definition.toString() + ")");
 		} else {
 			if (this.get(new Integer(milieu)).get(
