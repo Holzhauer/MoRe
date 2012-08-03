@@ -45,15 +45,6 @@ public class MTestUtilsLara {
 		}
 
 		/**
-		 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#perceiveNetworks()
-		 */
-		@Override
-		public void perceiveNetworks() {
-			// nothing to do
-		}
-
-
-		/**
 		 * @see de.cesr.lara.components.agents.impl.LAbstractAgent#getThis()
 		 */
 		@SuppressWarnings("unchecked")

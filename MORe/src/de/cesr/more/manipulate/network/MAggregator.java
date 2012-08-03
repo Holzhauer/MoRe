@@ -94,11 +94,15 @@ public class MAggregator {
 		}
 
 		for (AgentType partner : successors) {
-			network.disconnect(otherAgent, partner);
+			if (network.isAdjacent(otherAgent, partner)) {
+				network.disconnect(otherAgent, partner);
+			}
 		}
 
 		for (AgentType partner : predecessors) {
-			network.disconnect(partner, otherAgent);
+			if (network.isAdjacent(partner, otherAgent)) {
+				network.disconnect(partner, otherAgent);
+			}
 		}
 
 		return true;

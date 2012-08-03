@@ -75,9 +75,4 @@ public interface MoreAgentNetworkComp<A, E extends MoreEdge<? super A>> {
 	 * @return collection of all networks
 	 */
 	public Collection<MoreNetwork<A, E>> getNetworks();
-	
-	/**
-		 */
-	public abstract void perceiveNetworks();
-
 }

@@ -59,15 +59,6 @@ public class MAgentNetworkComp<A, E extends MoreEdge<? super A>> implements More
 
 
 	/**
-	 * @see de.cesr.more.basic.agent.MoreAgentNetworkComp#perceiveNetworks()
-	 */
-	@Override
-	public void perceiveNetworks() {
-		// nothing to do
-	}
-
-
-	/**
 	 * Getter of the property <tt>networks</tt>
 	 * @return  Returns the networks.
 	 */

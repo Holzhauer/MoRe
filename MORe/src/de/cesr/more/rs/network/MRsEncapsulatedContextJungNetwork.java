@@ -30,6 +30,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.random.RandomHelper;
@@ -62,6 +64,10 @@ import edu.uci.ics.jung.graph.Graph;
 public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> implements
 		MoreNetwork<AgentT, EdgeT> {
 
+	/**
+	 * Logger
+	 */
+	static private Logger logger = Logger.getLogger(MRsEncapsulatedContextJungNetwork.class);
 	
 	private final ContextJungNetwork<AgentT>	network;
 	private final Context<AgentT>						context;
@@ -262,6 +268,14 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 	@Override
 	public EdgeT getEdge(AgentT source, AgentT target) {
 		RepastEdge<AgentT> e = network.getEdge(source, target);
+		
+		if (e == null) {
+			// <- LOGGING
+			logger.error("Requested edge (" + source + " > " + target + ") does not exist!");
+			throw new IllegalStateException("Requested edge (" + source + " > " + target + ") does not exist!");
+			// LOGGING ->
+		}
+		
 		if (e instanceof MRepastEdge) {
 			return (EdgeT) e;
 		}
