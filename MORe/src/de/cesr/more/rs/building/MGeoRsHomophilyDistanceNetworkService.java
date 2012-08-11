@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import repast.simphony.space.gis.Geography;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
@@ -39,13 +40,17 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.parma.core.PmParameterManager;
 
+
 /**
  * MORe
- *
+ * 
  * TODO doc
+ * 
+ * Since the power function is invariant against scale/unit we do not need to adapt the meters scale.
+ * 
  * @author Sascha Holzhauer
- * @date 01.08.2012 
- *
+ * @date 01.08.2012
+ * 
  */
 public class MGeoRsHomophilyDistanceNetworkService<AgentType extends MoreMilieuAgent, 
 EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBaselineRadiusNetworkService<AgentType, EdgeType> {
@@ -108,10 +113,16 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 		// Calculate Distance Probability Compensation Factor $c_{distance}$ = 1 / \sum_{r = 1}^R (d_r)^\alpha
 		double cDistance = 0.0;
 		for (int i = 0; i < numRings; i++) {
-			cDistance += Math.pow(radiusMax / numRings * (i + 0.5d), alpha);
+			cDistance += Math.pow((radiusMax) / numRings * (i + 0.5d), alpha);
 		}
 		cDistance = 1.0 / cDistance;
 		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("cDistance: " + MManager.getFloatPointFormat().format(cDistance));
+		}
+		// LOGGING ->
+
 		double dRing, dRingMax, randomNumber;
 		List<AgentType> neighbourslist;
 		List<AgentType> checkedNeighbours = new ArrayList<AgentType>();
@@ -125,6 +136,7 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 			}
 			// LOGGING ->
 
+			potentialPartners.clear();
 			numLinkedNeighbors = 0;
 			dRing = radiusMax / numRings * (i + 0.5d);
 			dRingMax = radiusMax / numRings * (i + 1) ;
@@ -132,6 +144,7 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 			neighbourslist = geoWrapper
 					.<AgentType>getSurroundingAgents(hh, dRingMax, requestClass);
 			neighbourslist.removeAll(checkedNeighbours);
+			checkedNeighbours.addAll(neighbourslist);
 			
 	
 			// <- LOGGING
@@ -170,7 +183,15 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 			// Apply distance probabilities...
 			for (AgentType pPartner : potentialPartners) {
 				randomNumber = rand.nextDouble();
-				if (randomNumber < Math.pow(dRing, alpha) * cDistance) {
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug(MManager.getFloatPointFormat().format(Math.pow((dRing), alpha) * cDistance)
+							+ " (Probability of linking " + pPartner + " with "
+							+ hh + ") | random number: " + randomNumber);
+				}
+				// LOGGING ->
+
+				if (randomNumber < Math.pow((dRing), alpha) * cDistance) {
 					createEdge(network, pPartner, hh);
 				
 					// <- LOGGING

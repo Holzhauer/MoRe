@@ -64,10 +64,9 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 			getParameter(MNetworkBuildingPa.MILIEUS) != null ? 
 					((Map<Integer, Map<String, Object>>)PmParameterManager.
 			getParameter(MNetworkBuildingPa.MILIEUS)).size() : 2))),
-	
+
 	/**
-	 * Initial radius to search for local partner agents within in meters.
-	 * Default:<code>1000</code>
+	 * Initial radius to search for local partner agents within in meters. Default:<code>1000</code>
 	 */
 	SEARCH_RADIUS(Double.class, new Double(1000.0)),
 	
