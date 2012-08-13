@@ -32,6 +32,8 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import repast.simphony.parameter.IllegalParameterException;
+
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
@@ -138,6 +140,14 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			if (pointer >= randFloat) {
 				return entry.getKey().intValue();
 			}
+		}
+		if (pointer < 1.0) {
+			// <- LOGGING
+			logger.error("Partner link probabilities do not sum up to 1.0 for milieu " + focus.getMilieuGroup() + "!");
+			// LOGGING ->
+			throw new IllegalParameterException(
+					"Partner link probabilities do not sum up to 1.0 for milieu " + focus.getMilieuGroup() + "!");
+
 		}
 		throw new IllegalStateException("This code should never be reached!");
 	}
