@@ -19,9 +19,10 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 02.12.2011
+ * Created by Sascha Holzhauer on 14.08.2012
  */
 package de.cesr.more.rs.building;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,92 +32,61 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import repast.simphony.space.gis.Geography;
+import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
-import de.cesr.more.param.MNetBuildSocialAttachment;
-import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.param.MRandomPa;
-import de.cesr.more.rs.building.analyse.MoreBaselineNetworkServiceAnalysableAgent;
+import de.cesr.more.rs.building.MGeoRsIdealNetworkService.MilieuSize;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
-import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
+
 
 /**
  * MORe
- * 
- * Based on {@link MGeoRsBaselineRadiusNetworkService}
  *
- *
- * @formatter:off
- * <table>
- * <th>Property</th><th>Value</th>
- * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
- * <tr><td></td><td></td></tr>
- * <tr><td>#Edges:</td><td>N*(N-1)</td></tr>
- * </table> 
- *
- * Considered {@link PmParameterDefinition}s:
- * <ul>
- * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
- * <li>{@link MNetworkBuildingPa.MILIEU_NETWORK_PARAMS}</li>
- * <li>{@link MRandomPa.RND_STREAM_NETWORK_BUILDING}</li>
- * <li>{@link MNetBuildSocialAttachment.NUM_MILIEU_GROUPS}</li>
- * </ul>
  * @author Sascha Holzhauer
- * @date 02.12.2011 
+ * @date 14.08.2012 
  *
  */
-public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
-		extends MGeoRsBaselineRadiusNetworkService<AgentType, EdgeType> {
-	
+public class MGeoRsIdealHomophilyDistanceNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+		extends
+		MGeoRsHomophilyDistanceNetworkService<AgentType, EdgeType> {
+
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Logger.getLogger(MGeoRsIdealNetworkService.class);
+	static private Logger	logger	= Logger.getLogger(MGeoRsIdealHomophilyDistanceNetworkService.class);
 
-	static class MilieuSize implements Comparable<MilieuSize> {
-		double	size	= 0.0f;
-		int		milieu;
-
-		protected MilieuSize(double size, int milieu) {
-			this.size = size;
-			this.milieu = milieu;
-		}
-
-		@Override
-		public int compareTo(MilieuSize o) {
-			// reverse ordering because Array.sort sorts ascending but descending order required
-			return (-1) * Double.compare(this.size, o.size);
-		}
-
-		@Override
-		public String toString() {
-			return "Milieu " + milieu + ": " + size;
-		}
+	/**
+	 * @param geography
+	 * @param edgeFac
+	 * @param name
+	 */
+	public MGeoRsIdealHomophilyDistanceNetworkService(Geography<Object> geography,
+			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
+		super(geography, edgeFac, name);
+		// TODO Auto-generated constructor stub
 	}
-	
 
-	public MGeoRsIdealNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+	public MGeoRsIdealHomophilyDistanceNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this(edgeFac, "Network");
 	}
 
-	public MGeoRsIdealNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
-		this((Geography) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
-	}
-	
 	/**
-	 * - builder constructor - edge modifier - builder set - parma
-	 * 
-	 * @param areasGeography
+	 * @param edgeFac
+	 * @param name
 	 */
-	public MGeoRsIdealNetworkService(Geography<Object> geography,
-			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
-		super(geography, edgeFac, name);
+	@SuppressWarnings("unchecked")
+	public MGeoRsIdealHomophilyDistanceNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
+		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
 	}
+
 	/**
+	 * TODO integerate
+	 * 
 	 * @param paraMap
 	 * @param network
 	 * @param numNotConnectedPartners
@@ -133,70 +103,87 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 		logger.info(hh + " > Connect... (mileu: " + hh.getMilieuGroup() + ")");
 
 		Class<? extends AgentType> requestClass = getRequestClass(hh);
-		double curRadius = paraMap.getSearchRadius(hh.getMilieuGroup());
 
-		// fetch potential neighbours from proximity. NumNeighbors should be large enough to find required number of
-		// parters per milieu
 		int numNeighbors = paraMap.getK(hh.getMilieuGroup());
-		
-		
-		List<AgentType> neighbourslist = geoWrapper.getSurroundingAgents(hh, curRadius,
-				requestClass);
+		double radiusMax = paraMap.getMaxSearchRadius(hh.getMilieuGroup());
+		double alpha = paraMap.getDistanceProbExp(hh.getMilieuGroup());
+		int numRings = (int) (1.0 / paraMap.getExtengingSearchFraction(hh.getMilieuGroup()));
+
+		// Calculate Distance Probability Compensation Factor $c_{distance}$ = 1 / \sum_{r = 1}^R (d_r)^\alpha
+		double cDistance = 0.0;
+		for (int i = 0; i < numRings; i++) {
+			cDistance += Math.pow((radiusMax) / numRings * (i + 0.5d), alpha);
+		}
+		cDistance = 1.0 / cDistance;
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Found " + neighbourslist.size() + " of class " + 
-					hh.getClass().getSuperclass()+ " neighbours within " + curRadius + " meters.");
+			logger.debug("cDistance: " + MManager.getFloatPointFormat().format(cDistance));
 		}
 		// LOGGING ->
 
-		// mixing neighbour collection
-		shuffleCollection(neighbourslist);
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Shuffled: " + neighbourslist);
-		}
-		// LOGGING ->
-		
 		// <-- IDEAL specific
 		int[] numMilieuPartners = calculatePartnerMilieus(paraMap, hh, numNeighbors);
 		// IDEAL specific -->
 
-		int numRadiusExtensions = 0;
-		
-		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
-				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
-		
-		boolean anyPartnerAssignable = true;
-		
+		double dRing, dRingMax, randomNumber;
+		List<AgentType> neighbourslist;
+		List<AgentType> checkedNeighbours = new ArrayList<AgentType>();
+		List<AgentType> potentialPartners = new ArrayList<AgentType>();
+		int numLinkedNeighbors = 0, numLinkedNeighborsSum = 0;
 
-		// to check if the required neighbours is satisfied
-		int numLinkedNeighbors = 0;
+		for (int i = 0; i < numRings; i++) {
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Handle " + (i + 1) + "th ring");
+			}
+			// LOGGING ->
 
-		Iterator<AgentType> neighbourIter = neighbourslist.iterator();
-		AgentType potPartner;
+			potentialPartners.clear();
+			numLinkedNeighbors = 0;
+			dRing = radiusMax / numRings * (i + 0.5d);
+			dRingMax = radiusMax / numRings * (i + 1);
 
-		while (numLinkedNeighbors < numNeighbors && anyPartnerAssignable) {
-			if (neighbourIter.hasNext()) {
+			neighbourslist = geoWrapper
+					.<AgentType> getSurroundingAgents(hh, dRingMax, requestClass);
+			neighbourslist.removeAll(checkedNeighbours);
+			checkedNeighbours.addAll(neighbourslist);
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found " + neighbourslist.size() + " of class " +
+						hh.getClass().getSuperclass() + " neighbours within " + dRing + " +/- " + radiusMax / numRings
+						* 0.5 + " meters.");
+			}
+			// LOGGING ->
+
+			// mixing neighbour collection
+			shuffleCollection(neighbourslist);
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Shuffled: " + neighbourslist);
+			}
+			// LOGGING ->
+
+			Iterator<AgentType> neighbourIter = neighbourslist.iterator();
+			AgentType potPartner;
+
+			while (potentialPartners.size() < numNeighbors && neighbourIter.hasNext()) {
+
 				potPartner = neighbourIter.next();
-
-				// TODO check if potPartner has capacity (new feature)
 
 				// <-- IDEAL specific
 				if (checkPartner(network, numMilieuPartners, hh, potPartner)) {
-					edgeModifier.createEdge(network, potPartner, hh);
-					
-					numMilieuPartners[potPartner.getMilieuGroup() - 1]--;
 
-					numLinkedNeighbors++;
-					
+					potentialPartners.add(potPartner);
+
 					// substitutes rewiring:
 					if (numLinkedNeighbors < numNeighbors &&
 							distantLinking(paraMap, network, hh, requestClass) != null) {
 						numLinkedNeighbors++;
 					}
-					
+
 					if (numLinkedNeighbors < numNeighbors) {
 						AgentType target = distantLinking(paraMap, network, hh, requestClass);
 						if (target != null) {
@@ -204,73 +191,64 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 							numLinkedNeighbors++;
 						}
 					}
-					
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug(hh + " > Found partner: " + potPartner);
-					}
-					// LOGGING ->
+
 				}
 				// IDEAL specific -->
-				
-			} else {
-				// in case no partner was found the source set should be increased:
-				if (curRadius < paraMap.getMaxSearchRadius(hh.getMilieuGroup())) {
+
+				if (partnerFinder.checkPartner(network.getJungGraph(), paraMap, hh, potPartner, 0)) {
+					potentialPartners.add(potPartner);
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug(hh
-								+ " > No Partner found, but max search radius NOT reached!");
-					}
-					// LOGGING ->
-
-					// extending list of potential neighbours:
-					curRadius += paraMap.getXSearchRadius(hh.getMilieuGroup());
-					numRadiusExtensions++;
-
-					checkedNeighbours.addAll(neighbourslist);
-					
-					neighbourslist = geoWrapper
-							.<AgentType> getSurroundingAgents(hh, curRadius, requestClass);
-					
-					neighbourslist.removeAll(checkedNeighbours);
-
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug("Found " + neighbourslist.size() + " new neighbours within " + curRadius
-								+ " meters.");
-					}
-					// LOGGING ->
-					
-					// mixing neighbour collection
-					shuffleCollection(neighbourslist);
-
-					neighbourIter = neighbourslist.iterator();
-				} else {
-					anyPartnerAssignable = false;
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug(hh + " > Not enough partners found in max search radius!");
+						logger.debug(hh + " > Found potential(!) partner: " + potPartner);
 					}
 					// LOGGING ->
 				}
 			}
+
+			// Apply distance probabilities...
+			for (AgentType pPartner : potentialPartners) {
+				randomNumber = rand.nextDouble();
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug(MManager.getFloatPointFormat().format(Math.pow((dRing), alpha) * cDistance)
+							+ " (Probability of linking " + pPartner + " with "
+							+ hh + ") | random number: " + randomNumber);
+				}
+				// LOGGING ->
+
+				if (randomNumber < Math.pow((dRing), alpha) * cDistance) {
+					createEdge(network, pPartner, hh);
+
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug(hh + " > Linked partner: " + pPartner);
+					}
+					// LOGGING ->
+
+					// <-- IDEAL specific
+					numMilieuPartners[pPartner.getMilieuGroup() - 1]--;
+
+					numLinkedNeighbors++;
+
+					// substitutes rewiring:
+					if (numLinkedNeighbors < numNeighbors) {
+						AgentType target = distantLinking(paraMap, network, hh, requestClass);
+						if (target != null) {
+							numMilieuPartners[target.getMilieuGroup() - 1]--;
+							numLinkedNeighbors++;
+						}
+					}
+					// IDEAL specific -->
+				}
+			}
+			numLinkedNeighborsSum += numLinkedNeighbors;
+			numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 		}
-		
-		if (hh instanceof MoreBaselineNetworkServiceAnalysableAgent) {
-			MoreBaselineNetworkServiceAnalysableAgent agent = (MoreBaselineNetworkServiceAnalysableAgent) hh;
-			agent.setFinalRadius(curRadius);
-			agent.setNumRadiusExtensions(numRadiusExtensions);
-		}
-		
-		numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug(hh + " > " + numLinkedNeighbors
-					+ " neighbours found (from " + numNeighbors + ")");
-		}
+		logger.info(hh + " > " + numLinkedNeighborsSum
+				+ " neighbours found (from " + numNeighbors + ")");
 		// LOGGING ->
-		
 		return numNotConnectedPartners;
 	}
 
@@ -346,7 +324,7 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 		}
 		return numMilieuPartners;
 	}
-	
+
 	/**
 	 * @param paraMap
 	 * @param partnerMilieu

@@ -265,10 +265,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 		logger.info(hh + " > Connect... (mileu: " + hh.getMilieuGroup() + ")");
 
-		int numNeighbors = 0;
-		
-		int numRadiusExtensions = 0;
-
 		Class<? extends AgentType> requestClass = getRequestClass(hh);
 			
 
@@ -277,13 +273,10 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		// fetch potential neighbours from proximity. NumNeighbors should be
 		// large enough to find required number of
 		// parters per milieu
-		numNeighbors = paraMap.getK(hh.getMilieuGroup());
+		int numNeighbors = paraMap.getK(hh.getMilieuGroup());
 		
 		List<AgentType> neighbourslist = geoWrapper
 				.<AgentType>getSurroundingAgents(hh, curRadius, requestClass);
-		
-		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
-				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -301,7 +294,11 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		}
 		// LOGGING ->
 
-
+		int numRadiusExtensions = 0;
+		
+		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
+				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
+		
 		boolean anyPartnerAssignable = true;
 
 		// to check if the required neighbours is satisfied
@@ -322,7 +319,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					numLinkedNeighbors++;
 					
 					// substitutes rewiring:
-					
 					if (numLinkedNeighbors < numNeighbors &&
 							distantLinking(paraMap, network, hh, requestClass) != null) {
 						numLinkedNeighbors++;
@@ -391,6 +387,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					+ " neighbours found (from " + numNeighbors + ")");
 		}
 		// LOGGING ->
+		
 		return numNotConnectedPartners;
 	}
 
