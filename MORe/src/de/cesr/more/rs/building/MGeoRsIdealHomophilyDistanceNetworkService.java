@@ -175,68 +175,37 @@ public class MGeoRsIdealHomophilyDistanceNetworkService<AgentType extends MoreMi
 
 				// <-- IDEAL specific
 				if (checkPartner(network, numMilieuPartners, hh, potPartner)) {
-
 					potentialPartners.add(potPartner);
-
-					// substitutes rewiring:
-					if (numLinkedNeighbors < numNeighbors &&
-							distantLinking(paraMap, network, hh, requestClass) != null) {
-						numLinkedNeighbors++;
-					}
-
-					if (numLinkedNeighbors < numNeighbors) {
-						AgentType target = distantLinking(paraMap, network, hh, requestClass);
-						if (target != null) {
-							numMilieuPartners[target.getMilieuGroup() - 1]--;
-							numLinkedNeighbors++;
-						}
-					}
-
 				}
 				// IDEAL specific -->
 
-				if (partnerFinder.checkPartner(network.getJungGraph(), paraMap, hh, potPartner, 0)) {
-					potentialPartners.add(potPartner);
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug(hh + " > Found potential(!) partner: " + potPartner);
-					}
-					// LOGGING ->
-				}
-			}
-
-			// Apply distance probabilities...
-			for (AgentType pPartner : potentialPartners) {
 				randomNumber = rand.nextDouble();
+
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
 					logger.debug(MManager.getFloatPointFormat().format(Math.pow((dRing), alpha) * cDistance)
-							+ " (Probability of linking " + pPartner + " with "
+							+ " (Probability of linking " + potPartner + " with "
 							+ hh + ") | random number: " + randomNumber);
 				}
 				// LOGGING ->
 
 				if (randomNumber < Math.pow((dRing), alpha) * cDistance) {
-					createEdge(network, pPartner, hh);
+					createEdge(network, potPartner, hh);
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug(hh + " > Linked partner: " + pPartner);
+						logger.debug(hh + " > Linked partner: " + potPartner);
 					}
 					// LOGGING ->
 
 					// <-- IDEAL specific
-					numMilieuPartners[pPartner.getMilieuGroup() - 1]--;
+					numMilieuPartners[potPartner.getMilieuGroup() - 1]--;
 
 					numLinkedNeighbors++;
 
 					// substitutes rewiring:
-					if (numLinkedNeighbors < numNeighbors) {
-						AgentType target = distantLinking(paraMap, network, hh, requestClass);
-						if (target != null) {
-							numMilieuPartners[target.getMilieuGroup() - 1]--;
-							numLinkedNeighbors++;
-						}
+					if (distantLinking(paraMap, network, hh, requestClass) != null) {
+						numLinkedNeighbors++;
 					}
 					// IDEAL specific -->
 				}
@@ -294,7 +263,7 @@ public class MGeoRsIdealHomophilyDistanceNetworkService<AgentType extends MoreMi
 			if (logger.isDebugEnabled()) {
 				StringBuffer buffer = new StringBuffer();
 				for (int i = 0; i < addArray.length; i++) {
-					buffer.append(i + ": " + addArray[i] + " >= ");
+					buffer.append((i + 1) + ": " + addArray[i] + " >= ");
 				}
 				logger.debug("Sorted: " + buffer);
 			}
@@ -305,7 +274,7 @@ public class MGeoRsIdealHomophilyDistanceNetworkService<AgentType extends MoreMi
 
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug("Add agent to milieu " + addArray[i].milieu + " (subtraction remainder: "
+					logger.debug("Add agent to milieu " + (addArray[i].milieu + 1) + " (subtraction remainder: "
 							+ addArray[i].size + ")");
 				}
 				// LOGGING ->

@@ -422,10 +422,8 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 * @param requestClass
 	 * @param oldInfluencer
 	 */
-	@SuppressWarnings("unchecked")
 	protected AgentType distantLinking(MMilieuNetworkParameterMap networkParams, MoreNetwork<AgentType, EdgeType> network,
 			AgentType focus, Class<? extends AgentType> requestClass) {
-		boolean rewired;
 		
 		if (networkParams.getP_Rewire(focus.getMilieuGroup()) > this.rand
 				.nextDouble()) {

@@ -192,11 +192,6 @@ public class MGeoRsIdealNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 					numLinkedNeighbors++;
 					
 					// substitutes rewiring:
-					if (numLinkedNeighbors < numNeighbors &&
-							distantLinking(paraMap, network, hh, requestClass) != null) {
-						numLinkedNeighbors++;
-					}
-					
 					if (numLinkedNeighbors < numNeighbors) {
 						AgentType target = distantLinking(paraMap, network, hh, requestClass);
 						if (target != null) {
