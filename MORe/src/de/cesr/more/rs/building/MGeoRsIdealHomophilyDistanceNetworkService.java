@@ -176,39 +176,39 @@ public class MGeoRsIdealHomophilyDistanceNetworkService<AgentType extends MoreMi
 				// <-- IDEAL specific
 				if (checkPartner(network, numMilieuPartners, hh, potPartner)) {
 					potentialPartners.add(potPartner);
-				}
-				// IDEAL specific -->
 
-				randomNumber = rand.nextDouble();
-
-				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(MManager.getFloatPointFormat().format(Math.pow((dRing), alpha) * cDistance)
-							+ " (Probability of linking " + potPartner + " with "
-							+ hh + ") | random number: " + randomNumber);
-				}
-				// LOGGING ->
-
-				if (randomNumber < Math.pow((dRing), alpha) * cDistance) {
-					createEdge(network, potPartner, hh);
+					randomNumber = rand.nextDouble();
 
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug(hh + " > Linked partner: " + potPartner);
+						logger.debug(MManager.getFloatPointFormat().format(Math.pow((dRing), alpha) * cDistance)
+								+ " (Probability of linking " + potPartner + " with "
+								+ hh + ") | random number: " + randomNumber);
 					}
 					// LOGGING ->
 
-					// <-- IDEAL specific
-					numMilieuPartners[potPartner.getMilieuGroup() - 1]--;
+					if (randomNumber < Math.pow((dRing), alpha) * cDistance) {
+						createEdge(network, potPartner, hh);
 
-					numLinkedNeighbors++;
+						// <- LOGGING
+						if (logger.isDebugEnabled()) {
+							logger.debug(hh + " > Linked partner: " + potPartner);
+						}
+						// LOGGING ->
 
-					// substitutes rewiring:
-					if (distantLinking(paraMap, network, hh, requestClass) != null) {
+						// <-- IDEAL specific
+						numMilieuPartners[potPartner.getMilieuGroup() - 1]--;
+
 						numLinkedNeighbors++;
+
+						// substitutes rewiring:
+						if (distantLinking(paraMap, network, hh, requestClass) != null) {
+							numLinkedNeighbors++;
+						}
+						// IDEAL specific -->
 					}
-					// IDEAL specific -->
 				}
+				// IDEAL specific -->
 			}
 			numLinkedNeighborsSum += numLinkedNeighbors;
 			numNotConnectedPartners += numNeighbors - numLinkedNeighbors;

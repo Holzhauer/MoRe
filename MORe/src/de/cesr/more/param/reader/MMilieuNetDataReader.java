@@ -71,9 +71,10 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 			logger.debug("MySQL-Satement in init(): " + sql);
 		}
 
-		ResultSet result = MMySqlService.getInstance().connect(sql);
-
 		try {
+			ResultSet result = MMySqlService.getInstance().connect(sql);
+
+			
 			boolean hasNext = result.next();
 			boolean hasNextInner = false;
 
@@ -213,8 +214,25 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 			result.close();
 
 		} catch (SQLException e) {
-			logger.error("Error in fetching milieu net data");
+			logger.error("Error in fetching milieu net data (SQLException: " + e.getMessage() + ")");
 			e.printStackTrace();
+		} catch (InstantiationException e) {
+			logger.error("Error in fetching milieu net data (InstantiationException)");
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			logger.error("Error in fetching milieu net data (IllegalAccessException)");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			logger.error("Error in fetching milieu net data (ClassNotFoundException)");
+			e.printStackTrace();
+		} finally {
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Disconnect...");
+			}
+			// LOGGING ->
+
+			MMySqlService.disconnect();
 		}
 		PmParameterManager.setParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS, map);
 	}

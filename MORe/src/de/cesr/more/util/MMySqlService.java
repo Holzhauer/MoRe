@@ -1,3 +1,26 @@
+/**
+ * This file is part of
+ * 
+ * MORe - Managing Ongoing Relationships
+ *
+ * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *  
+ * MORe - Managing Ongoing Relationships is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Center for Environmental Systems Research, Kassel
+ * 
+ * Created by Sascha Holzhauer on 14.08.2012
+ */
 package de.cesr.more.util;
 
 import java.sql.Connection;
@@ -33,7 +56,7 @@ public class MMySqlService {
 	}
 
 	/**
-	 * @return an instance of this class Created by Sascha Holzhauer on 12.07.2010
+	 * @return an instance of this class
 	 */
 	public static MMySqlService getInstance() {
 		if (instance == null) {
@@ -85,36 +108,34 @@ public class MMySqlService {
 	/**
 	 * Execute the given SQL statement and return the according ResultSet
 	 * 
-	 * @param sql the statement to query
-	 * @return the ResultSet Created by Sascha Holzhauer on 13.07.2010
+	 * @param sql
+	 *        the statement to query
+	 * @return the ResultSet
+	 * @throws ClassNotFoundException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws SQLException
 	 */
-	public ResultSet connect(String sql) {
+	public ResultSet connect(String sql) throws SQLException, InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Execute SQL: " + sql);
 		}
-		
-		try {
-			if (sql.startsWith("update:")) {
-				getConnection().createStatement().executeUpdate(sql.substring(7));
-				return null;
-			} else {
-				return getConnection().createStatement().executeQuery(sql);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+
+		if (sql.startsWith("update:")) {
+			getConnection().createStatement().executeUpdate(sql.substring(7));
+			return null;
+		} else if (sql.startsWith("INSERT") || sql.startsWith("UPDATE")) {
+			getConnection().createStatement().executeUpdate(sql);
+			return null;
+		} else {
+			return getConnection().createStatement().executeQuery(sql);
 		}
-		return null;
 	}
 
 	/**
-	 * Disconnect the current mySQL connection Created by Sascha Holzhauer on 13.07.2010
+	 * Disconnect the current mySQL connection
 	 */
 	public static void disconnect() {
 
@@ -125,6 +146,12 @@ public class MMySqlService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug(con + "> disconnected.");
+		}
+		// LOGGING ->
 	}
 
 }
