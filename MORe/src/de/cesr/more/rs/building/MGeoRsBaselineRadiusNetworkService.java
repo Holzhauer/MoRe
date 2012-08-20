@@ -27,6 +27,8 @@ import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
+import repast.simphony.space.projection.ProjectionEvent;
+import repast.simphony.space.projection.ProjectionListener;
 import repast.simphony.util.collections.IndexedIterable;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
@@ -122,6 +124,8 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	protected MMilieuNetworkParameterMap paraMap;
 	
 	protected MMilieuPartnerFinder<AgentType, EdgeType> partnerFinder;
+	
+	protected ArrayList<AgentType> agentList;
 
 	public MGeoRsBaselineRadiusNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this(edgeFac, "Network");
@@ -158,6 +162,12 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		checkParameter();
 		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
 		
+		
+		this.agentList = new ArrayList<AgentType>(agents.size());
+		for (AgentType agent : agents) {
+			this.agentList.add(agent);
+		}
+		
 		PmParameterManager.logParameterValues(MNetworkBuildingPa.values());
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -174,6 +184,20 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 
 		addAgents(network, agents);
 
+		network.addProjectionListener(new ProjectionListener<AgentType>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void projectionEventOccurred(ProjectionEvent<AgentType> evt) {
+				if (evt.getType() == ProjectionEvent.OBJECT_ADDED) {
+					MGeoRsBaselineRadiusNetworkService.this.agentList.add((AgentType)evt.getSubject());
+				}
+				if (evt.getType() == ProjectionEvent.OBJECT_REMOVED) {
+					MGeoRsBaselineRadiusNetworkService.this.agentList.remove(evt.getSubject());
+				}
+			}
+		});
+		
 		createRadiusNetwork(agents, this.paraMap, network);
 
 		// <- LOGGING
@@ -427,18 +451,14 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		
 		if (networkParams.getP_Rewire(focus.getMilieuGroup()) > this.rand
 				.nextDouble()) {
-			ArrayList<AgentType> agents = new ArrayList<AgentType>();
-			for (AgentType agent : context.getObjects(requestClass)) {
-				agents.add(agent);
-			}
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug("Number of considered agents: " + agents.size() + " | prewire: " + 
+				logger.debug("Number of considered agents: " + this.getAgentList().size() + " | prewire: " + 
 						networkParams.getP_Rewire(focus.getMilieuGroup()));
 			}
 			// LOGGING ->
 
-			AgentType partner = partnerFinder.findPartner(agents, network.getJungGraph(), focus, true);
+			AgentType partner = partnerFinder.findPartner(this.getAgentList(), network.getJungGraph(), focus, true);
 			createEdge(network, partner, focus);
 			return partner;
 		} else {
@@ -499,6 +519,12 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		throw new IllegalStateException("This code should never be reached!");
 	}
 	
+	public ArrayList<AgentType> getAgentList() {
+		if (agentList == null) {
+			throw new IllegalStateException("Agent list has not been assigned!");
+		}
+		return this.agentList;
+	}
 	/**
 	 * @see java.lang.Object#toString()
 	 */
