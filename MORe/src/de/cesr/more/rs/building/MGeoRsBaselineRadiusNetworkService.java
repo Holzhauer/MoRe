@@ -427,11 +427,20 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		
 		if (networkParams.getP_Rewire(focus.getMilieuGroup()) > this.rand
 				.nextDouble()) {
-	ArrayList<AgentType> agents = new ArrayList<AgentType>();
+			ArrayList<AgentType> agents = new ArrayList<AgentType>();
 			for (AgentType agent : context.getObjects(requestClass)) {
 				agents.add(agent);
 			}
-			return partnerFinder.findPartner(agents, network.getJungGraph(), focus, true);
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Number of considered agents: " + agents.size() + " | prewire: " + 
+						networkParams.getP_Rewire(focus.getMilieuGroup()));
+			}
+			// LOGGING ->
+
+			AgentType partner = partnerFinder.findPartner(agents, network.getJungGraph(), focus, true);
+			createEdge(network, partner, focus);
+			return partner;
 		} else {
 			return null;
 		}

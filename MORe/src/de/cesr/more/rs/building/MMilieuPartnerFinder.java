@@ -33,7 +33,6 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 
 import repast.simphony.parameter.IllegalParameterException;
-
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
@@ -112,7 +111,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug(focal + "> Link with " + random);
+					logger.debug(focal + "> Selected " + random);
 				}
 				// LOGGING ->
 			}
