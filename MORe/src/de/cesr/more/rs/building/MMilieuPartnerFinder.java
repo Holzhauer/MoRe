@@ -83,7 +83,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			desiredMilieu = getProbabilisticMilieu(networkParams, focal);
 		}
 
-		AgentType random;
+		AgentType random = null;
 		ArrayList<AgentType> list;
 		if (agents instanceof ArrayList) {
 			list = (ArrayList<AgentType>) agents;
@@ -100,7 +100,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		
 		boolean rewired = false;
 		// fetch random partner:
-		do {
+		while (!rewired && list.size() > 0) {
 			random = list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
 			list.remove(random);
 
@@ -120,7 +120,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 				}
 				// LOGGING ->
 			}
-		} while (!rewired && list.size() > 0);
+		}
 
 		return rewired ? random : null;
 	}

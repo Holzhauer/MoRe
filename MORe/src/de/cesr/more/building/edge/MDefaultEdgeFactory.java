@@ -23,6 +23,9 @@
  */
 package de.cesr.more.building.edge;
 
+
+import org.apache.log4j.Logger;
+
 import de.cesr.more.basic.edge.MEdge;
 import de.cesr.more.basic.edge.MoreEdge;
 
@@ -36,10 +39,28 @@ import de.cesr.more.basic.edge.MoreEdge;
 public class MDefaultEdgeFactory<V> implements MoreEdgeFactory<V, MoreEdge<V>> {
 
 	/**
+	 * Logger
+	 */
+	static private Logger	logger	= Logger.getLogger(MDefaultEdgeFactory.class);
+
+	/**
 	 * @see de.cesr.more.building.edge.MoreEdgeFactory#createEdge(java.lang.Object, java.lang.Object, boolean)
 	 */
 	@Override
 	public MoreEdge<V> createEdge(V source, V target, boolean directed) {
+		if (source == null) {
+			// <- LOGGING
+			logger.error("Source node is null!");
+			// LOGGING ->
+			throw new IllegalStateException("Source node is null!");
+		}
+
+		if (target == null) {
+			// <- LOGGING
+			logger.error("Target node is null!");
+			// LOGGING ->
+			throw new IllegalStateException("Target node is null!");
+		}
 		return new MEdge<V>(source, target, directed);
 	} 
 }

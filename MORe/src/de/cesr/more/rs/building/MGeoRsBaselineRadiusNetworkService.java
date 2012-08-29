@@ -459,7 +459,9 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 			// LOGGING ->
 
 			AgentType partner = partnerFinder.findPartner(this.getAgentList(), network.getJungGraph(), focus, true);
-			createEdge(network, partner, focus);
+			if (partner != null)  {
+				createEdge(network, partner, focus);
+			}
 			return partner;
 		} else {
 			return null;
