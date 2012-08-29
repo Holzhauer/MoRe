@@ -39,8 +39,10 @@ import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MNetworkBuilderNotSpecified;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import edu.uci.ics.jung.graph.Graph;
@@ -75,6 +77,8 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 	protected MoreEdgeFactory<AgentT, EdgeT> edgeFac;
 	
 	public static double DEFAULT_EDGE_WEIGHT = 1.0;
+
+	protected Class<? extends MoreNetworkBuilder<?, ?>>	networkBuilderClass	= MNetworkBuilderNotSpecified.class;
 
 	/**
 	 * Adds the encapsulated network as projection to the given context.
@@ -379,5 +383,21 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 	@Override
 	public void setEdgeFactory(MoreEdgeFactory<AgentT, EdgeT> edgeFac) {
 		this.edgeFac = edgeFac;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#getNetworkBuilderClass()
+	 */
+	@Override
+	public Class<? extends MoreNetworkBuilder<?, ?>> getNetworkBuilderClass() {
+		return this.networkBuilderClass;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#setNetworkBuilderClass(java.lang.Class)
+	 */
+	@Override
+	public void setNetworkBuilderClass(Class<? extends MoreNetworkBuilder<?, ?>> builderClass) {
+		this.networkBuilderClass = builderClass;
 	}
 }

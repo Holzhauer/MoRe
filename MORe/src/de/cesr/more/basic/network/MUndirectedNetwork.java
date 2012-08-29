@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.uranus.core.URandomService;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedGraph;
@@ -59,7 +60,7 @@ public class MUndirectedNetwork<V, E extends MoreEdge<V>>
 	
 	protected Uniform 				randomNodeSelectionStream;
 
-
+	protected Class<? extends MoreNetworkBuilder<?, ?>>	networkBuilderClass	= MNetworkBuilderNotSpecified.class;
 
 	/**
 	 * @deprecated (used to build new instances by JUNG...)
@@ -389,6 +390,22 @@ public class MUndirectedNetwork<V, E extends MoreEdge<V>>
 	 * GETTER & SETTER
 	 ************************************************/
 	
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#getNetworkBuilderClass()
+	 */
+	@Override
+	public Class<? extends MoreNetworkBuilder<?, ?>> getNetworkBuilderClass() {
+		return this.networkBuilderClass;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#setNetworkBuilderClass(java.lang.Class)
+	 */
+	@Override
+	public void setNetworkBuilderClass(Class<? extends MoreNetworkBuilder<?, ?>> builderClass) {
+		this.networkBuilderClass = builderClass;
+	}
+
 	/**
 	 * @return random stream for random node selection
 	 */

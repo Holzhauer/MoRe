@@ -84,7 +84,12 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		}
 
 		AgentType random;
-		ArrayList<AgentType> list = new ArrayList<AgentType>(agents);
+		ArrayList<AgentType> list;
+		if (agents instanceof ArrayList) {
+			list = (ArrayList<AgentType>) agents;
+		} else {
+			list = new ArrayList<AgentType>(agents);
+		}
 		
 		list.remove(focal);
 		if (incoming) {

@@ -31,7 +31,6 @@ import de.cesr.more.util.Log4jLogger;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Hypergraph;
 import edu.uci.ics.jung.io.GraphMLMetadata;
-import edu.uci.ics.jung.io.GraphMLWriter;
 
 /**
  * MORe
@@ -105,7 +104,7 @@ public class MoreIoUtilities {
 				outputFile.getParentFile().mkdirs();
 			}
 			FileWriter fileWriter = new FileWriter(outputFile);
-			GraphMLWriter<V, E> graphWriter = new MGraphMlWriter<V, E>();
+			MGraphMlWriter<V, E> graphWriter = new MGraphMlWriter<V, E>();
 
 			// <- start logging
 			if (logger.isDebugEnabled()) {
@@ -138,7 +137,7 @@ public class MoreIoUtilities {
 				graphWriter.setEdgeData(edgeMetadata);
 			}
 			
-			graphWriter.save(network.getJungGraph(), fileWriter);
+			graphWriter.save(network, fileWriter);
 
 		} catch (IOException e) {
 			e.printStackTrace();

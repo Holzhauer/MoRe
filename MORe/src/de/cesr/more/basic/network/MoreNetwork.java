@@ -26,7 +26,8 @@ import java.util.NoSuchElementException;
 
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-
+import de.cesr.more.building.network.MoreNetworkBuilder;
+import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 import edu.uci.ics.jung.graph.Graph;
 
 
@@ -40,6 +41,7 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentType>> {
 	
+
 	/**
 	 * Add a node to the network.
 	 * @param node
@@ -229,6 +231,10 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 */
 	public void reverseNetwork();
 	
+	public Class<? extends MoreNetworkBuilder<?, ?>> getNetworkBuilderClass();
+
+	public void setNetworkBuilderClass(Class<? extends MoreNetworkBuilder<?, ?>> builderClass);
+
 	/**
 	 * Sets the {@link MoreEdgeFactory} that is used to connect agents.
 	 * @param edgeFac

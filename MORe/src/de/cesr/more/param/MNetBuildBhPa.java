@@ -83,7 +83,7 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 	MAX_SEARCH_RADIUS(Double.class, new Double(10000.0)),
 
 	/**
-	 * ^Fraction of Max. radius and X radius resp. the search ring is extended to. Default:<code>0.1</code>
+	 * Fraction of Max. radius and X radius resp. the search ring is extended to. Default:<code>0.1</code>
 	 */
 	EXTENDING_SEARCH_FRACTION(Double.class, new Double(0.1)),
 

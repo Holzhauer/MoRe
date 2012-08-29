@@ -36,20 +36,61 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public enum MNetManipulatePa implements PmParameterDefinition {
 
+	/**
+	 * Threshold for differences between the opinions (e.g.) of two network partners. Smaller values cause the according
+	 * link weight to increase.
+	 */
 	DYN_INCREASE_THRESHOLD(Double.class, 0.1),
+
+	/**
+	 * Threshold for differences between the opinions (e.g.) of two network partners. Larger values cause the according
+	 * link weight to decrease.
+	 */
 	DYN_DECREASE_THRESHOLD(Double.class, 0.5),
 
+	/**
+	 * Amount edge weights gets increased by in case of opinion similarity.
+	 */
 	DYN_INCREASE_AMOUNT(Double.class, 0.1),
+
+	/**
+	 * Amount edge weights gets reduced in case of opinion diverge.
+	 */
 	DYN_DECREASE_AMOUNT(Double.class, 0.1),
 
+	/**
+	 * Amount edge weights fade per fading tick.
+	 */
 	DYN_FADE_OUT_AMOUNT(Double.class, 0.000),
+
+	/**
+	 * Interval of fading ticks.
+	 */
 	DYN_FADE_OUT_INTERVAL(Double.class, 1.0),
 	
+	/**
+	 * Probability for a reciprocal link to be established
+	 */
 	DYN_PROP_RECIPROCITY(Double.class, 1.0),
+
+	/**
+	 * Probability for a transitive link to be established
+	 */
 	DYN_PROP_TRANSITIVIY(Double.class, 1.0),
+
+	/**
+	 * Probability for a global link to be established
+	 */
 	DYN_PROP_GLOBAL(Double.class, 1.0),
+
+	/**
+	 * Probability for a local link to be established
+	 */
 	DYN_PROP_LOCAL(Double.class, 1.0),
 	
+	/**
+	 * Determines the radius to draw local links for network dynamics.
+	 */
 	DYN_LOCAL_RADIUS(Double.class, 1000.0),
 
 	/**
@@ -61,7 +102,14 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	 */
 	DYN_EDGE_MANAGE_OPTIMUM(Double.class, 1.0),
 
+	/**
+	 * Tick interval for updating edge weights.
+	 */
 	DYN_INTERVAL_EDGE_UPDATING(Integer.class, 0),
+
+	/**
+	 * Tick interval for edge management.
+	 */
 	DYN_INTERVAL_LINK_MANAGEMENT(Integer.class, 0),
 	
 	/**

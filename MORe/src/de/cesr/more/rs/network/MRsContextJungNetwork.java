@@ -21,8 +21,11 @@ import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MNetworkBuilderNotSpecified;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
@@ -60,6 +63,8 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 	private MMeasureDescription mesaureDescA;
 	private MMeasureDescription mesaureDescB;
 	
+	protected Class<? extends MoreNetworkBuilder<?, ?>>	networkBuilderClass	= MNetworkBuilderNotSpecified.class;
+
 	/**
 	 * @param net
 	 * @param context
@@ -315,8 +320,9 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 	@Override
 	public Collection<EdgeT> getEdgesCollection() {
 		Collection<MRepastEdge<AgentT>> edges = new HashSet<MRepastEdge<AgentT>>();
-		for (RepastEdge<AgentT> edge : this.getEdges())
+		for (RepastEdge<AgentT> edge : this.getEdges()) {
 			edges.add((MRepastEdge<AgentT>) edge);
+		}
 		return (Collection<EdgeT>) edges;
 	}
 
@@ -363,5 +369,21 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#getNetworkBuilderClass()
+	 */
+	@Override
+	public Class<? extends MoreNetworkBuilder<?, ?>> getNetworkBuilderClass() {
+		return this.networkBuilderClass;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#setNetworkBuilderClass(java.lang.Class)
+	 */
+	@Override
+	public void setNetworkBuilderClass(Class<? extends MoreNetworkBuilder<?, ?>> builderClass) {
+		this.networkBuilderClass = builderClass;
 	}
 }

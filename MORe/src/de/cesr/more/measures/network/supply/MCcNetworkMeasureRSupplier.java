@@ -86,7 +86,7 @@ public class MCcNetworkMeasureRSupplier extends MAbstractMeasureSupplier {
 	private void addMeasures() {
 
 		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_CLUSTERING, Short.R_N_CL_OVERALL.name,
-				"R: Network Clustering coefficient (overall ration)");
+				"R: Network Clustering coefficient (overall ratio)");
 
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 			@Override
