@@ -23,7 +23,8 @@
  */
 package de.cesr.more.testing.rs.building;
 
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,28 +34,25 @@ import org.junit.Test;
 
 import repast.simphony.context.DefaultContext;
 import de.cesr.more.basic.network.MoreNetwork;
-import de.cesr.more.building.network.MNetworkService;
 import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.rs.building.MGeoRsCompleteNetworkBuilder;
-import de.cesr.more.rs.building.MGeoRsNetworkService;
 import de.cesr.more.rs.building.MRsCompleteNetworkBuilder;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 import de.cesr.parma.core.PmParameterManager;
 
+
 /**
  * MORe
- *
+ * 
  * @author Sascha Holzhauer
- * @date 14.05.2012 
- *
+ * @date 14.05.2012
+ * 
  */
 public class MRsCompleteNetworkBuilderTest {
 
 	static final int	NUM_AGENTS	= 20;
 
-	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -73,12 +71,12 @@ public class MRsCompleteNetworkBuilderTest {
 		for (int i = 0; i < NUM_AGENTS; i++) {
 			agents.add(new MTestNode());
 		}
-		
+
 		MRsCompleteNetworkBuilder<MTestNode, MRepastEdge<MTestNode>> netService =
 				new MRsCompleteNetworkBuilder<MTestNode, MRepastEdge<MTestNode>>(
 						new MRsEdgeFactory<MTestNode, MRepastEdge<MTestNode>>());
 		netService.setContext(new DefaultContext<MTestNode>());
-		
+
 		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, true);
 		MoreNetwork<MTestNode, MRepastEdge<MTestNode>> net = netService.buildNetwork(agents);
 
@@ -103,7 +101,7 @@ public class MRsCompleteNetworkBuilderTest {
 		}
 		assertEquals((20 - 1), predecessors.size());
 	}
-	
+
 	/**
 	 * Test method for {@link de.cesr.more.rs.building.MGeoRsCompleteNetworkBuilder#buildNetwork(java.util.Collection)}.
 	 */

@@ -196,6 +196,11 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		params.setEdgeFactory(eFac);
 		params.setRandomDist(randomDist);
 		
+		// add agents to context:
+		for (AgentType agent : agents) {
+			this.context.add(agent);
+		}
+
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(params);
 		
 		return (MoreRsNetwork<AgentType, EdgeType>) gen.buildNetwork(agents);

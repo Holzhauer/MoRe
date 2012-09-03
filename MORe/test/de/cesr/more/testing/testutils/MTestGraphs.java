@@ -154,7 +154,8 @@ public class MTestGraphs {
 	}
 	
 	public static MoreNetwork<MTestNode, MoreEdge<MTestNode>> getCompleteDirectedMNetwork(int num_nodes) {	
-		MoreNetwork<MTestNode, MoreEdge<MTestNode>> completeG = new MDirectedNetwork(new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
+		MoreNetwork<MTestNode, MoreEdge<MTestNode>> completeG = new MDirectedNetwork<MTestNode, MoreEdge<MTestNode>>(
+				new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
 
 			@Override
 			public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
@@ -210,8 +211,8 @@ public class MTestGraphs {
 	 * Created by Sascha Holzhauer on 03.12.2010
 	 * @throws IOException 
 	 */
-	public static Graph getSmallWorldGraph() throws IOException {
-		Graph readGraph = null;
+	public static Graph<Object, Object> getSmallWorldGraph() throws IOException {
+		Graph<Object, Object> readGraph = null;
 		GraphMLReader<Graph<Object, Object>, Object, Object> graphReader;
 		try {
 			graphReader = new GraphMLReader<Graph<Object, Object>, Object, Object>(new Factory<Object>() {

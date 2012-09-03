@@ -86,9 +86,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 
 		for (AgentType agent : agents) {
 			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("Add agent " + agent + " to network.");
-			}
+			logger.info("Add agent " + agent + " to network.");
 			// LOGGING ->
 
 			network.addNode(agent);

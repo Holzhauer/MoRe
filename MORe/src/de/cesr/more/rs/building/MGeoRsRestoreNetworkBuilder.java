@@ -48,7 +48,6 @@ import edu.uci.ics.jung.graph.Graph;
 /**
  * MORe
  * 
- * TODO test
  * TODO make description
  * 
  * Considered {@link PmParameterDefinition}s:
@@ -74,13 +73,23 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 	/**
 	 * @param areasGeography
 	 */
-	public MGeoRsRestoreNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MGeoRsRestoreNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String networkName) {
 		this.edgeFac = eFac;
-		this.name = name;
+		this.name = networkName;
 	}
 
 	@Override
 	public MoreRsNetwork < AgentType , EdgeType > buildNetwork(Collection < AgentType > agents) {
+
+		if (context == null) {
+			logger.error("Context not set!");
+			throw new IllegalStateException("Context not set!");
+		}
+
+		if (this.geography == null) {
+			logger.error("Geogrpahy not set!");
+			throw new IllegalStateException("Geogrpahy not set!");
+		}
 
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
@@ -88,7 +97,12 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
 		// put agents into map indexed by their indices:
-		BidiMap < AgentType , String > households = new DualHashBidiMap < AgentType , String >();
+		BidiMap<AgentType, String> agentIdMap = new DualHashBidiMap<AgentType, String>();
+
+		for (AgentType agent : agents) {
+			agentIdMap.put(agent, agent.toString());
+			network.addNode(agent);
+		}
 
 		// <- LOGGING
 		logger.info("Add agents");
@@ -97,7 +111,7 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 		MGraphMLReader2NodeMap < Graph < AgentType , EdgeType > , AgentType , EdgeType > graphReader;
 		try {
 			graphReader = new MGraphMLReader2NodeMap < Graph < AgentType , EdgeType > , AgentType , EdgeType >(
-						edgeFac, households);
+						edgeFac, agentIdMap);
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug("Load network from file " + (String) 

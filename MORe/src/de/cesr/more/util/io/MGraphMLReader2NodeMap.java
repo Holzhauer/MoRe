@@ -19,7 +19,6 @@ import org.xml.sax.SAXNotSupportedException;
 
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.util.Log4jLogger;
-
 import edu.uci.ics.jung.graph.Hypergraph;
 import edu.uci.ics.jung.io.GraphMLReader;
 
@@ -115,51 +114,58 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 	        E e;
 	        
 	        String source_id = edge_atts.get("source");
-	        if (source_id == null)
-	            throw new SAXNotSupportedException("edge attribute list missing " +
+	        if (source_id == null) {
+				throw new SAXNotSupportedException("edge attribute list missing " +
 	            		"'source': " + atts.toString());
+			}
 	        V source = vertex_ids.getKey(source_id);
-	        if (source == null)
-	            throw new SAXNotSupportedException("specified 'source' attribute " +
+	        if (source == null) {
+				throw new SAXNotSupportedException("specified 'source' attribute " +
 	            		"\"" + source_id + "\" does not match any node ID");
+			}
 
 	        String target_id = edge_atts.get("target");
-	        if (target_id == null)
-	            throw new SAXNotSupportedException("edge attribute list missing " +
+	        if (target_id == null) {
+				throw new SAXNotSupportedException("edge attribute list missing " +
 	            		"'target': " + atts.toString());
+			}
 	        V target = vertex_ids.getKey(target_id);
-	        if (target == null)
-	            throw new SAXNotSupportedException("specified 'target' attribute " +
+	        if (target == null) {
+				throw new SAXNotSupportedException("specified 'target' attribute " +
 	            		"\"" + target_id + "\" does not match any node ID");
+			}
 
 	        // directedness:
 	        // TODO check if working with EdgeType is more appropriate!
 	        boolean isDirected;
 	        String directed = edge_atts.remove("directed");
-	        if (directed == null)
-	        	isDirected = false;
-	        else if (directed.equals("true"))
-	        	isDirected = true;
-	        else if (directed.equals("false"))
-	        	isDirected = false;
-	        else
-	            throw new SAXNotSupportedException("Unrecognized edge direction specifier 'direction=\"" +
+	        if (directed == null) {
+				isDirected = false;
+			} else if (directed.equals("true")) {
+				isDirected = true;
+			} else if (directed.equals("false")) {
+				isDirected = false;
+			} else {
+				throw new SAXNotSupportedException("Unrecognized edge direction specifier 'direction=\"" +
 	            		directed + "\"': " + "source: " + source_id + ", target: " + target_id);
+			}
 	        
-	        if (edgeFactory != null)
-	        	e = edgeFactory.createEdge(source, target, isDirected);
-	        else
-	            if (id != null)
-	                e = (E)id;
-	            else
-	                throw new IllegalArgumentException("If no edge factory is supplied, " +
+	        if (edgeFactory != null) {
+				e = edgeFactory.createEdge(source, target, isDirected);
+			} else
+	            if (id != null) {
+					e = (E)id;
+				} else {
+					throw new IllegalArgumentException("If no edge factory is supplied, " +
 	                		"edge id may not be null: " + edge_atts);
+				}
 
 	        if (id != null)
 	        {
-	            if (edge_ids.containsKey(e))
-	                throw new SAXNotSupportedException("Edge id \"" + id +
+	            if (edge_ids.containsKey(e)) {
+					throw new SAXNotSupportedException("Edge id \"" + id +
 	                		"\" is a duplicate of an existing edge ID");
+				}
 	            edge_ids.put(e, id);
 	        }
 	        
@@ -170,7 +176,9 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 			// LOGGING ->
 
 	        if (state == TagState.EDGE)
-	        	assignEdgeSourceTarget(e, atts, edge_atts); //, id);
+			 {
+				assignEdgeSourceTarget(e, atts, edge_atts); //, id);
+			}
 
 	        // put remaining attribute/value pairs in edge_data
 	        addExtraData(edge_atts, edge_metadata, e);
@@ -188,9 +196,10 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
     {
         Map<String, String> vertex_atts = getAttributeMap(atts);
         String id = vertex_atts.remove("id");
-        if (id == null)
-            throw new SAXNotSupportedException("node attribute list missing " +
+        if (id == null) {
+			throw new SAXNotSupportedException("node attribute list missing " +
             		"'id': " + atts.toString());
+		}
         V v = vertex_ids.getKey(id);
         
         // <- LOGGING
@@ -202,10 +211,11 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 
         if (v == null)
         {
-        	if (vertex_factory != null)
-        		v = vertex_factory.create();
-        	else
-        		v = (V)id;
+        	if (vertex_factory != null) {
+				v = vertex_factory.create();
+			} else {
+				v = (V)id;
+			}
             vertex_ids.put(v, id);
             this.current_graph.addVertex(v);
 
@@ -214,6 +224,7 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
         }
         // error message (else case: duplicate node id) deleted
 
+		// TODO don't we need to add the vertex to the graph? check tests!
         this.current_vertex = v;
     }
 }
