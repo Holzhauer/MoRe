@@ -25,6 +25,8 @@ package de.cesr.more.rs.building;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -91,6 +93,8 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 			throw new IllegalStateException("Geogrpahy not set!");
 		}
 
+		checkAgentCollection(agents);
+
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
@@ -131,6 +135,20 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 		return network;
 	}
 	
+	protected void checkAgentCollection(Collection<AgentType> agents) {
+		// check agent collection:
+		if (!(agents instanceof Set)) {
+			Set<AgentType> set = new HashSet<AgentType>();
+			set.addAll(agents);
+			if (set.size() != agents.size()) {
+				logger.error("Agent collection contains duplicate entries of at least one agent " +
+							"(Set site: " + set.size() + "; collection size: " + agents.size());
+				throw new IllegalStateException("Agent collection contains duplicate entries of at least one agent " +
+							"(Set site: " + set.size() + "; collection size: " + agents.size());
+			}
+		}
+	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */

@@ -1,0 +1,27 @@
+	----------------
+	MoRe
+	----------------
+	Sascha Holzhauer
+	----------------
+	2012-09-14
+
+MORe Implementation Issues
+
+* Measure Framework
+
+	Some Measure calculations are based on the JUNG library. Sonivis implementation are not suitable because Graph-classes are
+	not compatible with JUNG and sonivis follows another concept of nodes that reference a network.
+	
+	
+	Network-measures are stored at a central registry
+	
+	[[*]] Data could be queried without java reference on the network object (by network name)
+	
+	[[*]] No requirements for network objects
+	
+	
+** Scheduling
+
+	Scheduling parameter can be defined in the measure's param map. An instance of <<<MoreScheduler>>> is responsible for
+	scheduling measure actions.
+	

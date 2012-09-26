@@ -70,6 +70,15 @@ MNetworkManager.setNetwork(network, socialNetworkName);
 
 *Configuring Network Measures
 
+	The concept of network measures works as follows:
+	
+	[[1]] Defining what measures (<<<MoreMeasure>>>) are calculated when using <<<MNetworkMeasureManager>>> or
+		  <<<MNodeMeasureManager>>>.
+	
+	[[1]] MoRe then calculated the measures and stores the data at the nodes (these need to implement <<<MoreNodeMeasureSupport>>>).
+	
+	[[1]] Calculated measures can be retrieved from the node objects.
+
 **Adding Measure Definitions
 
 	As default, the <<<MNetworkMeasureManager>>> imports measure definitions from <<<MBasicNetworkMeasureSupplier>>> (see JavaDoc for details).

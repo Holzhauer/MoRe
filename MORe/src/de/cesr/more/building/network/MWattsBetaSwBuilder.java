@@ -109,6 +109,8 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
 
+		checkAgentCollection(agents);
+
 		MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager
 				.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 				new MDirectedNetwork<AgentType, EdgeType>(getEdgeFactory(),
@@ -118,7 +120,7 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>();
 
 		params.setNetwork(network);
-		params.setEdgeFactory(getEdgeFactory());
+		params.setEdgeModifier(getEdgeModifier());
 
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
 				params);

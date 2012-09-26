@@ -74,6 +74,8 @@ public class MRsErdosRenyiRandomNetworkService<AgentType extends MoreMilieuAgent
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(final Collection<AgentType> agents) {
 		
+		checkAgentCollection(agents);
+
 		MoreLinkProbProvider<AgentType> linkProbProvider = null;
 		if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
 			final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) PmParameterManager.getParameter(

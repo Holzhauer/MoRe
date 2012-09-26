@@ -35,6 +35,12 @@ import org.junit.Test;
 
 import repast.simphony.context.DefaultContext;
 import repast.simphony.space.gis.DefaultGeography;
+import repast.simphony.space.gis.Geography;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.PrecisionModel;
+
 import de.cesr.more.basic.MNetworkTools;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.param.MNetworkBuildingPa;
@@ -83,8 +89,13 @@ public class MGeoRsRestoreNetworkBuilderTest {
 	public void testBuildNetwork() {
 		MGeoRsWattsBetaSwBuilder<MTestNode, MRepastEdge<MTestNode>> netBuilder =
 				new MGeoRsWattsBetaSwBuilder<MTestNode, MRepastEdge<MTestNode>>();
-		netBuilder.setGeography(new DefaultGeography<Object>("TestGeogrpahy"));
+		Geography<Object> geography = new DefaultGeography<Object>("TestGeogrpahy");
+		netBuilder.setGeography(geography);
 		netBuilder.setContext(new DefaultContext<MTestNode>());
+
+		for (MTestNode agent : agents) {
+			geography.move(agent, new Point(new Coordinate(0, 0), new PrecisionModel(), 1));
+		}
 		MoreNetwork<MTestNode, MRepastEdge<MTestNode>> networkOne = netBuilder.buildNetwork(agents);
 
 		MoreIoUtilities.outputGraph(networkOne, new File("./TestSwGraph.graphml"));

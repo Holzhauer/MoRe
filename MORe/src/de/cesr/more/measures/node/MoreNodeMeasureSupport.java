@@ -29,10 +29,11 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.measures.MMeasureDescription;
 
 
-
 /**
  * MORe
  * 
+ * Node objects that shall enable the calculation and usage of network and node measures need to implement this
+ * interface.
  * 
  * @author Sascha Holzhauer
  * @date 28.10.2010

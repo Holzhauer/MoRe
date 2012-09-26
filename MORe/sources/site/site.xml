@@ -13,6 +13,8 @@
   <body>
     <links>
       <item name="Repast Simphony" href="http://repast.sourceforge.net/" />
+      <item name="European Social Simulation Association" href="http://www.essa.eu.org/" />
+      <item name="OpenABM" href="http://www.openabm.org" />
     </links>
 
     <menu name="MoRe">
@@ -20,11 +22,17 @@
        <item name="Concept" href="concept.html"/>
       <item name="Features" href="features.html"/>
        <item name="Usage" href="usage.html"/>
+       <item name="Downloads" href="https://sourceforge.net/projects/more4abm/files"/>
         <item name="JavaDoc" href="../apidocs/index.html" target="new"/>
       <item name="FAQ" href="faq.html"/>
-      <item name="Old Doc" href="xhtml/olddoc.html"/>
+      <!--item name="Old Doc" href="xhtml/olddoc.html"/-->
     </menu>
 
+	<!--menu name="sourceforge">
+		<item name="Download" href="./TODO"/>
+		<item name="Mailing-List" href="TODO"/>
+	</menu-->
+	
     <menu ref="reports"/>
 
   </body>

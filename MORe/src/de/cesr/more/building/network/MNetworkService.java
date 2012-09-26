@@ -23,8 +23,10 @@
  */
 package de.cesr.more.building.network;
 
+
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,111 +40,110 @@ import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.util.Log4jLogger;
 
+
 /**
  * MORe
  * 
  * Provides basic functionality for network generators
- *
+ * 
  * @author holzhauer
- * @date 21.11.2011 
- *
+ * @date 21.11.2011
+ * 
  */
-public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? super AgentType>> implements MoreNetworkService<AgentType, EdgeType> {
+public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? super AgentType>> implements
+		MoreNetworkService<AgentType, EdgeType> {
 
-		/**
-		 * Logger
-		 */
-		static private Logger			logger			= Log4jLogger.getLogger(MNetworkService.class);
+	/**
+	 * Logger
+	 */
+	static private Logger									logger	= Log4jLogger.getLogger(MNetworkService.class);
 
-		
-		protected MoreEdgeFactory<AgentType, EdgeType> edgeFac = null;
+	protected MoreEdgeFactory<AgentType, EdgeType>			edgeFac	= null;
 
-		
-		/**
-		 * should be accessed via getEdgeModifer...
-		 */
-		protected MoreNetworkEdgeModifier<AgentType, EdgeType> edgeModifier;
-		
+	/**
+	 * should be accessed via getEdgeModifer...
+	 */
+	protected MoreNetworkEdgeModifier<AgentType, EdgeType>	edgeModifier;
 
-		/**
-		 * @param areasGeography
-		 */
-		public MNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
-			this.edgeFac = edgeFac;
-			this.edgeModifier = new MDefaultNetworkEdgeModifier<AgentType, EdgeType>(edgeFac);
+	/**
+	 * @param areasGeography
+	 */
+	public MNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this.edgeFac = edgeFac;
+		this.edgeModifier = new MDefaultNetworkEdgeModifier<AgentType, EdgeType>(edgeFac);
+	}
+
+	/**
+	 * @param areasGeography
+	 */
+	@SuppressWarnings("unchecked")
+	// risky but not avoidable
+	public MNetworkService() {
+		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
+	}
+
+	/**
+	 * Adds agents as nodes to the given network without linking them.
+	 * 
+	 * @param network
+	 * @param agents
+	 */
+	protected void addAgents(MoreNetwork<AgentType, EdgeType> network, Collection<AgentType> agents) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Adding agents to network: " + agents);
 		}
+		// LOGGING ->
 
-		
-		/**
-		 * @param areasGeography
-		 */
-		@SuppressWarnings("unchecked") // risky but not avoidable
-		public MNetworkService() {
-			this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
+		for (AgentType o : agents) {
+			network.addNode(o);
 		}
-		
-		/**
-		 * Adds agents as nodes to the given network without linking them.
-		 * @param network
-		 * @param agents
-		 */
-		protected void addAgents(MoreNetwork<AgentType, EdgeType> network, Collection<AgentType> agents) {
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("Adding agents to network: " + agents);
-			}
-			// LOGGING ->
+	}
 
-			for (AgentType o : agents) {
-				network.addNode(o);
-			}
+	/**
+	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#removeNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		for (AgentType partner : network.getSuccessors(node)) {
+			edgeModifier.removeEdge(network, node, partner);
 		}
-		
-		/**
-		 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#removeNode(de.cesr.more.basic.network.MoreNetwork, java.lang.Object)
-		 */
-		@Override
-		public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
-			for (AgentType partner : network.getSuccessors(node)) {
-				edgeModifier.removeEdge(network, node, partner);
-			}
-			for (AgentType partner : network.getPredecessors(node)) {
-				edgeModifier.removeEdge(network, partner, node);
-			}
-			network.removeNode(node);
-			return false;
+		for (AgentType partner : network.getPredecessors(node)) {
+			edgeModifier.removeEdge(network, partner, node);
 		}
-		
+		network.removeNode(node);
+		return false;
+	}
 
+	/**
+	 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#removeEdge(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object, java.lang.Object)
+	 */
+	@Override
+	public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
+		return getEdgeModifier().removeEdge(network, source, target);
+	}
 
-		/**
-		 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#removeEdge(de.cesr.more.basic.network.MoreNetwork, java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
-			return getEdgeModifier().removeEdge(network, source, target);
-		}
-		
-		/**
-		 * Created an edge in the direction from potInfluencer to influencedHh
-		 * 
-		 * @param network
-		 * @param influencedHh
-		 * @param potInfluencer
-		 */
-		@Override
-		public EdgeType createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source,
+	/**
+	 * Created an edge in the direction from potInfluencer to influencedHh
+	 * 
+	 * @param network
+	 * @param influencedHh
+	 * @param potInfluencer
+	 */
+	@Override
+	public EdgeType createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source,
 				AgentType target) {
-			return getEdgeModifier().createEdge(network, source, target);
-		}
+		return getEdgeModifier().createEdge(network, source, target);
+	}
 
-
-		/**
-		 * @param network
-		 */
-		protected void logEdges(Logger logger, MoreNetwork<AgentType, EdgeType> network, String prestring) {
-			if (logger.isDebugEnabled()) {
-				Set<MoreEdge<? super AgentType>> edges = new TreeSet<MoreEdge<? super AgentType>>(
+	/**
+	 * @param network
+	 */
+	protected void logEdges(Logger logger, MoreNetwork<AgentType, EdgeType> network, String prestring) {
+		if (logger.isDebugEnabled()) {
+			Set<MoreEdge<? super AgentType>> edges = new TreeSet<MoreEdge<? super AgentType>>(
 						new Comparator<MoreEdge<? super AgentType>>() {
 
 							@Override
@@ -158,44 +159,60 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 								}
 							}
 						});
-				edges.addAll(network.getEdgesCollection());
-				for (MoreEdge<? super AgentType> edge : edges) {
-					logger.debug(prestring + edge);
-				}
+			edges.addAll(network.getEdgesCollection());
+			for (MoreEdge<? super AgentType> edge : edges) {
+				logger.debug(prestring + edge);
 			}
-		}
-		
-		/*************************************
-		 *   GETTER & SETTER
-		 *************************************/
-
-		/**
-		 * @return the edgeModifier
-		 */
-		public MoreNetworkEdgeModifier<AgentType, EdgeType> getEdgeModifier() {
-			if (edgeModifier == null) {
-				logger.error("Edge Modifier has not been set or could not be instantiated since geography was not set!");
-				throw new IllegalArgumentException("Edge Modifier has not been set or could not be instantiated since geography was not set!");
-			}
-			return edgeModifier;
-		}
-
-		/**
-		 * @param edgeModifier the edgeModifier to set
-		 */
-		@Override
-		public void setEdgeModifier(
-				MoreNetworkEdgeModifier<AgentType, EdgeType> edgeModifier) {
-			this.edgeModifier = edgeModifier;
-		}
-
-
-		/**
-		 * To set a new {@link MoreEdgeFactory}, assign a new {@link MoreNetworkEdgeModifier}!
-		 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#getEdgeFactory()
-		 */
-		@Override
-		public MoreEdgeFactory<AgentType, EdgeType> getEdgeFactory() {
-			return edgeFac;
 		}
 	}
+
+	protected void checkAgentCollection(Collection<AgentType> agents) {
+		// check agent collection:
+		if (!(agents instanceof Set)) {
+			Set<AgentType> set = new HashSet<AgentType>();
+			set.addAll(agents);
+			if (set.size() != agents.size()) {
+				logger.error("Agent collection contains duplicate entries of at least one agent " +
+							"(Set site: " + set.size() + "; collection size: " + agents.size());
+				throw new IllegalStateException("Agent collection contains duplicate entries of at least one agent " +
+							"(Set site: " + set.size() + "; collection size: " + agents.size());
+			}
+		}
+	}
+
+	/*************************************
+	 * GETTER & SETTER
+	 *************************************/
+
+	/**
+	 * @return the edgeModifier
+	 */
+	public MoreNetworkEdgeModifier<AgentType, EdgeType> getEdgeModifier() {
+		if (edgeModifier == null) {
+			logger.error("Edge Modifier has not been set or could not be instantiated since geography was not set!");
+			throw new IllegalArgumentException(
+					"Edge Modifier has not been set or could not be instantiated since geography was not set!");
+		}
+		return edgeModifier;
+	}
+
+	/**
+	 * @param edgeModifier
+	 *        the edgeModifier to set
+	 */
+	@Override
+	public void setEdgeModifier(
+				MoreNetworkEdgeModifier<AgentType, EdgeType> edgeModifier) {
+		this.edgeModifier = edgeModifier;
+	}
+
+	/**
+	 * To set a new {@link MoreEdgeFactory}, assign a new {@link MoreNetworkEdgeModifier}!
+	 * 
+	 * @see de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier#getEdgeFactory()
+	 */
+	@Override
+	public MoreEdgeFactory<AgentType, EdgeType> getEdgeFactory() {
+		return edgeFac;
+	}
+}

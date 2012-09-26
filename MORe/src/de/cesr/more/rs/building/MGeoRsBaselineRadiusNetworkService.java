@@ -159,6 +159,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
 			
+		checkAgentCollection(agents);
 		checkParameter();
 		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
 		

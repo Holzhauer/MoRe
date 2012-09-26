@@ -30,16 +30,17 @@ import org.apache.commons.collections15.Factory;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.cesr.more.basic.edge.MEdge;
 import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.basic.network.MDirectedNetwork;
+import de.cesr.more.basic.network.MUndirectedNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.util.MLattice1DGenerator;
 import de.cesr.more.building.util.MoreKValueProvider;
+import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 import edu.uci.ics.jung.algorithms.generators.GraphGenerator;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 /**
  * MORe
@@ -50,18 +51,18 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
  */
 public class MLattice1DGeneratorTest {
 
-	static final int	NUM_AGENTS	= 6;
-	static final int	K_VALUE		= 2;
+	static final int	NUM_AGENTS	= 21;
+	static final int	K_VALUE		= 8;
 
 
 	@Test
 	public void testBuildingDirected() {
 
 		GraphGenerator<MTestNode, MoreEdge<MTestNode>> networkBuilder = new MLattice1DGenerator<MTestNode, MoreEdge<MTestNode>>(
-				new Factory<Graph<MTestNode, MoreEdge<MTestNode>>>() {
+				new Factory<MoreNetwork<MTestNode, MoreEdge<MTestNode>>>() {
 					@Override
-					public Graph<MTestNode, MoreEdge<MTestNode>> create() {
-						return new DirectedSparseGraph<MTestNode, MoreEdge<MTestNode>>();
+					public MoreNetwork<MTestNode, MoreEdge<MTestNode>> create() {
+						return new MDirectedNetwork<MTestNode, MoreEdge<MTestNode>>();
 					}
 				},
 				new Factory<MTestNode>() {
@@ -71,12 +72,7 @@ public class MLattice1DGeneratorTest {
 					}
 
 				},
-				new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
-					@Override
-					public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
-						return new MEdge<MTestNode>(source, target, directed);
-					}
-				},
+				new MDefaultNetworkEdgeModifier<MTestNode, MoreEdge<MTestNode>>(new MDefaultEdgeFactory<MTestNode>()),
 				NUM_AGENTS,
 				new MoreKValueProvider<MTestNode>() {
 					@Override
@@ -91,16 +87,21 @@ public class MLattice1DGeneratorTest {
 
 		assertEquals(NUM_AGENTS, graph.getVertexCount());
 		assertEquals(NUM_AGENTS * K_VALUE, graph.getEdgeCount());
+
+		for (MTestNode node : graph.getVertices()) {
+			assertEquals(K_VALUE, graph.inDegree(node));
+			assertEquals(K_VALUE, graph.outDegree(node));
+		}
 	}
 
 	@Test
 	public void testBuildingUndirected() {
 
 		GraphGenerator<MTestNode, MoreEdge<MTestNode>> networkBuilder = new MLattice1DGenerator<MTestNode, MoreEdge<MTestNode>>(
-				new Factory<Graph<MTestNode, MoreEdge<MTestNode>>>() {
+				new Factory<MoreNetwork<MTestNode, MoreEdge<MTestNode>>>() {
 					@Override
-					public Graph<MTestNode, MoreEdge<MTestNode>> create() {
-						return new UndirectedSparseGraph<MTestNode, MoreEdge<MTestNode>>();
+					public MoreNetwork<MTestNode, MoreEdge<MTestNode>> create() {
+						return new MUndirectedNetwork<MTestNode, MoreEdge<MTestNode>>();
 					}
 				},
 				new Factory<MTestNode>() {
@@ -110,12 +111,7 @@ public class MLattice1DGeneratorTest {
 					}
 
 				},
-				new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
-					@Override
-					public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
-						return new MEdge<MTestNode>(source, target, directed);
-					}
-				},
+				new MDefaultNetworkEdgeModifier<MTestNode, MoreEdge<MTestNode>>(new MDefaultEdgeFactory<MTestNode>()),
 				NUM_AGENTS,
 				new MoreKValueProvider<MTestNode>() {
 					@Override
@@ -130,16 +126,20 @@ public class MLattice1DGeneratorTest {
 
 		assertEquals(NUM_AGENTS, graph.getVertexCount());
 		assertEquals(NUM_AGENTS * K_VALUE / 2, graph.getEdgeCount());
+
+		for (MTestNode node : graph.getVertices()) {
+			assertEquals(K_VALUE, graph.inDegree(node));
+		}
 	}
 
 	@Test
 	public void testBuildingNoneToroidal() {
 
 		GraphGenerator<MTestNode, MoreEdge<MTestNode>> networkBuilder = new MLattice1DGenerator<MTestNode, MoreEdge<MTestNode>>(
-				new Factory<Graph<MTestNode, MoreEdge<MTestNode>>>() {
+				new Factory<MoreNetwork<MTestNode, MoreEdge<MTestNode>>>() {
 					@Override
-					public Graph<MTestNode, MoreEdge<MTestNode>> create() {
-						return new UndirectedSparseGraph<MTestNode, MoreEdge<MTestNode>>();
+					public MoreNetwork<MTestNode, MoreEdge<MTestNode>> create() {
+						return new MUndirectedNetwork<MTestNode, MoreEdge<MTestNode>>();
 					}
 				},
 				new Factory<MTestNode>() {
@@ -149,12 +149,7 @@ public class MLattice1DGeneratorTest {
 					}
 
 				},
-				new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
-					@Override
-					public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
-						return new MEdge<MTestNode>(source, target, directed);
-					}
-				},
+				new MDefaultNetworkEdgeModifier<MTestNode, MoreEdge<MTestNode>>(new MDefaultEdgeFactory<MTestNode>()),
 				NUM_AGENTS,
 				new MoreKValueProvider<MTestNode>() {
 					@Override
@@ -191,10 +186,10 @@ public class MLattice1DGeneratorTest {
 		};
 
 		GraphGenerator<MTestNode, MoreEdge<MTestNode>> networkBuilder = new MLattice1DGenerator<MTestNode, MoreEdge<MTestNode>>(
-				new Factory<Graph<MTestNode, MoreEdge<MTestNode>>>() {
+				new Factory<MoreNetwork<MTestNode, MoreEdge<MTestNode>>>() {
 					@Override
-					public Graph<MTestNode, MoreEdge<MTestNode>> create() {
-						return new UndirectedSparseGraph<MTestNode, MoreEdge<MTestNode>>();
+					public MoreNetwork<MTestNode, MoreEdge<MTestNode>> create() {
+						return new MDirectedNetwork<MTestNode, MoreEdge<MTestNode>>();
 					}
 				},
 				new Factory<MTestNode>() {
@@ -211,12 +206,7 @@ public class MLattice1DGeneratorTest {
 					}
 
 				},
-				new MoreEdgeFactory<MTestNode, MoreEdge<MTestNode>>() {
-					@Override
-					public MoreEdge<MTestNode> createEdge(MTestNode source, MTestNode target, boolean directed) {
-						return new MEdge<MTestNode>(source, target, directed);
-					}
-				},
+				new MDefaultNetworkEdgeModifier<MTestNode, MoreEdge<MTestNode>>(new MDefaultEdgeFactory<MTestNode>()),
 				NUM_AGENTS,
 				kProvider,
 				true,

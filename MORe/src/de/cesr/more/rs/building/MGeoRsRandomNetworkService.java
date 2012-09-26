@@ -24,7 +24,7 @@ import de.cesr.uranus.core.URandomService;
 
 /**
  * @author holzhauer
- * TODO incorporate edgeFactory!
+ * TODO incorporate edgeModifier!
  */
 public class MGeoRsRandomNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
 		extends MGeoRsNetworkService<AgentType, EdgeType> {
@@ -60,6 +60,8 @@ public class MGeoRsRandomNetworkService<AgentType extends MoreMilieuAgent, EdgeT
 	@SuppressWarnings("unchecked")
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
+
+		checkAgentCollection(agents);
 
 		MRandomNetworkGenerator<AgentType> generator = new MRandomNetworkGenerator<AgentType>(1.0 / (agents.size() - 1)
 				*

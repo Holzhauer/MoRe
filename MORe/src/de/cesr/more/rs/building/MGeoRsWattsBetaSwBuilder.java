@@ -23,7 +23,13 @@
  */
 package de.cesr.more.rs.building;
 
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -49,7 +55,6 @@ import de.cesr.uranus.core.URandomService;
 /**
  * MORe
  * 
- * TODO implement MoreGeoRsNetworkService
  * TODO parameter description
  * 
  * @author holzhauer
@@ -139,6 +144,10 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	protected Uniform randomDist;
 	protected String name;
 	
+	protected MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>	params;
+
+	protected MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>			gen;
+
 	/**
 	 * 
 	 */
@@ -159,10 +168,8 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	 * @param eFac
 	 */
 	public MGeoRsWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
-		super(eFac);
-		this.eFac = eFac;
+		this(eFac);
 		this.name = name;
-		this.randomDist = URandomService.getURandomService().getUniform();
 	}
 	
 	@Override
@@ -171,9 +178,8 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	}
 
 	/**
-	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection)
-	 *      Parameters are assigned through the parameter framework to allow
-	 *      network builders to be initialises automatically.
+	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection) Parameters are assigned
+	 *      through the parameter framework to allow network builders to be initialised automatically.
 	 */
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
@@ -184,16 +190,27 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 			throw new IllegalStateException("Context not set!");
 		}
 		
+		// check agent collection:
+		if (!(agents instanceof Set)) {
+			Set<AgentType> set = new HashSet<AgentType>();
+			set.addAll(agents);
+			if (set.size() != agents.size()) {
+				logger.error("Agent collection contains duplicate entries of at least one agent " +
+						"(Set site: " + set.size() + "; collection size: " + agents.size());
+				throw new IllegalStateException("Agent collection contains duplicate entries of at least one agent " +
+						"(Set site: " + set.size() + "; collection size: " + agents.size());
+			}
+		}
+
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ? new DirectedJungNetwork<AgentType>(
 						this.name) : new UndirectedJungNetwork<AgentType>(
 								this.name), context, this.edgeModifier.getEdgeFactory());
 		
-		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params = 
-			new MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentType, EdgeType>();
+		params = new MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentType, EdgeType>();
 		
 		params.setNetwork(network);
-		params.setEdgeFactory(eFac);
+		params.setEdgeModifier(edgeModifier);
 		params.setRandomDist(randomDist);
 		
 		// add agents to context:
@@ -201,18 +218,77 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 			this.context.add(agent);
 		}
 
-		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(params);
+		gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(params);
 		
 		return (MoreRsNetwork<AgentType, EdgeType>) gen.buildNetwork(agents);
 	}
 
 	/**
-	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork, java.lang.Object)
+	 * TODO test
+	 * 
+	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
-		// TODO Auto-generated method stub
-		return false;
+		List<EdgeType> edges = new ArrayList<EdgeType>();
+		ArrayList<AgentType> agents = new ArrayList<AgentType>();
+		Set<EdgeType> removedEdges = new HashSet<EdgeType>();
+
+		for (AgentType agent : network.getNodes()) {
+			agents.add(agent);
+		}
+
+		network.addNode(node);
+
+		// request random node to connect with
+		AgentType initialPartner = params.getRewireManager().findPartner(network.getJungGraph(), node);
+		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+			params.getEdgeModifier().createEdge(network, initialPartner, node);
+		} else {
+			params.getEdgeModifier().createEdge(network, node, initialPartner);
+		}
+
+		// request k neighbors of this node to connect with (since the node was initially connected to k nodes this is
+		// possible)
+		Iterator<AgentType> initialAgentPredecessors = network.getPredecessors(initialPartner).iterator();
+		// there is already on link to initial partner...:
+		for (int i = 1; i < params.getkProvider().getKValue(node) && initialAgentPredecessors.hasNext(); i++) {
+			AgentType next = initialAgentPredecessors.next();
+			if (next != node) {
+				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+					edges.add(params.getEdgeModifier().createEdge(network, next, node));
+				} else {
+					edges.add(params.getEdgeModifier().createEdge(network, node, next));
+				}
+			}
+		}
+
+		// randomly rewire these links
+		for (EdgeType edge : edges) {
+			gen.rewireEdge(agents, removedEdges, edge);
+		}
+
+		// add additional global links if required (in case initialPartner's milieu k is smaller than node one's)
+		int missing = params.getkProvider().getKValue(node)
+				- ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ?
+						network.getInDegree(node) : network.getOutDegree(node));
+		if (missing > 0) {
+			for (int j = 0; j < missing; j++) {
+				AgentType partner;
+				do {
+					partner = params.getRewireManager().findPartner(network.getJungGraph(), node);
+				} while (partner == node || network.isSuccessor(partner, node));
+
+				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+					params.getEdgeModifier().createEdge(network, partner, node);
+				} else {
+					params.getEdgeModifier().createEdge(network, node, partner);
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**

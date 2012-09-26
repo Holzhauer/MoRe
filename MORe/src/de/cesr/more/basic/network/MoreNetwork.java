@@ -240,4 +240,9 @@ public interface MoreNetwork<AgentType, EdgeType extends MoreEdge<? super AgentT
 	 * @param edgeFac
 	 */
 	public void setEdgeFactory(MoreEdgeFactory<AgentType, EdgeType> edgeFac);
+
+	/**
+	 * Provides some basic oinformation on the network: - number of links - number of edges - directedness
+	 */
+	public String getNetworkInfo();
 }

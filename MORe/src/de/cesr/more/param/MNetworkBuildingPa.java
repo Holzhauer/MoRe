@@ -81,10 +81,10 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * rewired edges in a graph. Range: <code>(0,1)</code>; Default: <code>0.1</code>.
 	 */
 	BUILD_WSSM_BETA(Double.class, 0.1),
-	
+
 	/**
-	 * Initial degree that is used to build to regular network (local neighbourhood size)
-	 * to start from. Must be an even number. Default: <code>4</code>.
+	 * Initial degree that is used to build to regular network (local neighbourhood size) to start from. Must be an even
+	 * number. Default: <code>4</code>. If BUILD_WSSM_CONSIDER_SOURCES is TRUE, this value is considered as in-degree!
 	 */
 	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
 	

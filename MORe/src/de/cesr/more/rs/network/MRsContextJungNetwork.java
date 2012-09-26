@@ -28,6 +28,7 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
+import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.util.Log4jLogger;
@@ -47,7 +48,8 @@ import edu.uci.ics.jung.graph.Graph;
  * @date 12.10.2010
  * 
  */
-public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> extends ContextJungNetwork<AgentT>
+public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & MoreEdge<AgentT>> extends
+		ContextJungNetwork<AgentT>
 		implements MoreRsNetwork<AgentT, EdgeT> {
 
 	/**
@@ -385,5 +387,20 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 	@Override
 	public void setNetworkBuilderClass(Class<? extends MoreNetworkBuilder<?, ?>> builderClass) {
 		this.networkBuilderClass = builderClass;
+	}
+
+	/**
+	 * @see de.cesr.more.basic.network.MoreNetwork#getNetworkInfo()
+	 */
+	@Override
+	public String getNetworkInfo() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Network " + this.getName() + ":" + System.getProperty("line.separator"));
+		buffer.append("Number of Nodes: " + this.numNodes() + System.getProperty("line.separator"));
+		buffer.append("Number of Edges: " + this.numEdges() + System.getProperty("line.separator"));
+		buffer.append("Directedness: " + (this.isDirected() ? " Directed" : "Undirected")
+				+ System.getProperty("line.separator"));
+		buffer.append("APL: " + MNetworkStatisticsR.getAveragepathLengthR(this.getJungGraph(), false));
+		return buffer.toString();
 	}
 }

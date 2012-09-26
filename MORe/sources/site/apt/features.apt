@@ -23,6 +23,8 @@ MoRe's features
   
   * Calculation and management of network an node measures
   
+    * Categorisation of Network and Node Measures
+  
   * Subnetworks
   
   	* Define subnetworks on given criteria using predicates

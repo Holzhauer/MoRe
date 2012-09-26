@@ -40,7 +40,6 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
-import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
@@ -55,6 +54,7 @@ import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe
+ * 
  * 
  * - uses MSmallWorldBetaModelNetworkGeneratorMilieuParams from MGeoRsWattsBetaSwBuilder
  * 
@@ -101,11 +101,11 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 						: new UndirectedJungNetwork<AgentType>(
 								this.name), context, this.edgeModifier.getEdgeFactory());
 
-		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
+		params =
 				new MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentType, EdgeType>();
 
 		params.setNetwork(network);
-		params.setEdgeFactory(eFac);
+		params.setEdgeModifier(edgeModifier);
 		params.setRandomDist(randomDist);
 
 		final MMilieuNetworkParameterMap paraMap = (MMilieuNetworkParameterMap) PmParameterManager

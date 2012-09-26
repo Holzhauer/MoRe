@@ -208,6 +208,11 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 		}
 		// LOGGING ->
 
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Node id: " + id + " - returned node: " + v);
+		}
+		// LOGGING ->
 
         if (v == null)
         {

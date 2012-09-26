@@ -27,6 +27,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +42,7 @@ import de.cesr.more.rs.building.MGeoRsWattsBetaSwBuilder;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.testing.testutils.MTestGraphs;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -53,6 +56,7 @@ public class MGeoRsWattsBetaSwBuilderTest {
 
 	static final int NUM_AGENTS = 20;
 	protected Collection<MoreMilieuAgent> agents;
+	protected Context<MoreMilieuAgent>		context;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -61,23 +65,15 @@ public class MGeoRsWattsBetaSwBuilderTest {
 	public void setUp() throws Exception {
 		MManager.init();
 		agents = new ArrayList<MoreMilieuAgent>(NUM_AGENTS);
+
+		context = new DefaultContext<MoreMilieuAgent>();
+
 		for (int i=0; i < NUM_AGENTS; i++) {
-			agents.add(new MoreMilieuAgent(){
-				@Override
-				public int getMilieuGroup() {
-					return 1;
-				}
+			agents.add(new MTestGraphs.MTestNode(1));
+		}
 
-				@Override
-				public String getAgentId() {
-					return "id";
-				}
-
-				@Override
-				public Context<?> getParentContext() {
-					return null;
-				}
-			});
+		for (MoreMilieuAgent o : agents) {
+			context.add(o);
 		}
 	}
 
@@ -90,10 +86,7 @@ public class MGeoRsWattsBetaSwBuilderTest {
 		PmParameterManager.setParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS, null);
 
 		MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> networkBuilder = new MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>>();
-		Context<MoreMilieuAgent> context = new DefaultContext<MoreMilieuAgent>();
-		for (MoreMilieuAgent o : agents) {
-			context.add(o);
-		}
+
 		networkBuilder.setContext(context);
 		MoreRsNetwork<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> network = networkBuilder.buildNetwork(agents);
 
@@ -102,16 +95,74 @@ public class MGeoRsWattsBetaSwBuilderTest {
 
 		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(true));
 		networkBuilder = new MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>>();
-		context = new DefaultContext<MoreMilieuAgent>();
-		for (MoreMilieuAgent o : agents) {
-			context.add(o);
-		}
 		networkBuilder.setContext(context);
 		network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());
 		assertEquals(NUM_AGENTS * ((Integer)PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue(), network.numEdges());
 	}
 	
+	@Test
+	public void testAddAndLinkNode() {
+		// build undirected network
+		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(false));
+		PmParameterManager.setParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS, null);
+
+		MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> networkBuilder = new MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>>();
+		networkBuilder.setContext(context);
+
+		MoreRsNetwork<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> network = networkBuilder.buildNetwork(agents);
+
+		// add node
+		MTestGraphs.MTestNode newAgent = new MTestGraphs.MTestNode(1);
+		context.add(newAgent);
+		networkBuilder.addAndLinkNode(network, newAgent);
+
+		// check in-degree
+		assertEquals(
+				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue(),
+				network.getInDegree(newAgent));
+
+		// remove node
+		Map<MoreMilieuAgent, Integer> exPartners = new HashMap<MoreMilieuAgent, Integer>();
+		for (MoreMilieuAgent partner : network.getPredecessors(newAgent)) {
+			exPartners.put(partner, new Integer(network.getOutDegree(partner)));
+		}
+		network.removeNode(newAgent);
+
+		// check out-degree of ex-partners
+		for (MoreMilieuAgent partner : exPartners.keySet()) {
+			assertEquals((exPartners.get(partner) - 1), network.getOutDegree(partner));
+		}
+
+		// build directed network
+		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(true));
+		networkBuilder = new MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>>();
+		networkBuilder.setContext(context);
+		network = networkBuilder.buildNetwork(agents);
+
+		// add node
+		newAgent = new MTestGraphs.MTestNode(1);
+		context.add(newAgent);
+		networkBuilder.addAndLinkNode(network, newAgent);
+
+		// check in-degree
+		assertEquals(
+				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG)).intValue(),
+				network.getInDegree(newAgent));
+
+		// remove node
+		exPartners = new HashMap<MoreMilieuAgent, Integer>();
+		for (MoreMilieuAgent partner : network.getPredecessors(newAgent)) {
+			exPartners.put(partner, new Integer(network.getOutDegree(partner)));
+		}
+		network.removeNode(newAgent);
+
+		// check out-degree of ex-partners
+		for (MoreMilieuAgent partner : exPartners.keySet()) {
+			assertEquals((exPartners.get(partner) - 1), network.getOutDegree(partner));
+		}
+	}
+
 	@Test
 	public void testKProvider() {
 		PmParameterManager.setParameter(MNetworkBuildingPa.BUILD_DIRECTED, new Boolean(true));
@@ -120,10 +171,6 @@ public class MGeoRsWattsBetaSwBuilderTest {
 		PmParameterManager.setParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS, netParamMap);
 
 		MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> networkBuilder = new MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>>();
-		Context<MoreMilieuAgent> context = new DefaultContext<MoreMilieuAgent>();
-		for (MoreMilieuAgent o : agents) {
-			context.add(o);
-		}
 		networkBuilder.setContext(context);
 		MoreRsNetwork<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());
@@ -137,10 +184,7 @@ public class MGeoRsWattsBetaSwBuilderTest {
 		PmParameterManager.setParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS, null);
 
 		MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> networkBuilder = new MGeoRsWattsBetaSwBuilder<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>>();
-		Context<MoreMilieuAgent> context = new DefaultContext<MoreMilieuAgent>();
-		for (MoreMilieuAgent o : agents) {
-			context.add(o);
-		}
+		networkBuilder.setContext(context);
 		networkBuilder.setContext(context);
 		MoreRsNetwork<MoreMilieuAgent, MRepastEdge<MoreMilieuAgent>> network = networkBuilder.buildNetwork(agents);
 		assertEquals(NUM_AGENTS, network.numNodes());

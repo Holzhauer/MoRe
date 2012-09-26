@@ -72,6 +72,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
+
 		if (context == null) {
 			// <- LOGGING
 			logger.error("The context has not been set!");
@@ -79,6 +80,8 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 			throw new IllegalStateException("The context has not bee set!");
 		}
 		
+		checkAgentCollection(agents);
+
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :

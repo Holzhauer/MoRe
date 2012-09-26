@@ -90,6 +90,8 @@ public class MRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, EdgeTy
 			throw new IllegalStateException("The context has not bee set!");
 		}
 		
+		checkAgentCollection(agents);
+
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :

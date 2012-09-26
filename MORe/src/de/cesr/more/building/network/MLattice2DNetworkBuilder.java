@@ -4,6 +4,8 @@
 package de.cesr.more.building.network;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -91,6 +93,8 @@ public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<Agent
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
 		
+		checkAgentCollection(agents);
+
 		MoreNetwork<AgentType, EdgeType> network = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED) ?
 				new MDirectedNetwork<AgentType, EdgeType>(edgeModifier.getEdgeFactory(), name) :
 				new MUndirectedNetwork<AgentType, EdgeType>(edgeModifier.getEdgeFactory(), name);
@@ -105,5 +109,19 @@ public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<Agent
 		}
 		network = latticeGenerator.createNetwork(network, edgeModifier);
 		return  network;
+	}
+
+	protected void checkAgentCollection(Collection<AgentType> agents) {
+		// check agent collection:
+		if (!(agents instanceof Set)) {
+			Set<AgentType> set = new HashSet<AgentType>();
+			set.addAll(agents);
+			if (set.size() != agents.size()) {
+				logger.error("Agent collection contains duplicate entries of at least one agent " +
+							"(Set site: " + set.size() + "; collection size: " + agents.size());
+				throw new IllegalStateException("Agent collection contains duplicate entries of at least one agent " +
+							"(Set site: " + set.size() + "; collection size: " + agents.size());
+			}
+		}
 	}
 }

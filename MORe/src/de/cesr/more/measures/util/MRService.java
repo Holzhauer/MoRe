@@ -55,6 +55,7 @@ public class MRService implements RMainLoopCallbacks{
 	 * Logger
 	 */
 	static private Logger logger = Log4jLogger.getLogger(MRService.class);
+	static private Logger		loggerThreads	= Log4jLogger.getLogger(MRService.class.getName() + ".threads");
 	
 	static private String[] R_ARGS = {"--no-save"};
 
@@ -101,8 +102,8 @@ public class MRService implements RMainLoopCallbacks{
 	 */
 	static public void endEngine() {
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Stopp REngine...");
+		if (loggerThreads.isDebugEnabled()) {
+			loggerThreads.debug("Stopp REngine...");
 		}
 		// LOGGING ->
 		Rengine re = Rengine.getMainEngine();
@@ -111,8 +112,8 @@ public class MRService implements RMainLoopCallbacks{
 		}
 
 		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("REngine stopped!");
+		if (loggerThreads.isDebugEnabled()) {
+			loggerThreads.debug("REngine stopped!");
 		}
 		// LOGGING ->
 
@@ -167,9 +168,9 @@ public class MRService implements RMainLoopCallbacks{
 			re = new Rengine(R_ARGS, false, getInstance());
 			
 			// the engine creates R is a new thread, so we should wait until it's ready
-			logger.debug("Rengine created, waiting for R");
+			loggerThreads.debug("Rengine created, waiting for R");
 			if (!re.waitForR()) {
-	        	logger.error("Cannot load R");
+				loggerThreads.error("Cannot load R");
 	        	throw new IllegalStateException("Cannot load R");
 	        }
 	        

@@ -103,6 +103,8 @@ public class MRsLattice2DNetworkBuilder<AgentType, EdgeType extends MRepastEdge<
 			// LOGGING ->
 			throw new IllegalStateException("The context has not bee set!");
 		}
+
+		checkAgentCollection(agents);
 		
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?

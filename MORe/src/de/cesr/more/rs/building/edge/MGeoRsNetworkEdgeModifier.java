@@ -127,7 +127,7 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	public boolean removeEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
 		EdgeType edge = network.disconnect(source, target);
 		if (edge != null) {
-			if (geography != null) {
+			if (geography != null && geography.getGeometry(edge) != null) {
 				geography.move(edge, null);
 			}
 			return true;
