@@ -7,6 +7,8 @@
 
 Using Network Generators
 
+%{toc|section=0|fromDepth=2|toDepth=3}
+
 * Adding and Removal of Nodes
   
   Network generators that support addition and removal of nodes and their edges extend

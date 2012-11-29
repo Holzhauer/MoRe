@@ -201,12 +201,11 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 		TieCounter tieCounter = new TieCounter();
 
 		ArrayList<A> transitiveAgents = null;
-		ArrayList<A> reciprocalAgents = null;
+		ArrayList<A> reciprocalAgents = new ArrayList<A>();
 		ArrayList<A> localAgents = null;
 
 		if (linkLogger.isInfoEnabled()) {
 			transitiveAgents = new ArrayList<A>();
-			reciprocalAgents = new ArrayList<A>();
 			localAgents = new ArrayList<A>();
 		}
 

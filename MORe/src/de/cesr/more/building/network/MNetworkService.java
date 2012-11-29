@@ -174,8 +174,8 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 			if (set.size() != agents.size()) {
 				logger.error("Agent collection contains duplicate entries of at least one agent " +
 							"(Set site: " + set.size() + "; collection size: " + agents.size());
-				throw new IllegalStateException("Agent collection contains duplicate entries of at least one agent " +
-							"(Set site: " + set.size() + "; collection size: " + agents.size());
+				throw new IllegalStateException("Agent collection contains duplicate entries of at least one agent "
+						+ "(Set site: " + set.size() + "; collection size: " + agents.size());
 			}
 		}
 	}

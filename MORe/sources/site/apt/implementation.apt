@@ -7,6 +7,8 @@
 
 MORe Implementation Issues
 
+%{toc|section=0|fromDepth=2|toDepth=3}
+
 * Measure Framework
 
 	Some Measure calculations are based on the JUNG library. Sonivis implementation are not suitable because Graph-classes are

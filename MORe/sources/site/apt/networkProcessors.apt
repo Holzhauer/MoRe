@@ -7,6 +7,8 @@
 
 Using Network Processors
 
+%{toc|section=0|fromDepth=2|toDepth=3}
+
 * Introduction
   
   Network processors allow to manipulate network links according to differences between partners regarding some node property.

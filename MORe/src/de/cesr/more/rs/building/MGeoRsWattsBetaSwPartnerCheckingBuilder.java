@@ -45,6 +45,7 @@ import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
+import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
@@ -72,6 +73,8 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 
 	protected Uniform		rand;
 
+	protected MMilieuNetworkParameterMap	paraMap;
+
 	/**
 	 * @param eFac
 	 */
@@ -95,6 +98,20 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 			throw new IllegalStateException("Context not set!");
 		}
 
+
+		if (((MMilieuNetworkParameterMap) PmParameterManager
+				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)) == null) {
+			new MMilieuNetDataReader().initParameters();
+
+			if (this.paraMap == null) {
+				// <- LOGGING
+				logger.warn("Parameter MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has not been set! (Re-)Initialise it.");
+				// LOGGING ->
+			}
+		}
+		this.paraMap = (MMilieuNetworkParameterMap) PmParameterManager
+				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
+
 		final MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ? new DirectedJungNetwork<AgentType>(
 						this.name)
@@ -107,9 +124,6 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 		params.setNetwork(network);
 		params.setEdgeModifier(edgeModifier);
 		params.setRandomDist(randomDist);
-
-		final MMilieuNetworkParameterMap paraMap = (MMilieuNetworkParameterMap) PmParameterManager
-				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 
 		// TODO Check if required
 		params.setkProvider(new MoreKValueProvider<AgentType>() {

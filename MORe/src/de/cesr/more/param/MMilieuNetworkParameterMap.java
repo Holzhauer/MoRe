@@ -24,7 +24,10 @@
 package de.cesr.more.param;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -41,7 +44,7 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  */
 public class MMilieuNetworkParameterMap extends
-		HashMap<Integer, Map<PmParameterDefinition, Object>> {
+		LinkedHashMap<Integer, Map<PmParameterDefinition, Object>> {
 	
 	/**
 	 * Logger
@@ -54,6 +57,8 @@ public class MMilieuNetworkParameterMap extends
 	 */
 	private static final long serialVersionUID = -5395092541374359151L;
 
+	private static Map<PmParameterDefinition, Set<Integer>>	warningsReducerMap	= new HashMap<PmParameterDefinition, Set<Integer>>();
+
 
 	public int getK(int milieu) {
 		return warnDefault(MNetBuildBhPa.K, milieu) ? 
@@ -64,7 +69,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setK(int milieu, int k) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(MNetBuildBhPa.K,
 				new Integer(k));
@@ -79,7 +84,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setP_Rewire(int milieu, double p) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.P_REWIRE, new Double(p));
@@ -94,7 +99,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setSearchRadius(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.SEARCH_RADIUS,
@@ -111,7 +116,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setXSearchRadius(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.X_SEARCH_RADIUS,
@@ -128,7 +133,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setMaxSearchRadius(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.MAX_SEARCH_RADIUS,
@@ -145,7 +150,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setExtengingSearchFraction(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.EXTENDING_SEARCH_FRACTION,
@@ -162,7 +167,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDistanceProbExp(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT,
@@ -179,7 +184,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDimWeightGeo(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.DIM_WEIGHTS_GEO,
@@ -196,7 +201,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDimWeightMilieu(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetBuildBhPa.DIM_WEIGHTS_MILIEU,
@@ -214,7 +219,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynProbReciprocity(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_PROP_RECIPROCITY,
@@ -231,7 +236,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynProbTransitivity(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_PROP_TRANSITIVIY,
@@ -248,7 +253,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynProbGlobal(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_PROP_GLOBAL,
@@ -265,7 +270,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynProbLocal(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_PROP_LOCAL,
@@ -282,7 +287,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynLocalRadius(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_LOCAL_RADIUS,
@@ -313,7 +318,7 @@ public class MMilieuNetworkParameterMap extends
 	@SuppressWarnings("unchecked")
 	public void setP_Milieu(int ownMilieu, int otherMilieu, double p) {
 		if (!this.containsKey(new Integer(ownMilieu))) {
-			this.put(new Integer(ownMilieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(ownMilieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		if (!this.get(new Integer(ownMilieu)).containsKey(
 				MNetBuildBhPa.P_MILIEUS)) {
@@ -336,7 +341,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynEdgeUpdatingInverval(int milieu, int interval) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING,
@@ -353,7 +358,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynLinkManagementInverval(int milieu, int interval) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT,
@@ -372,7 +377,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynIncreaseAmount(int milieu, double amount) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_INCREASE_AMOUNT,
@@ -389,7 +394,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynIncreaseThreshold(int milieu, double threshold) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_INCREASE_THRESHOLD,
@@ -407,7 +412,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynDecreaseAmount(int milieu, double amount) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_DECREASE_AMOUNT,
@@ -424,7 +429,7 @@ public class MMilieuNetworkParameterMap extends
 
 	public void setDynDecreaseThreshold(int milieu, double threshold) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_DECREASE_THRESHOLD,
@@ -441,7 +446,7 @@ public class MMilieuNetworkParameterMap extends
 	
 	public void setDynFadeOutAmount(int milieu, double amount) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_FADE_OUT_AMOUNT,
@@ -457,7 +462,7 @@ public class MMilieuNetworkParameterMap extends
 	
 	public void setDynFadeOutInterval(int milieu, double amount) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_FADE_OUT_INTERVAL,
@@ -474,7 +479,7 @@ public class MMilieuNetworkParameterMap extends
 	
 	public void setDynEdgeManageOptimum(int milieu, double amount) {
 		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new HashMap<PmParameterDefinition, Object>());
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
 				MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM,
@@ -504,8 +509,16 @@ public class MMilieuNetworkParameterMap extends
 		} else {
 			if (this.get(new Integer(milieu)).get(
 					definition) == null) {
-				logger.warn("No value for " + definition.toString() + "(milieu: " + milieu + ") defined. Using default (" + 
-						PmParameterManager.getParameter(definition) + ")!");
+				if (!(warningsReducerMap.containsKey(definition))) {
+					warningsReducerMap.put(definition, new HashSet<Integer>());
+				}
+				if (!warningsReducerMap.get(definition).contains(new Integer(milieu))) {
+					warningsReducerMap.get(definition).add(new Integer(milieu));
+					logger.warn("No value for " + definition.toString() + "(milieu: " + milieu
+							+ ") defined. Using default (" +
+							PmParameterManager.getParameter(definition) + ")!");
+
+				}
 				return true;
 			}
 		} 

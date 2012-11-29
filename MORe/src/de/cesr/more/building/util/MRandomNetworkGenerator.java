@@ -41,6 +41,8 @@ import edu.uci.ics.jung.algorithms.util.Indexer;
 /**
  * MORe
  * 
+ * Based on repast.simphony.context.space.graph.RandomDensityGenerator:
+ * 
  * "Generates a random network with a specified approximate density. The network is created by looping over all i, j
  * node pairs and deciding on the existence of a link between the nodes by comparing the value of a probability to a
  * uniform random number. If the boolean allowLoops is false, no self loops (links from i to itself) will be permitted.

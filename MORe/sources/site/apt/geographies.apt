@@ -7,6 +7,8 @@
 
 Using Geographies
 
+%{toc|section=0|fromDepth=2|toDepth=3}
+
 * Generating Network within Geographies
 
   For most network generators it is sufficient to use the <<<MGeoRsNetworkEdgeModifier>>>:
