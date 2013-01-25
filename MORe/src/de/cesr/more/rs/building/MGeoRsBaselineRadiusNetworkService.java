@@ -339,6 +339,12 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				// TODO check if potPartner has capacity (new feature)
 
 				if (partnerFinder.checkPartner(network.getJungGraph(), paraMap, hh, potPartner, 0)) {
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug(hh + " > Connect partner: " + potPartner);
+					}
+					// LOGGING ->
+					
 					createEdge(network, potPartner, hh);
 
 					numLinkedNeighbors++;

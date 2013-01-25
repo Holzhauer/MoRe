@@ -151,12 +151,23 @@ public final class MRsEncapsulatedContextJungNetwork<AgentT, EdgeT extends Repas
 
 	@Override
 	public Iterable<AgentT> getPredecessors(AgentT ego) {
+		checkVertex(ego);
 		return network.getPredecessors(ego);
 	}
 
+	/**
+	 * @param ego
+	 */
+	protected void checkVertex(AgentT ego) {
+		if (!network.getGraph().containsVertex(ego)) {
+			logger.error("Network " + network.getName() + " does not contain vertex " + ego + "!");
+			throw new IllegalStateException("Network " + network.getName() + " does not contain vertex " + ego + "!");
+		}
+	}
 
 	@Override
 	public Iterable<AgentT> getSuccessors(AgentT ego) {
+		checkVertex(ego);
 		return network.getSuccessors(ego);
 	}
 
