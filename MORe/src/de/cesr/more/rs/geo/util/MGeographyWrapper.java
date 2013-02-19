@@ -83,11 +83,21 @@ public class MGeographyWrapper<AgentType> {
 		@Override
 		public Query<AgentType> initQuery(Geography<AgentType> geography,
 				double distance, AgentType sourceObject) {
-			// TODO test!
-			if (geography.getLayer(MTorusCoordinate.class) != null) {
-				return new MGeoTorusDistanceQuery<AgentType>(geography, distance, sourceObject);
+
+			if (geography.getGeometry(sourceObject) != null) {
+				// TODO test!
+				if (geography.getLayer(MTorusCoordinate.class) != null) {
+					return new MGeoTorusDistanceQuery<AgentType>(geography, distance, sourceObject);
+				} else {
+					return new GeographyWithin<AgentType>(geography, distance, sourceObject);
+				}
 			} else {
-				return new GeographyWithin<AgentType>(geography, distance, sourceObject);
+				// <- LOGGING
+				logger.error("Node object <" + sourceObject + "> not contained in geography <" + geography + ">");
+				// LOGGING ->
+
+				throw new IllegalStateException("Node object <" + sourceObject + "> not contained in geography <"
+						+ geography + ">");
 			}
 		}
 	}

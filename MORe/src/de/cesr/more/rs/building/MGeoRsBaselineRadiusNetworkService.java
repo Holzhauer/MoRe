@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections15.list.SetUniqueList;
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
@@ -125,7 +126,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	
 	protected MMilieuPartnerFinder<AgentType, EdgeType> partnerFinder;
 	
-	protected ArrayList<AgentType> agentList;
+	protected List<AgentType> agentList;
 
 	public MGeoRsBaselineRadiusNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this(edgeFac, "Network");
@@ -164,7 +165,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
 		
 		
-		this.agentList = new ArrayList<AgentType>(agents.size());
+		this.agentList = SetUniqueList.decorate(new ArrayList<AgentType>(agents.size()));
 		for (AgentType agent : agents) {
 			this.agentList.add(agent);
 		}
@@ -191,9 +192,20 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 			@Override
 			public void projectionEventOccurred(ProjectionEvent<AgentType> evt) {
 				if (evt.getType() == ProjectionEvent.OBJECT_ADDED) {
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Object added to network: " + evt.getSubject());
+					}
+					// LOGGING ->
 					MGeoRsBaselineRadiusNetworkService.this.agentList.add((AgentType)evt.getSubject());
 				}
 				if (evt.getType() == ProjectionEvent.OBJECT_REMOVED) {
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Object removed from network: " + evt.getSubject());
+					}
+					// LOGGING ->
+
 					MGeoRsBaselineRadiusNetworkService.this.agentList.remove(evt.getSubject());
 				}
 			}
@@ -528,7 +540,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		throw new IllegalStateException("This code should never be reached!");
 	}
 	
-	public ArrayList<AgentType> getAgentList() {
+	public List<AgentType> getAgentList() {
 		if (agentList == null) {
 			throw new IllegalStateException("Agent list has not been assigned!");
 		}

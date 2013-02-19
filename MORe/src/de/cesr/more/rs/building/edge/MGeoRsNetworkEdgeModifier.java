@@ -106,13 +106,13 @@ public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? 
 	public EdgeType createEdge(MoreNetwork<AgentType, EdgeType> network, AgentType source, AgentType target) {
 		EdgeType edge = edgeFac.createEdge(source, target, network.isDirected());
 
-		network.connect(edge);
-
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Edge added: " + edge);
+			logger.debug("Adding Edge: " + edge);
 		}
 		// LOGGING ->
+
+		network.connect(edge);
 
 		if (geography != null) {
 			addEdgeToGeography(source, target, edge);
