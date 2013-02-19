@@ -26,6 +26,8 @@ package de.cesr.more.rs.building;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -77,20 +79,52 @@ public class MDefaultPartnerFinder<AgentType, EdgeType> implements MorePartnerFi
 	@Override
 	public AgentType findPartner(Collection<AgentType> agents, Graph<AgentType, EdgeType> graph, AgentType focal,
 			boolean incoming) {
-		ArrayList<AgentType> list = new ArrayList<AgentType>(agents);
-		list.remove(focal);
-		if (incoming) {
-			list.remove(graph.getPredecessors(focal));
+
+		AgentType random = null;
+		List<AgentType> list;
+		if (agents instanceof List) {
+			list = (List<AgentType>) agents;
 		} else {
-			list.remove(graph.getSuccessors(focal));
+			list = new ArrayList<AgentType>(agents);
+		}
+
+		Collection<AgentType> blacklist = new HashSet<AgentType>();
+		blacklist.add(focal);
+
+		if (incoming) {
+			blacklist.addAll(graph.getPredecessors(focal));
+		} else {
+			blacklist.addAll(graph.getSuccessors(focal));
 		}
 		
-		if (list.size() > 0) {
-			return list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
-		} else {
-			return null;
+		boolean rewired = false;
+		// fetch random partner:
+		while (!rewired && list.size() > blacklist.size()) {
+			random = list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(focal + "> Random object from context: "
+						+ random);
+			}
+			// LOGGING ->
+
+			if (!blacklist.contains(random)) {
+				blacklist.add(random);
+
+				rewired = true;
+
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug(focal + "> Selected " + random);
+				}
+				// LOGGING ->
+			}
 		}
+
+		return rewired ? random : null;
 	}
+
 
 	protected Uniform getRandomDist() {
 		if (this.rand == null) {

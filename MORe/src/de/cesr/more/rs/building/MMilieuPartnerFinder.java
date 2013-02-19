@@ -26,7 +26,9 @@ package de.cesr.more.rs.building;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -84,25 +86,26 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		}
 
 		AgentType random = null;
-		ArrayList<AgentType> list;
-		if (agents instanceof ArrayList) {
-			list = (ArrayList<AgentType>) agents;
+		List<AgentType> list;
+		if (agents instanceof List) {
+			list = (List<AgentType>) agents;
 		} else {
 			list = new ArrayList<AgentType>(agents);
 		}
 		
-		list.remove(focal);
+		Collection<AgentType> blacklist = new HashSet<AgentType>();
+		blacklist.add(focal);
+
 		if (incoming) {
-			list.remove(graph.getPredecessors(focal));
+			blacklist.addAll(graph.getPredecessors(focal));
 		} else {
-			list.remove(graph.getSuccessors(focal));
+			blacklist.addAll(graph.getSuccessors(focal));
 		}
 		
 		boolean rewired = false;
 		// fetch random partner:
-		while (!rewired && list.size() > 0) {
+		while (!rewired && list.size() > blacklist.size()) {
 			random = list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
-			list.remove(random);
 
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
@@ -111,14 +114,18 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			}
 			// LOGGING ->
 
-			if (checkPartner(graph, networkParams, focal, random, desiredMilieu)) {
-				rewired = true;
+			if (!blacklist.contains(random)) {
+				blacklist.add(random);
 
-				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(focal + "> Selected " + random);
+				if (checkPartner(graph, networkParams, focal, random, desiredMilieu)) {
+					rewired = true;
+
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug(focal + "> Selected " + random);
+					}
+					// LOGGING ->
 				}
-				// LOGGING ->
 			}
 		}
 
