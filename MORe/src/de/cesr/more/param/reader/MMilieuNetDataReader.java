@@ -181,7 +181,11 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 				}
 
 				if (colNames.contains("EXTENDING_SEARCH_FRACTION")) {
-					map.setExtengingSearchFraction(milieu, result.getDouble("EXTENDING_SEARCH_FRACTION"));
+					map.setExtendingSearchFraction(milieu, result.getDouble("EXTENDING_SEARCH_FRACTION"));
+				}
+
+				if (colNames.contains("PERCEIVE_SOCNET_INTERVAL")) {
+					map.setNetUpdateInterval(milieu, result.getInt("PERCEIVE_SOCNET_INTERVAL"));
 				}
 
 				String sql2 = "SELECT partnerMilieu, " + "p_links " + "FROM " + t2 + " AS t2 " + "WHERE paramID="

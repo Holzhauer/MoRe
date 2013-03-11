@@ -36,17 +36,75 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 
 /**
  * MORe
  * 
- * TODO doc
+ * @formatter:off
+ * The homophily and distance dependence (HDD) considering network generation consists of two interlinked parts,
+ * the establishment of local to medium distance links and the process of global tie generation. The distance 
+ * dependence is accomplished by defining probabilities for concentric rings around each agent using a ring’s
+ * mean radius. This network builder considers baseline homophily [1]. Agents are linked as follows:
+ * 
+ * <ol>
+ * <li>For every agent <code>i</code> in the context
+ * 	<ol>
+ * 		<li>Calculate a distance probability compensation factor c_d to normalise probabilities across rings</li>
+ * 		<li>For each ring r
+ * 			<ol>
+ * 				<li>Request agents in current ring</li>
+ * 				<li>Shuffle agents</li>
+ * 				<li>For each requested agent <code>j</code>
+ * 					<ol>
+ * 						<li>Check: <code>i</code> not yet connected with <code>j</code>?</li>
+ * 						<li>Accept milieu of <code>j</code> with probability of <code>i</code> preference towards milieu of <code>j</code></li>
+ * 						<li>Accept <code>j</code> as partner with  <code>i</code>'s <code>p_distance</code></li>
+ * 						<li>Connect!</li>
+ * 						<li>Establish distant link with <code>p_distant</code></li>
+ * 						<li>Determine desired milieu of <code>i</code></li>
+ * 						<li>Select random agent from entire population</li>
+ * 						<li>Check: Not yet connected?</li>
+ * 						<li>Check: Matches desired milieu?</li>
+ * 					</ol>
+ * 				</li>
+ * 			</ol>
+ * 		</li>
+ * </ol>
+ * 
+ * For details see [2].
+ * 
+ * Uses {@link MGeographyWrapper#getSurroundingAgents(Object, double, Class)} to fetch agents (all agents within the
+ * given radius of the given class).
+ * 
+ * <table>
+ * <th>Property</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
+ * <tr><td></td><td></td></tr>
+ * <tr><td>#Edges:</td><td>N*K (milieu-specific)</td></tr>
+ * </table> 
+ * 
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>{@link MNetworkBuildingPa.MILIEU_NETWORK_PARAMS} (K, MaxSearchRadius, DistanceProbExponent,
+ * 		ExtendingSearchFraction, P-rewire)</li>
+ * </ul>
  * 
  * Since the power function is invariant against scale/unit we do not need to adapt the meters scale.
+ * 
+ * 
+ * [1] McPherson, M.; Smith-Lovin, L. & Cook, J. Birds of a feather: Homophily in social networks.
+ * Annual Review of Sociology,  2001, 27, 415-444
+ * 
+ * [2] Holzhauer, S.; Krebs, F. & Ernst, A. Considering baseline homophily when generating spatial social networks for 
+ * agent-based modelling. Comput Math Organ Theory, 2012, SI: SNAMAS
+ * 
  * 
  * @author Sascha Holzhauer
  * @date 01.08.2012
@@ -107,7 +165,7 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 		int numNeighbors = paraMap.getK(hh.getMilieuGroup());
 		double radiusMax = paraMap.getMaxSearchRadius(hh.getMilieuGroup());
 		double alpha = paraMap.getDistanceProbExp(hh.getMilieuGroup());
-		int numRings = (int) (1.0 / paraMap.getExtengingSearchFraction(hh.getMilieuGroup()));
+		int numRings = (int) (1.0 / paraMap.getExtendingSearchFraction(hh.getMilieuGroup()));
 
 
 		// Calculate Distance Probability Compensation Factor $c_{distance}$ = 1 / \sum_{r = 1}^R (d_r)^\alpha

@@ -107,7 +107,7 @@ public class MGeoRsIdealHomophilyDistanceNetworkService<AgentType extends MoreMi
 		int numNeighbors = paraMap.getK(hh.getMilieuGroup());
 		double radiusMax = paraMap.getMaxSearchRadius(hh.getMilieuGroup());
 		double alpha = paraMap.getDistanceProbExp(hh.getMilieuGroup());
-		int numRings = (int) (1.0 / paraMap.getExtengingSearchFraction(hh.getMilieuGroup()));
+		int numRings = (int) (1.0 / paraMap.getExtendingSearchFraction(hh.getMilieuGroup()));
 
 		// Calculate Distance Probability Compensation Factor $c_{distance}$ = 1 / \sum_{r = 1}^R (d_r)^\alpha
 		double cDistance = 0.0;

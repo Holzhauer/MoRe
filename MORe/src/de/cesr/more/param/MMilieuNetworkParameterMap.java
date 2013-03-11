@@ -140,7 +140,7 @@ public class MMilieuNetworkParameterMap extends
 				new Double(radius));
 	}
 
-	public double getExtengingSearchFraction(int milieu) {
+	public double getExtendingSearchFraction(int milieu) {
 		return warnDefault(MNetBuildBhPa.EXTENDING_SEARCH_FRACTION, milieu) ?
 				((Double) PmParameterManager.getParameter(MNetBuildBhPa.EXTENDING_SEARCH_FRACTION)).doubleValue() :
 				((Double) this.get(new Integer(milieu)).get(
@@ -148,7 +148,7 @@ public class MMilieuNetworkParameterMap extends
 						.doubleValue();
 	}
 
-	public void setExtengingSearchFraction(int milieu, double radius) {
+	public void setExtendingSearchFraction(int milieu, double radius) {
 		if (!this.containsKey(new Integer(milieu))) {
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
@@ -494,6 +494,20 @@ public class MMilieuNetworkParameterMap extends
 							.doubleValue();
 	}
 	
+	public int getNetUpdateInterval(int milieu) {
+		return warnDefault(MDonNetworksPa.PERCEIVE_SOCNET_INTERVAL, milieu) ?
+				((Integer) PmParameterManager.getParameter(MDonNetworksPa.PERCEIVE_SOCNET_INTERVAL)).intValue() :
+					((Integer) this.get(new Integer(milieu)).get(MDonNetworksPa.PERCEIVE_SOCNET_INTERVAL))
+							.intValue();
+	}
+
+	public void setNetUpdateInterval(int milieu, int interval) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MDonNetworksPa.PERCEIVE_SOCNET_INTERVAL,
+				new Integer(interval));
+	}
 
 	/**
 	 * Checks if the requested value is defined in the map and
