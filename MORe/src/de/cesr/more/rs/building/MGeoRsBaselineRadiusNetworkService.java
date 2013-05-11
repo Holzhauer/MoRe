@@ -39,6 +39,7 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
@@ -52,87 +53,118 @@ import de.cesr.parma.core.PmParameterManager;
 
 
 /**
- * This network builder considers baseline homophily (McPherson2001). Agents are linked as follows:
+ * This network builder considers baseline homophily [1]. Agents are linked as follows:
  * <ol>
  * <li>For every agent in the context
  * <ol>
- * <li>Fetch all agents within a given radius (<code>SEARCH_RADIUS</code>) from the focal agent (do not consider area
+ * <li>Fetch all agents within a given radius (<code>SEARCH_RADIUS</code>) around the focal agent (do not consider area
  * boundaries).</li>
  * <li>For every potential partner that is not yet connected check according to milieu specific probability if it should
  * be connected with focal agent. The approach to check the agents that are in the surroundings <i>as they come</i>
  * considers the local milieu distribution and reflects <i>baseline homophily</i>. Applying milieu specific tie
  * probabilities reflects <i>inbreeding homophily</i>.</li>
- * <li>If the number of required neighbours is not satisfied but all fetched agents checked, request more agents from
- * geography within an extended radius (<code>X_SEARCH_RADIUS</code>) until maximum radius (
- * <code>MAX_SEARCH_RADIUS</code>) is reached.</li>
+ * <li>If the number of required neighbours (<code>K</code>) is not satisfied but all fetched agents are checked,
+ * request more agents from geography within an extended radius (
+ * <code>SEARCH_RADIUS = SEARCH_RADIUS + X_SEARCH_RADIUS</code>) until maximum radius (<code>MAX_SEARCH_RADIUS</code>)
+ * is reached.</li>
  * </ol>
- * <li>Rewire: For each agent, check if every existing link should be rewired (with probability <code>p_rewire</code>)
- * to a randomly chosen agent from the whole region that passes the milieu check (applying milieu tie probabilities (
- * <code>p_links</code> for every <code>partnerMilieu</code>). On purpose the new partner's milieu is not guaranteed to
- * be the same as that of the original link: The partners within direct surroundings are coined by local milieu 
- * distributions (baseline homophly) and therefore do not entirely reflect the focal agent's preferences.
- * Determining the milieu during rewiring anew may correct to milieu distributions of partners towards
- * inbreeeding homophily and is desired.</li>
+ * <li>Global Linking: For each locally created link establish a global link with probability <code>p_rewire</code> to a
+ * randomly chosen agent from the whole region that passes the milieu check (applying milieu tie probabilities (
+ * <code>p_links</code> for every <code>partnerMilieu</code>). Determining the milieu during global linking drives the
+ * milieu distributions of partners towards inbreeeding homophily.</li>
  * </ol>
  * 
  * Uses {@link MGeographyWrapper#getSurroundingAgents(Object, double, Class)} to fetch agents (all agents within the
  * given radius of the given class).
  * 
+ * <br>
+ * <br>
+ * 
  * Internal: The BaselineDhhRadiusNetworkBuilder is based on DHH_ColCalc_Computer_Lifestyle.
  * 
- * @formatter:off
+ * <br>
+ * <br>
+ * 
  * <table>
- * <th>Property</th><th>Value</th>
- * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
- * <tr><td></td><td></td></tr>
- * <tr><td>#Edges:</td><td>N*(N-1)</td></tr>
- * </table> 
+ * <th>Property</th>
+ * <th>Value</th>
+ * <tr>
+ * <td>#Vertices</td>
+ * <td>N (via collection of agents)</td>
+ * </tr>
+ * <tr>
+ * <td></td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>#Edges:</td>
+ * <td>N*(N-1)</td>
+ * </tr>
+ * </table>
+ * 
+ * <br>
+ * <br>
  * 
  * Considered {@link PmParameterDefinition}s:
  * <ul>
- * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
- * <li>{@link MNetworkBuildingPa.MILIEU_NETWORK_PARAMS}</li>
- * <li>...</li>
+ * <li>{@link MNetworkBuildingPa#BUILD_DIRECTED}</li>
+ * <li>{@link MNetBuildBhPa#K} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#SEARCH_RADIUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#X_RADIUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#MAX_SEARCH_RADIUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#P_MILIEUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#DISTANT_FORCE_MILIEU} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#P_REWIRE} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * </ul>
  * 
+ * <br>
+ * <br>
  * 
+ * [1] McPherson, M.; Smith-Lovin, L. & Cook, J. Birds of a feather: Homophily in social networks Annual Review of
+ * Sociology, Annual Reviews, 2001, 27, 415-444
+ * 
+ * <br>
+ * 
+ * @version 1.0
  * @author Sascha Holzhauer
  * @param <AgentT>
  *        The type of nodes
+ * @param <EdgeType>
+ *        The type of edges
  * @date 22.07.2010
  * 
  */
-public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgent, 
-			EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
 		extends MGeoRsNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Logger
-											.getLogger(MGeoRsBaselineRadiusNetworkService.class);
-	
+	static private Logger								logger								= Logger
+																									.getLogger(MGeoRsBaselineRadiusNetworkService.class);
+
 	/**
-	 * The multiplicative of the first retrieved neighbours' list's size
-	 * that is used to initialise the checked neighbours array list. 
+	 * The multiplicative of the first retrieved neighbours' list's size that is used to initialise the checked
+	 * neighbours array list.
 	 */
-	public static final int CHECKED_NEIGHBOURS_CAPACITY_FACTOR = 3;
+	public static final int								CHECKED_NEIGHBOURS_CAPACITY_FACTOR	= 3;
 
-	protected Uniform		rand;
+	protected Uniform									rand;
 
-	protected String		name;
-	
-	protected MMilieuNetworkParameterMap paraMap;
-	
-	protected MMilieuPartnerFinder<AgentType, EdgeType> partnerFinder;
-	
-	protected List<AgentType> agentList;
+	protected String									name;
+
+	protected MMilieuNetworkParameterMap				paraMap;
+
+	protected MMilieuPartnerFinder<AgentType, EdgeType>	partnerFinder;
+
+	protected List<AgentType>							agentList;
 
 	public MGeoRsBaselineRadiusNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this(edgeFac, "Network");
 	}
 
-	@SuppressWarnings("unchecked") // geography needs to be parameterised with Object
+	@SuppressWarnings("unchecked")
+	// geography needs to be parameterised with Object
 	public MGeoRsBaselineRadiusNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
 		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
 	}
@@ -159,17 +191,16 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
-			
+
 		checkAgentCollection(agents);
 		checkParameter();
 		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
-		
-		
+
 		this.agentList = SetUniqueList.decorate(new ArrayList<AgentType>(agents.size()));
 		for (AgentType agent : agents) {
 			this.agentList.add(agent);
 		}
-		
+
 		PmParameterManager.logParameterValues(MNetworkBuildingPa.values());
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -177,9 +208,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		}
 		// LOGGING ->
 
-
-		
-		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
+		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
@@ -197,7 +226,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 						logger.debug("Object added to network: " + evt.getSubject());
 					}
 					// LOGGING ->
-					MGeoRsBaselineRadiusNetworkService.this.agentList.add((AgentType)evt.getSubject());
+					MGeoRsBaselineRadiusNetworkService.this.agentList.add((AgentType) evt.getSubject());
 				}
 				if (evt.getType() == ProjectionEvent.OBJECT_REMOVED) {
 					// <- LOGGING
@@ -210,7 +239,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				}
 			}
 		});
-		
+
 		createRadiusNetwork(agents, this.paraMap, network);
 
 		// <- LOGGING
@@ -249,8 +278,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		if (((MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)) == null) {
 			new MMilieuNetDataReader().initParameters();
-			
-			
+
 			if (this.paraMap == null) {
 				// <- LOGGING
 				logger.warn("Parameter MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has not been set! (Re-)Initialise it.");
@@ -280,7 +308,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 			numNotConnectedPartners = connectAgent(paraMap, network,
 					numNotConnectedPartners, geoWrapper, hh);
 		}
-		
+
 		// <- LOGGING
 		logger.info("Number of not connected partners: "
 				+ numNotConnectedPartners);
@@ -303,7 +331,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		logger.info(hh + " > Connect... (mileu: " + hh.getMilieuGroup() + ")");
 
 		Class<? extends AgentType> requestClass = getRequestClass(hh);
-			
 
 		double curRadius = paraMap.getSearchRadius(hh.getMilieuGroup());
 
@@ -311,20 +338,20 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		// large enough to find required number of
 		// parters per milieu
 		int numNeighbors = paraMap.getK(hh.getMilieuGroup());
-		
+
 		List<AgentType> neighbourslist = geoWrapper
-				.<AgentType>getSurroundingAgents(hh, curRadius, requestClass);
+				.<AgentType> getSurroundingAgents(hh, curRadius, requestClass);
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug("Found " + neighbourslist.size() + " of class " + 
-					hh.getClass().getSuperclass()+ " neighbours within " + curRadius + " meters.");
+			logger.debug("Found " + neighbourslist.size() + " of class " +
+					hh.getClass().getSuperclass() + " neighbours within " + curRadius + " meters.");
 		}
 		// LOGGING ->
 
 		// mixing neighbour collection
 		shuffleCollection(neighbourslist);
-		
+
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("Shuffled: " + neighbourslist);
@@ -332,10 +359,10 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		// LOGGING ->
 
 		int numRadiusExtensions = 0;
-		
-		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() * 
+
+		List<AgentType> checkedNeighbours = new ArrayList<AgentType>(neighbourslist.size() *
 				CHECKED_NEIGHBOURS_CAPACITY_FACTOR);
-		
+
 		boolean anyPartnerAssignable = true;
 
 		// to check if the required neighbours is satisfied
@@ -356,14 +383,14 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 						logger.debug(hh + " > Connect partner: " + potPartner);
 					}
 					// LOGGING ->
-					
+
 					createEdge(network, potPartner, hh);
 
 					numLinkedNeighbors++;
-					
+
 					// substitutes rewiring:
 					if (numLinkedNeighbors < numNeighbors &&
-							distantLinking(paraMap, network, hh, requestClass) != null) {
+							globalLinking(paraMap, network, hh, requestClass) != null) {
 						numLinkedNeighbors++;
 					}
 
@@ -389,10 +416,10 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					numRadiusExtensions++;
 
 					checkedNeighbours.addAll(neighbourslist);
-					
+
 					neighbourslist = geoWrapper
 							.<AgentType> getSurroundingAgents(hh, curRadius, requestClass);
-					
+
 					neighbourslist.removeAll(checkedNeighbours);
 
 					// <- LOGGING
@@ -415,13 +442,13 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				}
 			}
 		}
-		
+
 		if (hh instanceof MoreBaselineNetworkServiceAnalysableAgent) {
 			MoreBaselineNetworkServiceAnalysableAgent agent = (MoreBaselineNetworkServiceAnalysableAgent) hh;
 			agent.setFinalRadius(curRadius);
 			agent.setNumRadiusExtensions(numRadiusExtensions);
 		}
-		
+
 		numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 
 		// <- LOGGING
@@ -430,7 +457,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 					+ " neighbours found (from " + numNeighbors + ")");
 		}
 		// LOGGING ->
-		
+
 		return numNotConnectedPartners;
 	}
 
@@ -439,7 +466,8 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 * @param requestClass
 	 * @return
 	 */
-	@SuppressWarnings("unchecked") // handled by try/catch
+	@SuppressWarnings("unchecked")
+	// handled by try/catch
 	protected Class<? extends AgentType> getRequestClass(AgentType hh) {
 		Class<? extends AgentType> requestClass;
 		if (geoRequestClass == null) {
@@ -447,16 +475,14 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				requestClass = (Class<AgentType>) hh.getClass().getSuperclass();
 			} catch (ClassCastException e) {
 				logger.error("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
-				throw new ClassCastException("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
+				throw new ClassCastException(
+						"Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
 			}
 		} else {
 			requestClass = geoRequestClass;
 		}
 		return requestClass;
 	}
-
-
-
 
 	/**
 	 * @param networkParams
@@ -465,20 +491,21 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 	 * @param requestClass
 	 * @param oldInfluencer
 	 */
-	protected AgentType distantLinking(MMilieuNetworkParameterMap networkParams, MoreNetwork<AgentType, EdgeType> network,
+	protected AgentType globalLinking(MMilieuNetworkParameterMap networkParams,
+			MoreNetwork<AgentType, EdgeType> network,
 			AgentType focus, Class<? extends AgentType> requestClass) {
-		
+
 		if (networkParams.getP_Rewire(focus.getMilieuGroup()) > this.rand
 				.nextDouble()) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug("Number of considered agents: " + this.getAgentList().size() + " | prewire: " + 
+				logger.debug("Number of considered agents: " + this.getAgentList().size() + " | prewire: " +
 						networkParams.getP_Rewire(focus.getMilieuGroup()));
 			}
 			// LOGGING ->
 
 			AgentType partner = partnerFinder.findPartner(this.getAgentList(), network.getJungGraph(), focus, true);
-			if (partner != null)  {
+			if (partner != null) {
 				createEdge(network, partner, focus);
 			}
 			return partner;
@@ -513,7 +540,7 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		logger.info("Number of not connected partners: "
 				+ numNotConnectedPartners);
 		// LOGGING ->
-		
+
 		return true;
 	}
 
@@ -539,13 +566,14 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		}
 		throw new IllegalStateException("This code should never be reached!");
 	}
-	
+
 	public List<AgentType> getAgentList() {
 		if (agentList == null) {
 			throw new IllegalStateException("Agent list has not been assigned!");
 		}
 		return this.agentList;
 	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */

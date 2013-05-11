@@ -44,33 +44,33 @@ Using Network Processors
  
  * The network processor component is initialised...
  
-   +--
- 	Map<MoreEgoNetworkEvent, MoreEgoNetworkProcessor<V, E>> map = MEgoNetworkManagerComp
-				.getEmptyProcessorMap();
++--
+Map<MoreEgoNetworkEvent, MoreEgoNetworkProcessor<V, E>> map = MEgoNetworkManagerComp
+			.getEmptyProcessorMap();
 
-		MoreNetworkEdgeModifier<V, E> edgeModifier = new MDefaultNetworkEdgeModifier<V; E>(new MDefaultEdgeFactory<V>());
-		
-		map.put(MLinkManagingEvent.getInstance(),
-				(Class<MoreEgoNetworkProcessor<V, E>>) DYN_EDGE_MANAGER);
-		map.put(MLinkWeightUpdatingEvent.getInstance(),
-				((Class<MoreEgoNetworkProcessor<V, E>>>) DYN_EDGE_WEIGHT_UPDATER);
+MoreNetworkEdgeModifier<V, E> edgeModifier = new MDefaultNetworkEdgeModifier<V; E>(new MDefaultEdgeFactory<V>());
 
-		MoreEgoNetworkManagerComp<V, E> egoNetManager = new MEgoNetworkManagerComp<V, E>(map);
-   +--
+map.put(MLinkManagingEvent.getInstance(),
+		(Class<MoreEgoNetworkProcessor<V, E>>) DYN_EDGE_MANAGER);
+map.put(MLinkWeightUpdatingEvent.getInstance(),
+		((Class<MoreEgoNetworkProcessor<V, E>>>) DYN_EDGE_WEIGHT_UPDATER);
+
+MoreEgoNetworkManagerComp<V, E> egoNetManager = new MEgoNetworkManagerComp<V, E>(map);
++--
   
  * ... and assigned to all agents:
  
-   +--
-	for (V agent : agents) {
-		agent.setEgoNetworkManager(egoNetManager);
-	}
-   +--
++--
+for (V agent : agents) {
+	agent.setEgoNetworkManager(egoNetManager);
+}
++--
 
  * Agents need to call regularly the agent component's process method for certain events:
  
-  +--
-  getEgoNetworkManager().process(MLinkManagingEvent.getInstance(), this, getMainNetwork());
-  +--
++--
+getEgoNetworkManager().process(MLinkManagingEvent.getInstance(), this, getMainNetwork());
++--
   
   
  * Analysis

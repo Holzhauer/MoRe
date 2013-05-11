@@ -5,25 +5,38 @@
 	----------------
 	2011-11-18
 
+%{toc|section=0|fromDepth=1|toDepth=3}
+
 Using Network Generators
 
-%{toc|section=0|fromDepth=2|toDepth=3}
+* Network Generator Classes
 
-* Adding and Removal of Nodes
-  
-  Network generators that support addition and removal of nodes and their edges extend
-  {{{../apidocs/de/cesr/more/manipulate/network/MoreNetworkModifier.html}<<<MoreNetworkModifier>>>}}.
+[./res/NetworkGeneratorClasses.jpg] Network Generator UML Class Diagram
 
+* Recycling of Network Configurations
 
- * Adding and Removal of Edges
+	Often, especially for sensitivity analysis, simulations are conducted many times and only one or a few parameters 
+	are changed meaning the networks stays constant. Then, especially for resource consuming network builders it is a 
+	good idea to generate the network once and store it. MoRe provides suitable features:
+		
+	Typically, the GRAPHML file is also produced by MoRe using
+	{{{../apidocs/de/cesr/more/util/io/MoreIoUtilities.html}<<<MoreIoUtilities#outputGraph()>>>}}
+	
+	For details, see JavaDoc of {{{../apidocs/de/cesr/more/rs/building/MGeoRsRestoreNetworkBuilder.html}
+	<<<MGeoRsRestoreNetworkBuilder>>>}}. The test class 
+	{{{../apidocs/de/cesr/more/testing/rs/building/geo/MGeoRsRestoreNetworkBuilderTest.html}<<<MGeoRsRestoreNetworkBuilderTest>>>}}
+	contains a complete example.
+	
+	The builder implements <<<MoreGeoNetworkBuilder>>> in order to substitute such network builders. However, it can also be used to 
+	restore networks for agents that are not geographically rooted.
+	 
+
+* Adding and Removal of Edges
  
   Network generators that support addition and removal of edges extend 
   {{{../apidocs/de/cesr/more/manipulate/network/MoreNetworkEdgeModifier.html}<<<MoreNetworkEdgeModifier>>>}}.
   Implementations often depend on the target system like Repast Simphony ({{{../apidocs/de/cesr/more/rs/building/MGeoRsNetworkEdgeModifier.html}<<<MGeoRsNetworkEdgeModifier>>>}}).
-  
-  +--
   Example: <<<MBaselineDhhRadiusNetworkBuilder>>> extends <<<MGeoRsNetworkService>>>, which uses a <<<MGeoRsNetworkEdgeModifier>>>.
-  +--
   
   Often, the method <<<addAndLinkNode>>> needs to specified by the network generator by themselves since the way a node is linked a network is not general (e.g.
   <<<MBaselineDhhRadiusNetworkBuilder>>>). The <<<MoreNetworkEdgeModifier>>> can be used in these implementations.
@@ -52,11 +65,14 @@ Implementing Network Builders
   as a component and add forwarding methods to this component.
   
   To specify a general network generator as RS and/or geography network generator it is normally sufficient to
-  *assign a <<<MoreGeoNetworkEdgeModifier>>> instead of a <<<MoreNetworkEdgeModifier>>>
-  *implement <<<MoreGeoNetworkService>>> or extend <<<MGeoRsNetworkService>>> and copy & paste the special network generator code (since JAVA does
+  
+  * assign a <<<MoreGeoNetworkEdgeModifier>>> instead of a <<<MoreNetworkEdgeModifier>>>
+  
+  * implement <<<MoreGeoNetworkService>>> or extend <<<MGeoRsNetworkService>>> and copy & paste the special network generator code (since JAVA does
   not allow multiple inheritance).
   
   Network Builders should have at least two constructors:
   
   * One with only <<<MoreEdgeFactory>>> as parameter
+  
   * One with <<<MoreEdgeFactory>>> and <<<String>>> as name as parameter

@@ -23,6 +23,7 @@
  */
 package de.cesr.more.rs.building;
 
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +37,7 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
@@ -43,14 +45,12 @@ import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 
+//@formatter:off
 /**
- * MORe
- * 
- * @formatter:off
- * The homophily and distance dependence (HDD) considering network generation consists of two interlinked parts,
- * the establishment of local to medium distance links and the process of global tie generation. The distance 
- * dependence is accomplished by defining probabilities for concentric rings around each agent using a ring’s
- * mean radius. This network builder considers baseline homophily [1]. Agents are linked as follows:
+ * The homophily and distance dependence (HDD) considering network generation consists of two interlinked parts, the
+ * establishment of local to medium distance links and the process of global tie generation. The distance dependence is
+ * accomplished by defining probabilities for concentric rings around each agent using a ring’s mean radius. This
+ * network builder considers baseline homophily [1]. Agents are linked as follows:
  * 
  * <ol>
  * <li>For every agent <code>i</code> in the context
@@ -76,11 +76,18 @@ import de.cesr.parma.core.PmParameterManager;
  * 			</ol>
  * 		</li>
  * </ol>
+ * </ol>
  * 
  * For details see [2].
  * 
+ * <br>
+ * <br>
+ * 
  * Uses {@link MGeographyWrapper#getSurroundingAgents(Object, double, Class)} to fetch agents (all agents within the
  * given radius of the given class).
+ * 
+ * <br>
+ * <br>
  * 
  * <table>
  * <th>Property</th><th>Value</th>
@@ -89,40 +96,60 @@ import de.cesr.parma.core.PmParameterManager;
  * <tr><td>#Edges:</td><td>N*K (milieu-specific)</td></tr>
  * </table> 
  * 
+ * <br>
+ * <br>
  * Considered {@link PmParameterDefinition}s:
  * <ul>
- * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
- * <li>{@link MNetworkBuildingPa.MILIEU_NETWORK_PARAMS} (K, MaxSearchRadius, DistanceProbExponent,
- * 		ExtendingSearchFraction, P-rewire)</li>
+ * <li>{@link MNetworkBuildingPa#BUILD_DIRECTED}</li>
+ * <li>{@link MNetBuildBhPa#K} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#DISTANCTE_PROBABILITY_EXPONENT} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#EXTENDING_SEARCH_FRACTION} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#MAX_SEARCH_RADIUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#P_MILIEUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#DISTANT_FORCE_MILIEU} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#P_REWIRE} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * </ul>
  * 
- * Since the power function is invariant against scale/unit we do not need to adapt the meters scale.
+ * <br>
  * 
+ * NOTE: Since the power function is invariant against scale/unit we do not need to adapt the meters scale.
  * 
- * [1] McPherson, M.; Smith-Lovin, L. & Cook, J. Birds of a feather: Homophily in social networks.
- * Annual Review of Sociology,  2001, 27, 415-444
+ * <br>
+ * <br>
  * 
- * [2] Holzhauer, S.; Krebs, F. & Ernst, A. Considering baseline homophily when generating spatial social networks for 
+ * [1] McPherson, M.; Smith-Lovin, L. & Cook, J. Birds of a feather: Homophily in social networks Annual Review of
+ * Sociology, Annual Reviews, 2001, 27, 415-444
+ * 
+ * <br>
+ * 
+ * [2] Holzhauer, S.; Krebs, F., Ernst, A. Considering baseline homophily when generating spatial social networks for
  * agent-based modelling. Comput Math Organ Theory, 2012, SI: SNAMAS
  * 
+ * <br>
  * 
+ * @version 0.9
  * @author Sascha Holzhauer
  * @date 01.08.2012
  * 
+ * @param <AgentType>
+ *        The type of nodes
+ * @param <EdgeType>
+ *        The type of edges
+ * 
  */
-public class MGeoRsHomophilyDistanceNetworkService<AgentType extends MoreMilieuAgent, 
-EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBaselineRadiusNetworkService<AgentType, EdgeType> {
-
+public class MGeoRsHomophilyDistanceNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+		extends MGeoRsBaselineRadiusNetworkService<AgentType, EdgeType> {
+	
+	//@formatter:on
 	/**
 	 * Logger
 	 */
-	static private Logger logger = Logger.getLogger(MGeoRsHomophilyDistanceNetworkService.class);
+	static private Logger	logger	= Logger.getLogger(MGeoRsHomophilyDistanceNetworkService.class);
 
-	
 	public MGeoRsHomophilyDistanceNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this(edgeFac, "Network");
 	}
-	
+
 	/**
 	 * @param edgeFac
 	 * @param name
@@ -131,19 +158,21 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 	public MGeoRsHomophilyDistanceNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
 		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
 	}
-	
+
 	/**
 	 * @param geography
 	 * @param edgeFac
 	 * @param name
 	 */
-	public MGeoRsHomophilyDistanceNetworkService(Geography<Object> geography, MoreEdgeFactory<AgentType, EdgeType> edgeFac,
+	public MGeoRsHomophilyDistanceNetworkService(Geography<Object> geography,
+			MoreEdgeFactory<AgentType, EdgeType> edgeFac,
 			String name) {
 		super(geography, edgeFac, name);
 	}
-	
+
 	/**
-	 * TODO integerate 
+	 * TODO integerate
+	 * 
 	 * @param paraMap
 	 * @param network
 	 * @param numNotConnectedPartners
@@ -159,14 +188,12 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 
 		logger.info(hh + " > Connect... (mileu: " + hh.getMilieuGroup() + ")");
 
-
 		Class<? extends AgentType> requestClass = getRequestClass(hh);
-			
+
 		int numNeighbors = paraMap.getK(hh.getMilieuGroup());
 		double radiusMax = paraMap.getMaxSearchRadius(hh.getMilieuGroup());
 		double alpha = paraMap.getDistanceProbExp(hh.getMilieuGroup());
 		int numRings = (int) (1.0 / paraMap.getExtendingSearchFraction(hh.getMilieuGroup()));
-
 
 		// Calculate Distance Probability Compensation Factor $c_{distance}$ = 1 / \sum_{r = 1}^R (d_r)^\alpha
 		double cDistance = 0.0;
@@ -174,7 +201,7 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 			cDistance += Math.pow((radiusMax) / numRings * (i + 0.5d), alpha);
 		}
 		cDistance = 1.0 / cDistance;
-		
+
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("cDistance: " + MManager.getFloatPointFormat().format(cDistance));
@@ -186,7 +213,7 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 		List<AgentType> checkedNeighbours = new ArrayList<AgentType>();
 		List<AgentType> potentialPartners = new ArrayList<AgentType>();
 		int numLinkedNeighbors = 0, numLinkedNeighborsSum = 0;
-		
+
 		for (int i = 0; i < numRings; i++) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
@@ -197,36 +224,35 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 			potentialPartners.clear();
 			numLinkedNeighbors = 0;
 			dRing = radiusMax / numRings * (i + 0.5d);
-			dRingMax = radiusMax / numRings * (i + 1) ;
-			
+			dRingMax = radiusMax / numRings * (i + 1);
+
 			neighbourslist = geoWrapper
-					.<AgentType>getSurroundingAgents(hh, dRingMax, requestClass);
+					.<AgentType> getSurroundingAgents(hh, dRingMax, requestClass);
 			neighbourslist.removeAll(checkedNeighbours);
 			checkedNeighbours.addAll(neighbourslist);
-			
-	
+
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug("Found " + neighbourslist.size() + " of class " + 
-						hh.getClass().getSuperclass()+ " neighbours within " + dRing + " +/- " + radiusMax / numRings * 0.5 + " meters.");
+				logger.debug("Found " + neighbourslist.size() + " of class " +
+						hh.getClass().getSuperclass() + " neighbours within " + dRing + " +/- " + radiusMax / numRings
+						* 0.5 + " meters.");
 			}
 			// LOGGING ->
-	
+
 			// mixing neighbour collection
 			shuffleCollection(neighbourslist);
-			
+
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug("Shuffled: " + neighbourslist);
 			}
 			// LOGGING ->
 
-	
 			Iterator<AgentType> neighbourIter = neighbourslist.iterator();
 			AgentType potPartner;
-	
+
 			while (potentialPartners.size() < numNeighbors && neighbourIter.hasNext()) {
-					
+
 				potPartner = neighbourIter.next();
 				if (partnerFinder.checkPartner(network.getJungGraph(), paraMap, hh, potPartner, 0)) {
 					potentialPartners.add(potPartner);
@@ -237,7 +263,7 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 					// LOGGING ->
 				}
 			}
-			
+
 			// Apply distance probabilities...
 			for (AgentType pPartner : potentialPartners) {
 				randomNumber = rand.nextDouble();
@@ -251,25 +277,25 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 
 				if (randomNumber < Math.pow((dRing), alpha) * cDistance) {
 					createEdge(network, pPartner, hh);
-				
+
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
 						logger.debug(hh + " > Linked partner: " + pPartner);
 					}
 					// LOGGING ->
-					
+
 					numLinkedNeighbors++;
-							
-					// substitutes rewiring:		
-					if (distantLinking(paraMap, network, hh, requestClass) != null) {
+
+					// substitutes rewiring:
+					if (globalLinking(paraMap, network, hh, requestClass) != null) {
 						numLinkedNeighbors++;
 					}
 				}
 			}
-			numLinkedNeighborsSum +=numLinkedNeighbors;
+			numLinkedNeighborsSum += numLinkedNeighbors;
 			numNotConnectedPartners += numNeighbors - numLinkedNeighbors;
 		}
-		
+
 		// <- LOGGING
 		logger.info(hh + " > " + numLinkedNeighborsSum
 				+ " neighbours found (from " + numNeighbors + ")");

@@ -206,7 +206,7 @@ EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>> extends MGeoRsBas
 					// substitutes rewiring:
 					
 					if (numLinkedNeighbors < numNeighbors &&
-							distantLinking(paraMap, network, hh, requestClass) != null) {
+							globalLinking(paraMap, network, hh, requestClass) != null) {
 						numLinkedNeighbors++;
 					}
 

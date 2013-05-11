@@ -97,11 +97,13 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 		// LOGGING ->
 		this.vertex_ids.putAll(this.nodeMap);
 	}
-	
+
 	/**
-	 * Fetches information about source, target and direction from attributes to enable initialisation of
-	 * and extended edge object.
-	 * @see edu.uci.ics.jung.io.GraphMLReader#createEdge(org.xml.sax.Attributes, edu.uci.ics.jung.io.GraphMLReader.TagState)
+	 * Fetches information about source, target and direction from attributes to enable initialisation of an extended
+	 * edge object.
+	 * 
+	 * @see edu.uci.ics.jung.io.GraphMLReader#createEdge(org.xml.sax.Attributes,
+	 *      edu.uci.ics.jung.io.GraphMLReader.TagState)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")

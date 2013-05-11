@@ -1,7 +1,7 @@
  <project default="publish">
  
  	<!-- 
-		ParMa
+		MoRe
 		
 	 -->
  	
@@ -16,10 +16,10 @@
  	<property name="remote_base_dir" value="/home/project-web/more4abm/htdocs"/>
  	<property name="remote_host" value="web.sourceforge.net"/>
  	
- 	<property name="site_source" value="${basedir}/../../target/site/"/>
+ 	<property name="site_source" value="${basedir}/../../docs/new/"/>
  		
 	<tstamp/>
-	<property name="docs.dir" location="${basedir}/../../doc/javadoc" />
+	<property name="docs.dir" location="${basedir}/../../docs/apidocs" />
 	<property name="project.dir" location="${basedir}/../../" />
 	<property name="image.type" value="svg" />
  	
@@ -60,13 +60,54 @@
 		<echo>"${docs.dir}"</echo>
 		<mkdir dir="${docs.dir}"/>
 		<!-- narrrowing the packagenames more than "de.cesr.lara.components.*" causes invalid links in the map (maybe a link-provision problem...	-->
-	        <javadoc sourcepath="${project.dir}/src" packagenames="de.cesr.more.*" destdir="${docs.dir}" classpath="${project.dir}/lib/junit-4.4.jar;${project.dir}/lib/log4j-1.2.8.jar;${project.dir}/lib/collections-generic-4.01.jar;${project.dir}/lib/commons-collections-3.2.jar;">
+	        <javadoc packagenames="de.cesr.more.*" 
+	        	destdir="${docs.dir}" 
+	        	Overview="${project.dir}/config/description.html"
+	        	version="true"
+	        	author="false"
+	        	classpath="
+	        		${project.dir}/libs/junit-4.4.jar;
+	        		${project.dir}/libs/log4j-1.2.8.jar;
+	        		${project.dir}/libs/colt-1.2.0.jar;
+	        		${project.dir}/libs/collections-generic-4.01.jar;
+	        		${project.dir}/libs/jung-api-2.0.1.jar;
+		        	${project.dir}/libs/geoapi-nogenerics-2.1-M2.jar;
+		        	${project.dir}/libs/gt2-epsg-wkt-2.3.3.jar;
+		        	${project.dir}/libs/gt2-main-2.3.3.jar;
+		        	${project.dir}/libs/gt2-referencing-2.3.3.jar;
+		        	${project.dir}/libs/JRI_101015.jar;
+		        	${project.dir}/libs/JRI.jar;
+		        	${project.dir}/libs/jscience.jar;
+		        	${project.dir}/libs/jts-1.7.1.jar;
+		        	${project.dir}/libs/jung-algorithms-2.0-beta1.jar;
+		        	${project.dir}/libs/jung-algorithms-2.0.1.jar;
+		        	${project.dir}/libs/jung-graph-impl-2.0.1.jar;
+		        	${project.dir}/libs/jung-io-2.0.1.jar;
+		        	${project.dir}/libs/Lara.jar;
+		        	${project.dir}/libs/log4j-1.2.8.jar;
+		        	${project.dir}/libs/ParMa.jar;
+		        	${project.dir}/libs/repast.simphony.bin_and_src.jar;
+		        	${project.dir}/libs/saf.core.runtime.jar;
+		        	${project.dir}/libs/stax-api-1.0.1.jar;
+		        	${project.dir}/libs/units-0.01.jar;
+		        	${project.dir}/libs/Uranus.jar;
+		        	${project.dir}/libs/vecmath-1.3.1.jar;
+		        	${project.dir}/libs/wstx-asl-3.2.6.jar">
+
+	        	<sourcepath>
+	        		<pathelement path="${project.dir}/src"/>
+	        		<pathelement path="${project.dir}/test"/>
+	        	</sourcepath>
+	        	
 	        	<link href="http://projects.hepforge.org/jhepwork/api_extra/"/>
 	        	<link href="http://jung.sourceforge.net/doc/api/"/>
 	        	<link href="http://java.sun.com/javase/6/docs/api/"/>
-	        	<link href="http://logging.apache.org/log4j/1.2/apidocs/index.html"/>
+	        	<link href="http://logging.apache.org/log4j/1.2/apidocs/"/>
 	        	<link href="http://collections.sourceforge.net/api/"/>
-	        	<link href="http://commons.apache.org/collections/"/>
+	        	<link href="http://commons.apache.org/proper/commons-collections/apidocs/"/>
+	        	
+	        	<tag name="date" scope="all" description="Date:"/>
+	        	
 	        	<doclet name="de.cesr.tools.umlgraph.UmlGraphDoc"
 	        	   	path="${project.dir}/lib_tools/UmlGraphSvg.jar">
 	        	   		<param name="-enumerations" />
@@ -80,9 +121,8 @@
 	<delete>
 		<fileset dir="${docs.dir}" includes="**/*.map"/>
 	</delete>
-		 
 	</target>
- 	
+ 
  	
  	<target name="queryPassword">
 		<input
@@ -91,8 +131,7 @@
 		/>
  	</target>
 			
-	
- 	<target name="copySite2sourceforge" depends="queryPassword">
+ 	<target name="copySiteOnly2sourceforge" depends="queryPassword">
  		<!--sshexec host="${remote_host}"
  						username="${user}"
  						password="${passphrase}"
@@ -111,6 +150,44 @@
  			  	</scp>
  	</target>
  	
+ 	<target name="copyJavaDoc2sourceforge" depends="queryPassword">
+ 		<!--sshexec host="${remote_host}"
+ 						username="${user}"
+ 						password="${passphrase}"
+ 					  	trust="true"
+ 						command="date"/-->
+ 				<echo>Transfering data from ${docs.dir} to ${remote_base_dir}/apidocs...</echo>
+ 		
+ 			 	<scp
+ 			       todir="${user}@${remote_host}:${remote_base_dir}/apidocs" 
+ 			       password="${passphrase}"
+ 			 	   trust="true"
+ 			 		sftp="true" >
+ 			 		<fileset id="myfileset" dir="${docs.dir}">
+	 		       		<include name="**/*"/>
+	 				</fileset>
+ 			  	</scp>
+ 	</target>
+ 			  		
+ 	<target name="copySite2sourceforge" depends="queryPassword">
+ 		<!--sshexec host="${remote_host}"
+ 						username="${user}"
+ 						password="${passphrase}"
+ 					  	trust="true"
+ 						command="date"/-->
+ 				<echo>Transfering data from ${site_source} to ${remote_base_dir}...</echo>
+ 		
+ 			 	<scp
+ 			       todir="${user}@${remote_host}:${remote_base_dir}" 
+ 			       password="${passphrase}"
+ 			 	   trust="true"
+ 			 		sftp="true" >
+ 			 		<fileset id="myfileset" dir="${site_source}">
+ 			 		       		<include name="**/*"/>
+ 			 		</fileset>
+ 			  	</scp>
+ 	</target>
+ 			  		
 	<target name="clean">
 		<delete dir="${docs.dir}"/>
 	</target>

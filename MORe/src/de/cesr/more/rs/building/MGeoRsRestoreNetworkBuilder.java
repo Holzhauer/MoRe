@@ -23,6 +23,7 @@
  */
 package de.cesr.more.rs.building;
 
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,34 +44,49 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.io.MGraphMLReader2NodeMap;
+import de.cesr.more.util.io.MoreIoUtilities;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Graph;
 
+
 /**
  * MORe
  * 
- * TODO make description
+ * First, a new {@link MRsContextJungNetwork} is initialised according to {@link MNetworkBuildingPa#BUILD_DIRECTED}.
+ * 
+ * Using the passed agent collection this network generator assigns each agent to a node defined in the GRAPHML file
+ * specified in {@link MNetworkBuildingPa#RESTORE_NETWORK_SOURCE_FILE} according to the agent id. Then, links are
+ * created as defined in the GRAPHML file.
+ * 
+ * Typically, the GRAPHML file is also produced by MoRe using
+ * {@link MoreIoUtilities#outputGraph(de.cesr.more.basic.network.MoreNetwork, java.io.File)} .
+ * 
+ * NOTE: Using this generator requires the agent collection to contain at least the nodes defined in the GRAPHML file.
+ * Otherwise, an {@link IllegalStateException} is thrown.
  * 
  * Considered {@link PmParameterDefinition}s:
  * <ul>
- * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>{@link de.cesr.more.param.MNetworkBuildingPa#BUILD_DIRECTED}</li>
+ * <li>{@link de.cesr.more.param.MNetworkBuildingPa#RESTORE_NETWORK_SOURCE_FILE}</li>
  * <li>...</li>
  * </ul>
- *
+ * 
  * @author Sascha Holzhauer
- * @date 29.11.2011 
- *
+ * @date 29.11.2011
+ * 
  */
-public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge<AgentType>> 
-		extends  MAbstractGeoRsNetworkBuilder<AgentType, EdgeType> {
-	
+public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge<AgentType>>
+		extends MAbstractGeoRsNetworkBuilder<AgentType, EdgeType> {
+
 	/**
 	 * Logger
 	 */
 	static private Logger	logger	= Logger.getLogger(MGeoRsRestoreNetworkBuilder.class);
 
-	protected String name;
+	protected String		name;
+	
+
 	
 	/**
 	 * @param areasGeography
@@ -81,7 +97,7 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 	}
 
 	@Override
-	public MoreRsNetwork < AgentType , EdgeType > buildNetwork(Collection < AgentType > agents) {
+	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
 
 		if (context == null) {
 			logger.error("Context not set!");
@@ -95,7 +111,7 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 
 		checkAgentCollection(agents);
 
-		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
+		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
@@ -112,18 +128,19 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 		logger.info("Add agents");
 		// LOGGING ->
 
-		MGraphMLReader2NodeMap < Graph < AgentType , EdgeType > , AgentType , EdgeType > graphReader;
+		MGraphMLReader2NodeMap<Graph<AgentType, EdgeType>, AgentType, EdgeType> graphReader;
 		try {
-			graphReader = new MGraphMLReader2NodeMap < Graph < AgentType , EdgeType > , AgentType , EdgeType >(
+			graphReader = new MGraphMLReader2NodeMap<Graph<AgentType, EdgeType>, AgentType, EdgeType>(
 						edgeFac, agentIdMap);
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug("Load network from file " + (String) 
+				logger.debug("Load network from file " + (String)
 						PmParameterManager.getParameter(MNetworkBuildingPa.RESTORE_NETWORK_SOURCE_FILE));
 			}
 			// LOGGING ->
 
-			graphReader.load(((String) PmParameterManager.getParameter(MNetworkBuildingPa.RESTORE_NETWORK_SOURCE_FILE)),
+			graphReader.load(
+					((String) PmParameterManager.getParameter(MNetworkBuildingPa.RESTORE_NETWORK_SOURCE_FILE)),
 					network.getJungGraph());
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -134,7 +151,7 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 		}
 		return network;
 	}
-	
+
 	protected void checkAgentCollection(Collection<AgentType> agents) {
 		// check agent collection:
 		if (!(agents instanceof Set)) {

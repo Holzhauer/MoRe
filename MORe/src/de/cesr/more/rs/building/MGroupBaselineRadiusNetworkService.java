@@ -177,7 +177,7 @@ public class MGroupBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 				logger.debug(focus + "> Check link to " + oldInfluencer);
 			}
 			// LOGGING ->
-			if (distantLinking(networkParams, network, focus, requestClass) != null) {
+			if (globalLinking(networkParams, network, focus, requestClass) != null) {
 				context.remove(network.getEdge(oldInfluencer, focus));
 				network.disconnect(oldInfluencer, focus);
 			}

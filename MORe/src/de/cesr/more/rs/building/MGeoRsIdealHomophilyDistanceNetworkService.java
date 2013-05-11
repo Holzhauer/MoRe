@@ -202,7 +202,7 @@ public class MGeoRsIdealHomophilyDistanceNetworkService<AgentType extends MoreMi
 						numLinkedNeighbors++;
 
 						// substitutes rewiring:
-						if (distantLinking(paraMap, network, hh, requestClass) != null) {
+						if (globalLinking(paraMap, network, hh, requestClass) != null) {
 							numLinkedNeighbors++;
 						}
 						// IDEAL specific -->

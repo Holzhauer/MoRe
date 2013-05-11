@@ -13,6 +13,6 @@ Using Geographies
 
   For most network generators it is sufficient to use the <<<MGeoRsNetworkEdgeModifier>>>:
   
-  ---
-  MoreNetworkModifierthis.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(this.edgeFac, geography, geoFactory);
-  ---
++---
+MoreNetworkModifierthis.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(this.edgeFac, geography, geoFactory);
++---

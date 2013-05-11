@@ -21,11 +21,17 @@
       <item name="Introduction" href="index.html"/>
        <item name="Concept" href="concept.html"/>
       <item name="Features" href="features.html"/>
-       <item name="Usage" href="usage.html"/>
        <item name="Downloads" href="https://sourceforge.net/projects/more4abm/files"/>
         <item name="JavaDoc" href="../apidocs/index.html" target="new"/>
       <item name="FAQ" href="faq.html"/>
       <!--item name="Old Doc" href="xhtml/olddoc.html"/-->
+    </menu>
+    
+    <menu name="Usage">
+    	<item name="General" href="usage.html"/>
+    	<item name="Network Generation" href="networkGeneration.html"/>
+    	<item name="Network Processors" href="networkProcessors.html"/>
+    	<item name="Geographies" href="geographies.html"/>
     </menu>
     
    <menu name="Related Projects">
