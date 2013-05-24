@@ -132,6 +132,35 @@ MNetworkMeasureManager.getInstance().addMeasureCalculation(ModelManager.SOCNET_N
 		MNetworkStatisticsSupplier.Short.N_STAT_AVGPATH.getName(), params);	
 +---
 
+** Node Measure Support
+
+	More offers features to access node measures. The agent class needs to implement the interface <<<MoreNodeMeasureSupport>>>:
+
++--
+protected MNodeMeasures measures = new MNodeMeasures();
++--
+
++--
+	@Override
+	public void setNetworkMeasureObject(
+			MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+			MMeasureDescription key, Number value) {
+		measures.setNetworkMeasureObject(network, key, value);
+	}
+
+	@Override
+	public Number getNetworkMeasureObject(
+			MoreNetwork<? extends MoreNodeMeasureSupport, ?> network,
+			MMeasureDescription key) {
+		if (measures.getNetworkMeasureObject(network, key) == null) {
+			// <- LOGGING
+			logger.error("No measure defined for key " + key);
+			// LOGGING ->
+		}
+		return measures.getNetworkMeasureObject(network, key);
+	}
++--
+
 *Managing Network Measures
 
 **Basics
@@ -148,7 +177,8 @@ netMan.addMeasureCalculation(net, MCentralityNetMSupplier.Short.NET_CEN_DEGREE.g
 +---
 
 **Setting Parameters for Network Measure Calculation
-	see above
+
+	{{{Setting Parameters for Node Measure Calculation}see above}}
 
 
 *Defining subnetworks

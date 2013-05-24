@@ -6,16 +6,21 @@
 	 -->
  	
  	<property name="dest_dir" location="//Usf/home/holzhauer/Generell/Releases/MoRe/" />
- 	<property name="release" value="0.8" />
+ 	<property name="release" value="0.82" />
  	<property name="src_java_dir" location="../../" />
  	<property name="src_doc_dir" location="../../doc" />
- 	<property name="project" value="MORe" />
- 	
+ 	<property name="project" value="MoRe" />
+ 	<property name="project_unix" value="more4abm" />
+ 	<property name="project_git" value="${basedir}/../../../../git/more4abm/SF_more4abm" />
  	
  	<property name="user" value="s-holzhauer"/>
  	<property name="remote_base_dir" value="/home/project-web/more4abm/htdocs"/>
  	<property name="remote_host" value="web.sourceforge.net"/>
  	
+ 	<property name="file_source_dir" value="${dest_dir}/"/>
+ 	<property name="remote_files_dir" value="/home/frs/project/${project_unix}/"/>
+ 	<property name="remote_host_files" value="frs.sourceforge.net"/>
+ 		
  	<property name="site_source" value="${basedir}/../../docs/new/"/>
  		
 	<tstamp/>
@@ -24,7 +29,7 @@
 	<property name="image.type" value="svg" />
  	
  	
- 	<target name="publish" depends="copyDoc, makeJar"></target>
+ 	<target name="publish" depends="copyDoc, makeJars"></target>
 
     <target name="svn_infos" description="Fetch SVN infos">
     	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
@@ -34,13 +39,12 @@
     	<echo>"Last Revision: ${svn.info.rev}"</echo>
     </target>
     		
- 	<target name="makeJar" depends="svn_infos">
+ 	<target name="makeJars" depends="svn_infos">
  	   <mkdir dir="${dest_dir}/${release}/"/>	
- 	   <jar destfile="${dest_dir}/${release}/${project}_${release}.jar"
+ 	   <jar destfile="${dest_dir}/${release}/${project}_src_${release}.jar"
  	        update="false"
  	        compress="true"
  	        duplicate="add">
- 	    	<fileset dir="${src_java_dir}/bin"/>
  	    	<fileset dir="${src_java_dir}/src"/>
  	    	<manifest>
  	            <attribute name="Built-By" value="Sascha Holzhauer, CESR"/>
@@ -48,6 +52,18 @@
  	            <attribute name="Built-Date" value="${TODAY}"/>
  	        </manifest>
  	    </jar>
+ 		
+  	   <jar destfile="${dest_dir}/${release}/${project}_bin_${release}.jar"
+  	        update="false"
+  	        compress="true"
+  	        duplicate="add">
+  	    	<fileset dir="${src_java_dir}/bin"/>
+  	    	<manifest>
+  	            <attribute name="Built-By" value="Sascha Holzhauer, CESR"/>
+  	            <attribute name="Implementation-Version"  value="${svn.info.rev}"/>
+  	            <attribute name="Built-Date" value="${TODAY}"/>
+  	        </manifest>
+  	    </jar>
  	</target>
 
  	<target name="copyDoc" depends="Make_SVG">
@@ -150,7 +166,35 @@
  			  	</scp>
  	</target>
  	
- 	<target name="copyJavaDoc2sourceforge" depends="queryPassword">
+ 	<target name="copySourcesToGit">
+ 		<copy verbose="true" todir="${project_git}">
+ 		    <fileset dir="${project.dir}" includes="src/**/*.*" id="set1"/>
+ 			<fileset dir="${project.dir}" includes="test/**/*.*" id="set2"/>
+ 			<fileset dir="${project.dir}" includes="source/**/*.*" id="set3"/>
+ 			<fileset dir="${project.dir}" includes="config/**/*.*" excludes="/config/ant/Create_JarFile_*.xml" id="set4"/>
+ 			<fileset dir="${project.dir}" includes="libs/**/*.*" id="set5"/>
+ 			<fileset dir="${project.dir}" includes="lib_tools/**/*.*" id="set6"/>
+ 			<fileset dir="${project.dir}" includes="uml/**/*.*" id="set7"/>
+ 			<fileset dir="${project.dir}" includes=".classpath, .project, pom.xml" id="set8"/>
+ 		 </copy>
+ 	</target>
+ 	
+ 	<target name="copyRelease2sourceforge" depends="queryPassword, makeJars">
+ 	 		
+ 			<echo>Transfering data from ${file_source_dir} to ${remote_files_dir}...</echo>
+
+ 		 	<scp
+ 		       todir="${user},${project_unix}@${remote_host_files}:${remote_files_dir}" 
+ 		       password="${passphrase}"
+ 		 	   trust="true"
+ 		 		sftp="true" >
+ 		 		<fileset id="myfilesetFiles" dir="${file_source_dir}">
+ 		 		       		<include name="${release}/*"/>
+ 		 		</fileset>
+ 		  	</scp>
+ 	 </target>
+ 	
+ 	<target name="copyJavaDoc2sourceforge" depends="queryPassword, Make_SVG">
  		<!--sshexec host="${remote_host}"
  						username="${user}"
  						password="${passphrase}"

@@ -142,13 +142,21 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 * @param neighbourslist
 	 */
 	protected void shuffleCollection(List<AgentType> neighbourslist) {
-		Collections.<AgentType> sort(neighbourslist,
+		try {
+			Collections.<AgentType> sort(neighbourslist,
 				new Comparator<AgentType>() {
 					@Override
 					public int compare(AgentType o1, AgentType o2) {
 						return o1.getAgentId().compareTo(o2.getAgentId());
 					}
 				});
+		} catch (ClassCastException exception) {
+			// <- LOGGING
+			logger.error("It seems that the list of potential neighbours contains objects that are not agents. e.g. an edge object. This is "
+					+ "the case when the agent class has no particular agent super class. " +
+							"Use <networkBuilder>.setGeoRequestClass() to set the proper agent class!");
+			// LOGGING ->
+		}
 		Collections.shuffle(neighbourslist, new Random(
 				((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 	}
@@ -190,12 +198,9 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	}
 
 	/**
-	 * Set the class of which the geography wrapper requests agents. Default is the agent's superclass (in case geo
-	 * request class is null).
-	 * 
-	 * @param geoRequestClass
-	 *        the geoRequestClass to set
+	 * @see de.cesr.more.rs.building.MoreGeoRsNetworkService#setGeoRequestClass(java.lang.Class)
 	 */
+	@Override
 	public void setGeoRequestClass(Class<? extends AgentType> geoRequestClass) {
 		this.geoRequestClass = geoRequestClass;
 	}

@@ -37,4 +37,13 @@ public interface MoreGeoRsNetworkService <AgentType, EdgeType extends MRepastEdg
 	MoreRsNetworkService<AgentType, EdgeType>,
 	MoreGeoNetworkService<AgentType, EdgeType>,
 	MoreGeoRsNetworkBuilder<AgentType, EdgeType>{
+
+	/**
+	 * Set the class of which the geography wrapper requests agents. Default is the agent's superclass (in case geo
+	 * request class is null).
+	 * 
+	 * @param geoRequestClass
+	 *        the geoRequestClass to set
+	 */
+	public void setGeoRequestClass(Class<? extends AgentType> geoRequestClass);
 }

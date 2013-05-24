@@ -63,7 +63,7 @@ public class MVertexSimilarityMeasureCalculatorTest {
 		Graph<MTestNode, MoreEdge<MTestNode>> g = MTestGraphs.getCompleteDirectedGraph(5);
 		
 		Map<MTestNode, Integer> nodes = new LinkedHashMap<MTestNode, Integer>();
-		int h = 0;
+		int h = 1;
 		for (MTestNode node : g.getVertices()) {
 			nodes.put(node, new Integer(h++));
 		}
@@ -105,14 +105,14 @@ public class MVertexSimilarityMeasureCalculatorTest {
 			for (int j = i; j < nodes.size(); j++) {
 				if (i == j) {
 					assertEquals(i + " == " + j + ":", 1.0, similarities[i][j], 0.001);
-				} else if (i == nodes.get(one)) {
-					if (j == nodes.get(two)) {
+				} else if (i == nodes.get(one) - 1) {
+					if (j == nodes.get(two) - 1) {
 						assertEquals(i + " <> " + j + ":", 6.0 / 6.0, similarities[i][j], 0.001);
 					} else {
 						// one node is less connected:
 						assertEquals(i + " <> " + j + ":", 4.0 / 7.0, similarities[i][j], 0.001);
 					}
-				} else if (j == nodes.get(two) || i == nodes.get(two)) {
+				} else if (j == (nodes.get(two) - 1) || i == (nodes.get(two) - 1)) {
 					// i = 0 covered above...
 					assertEquals(i + " <> " + j + ":", 4.0 / 7.0, similarities[i][j], 0.001);
 			
@@ -128,13 +128,13 @@ public class MVertexSimilarityMeasureCalculatorTest {
 			for (int j = i; j < nodes.size(); j++) {
 				if (i == j) {
 					assertEquals(i + " == " + j + ":", 1.0, similarities[i][j], 0.001);
-				} else if (i == nodes.get(one)) {
-					if (j == nodes.get(two)) {
+				} else if (i == (nodes.get(one) - 1)) {
+					if (j == (nodes.get(two) - 1)) {
 						assertEquals(3.0 / 3.0, similarities[i][j], 0.001);
 					} else {
 						assertEquals(2.0 / 5.0, similarities[i][j], 0.001);
 					}
-				} else if (j == nodes.get(two) || i == nodes.get(two)) {
+				} else if (j == (nodes.get(two) - 1) || i == (nodes.get(two) - 1)) {
 					// i = 0 covered above...
 					assertEquals(2.0 / 5.0, similarities[i][j], 0.001);
 			
