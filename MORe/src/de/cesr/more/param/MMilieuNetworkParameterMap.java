@@ -518,23 +518,28 @@ public class MMilieuNetworkParameterMap extends
 	 */
 	protected boolean warnDefault(PmParameterDefinition definition, int milieu) {
 		if (this.size() < milieu) {
-			logger.warn("There are less milieus in the map than reqested (map size: " + this.size() + " / requested milieu: " +
-					milieu + "; parameter: " + definition.toString() + ")");
-		} else {
-			if (this.get(new Integer(milieu)).get(
-					definition) == null) {
-				if (!(warningsReducerMap.containsKey(definition))) {
-					warningsReducerMap.put(definition, new HashSet<Integer>());
-				}
-				if (!warningsReducerMap.get(definition).contains(new Integer(milieu))) {
-					warningsReducerMap.get(definition).add(new Integer(milieu));
-					logger.warn("No value for " + definition.toString() + "(milieu: " + milieu
-							+ ") defined. Using default (" +
-							PmParameterManager.getParameter(definition) + ")!");
-
-				}
-				return true;
+			if (!(warningsReducerMap.containsKey(null))) {
+				warningsReducerMap.put(null, new HashSet<Integer>());
 			}
+			if (!warningsReducerMap.get(null).contains(new Integer(milieu))) {
+				warningsReducerMap.get(null).add(new Integer(milieu));
+				logger.warn("There are less milieus in the map than reqested (map size: " + this.size()
+						+ " / requested milieu: " +
+						milieu + "; parameter: " + definition.toString() + ")");
+			}
+			return true;
+		} else if (this.get(new Integer(milieu)).get(
+					definition) == null) {
+			if (!(warningsReducerMap.containsKey(definition))) {
+				warningsReducerMap.put(definition, new HashSet<Integer>());
+			}
+			if (!warningsReducerMap.get(definition).contains(new Integer(milieu))) {
+				warningsReducerMap.get(definition).add(new Integer(milieu));
+				logger.warn("No value for " + definition.toString() + "(milieu: " + milieu
+						+ ") defined. Using default (" +
+						PmParameterManager.getParameter(definition) + ")!");
+			}
+			return true;
 		} 
 		return false;
 	}

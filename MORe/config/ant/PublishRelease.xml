@@ -5,8 +5,10 @@
 		
 	 -->
  	
+ 	<property file="../../project.properties"/>
+ 	
  	<property name="dest_dir" location="//Usf/home/holzhauer/Generell/Releases/MoRe/" />
- 	<property name="release" value="0.82" />
+ 	
  	<property name="src_java_dir" location="../../" />
  	<property name="src_doc_dir" location="../../doc" />
  	<property name="project" value="MoRe" />
@@ -24,13 +26,24 @@
  	<property name="site_source" value="${basedir}/../../docs/new/"/>
  		
 	<tstamp/>
-	<property name="docs.dir" location="${basedir}/../../docs/apidocs" />
+	<property name="javadocs.dir" location="${basedir}/../../docs/apidocs" />
 	<property name="project.dir" location="${basedir}/../../" />
 	<property name="image.type" value="svg" />
  	
- 	
- 	<target name="publish" depends="copyDoc, makeJars"></target>
+	<input
+    	message="Set version correctly in project.properties and pom.xml? (y/n)?"
+    	validargs="y,n"
+		defaultvalue="y"
+    	addproperty="do.delete"
+	/>
+	<condition property="do.abort">
+	<equals arg1="n" arg2="${do.delete}"/>
+	</condition>
+	<fail if="do.abort">Build aborted by user.</fail>
+		
+ 	<target name="publish" depends="copySite2sourceforge, copyRelease2sourceforge"></target>
 
+ 		    	
     <target name="svn_infos" description="Fetch SVN infos">
     	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
     	<svn javahl="false" username="holzhauer" password="holzhauer">
@@ -38,7 +51,19 @@
     	</svn>
     	<echo>"Last Revision: ${svn.info.rev}"</echo>
     </target>
-    		
+    
+ 	<target name="make_website" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+ 		<delete>
+			<fileset dir="${site_source}">
+			</fileset>
+		</delete>
+
+ 		<echo>"Create website..."</echo>
+ 		  <artifact:mvn pom="${basedir}/../../pom.xml" mavenHome="C:/Users/holzhauer/Programme/apache-maven-3.0.4" fork="true">
+ 		    <arg value="site:site"/>
+ 		  </artifact:mvn>
+ 	</target>
+ 		    	
  	<target name="makeJars" depends="svn_infos">
  	   <mkdir dir="${dest_dir}/${release}/"/>	
  	   <jar destfile="${dest_dir}/${release}/${project}_src_${release}.jar"
@@ -48,7 +73,7 @@
  	    	<fileset dir="${src_java_dir}/src"/>
  	    	<manifest>
  	            <attribute name="Built-By" value="Sascha Holzhauer, CESR"/>
- 	            <attribute name="Implementation-Version"  value="${svn.info.rev}"/>
+ 	            <attribute name="Implementation-Version"  value="${release} (revision ${svn.info.rev})"/>
  	            <attribute name="Built-Date" value="${TODAY}"/>
  	        </manifest>
  	    </jar>
@@ -59,22 +84,22 @@
   	        duplicate="add">
   	    	<fileset dir="${src_java_dir}/bin"/>
   	    	<manifest>
-  	            <attribute name="Built-By" value="Sascha Holzhauer, CESR"/>
-  	            <attribute name="Implementation-Version"  value="${svn.info.rev}"/>
+ 	            <attribute name="Built-By" value="Sascha Holzhauer, CESR"/>
+  	            <attribute name="Implementation-Version"  value="${release} (revision ${svn.info.rev})"/>
   	            <attribute name="Built-Date" value="${TODAY}"/>
   	        </manifest>
   	    </jar>
  	</target>
 
- 	<target name="copyDoc" depends="Make_SVG">
+ 	<target name="copyDoc" depends="Make_SVG" description="Copy docs to release dir on M">
  		<copy todir="${dest_dir}/${release}/doc">
  		    <fileset dir="${src_doc_dir}" includes="**/*.*"/>
  		  </copy>
  	</target>
  	
 	<target name="javadoc_classes" depends="clean" description="generates javadoc and also UML Diagrams, and deletes Map-Files">
-		<echo>"${docs.dir}"</echo>
-		<mkdir dir="${docs.dir}"/>
+		<echo>"Create javadoc at ${javadocs.dir}"</echo>
+		<mkdir dir="${javadocs.dir}"/>
 		<!-- narrrowing the packagenames more than "de.cesr.lara.components.*" causes invalid links in the map (maybe a link-provision problem...	-->
 	        <javadoc packagenames="de.cesr.more.*" 
 	        	destdir="${docs.dir}" 
@@ -135,8 +160,9 @@
 	        	    </doclet>
 	      </javadoc>
 	<delete>
-		<fileset dir="${docs.dir}" includes="**/*.map"/>
+		<fileset dir="${javadocs.dir}" includes="**/*.map"/>
 	</delete>
+		 
 	</target>
  
  	
@@ -147,7 +173,7 @@
 		/>
  	</target>
 			
- 	<target name="copySiteOnly2sourceforge" depends="queryPassword">
+ 	<target name="copySiteOnly2sourceforge" depends="queryPassword, make_website, Make_SVG">
  		<!--sshexec host="${remote_host}"
  						username="${user}"
  						password="${passphrase}"
@@ -214,11 +240,6 @@
  	</target>
  			  		
  	<target name="copySite2sourceforge" depends="queryPassword">
- 		<!--sshexec host="${remote_host}"
- 						username="${user}"
- 						password="${passphrase}"
- 					  	trust="true"
- 						command="date"/-->
  				<echo>Transfering data from ${site_source} to ${remote_base_dir}...</echo>
  		
  			 	<scp
@@ -233,12 +254,12 @@
  	</target>
  			  		
 	<target name="clean">
-		<delete dir="${docs.dir}"/>
+		<delete failonerror="no" dir="${javadocs.dir}"/>
 	</target>
 		
 	<target name="javadoc_package" depends="clean" description="generates javadoc and also UML Diagram">
-		<mkdir dir="${docs.dir}"/>
-	        <javadoc sourcepath="src" packagenames="de.cesr.more.*" destdir="${docs.dir}" classpath="lib/junit-4.4.jar;lib/log4j-1.2.8.jar;lib/collections-generic-4.01.jar;lib/commons-collections-3.2.jar;">
+		<mkdir dir="${javadocs.dir}"/>
+	        <javadoc sourcepath="src" packagenames="de.cesr.more.*" destdir="${javadocs.dir}" classpath="lib/junit-4.4.jar;lib/log4j-1.2.8.jar;lib/collections-generic-4.01.jar;lib/commons-collections-3.2.jar;">
 	        	   <doclet name="de.cesr.tools.umlgraph.UmlGraphDoc"
 	        	   	path="lib_tools/UmlGraphSvg.jar">
         	        	<param name="-inferrel" />
@@ -246,33 +267,33 @@
     	   				<param name="-useimports" />
 	        	    </doclet>
 	        	  </javadoc>
-		  <apply executable="dot" dest="${docs.dir}" parallel="false">
+		  <apply executable="dot" dest="${javadocs.dir}" parallel="false">
 		    <arg value="-T${image.type}"/>
 		    <arg value="-o"/>
 		     <targetfile/>
 		     <srcfile/>
-		     <fileset dir="${docs.dir}" includes="**/*.dot"/>
+		     <fileset dir="${javadocs.dir}" includes="**/*.dot"/>
 		     <mapper type="glob" from="*.dot" to="*.${image.type}"/>
 		  </apply>
 	</target>
 	
 	<target name="Make_SVG" depends="javadoc_classes" description="Generates SVG from DOT and deletes DOT">
 		<echo>"Making SVG..."</echo>
-		 <apply executable="dot" dest="${docs.dir}" parallel="false">
+		 <apply executable="dot" dest="${javadocs.dir}" parallel="false">
 				    <arg value="-T${image.type}"/>
 				    <arg value="-o"/>
 				     <targetfile/>
 				     <srcfile/>
-				     <fileset dir="${docs.dir}" includes="**/*.dot"/>
+				     <fileset dir="${javadocs.dir}" includes="**/*.dot"/>
 				     <mapper type="glob" from="*.dot" to="*.${image.type}"/>
 		</apply>
 		
 		<!-- TODO omit generation of PNG in Doclet -->
 		<delete>
-			<fileset dir="${docs.dir}" includes="**/*.dot"/>
+			<fileset dir="${javadocs.dir}" includes="**/*.dot"/>
 		</delete>
 		<delete>
-			<fileset dir="${docs.dir}" includes="**/*.png"/>
+			<fileset dir="${javadocs.dir}" includes="**/*.png"/>
 		</delete>
 		
 	</target>

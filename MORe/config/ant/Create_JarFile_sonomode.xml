@@ -2,7 +2,14 @@
 <!-- excludes example models; excludes java runtime classes from UML; display only operations -->
 <project default="MoRe-jar-creation">
 	
+	
 	<property name="dir_target" value="${basedir}/../../../SonoMode/lib" />
+	
+	<property file="../../project.properties"/>
+	
+	<tstamp>
+	    <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" locale="ENGLISH, GERMANY"/>
+	 </tstamp>
 	
 	<!-- ================================= 
           target: Fetch SVN Revision Number        
@@ -19,8 +26,8 @@
     	<echo>"Last Revision: ${svn.info.rev}"</echo>
     </target>
 
-<target name="MoRe-jar-creation" description="creates a jar file from MoRe">
-	<!--delete file="${dir_taret}/MORe.jar"/-->
+<target name="MoRe-jar-creation" description="creates a jar file from MoRe" depends="svn_infos">
+	<echo>"Destination: ${dir_target}/MORe.jar"</echo>
     <jar destfile="${dir_target}/MORe.jar"
         update="false"
         compress="true"
@@ -33,7 +40,7 @@
     		
        <manifest>
             <attribute name="Built-By" value="Sascha Holzhauer"/>
-            <!--attribute name="Implementation-Version"  value="${svn.info.rev}"/-->
+            <attribute name="Implementation-Version"  value="${release} (revision ${svn.info.rev})"/>
             <attribute name="Built-Date" value="${TODAY}"/>
         </manifest>
     </jar>
