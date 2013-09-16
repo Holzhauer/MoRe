@@ -41,6 +41,8 @@ public enum MNetworkMeasureCategory implements MoreMeasureCategory {
 	NETWORK_CENTRALITY("Network: Centrality, not normalized"),
 	NETWORK_CENTRALITY_NORM("Centrality, normalized"),
 	NETWORK_CENTRALITY_STD("Centrality, standardized"),
+
+	NETWORK_MODULARITY("Modularity"),
 	NETWORK_PRESTIGE("Prestige"),
 	NETWORK_AUTHORITY("Authority"),
 	

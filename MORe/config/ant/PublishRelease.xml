@@ -239,7 +239,7 @@
  			  	</scp>
  	</target>
  			  		
- 	<target name="copySite2sourceforge" depends="queryPassword">
+ 	<target name="copySite2sourceforge" depends="queryPassword, make_website, Make_SVG">
  				<echo>Transfering data from ${site_source} to ${remote_base_dir}...</echo>
  		
  			 	<scp

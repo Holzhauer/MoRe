@@ -11,6 +11,7 @@
  */
 package de.cesr.more.measures.network.supply;
 
+
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
 
@@ -34,6 +35,7 @@ public class MBasicNetworkMeasureSupplier extends MAbstractMeasureSupplier {
 		// require R:
 		this.addMeasureSupplier(MCcNetworkMeasureRSupplier.getInstance());
 		this.addMeasureSupplier(MNetworkStatisticsSupplier.getInstance());
+		this.addMeasureSupplier(MModularityMeasureSupplier.getInstance());
 		
 		
 //		this.addMeasureSupplier(new CentralityStandardizedNMSupplier());

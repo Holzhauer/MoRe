@@ -1,4 +1,5 @@
 /**
+
  * This file is part of
  * 
  * MORe - Managing Ongoing Relationships
@@ -31,13 +32,16 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import de.cesr.more.param.reader.MMilieuNetDataReader;
+import de.cesr.more.rs.building.MGeoRsHomophilyDistanceFfNetworkService;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
+
 
 /**
  * MoRe
  * 
- * TODO provide default values! TODO exception management
+ * This class provides milieu-specific parameter values. Usually, it is filled by {@link MMilieuNetDataReader}.
  * 
  * @author Sascha Holzhauer
  * @date 27.07.2010
@@ -158,10 +162,10 @@ public class MMilieuNetworkParameterMap extends
 	}
 	
 	public double getDistanceProbExp(int milieu) {
-		return warnDefault(MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT, milieu) ?
-				((Double) PmParameterManager.getParameter(MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT)).doubleValue() :
+		return warnDefault(MNetBuildBhPa.DISTANCE_PROBABILITY_EXPONENT, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildBhPa.DISTANCE_PROBABILITY_EXPONENT)).doubleValue() :
 				((Double) this.get(new Integer(milieu)).get(
-						MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT))
+						MNetBuildBhPa.DISTANCE_PROBABILITY_EXPONENT))
 						.doubleValue();
 	}
 
@@ -170,7 +174,7 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.DISTANCTE_PROBABILITY_EXPONENT,
+				MNetBuildBhPa.DISTANCE_PROBABILITY_EXPONENT,
 				new Double(radius));
 	}
 
@@ -510,8 +514,310 @@ public class MMilieuNetworkParameterMap extends
 	}
 
 	/**
-	 * Checks if the requested value is defined in the map and
-	 * issues a warning otherwise
+	 * MGeoRsHomophilyDistanceFfNetworkService
+	 **/
+
+	public double getBackwardProb(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.PROB_BACKWARD + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+		return warnDefault(MNetBuildHdffPa.PROB_BACKWARD, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.PROB_BACKWARD)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.PROB_BACKWARD))
+							.doubleValue();
+	}
+
+	public void setBackwardProb(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.PROB_BACKWARD,
+				new Double(value));
+	}
+
+	/**
+	 * Forward probability is used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @return
+	 */
+	public double getForwardProb(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.PROB_FORWARD + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.PROB_FORWARD, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.PROB_FORWARD)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.PROB_FORWARD))
+							.doubleValue();
+	}
+
+	/**
+	 * Forward probability is used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setForwardProb(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.PROB_FORWARD,
+				new Double(value));
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public String getKDistributionClass(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.K_DISTRIBUTION_CLASS + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.K_DISTRIBUTION_CLASS, milieu) ?
+				(String) PmParameterManager.getParameter(MNetBuildHdffPa.K_DISTRIBUTION_CLASS) :
+					(String) this.get(new Integer(milieu)).get(MNetBuildHdffPa.K_DISTRIBUTION_CLASS);
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setKDistributionClass(int milieu, String value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.K_DISTRIBUTION_CLASS, value);
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public double getKparamA(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.K_PARAM_A + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.K_PARAM_A, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.K_PARAM_A)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.K_PARAM_A))
+							.doubleValue();
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setKparamA(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.K_PARAM_A,
+				new Double(value));
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public double getKparamB(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.K_PARAM_B + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.K_PARAM_B, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.K_PARAM_B)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.K_PARAM_B))
+							.doubleValue();
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setKparamB(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.K_PARAM_B,
+				new Double(value));
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public String getDistDistributionClass(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.DIST_DISTRIBUTION_CLASS + " for milieu " + milieu
+					+ " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.DIST_DISTRIBUTION_CLASS, milieu) ?
+				(String) PmParameterManager.getParameter(MNetBuildHdffPa.DIST_DISTRIBUTION_CLASS) :
+					(String) this.get(new Integer(milieu)).get(MNetBuildHdffPa.DIST_DISTRIBUTION_CLASS);
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setDistDistributionClass(int milieu, String value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.DIST_DISTRIBUTION_CLASS, value);
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public double getDistParamA(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.DIST_PARAM_A + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.DIST_PARAM_A, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.DIST_PARAM_A)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.DIST_PARAM_A))
+							.doubleValue();
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setDistParamA(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.DIST_PARAM_A,
+				new Double(value));
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public double getDistParamB(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.DIST_PARAM_B + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.DIST_PARAM_B, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.DIST_PARAM_B)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.DIST_PARAM_B))
+							.doubleValue();
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setDistParamB(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.DIST_PARAM_B,
+				new Double(value));
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public double getDistParamXMin(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.DIST_PARAM_XMIN + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.DIST_PARAM_XMIN, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.DIST_PARAM_XMIN)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.DIST_PARAM_XMIN))
+							.doubleValue();
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setDistParamXMin(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.DIST_PARAM_XMIN,
+				new Double(value));
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 */
+	public double getDistParamPLocal(int milieu) {
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Value of " + MNetBuildHdffPa.DIST_PARAM_PLOCAL + " for milieu " + milieu + " requested.");
+		}
+		// LOGGING ->
+
+		return warnDefault(MNetBuildHdffPa.DIST_PARAM_PLOCAL, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.DIST_PARAM_PLOCAL)).doubleValue() :
+					((Double) this.get(new Integer(milieu)).get(MNetBuildHdffPa.DIST_PARAM_PLOCAL))
+							.doubleValue();
+	}
+
+	/**
+	 * Used by {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param milieu
+	 * @param value
+	 */
+	public void setDistParamPLocal(int milieu, double value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(MNetBuildHdffPa.DIST_PARAM_PLOCAL,
+				new Double(value));
+	}
+
+	/**
+	 * Checks if the requested value is defined in the map and issues a warning otherwise
+	 * 
 	 * @param definition
 	 * @param milieu
 	 * @return true if no value is defined in the map

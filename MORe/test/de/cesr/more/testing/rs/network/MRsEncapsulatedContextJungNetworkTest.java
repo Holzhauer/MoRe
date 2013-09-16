@@ -1,11 +1,27 @@
 /**
- * LARA - Lightweight Architecture for boundedly Rational citizen Agents
+ * This file is part of
+ * 
+ * MORe - Managing Ongoing Relationships
+ *
+ * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
+ * 
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *  
+ * MORe - Managing Ongoing Relationships is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Center for Environmental Systems Research, Kassel
+ * 
  * Created by Sascha Holzhauer on 15.01.2010
  */
 package de.cesr.more.testing.rs.network;
-
 
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +40,7 @@ import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.lara.components.container.properties.impl.LFloatProperty;
 import de.cesr.lara.components.environment.LaraEnvironment;
+import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.LaraRandom;
@@ -67,9 +84,9 @@ public class MRsEncapsulatedContextJungNetworkTest {
 			getLaraComp().getGeneralMemory().memorize(new LFloatProperty("Value", value));
 		}
 	}
-	
+
 	/**
-	 * @throws java.lang.Exception Created by Sascha Holzhauer on 15.01.2010
+	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -79,6 +96,10 @@ public class MRsEncapsulatedContextJungNetworkTest {
 			@Override
 			public LaraRandom getLRandom() {
 				return new LRandomService((int) System.currentTimeMillis());
+			}
+
+			@Override
+			public <T extends LaraEvent> void onEvent(T event) {
 			}
 		});
 		env = new MLaraNetworkEnvironment<TestAgent, MRepastEdge<TestAgent>>();
@@ -164,7 +185,6 @@ public class MRsEncapsulatedContextJungNetworkTest {
 
 	/**
 	 * 
-	 * Created by Sascha Holzhauer on 18.01.2010
 	 */
 	@Test
 	public final void testNormalizeWeights() {
@@ -188,7 +208,7 @@ public class MRsEncapsulatedContextJungNetworkTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception Created by Sascha Holzhauer on 15.01.2010
+	 * @throws java.lang.Exception
 	 */
 	@After
 	public void tearDown() throws Exception {

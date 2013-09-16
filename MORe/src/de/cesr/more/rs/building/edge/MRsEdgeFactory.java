@@ -62,6 +62,12 @@ public class MRsEdgeFactory<V, E> implements MoreEdgeFactory<V, E> {
 			throw new IllegalStateException("Target node is null!");
 		}
 
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Created edge between " + source + " -> " + target);
+		}
+		// LOGGING ->
+
 		return (E) new MRepastEdge<V>(source, target, directed);
 	} 
 }

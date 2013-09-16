@@ -26,6 +26,7 @@ package de.cesr.more.basic;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import repast.simphony.context.Context;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import de.cesr.more.measures.util.MoreSchedule;
@@ -44,6 +45,23 @@ import de.cesr.uranus.core.UranusRandomService;
 public class MManager {
 
 	protected static MoreSchedule schedule;
+
+	protected static Context<Object>	rootContext;
+
+	/**
+	 * @return the rootContext
+	 */
+	public static Context<Object> getRootContext() {
+		return rootContext;
+	}
+
+	/**
+	 * @param rootContext
+	 *        the rootContext to set
+	 */
+	public static void setRootContext(Context<Object> rootContext) {
+		MManager.rootContext = rootContext;
+	}
 
 	protected static UranusRandomService randomService;
 

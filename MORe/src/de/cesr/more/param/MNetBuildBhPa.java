@@ -27,6 +27,7 @@ package de.cesr.more.param;
 import java.util.Map;
 
 import de.cesr.more.rs.building.MGeoRsBaselineNumberNetworkService;
+import de.cesr.more.rs.building.MGeoRsHomophilyDistanceNetworkService;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -83,14 +84,15 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 	MAX_SEARCH_RADIUS(Double.class, new Double(10000.0)),
 
 	/**
-	 * Fraction of Max. radius and X radius resp. the search ring is extended to. Default:<code>0.1</code>
+	 * 1/EXTENDING_SEARCH_FRACTION gives the number of rings applied in {@link MGeoRsHomophilyDistanceNetworkService}
+	 * Default:<code>0.1</code>
 	 */
 	EXTENDING_SEARCH_FRACTION(Double.class, new Double(0.1)),
 
 	/**
 	 * To calculate the distance dependent link probability (d_r)^\alpha
 	 */
-	DISTANCTE_PROBABILITY_EXPONENT(Double.class, new Double(1.0)),
+	DISTANCE_PROBABILITY_EXPONENT(Double.class, new Double(1.0)),
 	
 	/**
 	 * Weight for geographical proximity regarding partner homophily. Default: <code>0.5</code>

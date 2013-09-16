@@ -51,6 +51,41 @@ Using Network Generators
   It allows using e.g. different edge modifiers as ones that have geography support only in certain contexts, for instance initialisation or for certain model
   configurations.
   
+  
+* Homophily Distance Forest Fire Network Service
+
+** Creating Hexagon Shapefiles
+
+	Hexagon shapefiles are required to determine distances between agents. Since the size of hexagons
+	depends on the simuulation region and desired performance, often according hexagon shapefiles
+	need to be created anew:
+	
+	[[1]] Download and install {{{http://www.qgis.org}QuantumGIS}}
+	
+	[[1]] Download and install the python plugin {{{http://michaelminn.com/linux/mmqgis/}<<<mmqgis>>>}}
+	
+	[[1]] Choose <plugins> > <mmqgis> > <create> > <Create Grid Layer>
+	
+	[[1]] Select <Hexagon (polygon)> at the bottom
+	
+	[[1]] Adapt and use these values (here for a 1km x 1km area):
+	
+*-------------*--------------*
+Left X | -150
+*-------------*--------------*
+Width | 1300
+*-------------*--------------*
+Bottom Y | -150
+*-------------*--------------*
+Height | 1200
+*-------------*--------------*
+H Spacing | 200
+*-------------*--------------*
+V Spacing | auto
+*-------------*--------------*
+	
+
+	
 Implementing Network Builders
 
   There are several ways to implement network generators that comply with the various MoRe interfaces:

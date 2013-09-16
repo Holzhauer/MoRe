@@ -185,8 +185,8 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 						map.setDynLocalRadius(milieu, result.getDouble("DYN_PROB_GLOBAL"));
 					}
 
-					if (colNames.contains("DISTANCTE_PROBABILITY_EXPONENT")) {
-						map.setDistanceProbExp(milieu, result.getDouble("DISTANCTE_PROBABILITY_EXPONENT"));
+					if (colNames.contains("DISTANCE_PROBABILITY_EXPONENT")) {
+						map.setDistanceProbExp(milieu, result.getDouble("DISTANCE_PROBABILITY_EXPONENT"));
 					}
 
 					if (colNames.contains("EXTENDING_SEARCH_FRACTION")) {
@@ -197,6 +197,47 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 						map.setNetUpdateInterval(milieu, result.getInt("PERCEIVE_SOCNET_INTERVAL"));
 					}
 
+					if (colNames.contains("PROB_BACKWARD")) {
+						map.setBackwardProb(milieu, result.getInt("PROB_BACKWARD"));
+					}
+
+					if (colNames.contains("PROB_FORWARD")) {
+						map.setForwardProb(milieu, result.getInt("PROB_FORWARD"));
+					}
+
+					if (colNames.contains("K_DISTRIBUTION_CLASS")) {
+						map.setKDistributionClass(milieu, result.getString("K_DISTRIBUTION_CLASS"));
+					}
+
+					if (colNames.contains("K_PARAM_A")) {
+						map.setKparamA(milieu, result.getDouble("K_PARAM_A"));
+					}
+
+					if (colNames.contains("K_PARAM_B")) {
+						map.setKparamB(milieu, result.getDouble("K_PARAM_B"));
+					}
+
+					if (colNames.contains("DIST_DISTRIBUTION_CLASS")) {
+						map.setDistDistributionClass(milieu, result.getString("DIST_DISTRIBUTION_CLASS"));
+					}
+
+					if (colNames.contains("DIST_PARAM_A")) {
+						map.setDistParamA(milieu, result.getDouble("DIST_PARAM_A"));
+					}
+
+					if (colNames.contains("DIST_PARAM_B")) {
+						map.setDistParamB(milieu, result.getDouble("DIST_PARAM_B"));
+					}
+					
+
+					if (colNames.contains("DIST_PARAM_XMIN")) {
+						map.setDistParamXMin(milieu, result.getDouble("DIST_PARAM_XMIN"));
+					}
+
+					if (colNames.contains("DIST_PARAM_PLOCAL")) {
+						map.setDistParamPLocal(milieu, result.getDouble("K_PARAM_PLOCAL"));
+					}
+					
 					String sql2 = "SELECT partnerMilieu, " + "p_links " + "FROM " + t2 + " AS t2 " + "WHERE paramID="
 							+ PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID) + " AND "
 							+ "milieu=" + milieu

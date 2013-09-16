@@ -102,7 +102,7 @@ import de.cesr.parma.core.PmParameterManager;
  * <ul>
  * <li>{@link MNetworkBuildingPa#BUILD_DIRECTED}</li>
  * <li>{@link MNetBuildBhPa#K} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
- * <li>{@link MNetBuildBhPa#DISTANCTE_PROBABILITY_EXPONENT} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildBhPa#DISTANCE_PROBABILITY_EXPONENT} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildBhPa#EXTENDING_SEARCH_FRACTION} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildBhPa#MAX_SEARCH_RADIUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildBhPa#P_MILIEUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>

@@ -4,6 +4,7 @@
 	
 	
 	<property name="dir_target" value="${basedir}/../../../NetworkGenerator/libs" />
+	<property name="svn.info.rev" value="NOT DEFINED" />
 	
 	<property file="../../project.properties"/>
 	
@@ -26,7 +27,7 @@
     	<echo>"Last Revision: ${svn.info.rev}"</echo>
     </target>
 
-<target name="MoRe-jar-creation" description="creates a jar file from MoRe" depends="svn_infos">
+<target name="MoRe-jar-creation" description="creates a jar file from MoRe">
 	<echo>"Destination: ${dir_target}/MORe.jar"</echo>
     <jar destfile="${dir_target}/MORe.jar"
         update="false"

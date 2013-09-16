@@ -19,27 +19,37 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 10.12.2010
+ * Created by Sascha Holzhauer on 15.09.2013
  */
-package de.cesr.more.testing.util;
+package de.cesr.more.util.distributions;
 
-/**
-*
-* @author Sascha Holzhauer
-* @date 10.02.2010 
-*
-*/
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
+import org.apache.commons.math3.distribution.IntegerDistribution;
 
 
 /**
-* run all adapter tests at once
-*/
-@RunWith(Suite.class)
-@SuiteClasses({ MoreUtilitiesTest.class, MScheduleTest.class, MWeibullDistanceDistributionTest.class })
-public class MAllUtilitiesTests {
+ * MORe
+ * 
+ * Interface for instantiation and initialisation of discrete distributions to be used in a general manner.
+ * 
+ * @author Sascha Holzhauer
+ * @date 15.09.2013
+ * 
+ */
+public interface MIntegerDistribution extends IntegerDistribution {
 
+	/**
+	 * Set distribution specific parameters that are defined by a distribution specific enumeration that implements
+	 * {@link MDistributionParameter}.
+	 * 
+	 * @param param
+	 * @param a
+	 */
+	public void setParameter(MDistributionParameter param, double a);
+
+	/**
+	 * Initialises the distribution. Parameters need to be set before via
+	 * {@link MIntegerDistribution#setParameter(MDistributionParameter, double)}!
+	 */
+	public void init();
 }

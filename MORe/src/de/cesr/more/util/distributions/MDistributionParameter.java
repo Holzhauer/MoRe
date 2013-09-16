@@ -19,27 +19,19 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 10.12.2010
+ * Created by Sascha Holzhauer on 14.09.2013
  */
-package de.cesr.more.testing.util;
+package de.cesr.more.util.distributions;
 
 /**
-*
-* @author Sascha Holzhauer
-* @date 10.02.2010 
-*
-*/
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+ * MORe
+ *
+ * @author Sascha Holzhauer
+ * @date 14.09.2013 
+ *
+ */
+public interface MDistributionParameter {
 
-
-
-/**
-* run all adapter tests at once
-*/
-@RunWith(Suite.class)
-@SuiteClasses({ MoreUtilitiesTest.class, MScheduleTest.class, MWeibullDistanceDistributionTest.class })
-public class MAllUtilitiesTests {
+	public int ordinal();
 
 }

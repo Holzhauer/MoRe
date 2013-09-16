@@ -16,10 +16,7 @@ package de.cesr.more.rs.building;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections15.list.SetUniqueList;
 import org.apache.log4j.Logger;
@@ -542,29 +539,6 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		// LOGGING ->
 
 		return true;
-	}
-
-	protected int getProbabilisticMilieu(MMilieuNetworkParameterMap networkParams, AgentType focus) {
-		Map<Integer, Double> roulette_wheel = new LinkedHashMap<Integer, Double>();
-
-		for (int i = 1; i <= networkParams.size(); i++) {
-			roulette_wheel.put(new Integer(i), networkParams.getP_Milieu(focus.getMilieuGroup(), i));
-		}
-
-		double randFloat = rand.nextDouble();
-		if (randFloat < 0.0 || randFloat > 1.0) {
-			throw new IllegalStateException(rand
-					+ "> Make sure min = 0.0 and max = 1.0");
-		}
-
-		float pointer = 0.0f;
-		for (Entry<Integer, Double> entry : roulette_wheel.entrySet()) {
-			pointer += entry.getValue().doubleValue();
-			if (pointer >= randFloat) {
-				return entry.getKey().intValue();
-			}
-		}
-		throw new IllegalStateException("This code should never be reached!");
 	}
 
 	public List<AgentType> getAgentList() {

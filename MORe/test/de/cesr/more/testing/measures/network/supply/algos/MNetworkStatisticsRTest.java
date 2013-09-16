@@ -23,7 +23,7 @@
  */
 package de.cesr.more.testing.measures.network.supply.algos;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -31,8 +31,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
 import de.cesr.more.testing.testutils.MTestGraphs;
+import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
 import de.cesr.more.util.Log4jLogger;
 import de.cesr.more.util.MSchedule;
 import edu.uci.ics.jung.graph.Graph;
@@ -51,7 +53,6 @@ public class MNetworkStatisticsRTest {
 	
 	/**
 	 * @throws java.lang.Exception
-	 * Created by Sascha Holzhauer on 11.01.2011
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -64,7 +65,6 @@ public class MNetworkStatisticsRTest {
 
 	/**
 	 * @throws java.lang.Exception
-	 * Created by Sascha Holzhauer on 11.01.2011
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -76,7 +76,7 @@ public class MNetworkStatisticsRTest {
 	@Test
 	public final void testGetAveragepathLengthR() {
 		logger.info("Test calculating average path length.");
-		Graph g = MTestGraphs.getCompleteUndirectedGraph(5);
+		Graph<MTestNode, MoreEdge<MTestNode>> g = MTestGraphs.getCompleteUndirectedGraph(5);
 		double result = MNetworkStatisticsR.getAveragepathLengthR(g, false);
 		assertEquals("(Calculated Average Path length is : " + result + ")", result, 1.0, 0.001);
 	}

@@ -85,7 +85,7 @@ MNetworkManager.setNetwork(network, socialNetworkName);
 
 	As default, the <<<MNetworkMeasureManager>>> imports measure definitions from <<<MBasicNetworkMeasureSupplier>>> (see JavaDoc for details).
 	Further measure definitions are added by passing an instance of <<<MoreMeasureSupplier>>> to <<<MNetworkMeasureManager#addMeasureSupplier(supplier)>>>.
-	See Implementing Custom Measures <insert link> for further instructions.
+	See {{{Implementing Custom Measures}Implementing Custom Measures}} for further instructions.
 
 
 *Managing Node Measures
@@ -203,7 +203,7 @@ MNetworkManager.storeVertexSubnetwork(network, predicate, subnetwork_name)
 	from overriding its <<<equals()>>> method.
 
 	The scheduling parameters (start, interval, end) are defined in the parameter map that is interpreted by <<<MNetworkMeasureManager>>> or 
-	<<<MNodeMeasureManager>>>. Therefore, generating <<<MoreActions>>> do not need to define a <<<MSchedulingParameter>>>.
+	<<<MNodeMeasureManager>>>. Therefore, generating <<<MoreActions>>> does not need to define a <<<MSchedulingParameter>>>.
 	
 	
 *Defining Dynamics of Networks

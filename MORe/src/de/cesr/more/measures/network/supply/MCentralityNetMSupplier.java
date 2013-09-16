@@ -85,7 +85,7 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 		}
 
 		/**
-		 * @return the short name Created by Sascha Holzhauer on 22.12.2010
+		 * @return the short name
 		 */
 		public String getName() {
 			return name;
@@ -112,7 +112,6 @@ public class MCentralityNetMSupplier extends MAbstractMeasureSupplier {
 	
 	/**
 	 * @return
-	 * Created by Sascha Holzhauer on 23.12.2010
 	 */
 	public static MCentralityNetMSupplier getInstance() {
 		if (instance == null) {
