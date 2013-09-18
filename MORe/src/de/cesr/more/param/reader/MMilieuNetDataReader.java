@@ -235,7 +235,7 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 					}
 
 					if (colNames.contains("DIST_PARAM_PLOCAL")) {
-						map.setDistParamPLocal(milieu, result.getDouble("K_PARAM_PLOCAL"));
+						map.setDistParamPLocal(milieu, result.getDouble("DIST_PARAM_PLOCAL"));
 					}
 					
 					String sql2 = "SELECT partnerMilieu, " + "p_links " + "FROM " + t2 + " AS t2 " + "WHERE paramID="

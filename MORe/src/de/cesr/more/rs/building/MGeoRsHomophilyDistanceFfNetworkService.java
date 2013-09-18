@@ -171,6 +171,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 */
 	static private Logger								logger	= Logger.getLogger(MGeoRsHomophilyDistanceFfNetworkService.class);
 
+	static final public int								DISTANCE_FACTOR_FOR_DISTRIBUTION	= 1000;
+
 	protected String									name	= "Not Defined";
 
 	protected MMilieuNetworkParameterMap				paraMap;
@@ -294,12 +296,32 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 				while (ambassador == null) {
 					double startDistance = getDistance(agent.getMilieuGroup());
+
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Start-Distance: " + startDistance);
+					}
+					// LOGGING ->
+
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new HashSet<AgentType>();
 
-					for (MGeoHexagon<AgentType> hexagon : agentHexagons.get(agent).getHexagonsOfDistance(startDistance)) {
+					MGeoHexagon<AgentType> h = agentHexagons.get(agent);
+					if (h == null) {
+						logger.error("Agent " + agent + " is not assigned to a hexagon. " +
+								"Check that hexagon shapefile covers all agent positions!");
+						throw new IllegalStateException("Agent " + agent + " is not assigned to a hexagon. " +
+								"Check that hexagon shapefile covers all agent positions!");
+					}
+					for (MGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(startDistance)) {
 						potPartners.addAll(hexagon.getAgents());
 					}
+
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Number of potential partners: " + potPartners.size());
+					}
+					// LOGGING ->
 
 					// Select a random ambassador according to milieu preferences (inbreeding homophily) from these
 					// hexagons
@@ -328,7 +350,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * @see http://mathworld.wolfram.com/RandomNumber.html
 	 */
 	protected double getDistance(int milieu) {
-		return this.distanceDistributions.get(new Integer(milieu)).sample();
+		return this.distanceDistributions.get(new Integer(milieu)).sample() *
+				DISTANCE_FACTOR_FOR_DISTRIBUTION;
 	}
 
 	/**
@@ -413,8 +436,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 											neighbour.getMilieuGroup())
 											* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup()) : 1.0)
 									* this.paraMap.getBackwardProb(agent.getMilieuGroup()) < rand.nextDouble()) {
-						// UNDO
-						System.out.println("----------><");
 						this.edgeModifier.createEdge(network, neighbour, agent);
 						// For each connected partner, decrease k_target
 						degreeTargets.put(agent, new Integer(degreeTargets.get(agent) - 1));
@@ -455,7 +476,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 */
 	protected double getDistanceProb(AgentType ego, AgentType partner) {
 		return this.distanceDistributions.get(ego.getMilieuGroup()).
-				density(this.geography.getGeometry(ego).distance(geography.getGeometry(partner)));
+				density(this.geography.getGeometry(ego).distance(geography.getGeometry(partner)) /
+						DISTANCE_FACTOR_FOR_DISTRIBUTION);
 	}
 
 	/**
@@ -480,23 +502,46 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 			} catch (NoSuchMethodException exception) {
 				exception.printStackTrace();
-			} catch (IllegalArgumentException exception) {
-				exception.printStackTrace();
-			} catch (SecurityException exception) {
-				exception.printStackTrace();
-			} catch (InstantiationException exception) {
-				exception.printStackTrace();
-			} catch (IllegalAccessException exception) {
-				exception.printStackTrace();
-			} catch (InvocationTargetException exception) {
-				exception.printStackTrace();
-			} catch (ClassNotFoundException exception) {
-				exception.printStackTrace();
-			} finally {
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
-				// LOGGING ->	
+				// LOGGING ->
+			} catch (IllegalArgumentException exception) {
+				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+			} catch (SecurityException exception) {
+				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+			} catch (InstantiationException exception) {
+				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+			} catch (IllegalAccessException exception) {
+				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+			} catch (InvocationTargetException exception) {
+				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+			} catch (ClassNotFoundException exception) {
+				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
 			}
 			this.degreeDistributions.put(new Integer(i), dist);
 		}
@@ -515,19 +560,42 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 												.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING))));
 			} catch (IllegalArgumentException exception) {
 				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getDistDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
 			} catch (SecurityException exception) {
 				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getDistDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
 			} catch (InstantiationException exception) {
 				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getDistDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
 			} catch (IllegalAccessException exception) {
 				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getDistDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
 			} catch (InvocationTargetException exception) {
 				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getDistDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
 			} catch (NoSuchMethodException exception) {
 				exception.printStackTrace();
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getDistDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
 			} catch (ClassNotFoundException exception) {
 				exception.printStackTrace();
-			} finally {
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getDistDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
@@ -537,7 +605,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			dist.setParameter(MGeneralDistributionParameter.PARAM_A, paraMap.getDistParamA(i));
 			dist.setParameter(MGeneralDistributionParameter.PARAM_B, paraMap.getDistParamB(i));
 			dist.setParameter(MGeneralDistributionParameter.PARAM_C, paraMap.getDistParamXMin(i));
-			dist.setParameter(MGeneralDistributionParameter.PARAM_D, this.getAreaDiameter());
+			dist.setParameter(MGeneralDistributionParameter.PARAM_D, this.getAreaDiameter()
+					/ DISTANCE_FACTOR_FOR_DISTRIBUTION);
 			dist.setParameter(MGeneralDistributionParameter.PARAM_E, paraMap.getDistParamPLocal(i));
 			dist.init();
 
@@ -614,6 +683,14 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		logger.info("Init distance matrix...");
 		// LOGGING ->
 
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			for (AgentType agent : agents) {
+				logger.debug(agent + "> cetroid: " + geography.getGeometry(agent).getCentroid());
+			}
+		}
+		// LOGGING ->
+
 		Set<MGeoHexagon<AgentType>> hexagons = new HashSet<MGeoHexagon<AgentType>>();
 		for (Object o : this.geography.getLayer(MGeoHexagon.class).getAgentSet()) {
 			hexagons.add((MGeoHexagon<AgentType>) o);
@@ -628,6 +705,13 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			MGeoHexagon<AgentType> hexagon = (MGeoHexagon<AgentType>)o;
 			Geometry hexagonGeo = this.geography.getGeometry(hexagon);
 			Geometry hexagonCentroid = this.geography.getGeometry(hexagon).getCentroid();
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Hexagons centroid: " + hexagonCentroid);
+			}
+			// LOGGING ->
+
 			// Assign Agents to hexagons
 			ContainsQuery<Object> containsQuery = new ContainsQuery<Object>(
 					this.geography, hexagonGeo);
@@ -636,6 +720,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				if (a instanceof MoreMilieuAgent) {
 					agentHexagons.put((AgentType) a, hexagon);
 					hexagon.addAgent((AgentType) a);
+
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Added agent " + a + " to hexagon " + hexagon);
+					}
+					// LOGGING ->
 				}
 			}
 			// For each remaining hexagon h

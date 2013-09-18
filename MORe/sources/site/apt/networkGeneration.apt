@@ -64,6 +64,8 @@ Using Network Generators
 	
 	[[1]] Download and install the python plugin {{{http://michaelminn.com/linux/mmqgis/}<<<mmqgis>>>}}
 	
+	[[1]] Settings > Project Properties > Select "WTS 84 / UTM zone 32N"
+	
 	[[1]] Choose <plugins> > <mmqgis> > <create> > <Create Grid Layer>
 	
 	[[1]] Select <Hexagon (polygon)> at the bottom
@@ -84,7 +86,7 @@ H Spacing | 200
 V Spacing | auto
 *-------------*--------------*
 	
-
+	[[1]] Make sure that the shapefile definse the correct CRS (usually the plugin does not assign a CRS)
 	
 Implementing Network Builders
 

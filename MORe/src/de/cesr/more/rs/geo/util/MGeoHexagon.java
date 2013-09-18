@@ -138,15 +138,20 @@ public class MGeoHexagon<AgentType> implements Comparable<MGeoHexagon<AgentType>
 		Set<MGeoHexagon<AgentType>> hexagons = new HashSet<MGeoHexagon<AgentType>>();
 		// to capture agents of the given distances, hexagons need to be considered whose centroid
 		// is +/- (hexagonHeight/2.0) away (if we assume that the agents coordinates can deviate from
-		// its hexagons cetroid by (hexagonHeight/2.0) we would need to apply +/- hexagonHeight).
+		// its hexagons centroid by (hexagonHeight/2.0) we would need to apply +/- hexagonHeight).
 		Distance lower = distanceHexagon.higher(new Distance(distance - (hexagonHeight / 2.0), null));
 		Distance upper = distanceHexagon.lower(new Distance(distance + (hexagonHeight / 2.0), null));
 		// Query the subset
-		for (Distance d : distanceHexagon.subSet(
-				lower != null ? lower : distanceHexagon.first(),
-				upper != null ? upper : distanceHexagon.last())) {
-			hexagons.add(d.hexagon);
+		if (lower == upper) {
+			hexagons.add(lower.hexagon);
+		} else {
+			for (Distance d : distanceHexagon.subSet(
+					lower != null ? lower : distanceHexagon.first(),
+					upper != null ? upper : distanceHexagon.last())) {
+				hexagons.add(d.hexagon);
+			}
 		}
+
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("Number of hexagons retrieved: " + hexagons.size());

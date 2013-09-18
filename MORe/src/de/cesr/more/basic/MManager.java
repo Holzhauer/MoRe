@@ -26,6 +26,8 @@ package de.cesr.more.basic;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.context.Context;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
@@ -44,6 +46,11 @@ import de.cesr.uranus.core.UranusRandomService;
  */
 public class MManager {
 
+	/**
+	 * Logger
+	 */
+	static private Logger				logger	= Logger.getLogger(MManager.class);
+
 	protected static MoreSchedule schedule;
 
 	protected static Context<Object>	rootContext;
@@ -52,6 +59,10 @@ public class MManager {
 	 * @return the rootContext
 	 */
 	public static Context<Object> getRootContext() {
+		if (rootContext == null) {
+			logger.error("The root context has not been set!");
+			throw new IllegalStateException("The root context has not been set!");
+		}
 		return rootContext;
 	}
 
