@@ -29,7 +29,6 @@ import java.text.NumberFormat;
 import org.apache.log4j.Logger;
 
 import repast.simphony.context.Context;
-import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.param.MRandomPa;
@@ -90,25 +89,57 @@ public class MManager {
 	 * Initialised parameter framework.
 	 */
 	public static void init() {
-		// init random stream if not done before:
-		if (!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
+		// init the general random stream:
+		if (!PmParameterManager.isCustomised(MRandomPa.RND_STREAM) &&
+				!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
+						MRandomPa.RND_STREAM))) {
+			getURandomService().registerGenerator((String) PmParameterManager
+					.getParameter(MRandomPa.RND_STREAM), new MersenneTwister(
+							((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED)).intValue()));
+		}
+
+		// init random streams if not done before, but only if random seed is customized:
+		if (PmParameterManager.isCustomised(MRandomPa.RANDOM_SEED_NETWORK_BUILDING) &&
+				!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_BUILDING) &&
+				!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
 				MRandomPa.RND_STREAM_NETWORK_BUILDING))) {
-			getURandomService()
-			.registerGenerator((String) PmParameterManager
+			getURandomService().registerGenerator((String) PmParameterManager
 					.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING), new MersenneTwister(
-									((Integer) PmParameterManager
-											.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING))
-											.intValue()));
+							((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING))
+									.intValue()));
 		}
 		
 		// init random distribution if not done before:
-		if (!getURandomService().isDistributionRegistered((String) PmParameterManager
-									.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING))) {
-			getURandomService()
-					.registerDistribution(new Uniform(getURandomService().getGenerator((String) PmParameterManager
+		if (!PmParameterManager.isCustomised(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING) &&
+				!getURandomService().isDistributionRegistered((String) PmParameterManager
+						.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING))) {
+			getURandomService().registerDistribution(getURandomService().getNewUniformDistribution(
+					getURandomService().getGenerator((String) PmParameterManager
 									.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING))),
 							(String) PmParameterManager
 									.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING));
+		}
+
+		// init random streams if not done before:
+		if (PmParameterManager.isCustomised(MRandomPa.RANDOM_SEED_NETWORK_DYNAMICS) &&
+				!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_DYNAMICS) &&
+				!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
+						MRandomPa.RND_STREAM_NETWORK_DYNAMICS))) {
+			getURandomService().registerGenerator((String) PmParameterManager
+					.getParameter(MRandomPa.RND_STREAM_NETWORK_DYNAMICS), new MersenneTwister(
+							((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_DYNAMICS))
+									.intValue()));
+		}
+
+		// init random distribution if not done before:
+		if (!PmParameterManager.isCustomised(MRandomPa.RND_UNIFORM_DIST_NETWORK_DYNAMICS) &&
+				!getURandomService().isDistributionRegistered((String) PmParameterManager
+						.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_DYNAMICS))) {
+			getURandomService().registerDistribution(getURandomService().getNewUniformDistribution(
+					getURandomService().getGenerator((String) PmParameterManager
+									.getParameter(MRandomPa.RND_STREAM_NETWORK_DYNAMICS))),
+							(String) PmParameterManager
+									.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_DYNAMICS));
 		}
 	}
 

@@ -52,7 +52,7 @@ MNetworkManager.setNetwork(network, socialNetworkName);
     * Copy Your custom parameter data to the MoRe equivalents. 
     To get an overview of used parameters in MoRe, consult the {{{../apidocs/index.html}JavaDoc}} and see package <<<de.cesr.more.params>>> 
     for descriptions of parameters. More only defines default values in these enumerations. Further parameter retrieval must be
-    issued in the user code. For details, see the ParMa manual <insert link>. Consider especially:
+    issued in the user code. For details, see the {{{http://parma.sourceforge.net/}ParMa manual}}. Consider especially:
     
     	* <<<MSyQLPa>>> for database setting relevant for storing network and node data
     
@@ -60,7 +60,11 @@ MNetworkManager.setNetwork(network, socialNetworkName);
     
     	* Random seeds
     
-    * Call <<<MManager.init()>>> to initialise default random streams (according to parameter settings for random seeds).
+    * Call <<<MManager.init()>>> to initialise default random streams (according to parameter settings for random seeds,
+    see also {{{Random Numbers in More}}})).
+    
+    <<NOTE:>> Make sure to set up parameters before <<<MManager.init()>>> is called because otherwise defined
+    parameters may not be considered during the initialisation of random number streams!
     
 ** Using Logging
 
@@ -233,3 +237,49 @@ this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();
 
   The RS networks usually deal with changes of edges in the geography via <<<MoreGeoNetworkEdgeModifier>>>, but do not care about adding and removing
   nodes to and from contexts and geographies. The reason is that these node objects are expected to survive even if they are deleted from the network.
+
+
+* Random Numbers in MoRe
+
+	MoRe uses its own instance of {{{http://uranus4abm.sourceforge.net/javadoc/de/cesr/uranus/core/URandomService.html}
+	<<<URandomService>>>}}. Basically, it manages two different random number generators:
+	
+	* <<<RND_STREAM_NETWORK_BUILDING>>>
+	
+	* <<<RND_STREAM_NETWORK_DYNAMICS>>>
+	
+	
+	These streams are fed by distinct random seeds which default to <<<RANDOM_SEED>>>
+	
+	* <<<RANDOM_SEED_NETWORK_BUILDING>>>
+	
+	* <<<RANDOM_SEED_NETWORK_DYNAMICS>>>
+	
+	
+	The streams are initialised 
+	
+	To influence the entire random number generation in MoRe it is sufficient to set the parameter <<<RANDOM_SEED>>>:
+	
++--
+PmParameterManager.setParameter(MRandomPa.RANDOM_SEED, new Integer(1));
++--
+
+	To influence the random number generation of certain parts of MoRe change the according random number seed, e.g.:
+		
++--
+PmParameterManager.setParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING, new Integer(2));
++--
+	
+	Furthermore, it is possible to register custom random number generators for a certain part of MoRe:
+	
++--
+MManager.getURandomService().registerGenerator((String) PmParameterManager
+	.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING), new MersenneTwister(3));
++--
+	
+	Alternatively, you may register your custom random number generator and adapt the stream name parameter
+	accordingly. 
+	
+	See the {{{http://uranus4abm.sourceforge.net/}URaNuS manual} for further information, especially
+	{{{http://uranus4abm.sourceforge.net/http://uranus4abm.sourceforge.net/usage.html#Full_Flexibility}
+	Full Flexibility}}.

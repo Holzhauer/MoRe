@@ -663,7 +663,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		if (!(agents instanceof ArrayList)) {
 			orderedAgents.addAll(agents);
 		} else {
-			orderedAgents = (ArrayList<AgentType>) agents;
+			orderedAgents = new ArrayList<AgentType>(agents);
 		}
 		
 		Collections.shuffle(orderedAgents, new Random(((Integer)PmParameterManager.getParameter(

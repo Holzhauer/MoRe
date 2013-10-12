@@ -25,13 +25,14 @@ package de.cesr.more.testing.basic;
 
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.collections15.Predicate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
@@ -57,7 +58,7 @@ public class MNetworkManagerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-
+		MManager.init();
 		network = MTestGraphs.getCompleteDirectedMNetwork(6);
 
 		predicate = new Predicate<MTestNode>() {

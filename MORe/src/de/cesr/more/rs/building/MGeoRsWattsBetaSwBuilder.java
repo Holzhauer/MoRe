@@ -37,6 +37,7 @@ import repast.simphony.context.Context;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import cern.jet.random.Uniform;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
@@ -45,12 +46,12 @@ import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
-import de.cesr.uranus.core.URandomService;
 
 /**
  * MORe
@@ -161,7 +162,9 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	public MGeoRsWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		super(eFac);
 		this.eFac = eFac;
-		this.randomDist = URandomService.getURandomService().getUniform();
+		this.randomDist = MManager.getURandomService().getNewUniformDistribution(
+				MManager.getURandomService().getGenerator(
+						(String) PmParameterManager.getParameter(MRandomPa.RND_STREAM)));
 	}
 
 	/**

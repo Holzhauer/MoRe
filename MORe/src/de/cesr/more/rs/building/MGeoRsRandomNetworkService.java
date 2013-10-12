@@ -11,6 +11,7 @@ import repast.simphony.context.Context;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import cern.jet.random.Uniform;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MRandomNetworkGenerator;
@@ -20,7 +21,6 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.parma.core.PmParameterManager;
-import de.cesr.uranus.core.URandomService;
 
 /**
  * @author holzhauer
@@ -110,8 +110,8 @@ public class MGeoRsRandomNetworkService<AgentType extends MoreMilieuAgent, EdgeT
 	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
 
-		Uniform uniform = URandomService.getURandomService().getNewUniformDistribution(
-				URandomService.getURandomService().getGenerator(
+		Uniform uniform = MManager.getURandomService().getNewUniformDistribution(
+				MManager.getURandomService().getGenerator(
 						((String) PmParameterManager.getParameter(MRandomPa.RND_STREAM_RANDOM_NETWORK_BUILDING))));
 		double p = 1.0 / (network.numNodes() - 1) *
 				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_RANDOM_AVG_DEGREE)).intValue();

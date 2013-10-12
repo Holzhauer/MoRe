@@ -46,25 +46,40 @@ public enum MRandomPa implements PmParameterDefinition {
 	 * Random seed used for network building processes.
 	 * Default: <code>0</code>.
 	 */
-	RANDOM_SEED_NETWORK_BUILDING(Integer.class, 0),
+	RANDOM_SEED_NETWORK_BUILDING(Integer.class, RANDOM_SEED),
 	
 	/**
-	 * The name of the random stream used for network building
-	 * processes. Default: <code>Uniform network-building</code>.
+	 * Random seed used for network building processes. Default: <code>0</code>.
 	 */
-	RND_UNIFORM_DIST_NETWORK_BUILDING(String.class, "Uniform network-building"),
-
-	RND_UNIFORM_DIST_NETWORK_DYNAMICS(String.class, RND_UNIFORM_DIST_NETWORK_BUILDING),
+	RANDOM_SEED_NETWORK_DYNAMICS(Integer.class, RANDOM_SEED),
 
 	/**
-	 * The name of the random stream used for network building processes. Default: <code>Network-building stream</code>.
+	 * The name of the random stream used for network building processes. Default: <code>Network-Building stream</code>.
 	 */
-	RND_STREAM_NETWORK_BUILDING(String.class, "Network-building Stream"),
+	RND_STREAM(String.class, "MoRe Random Stream"),
+
+	/**
+	 * The name of the random stream used for network building processes. Default: <code>Network-Building stream</code>.
+	 */
+	RND_STREAM_NETWORK_BUILDING(String.class, RND_STREAM),
+
+	/**
+	 * The name of the random stream used for network building processes. Default: <code>Network-Dynamics Stream</code>.
+	 */
+	RND_STREAM_NETWORK_DYNAMICS(String.class, RND_STREAM),
 
 	/**
 	 * Used for {@link MRandomNetworkGenerator}.
 	 */
-	RND_STREAM_RANDOM_NETWORK_BUILDING(String.class, RND_STREAM_NETWORK_BUILDING);
+	RND_STREAM_RANDOM_NETWORK_BUILDING(String.class, RND_STREAM_NETWORK_BUILDING),
+
+	/**
+	 * The name of the random stream used for network building processes. Default: <code>Uniform network-building</code>
+	 * .
+	 */
+	RND_UNIFORM_DIST_NETWORK_BUILDING(String.class, "Uniform network-building"),
+
+	RND_UNIFORM_DIST_NETWORK_DYNAMICS(String.class, RND_UNIFORM_DIST_NETWORK_BUILDING);
 	
 	private Class<?> type;
 	private Object defaultValue;

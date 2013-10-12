@@ -46,11 +46,11 @@ import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.MDefaultPartnerFinder;
 import de.cesr.more.rs.building.MorePartnerFinder;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
-import de.cesr.uranus.core.URandomService;
 import edu.uci.ics.jung.graph.Graph;
 
 
@@ -129,7 +129,9 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		 */
 		public Uniform getRandomDist() {
 			if (this.randomDist== null) {
-				this.randomDist = URandomService.getURandomService().getUniform();
+				this.randomDist = MManager.getURandomService().getNewUniformDistribution(
+						MManager.getURandomService().getGenerator(
+								(String) PmParameterManager.getParameter(MRandomPa.RND_STREAM)));
 			}
 			return randomDist;
 		}

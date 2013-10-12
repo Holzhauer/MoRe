@@ -74,6 +74,7 @@ public class MWeibullDistanceDistributionTest {
 		this.weibull.setParameter(MWeibullDistanceDistParams.PLOCAL,
 				((Double) PmParameterManager.getParameter(MNetBuildHdffPa.DIST_PARAM_PLOCAL)));
 		this.weibull.setParameter(MWeibullDistanceDistParams.XMAX, DIAMETER);
+		this.weibull.init();
 	}
 
 	/**

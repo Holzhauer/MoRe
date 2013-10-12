@@ -28,11 +28,13 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import cern.jet.random.Uniform;
+import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.measures.network.supply.algos.MNetworkStatisticsR;
-import de.cesr.uranus.core.URandomService;
+import de.cesr.more.param.MRandomPa;
+import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -67,13 +69,21 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 	public MDirectedNetwork() {
 		this.edgeFactory = null;
 		this.name = "NN";
-		this.randomNodeSelectionStream = URandomService.getURandomService().getUniform();
+		this.randomNodeSelectionStream = MManager.getURandomService().getNewUniformDistribution(
+				MManager.getURandomService().getGenerator(
+						(String) PmParameterManager.getParameter(MRandomPa.RND_STREAM)));
 	}
 
+	/**
+	 * @param edgeFactory
+	 * @param name
+	 */
 	public MDirectedNetwork(MoreEdgeFactory<V, E> edgeFactory, String name) {
 		this.edgeFactory = edgeFactory;
 		this.name = name;
-		this.randomNodeSelectionStream = URandomService.getURandomService().getUniform();
+		this.randomNodeSelectionStream = MManager.getURandomService().getNewUniformDistribution(
+				MManager.getURandomService().getGenerator(
+						(String) PmParameterManager.getParameter(MRandomPa.RND_STREAM)));
 	}
 
 	
