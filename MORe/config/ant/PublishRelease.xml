@@ -102,7 +102,7 @@
 		<mkdir dir="${javadocs.dir}"/>
 		<!-- narrrowing the packagenames more than "de.cesr.lara.components.*" causes invalid links in the map (maybe a link-provision problem...	-->
 	        <javadoc packagenames="de.cesr.more.*" 
-	        	destdir="${docs.dir}" 
+	        	destdir="${javadocs.dir}" 
 	        	Overview="${project.dir}/config/description.html"
 	        	version="true"
 	        	author="false"
@@ -226,14 +226,14 @@
  						password="${passphrase}"
  					  	trust="true"
  						command="date"/-->
- 				<echo>Transfering data from ${docs.dir} to ${remote_base_dir}/apidocs...</echo>
+ 				<echo>Transfering data from ${javadocs.dir} to ${remote_base_dir}/apidocs...</echo>
  		
  			 	<scp
  			       todir="${user}@${remote_host}:${remote_base_dir}/apidocs" 
  			       password="${passphrase}"
  			 	   trust="true"
  			 		sftp="true" >
- 			 		<fileset id="myfileset" dir="${docs.dir}">
+ 			 		<fileset id="myfileset" dir="${javadocs.dir}">
 	 		       		<include name="**/*"/>
 	 				</fileset>
  			  	</scp>
