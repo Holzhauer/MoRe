@@ -100,9 +100,13 @@ public class MManager {
 
 		// init random streams if not done before, but only if random seed is customized:
 		if (PmParameterManager.isCustomised(MRandomPa.RANDOM_SEED_NETWORK_BUILDING) &&
-				!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_BUILDING) &&
+				(!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_BUILDING) ||
 				!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
-				MRandomPa.RND_STREAM_NETWORK_BUILDING))) {
+						MRandomPa.RND_STREAM_NETWORK_BUILDING)))) {
+
+			PmParameterManager.setParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING,
+					MRandomPa.RND_STREAM_NETWORK_BUILDING_CUSTOMISED);
+
 			getURandomService().registerGenerator((String) PmParameterManager
 					.getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING), new MersenneTwister(
 							((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING))
@@ -122,9 +126,13 @@ public class MManager {
 
 		// init random streams if not done before:
 		if (PmParameterManager.isCustomised(MRandomPa.RANDOM_SEED_NETWORK_DYNAMICS) &&
-				!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_DYNAMICS) &&
+				(!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_DYNAMICS) ||
 				!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
-						MRandomPa.RND_STREAM_NETWORK_DYNAMICS))) {
+						MRandomPa.RND_STREAM_NETWORK_DYNAMICS)))) {
+
+			PmParameterManager.setParameter(MRandomPa.RND_STREAM_NETWORK_DYNAMICS,
+					MRandomPa.RND_STREAM_NETWORK_DYNAMICS_CUSTOMISED);
+
 			getURandomService().registerGenerator((String) PmParameterManager
 					.getParameter(MRandomPa.RND_STREAM_NETWORK_DYNAMICS), new MersenneTwister(
 							((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_DYNAMICS))

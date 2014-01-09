@@ -4,6 +4,8 @@
 	
 	<property name="dir_target" value="${basedir}/../../../SpreadPrototyp/lib" />
 	
+	<property name="svn.info.rev" value="384" />
+		
 	<property file="../../project.properties"/>
 	
 	<tstamp>

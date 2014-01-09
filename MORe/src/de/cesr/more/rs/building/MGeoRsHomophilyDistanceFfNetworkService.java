@@ -391,7 +391,11 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 	/**
 	 * @param agent
-	 * @param ambassador
+	 *        agent/ambassador
+	 * @param partner
+	 * @param network
+	 * @param orderedAgents
+	 * @param degreeTargets
 	 */
 	protected void linkAndExplorePartner(AgentType agent, AgentType partner, MoreNetwork<AgentType, EdgeType> network,
 			ArrayList<AgentType> orderedAgents, Map<AgentType, Integer>	degreeTargets) {

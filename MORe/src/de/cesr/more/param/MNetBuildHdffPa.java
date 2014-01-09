@@ -132,9 +132,12 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	DISTANCE_PARAM_A(Double.class, new Double(1.0)),
 
 	/**
-	 * Determines the probability of establishing links from partners of the ambassador (and recursively). Default:
-	 * <code>0.2</code>. The values is multiplied by distance and milieu related probabilities (see
-	 * {@link MNetBuildHdffPa#DIM_WEIGHTS_GEO} and {@link MNetBuildHdffPa#DIM_WEIGHTS_MILIEU}).
+	 * Determines the probability of establishing links from partners of the focal agent (e.g. ambassador) (and
+	 * recursively). Default: <code>0.2</code>. The values is multiplied by distance and milieu related probabilities
+	 * (see {@link MNetBuildHdffPa#DIM_WEIGHTS_GEO} and {@link MNetBuildHdffPa#DIM_WEIGHTS_MILIEU}).
+	 * 
+	 * For social influence, this is more important than {@link this#PROB_FORWARD} because it is regarded for incoming
+	 * links of the focal agent (i.e. the focal agents decides about its social influence).
 	 */
 	PROB_BACKWARD(Double.class, new Double(0.2)),
 

@@ -256,7 +256,11 @@ this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();
 	* <<<RANDOM_SEED_NETWORK_DYNAMICS>>>
 	
 	
-	The streams are initialised 
+	The streams are initialised by calling 
+
++--
+MManager.init()
++--
 	
 	To influence the entire random number generation in MoRe it is sufficient to set the parameter <<<RANDOM_SEED>>>:
 	

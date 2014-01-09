@@ -110,6 +110,15 @@ public enum MRandomPa implements PmParameterDefinition {
 		}
 	}
 	
+	final public static String	RND_STREAM_NETWORK_BUILDING_CUSTOMISED			=
+																				"MoRe Random Stream Network Building customised";
+
+	final public static String	RND_STREAM_NETWORK_DYNAMICS_CUSTOMISED			=
+																				"MoRe Random Stream Network Dynamics customised";
+
+	final public static String	RND_STREAM_RANDOM_NETWORK_BUILDING_CUSTOMISED	=
+																				"MoRe Random Stream Random Network Building customised";
+
 	/**
 	 * @see de.cesr.parma.core.PmParameterDefinition#getType()
 	 */

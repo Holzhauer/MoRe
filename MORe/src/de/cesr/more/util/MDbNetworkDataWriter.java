@@ -30,8 +30,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -68,7 +68,7 @@ public class MDbNetworkDataWriter {
 	 */
 	static private Logger		logger				= Log4jLogger.getLogger(MDbNetworkDataWriter.class);
 
-	private Map<String, String>	values;
+	private final Map<String, String>	values;
 
 	private Connection			con;
 
@@ -121,10 +121,10 @@ public class MDbNetworkDataWriter {
 			sql.append(", `" + e.getKey() + "` = '" + (e.getValue().equals("NaN") ? "-1" : e.getValue()) + "'");
 		}
 		sql.append(";");
-		logger.debug("SQL-statement to fetch params: " + sql);
+		logger.debug("SQL-statement to write data: " + sql);
 
 		connect(sql.toString());
-		disconnect();
+		disconnect(con);
 	}
 
 	/**
@@ -163,7 +163,8 @@ public class MDbNetworkDataWriter {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	protected Connection getConnection() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
+	public static Connection getConnection() throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException,
 			SQLException {
 
 		Properties properties = new Properties();
@@ -195,7 +196,7 @@ public class MDbNetworkDataWriter {
 	/**
 	 * 
 	 */
-	protected void disconnect() {
+	public static void disconnect(Connection con) {
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("Connection (" + con + ") closing...");
