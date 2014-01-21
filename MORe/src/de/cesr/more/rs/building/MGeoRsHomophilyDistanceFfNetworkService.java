@@ -776,7 +776,9 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 		while (degreetarget > 0) {
 			// <- LOGGING
-			logger.info("Connect agent " + node);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Connect agent " + node);
+			}
 			// LOGGING ->
 
 			AgentType ambassador = null;
@@ -821,7 +823,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		}
 
 		// <- LOGGING
-		logger.info("Init contexts from " + hexagonShapeFile);
+		logger.info("Init hexagons from " + hexagonShapeFile);
 		// LOGGING ->
 
 		ShapefileLoader<MGeoHexagon> areasLoader = null;

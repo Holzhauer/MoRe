@@ -36,6 +36,7 @@ import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.network.MAbstractNetworkMeasure;
 import de.cesr.more.measures.network.MNetworkMeasureCategory;
 import de.cesr.more.measures.network.supply.algos.MNetworkModularityR;
+import de.cesr.more.measures.network.supply.algos.MNetworkModularityR.MCommunityDetectionAlgorithms;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
 
@@ -59,6 +60,10 @@ public class MModularityMeasureSupplier extends MAbstractMeasureSupplier {
 		/**
 		 * Network Measure: Modularity based on Edge-Betweenness
 		 */
+		NET_MOD_INFOMAP("Net-Mod-InfoMap"),
+
+		NET_MOD_FASTGREEDY("Net-Mod-FastGreedy"),
+
 		NET_MOD_EDGEBETWEEN("Net-Mod-EdgeBetweenness");
 
 		String	name;
@@ -100,8 +105,71 @@ public class MModularityMeasureSupplier extends MAbstractMeasureSupplier {
 	}
 
 	private void addMeasures() {
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_MODULARITY, Short.NET_MOD_INFOMAP
+				.getName(), "Modularity based on InfoMap community detection (not normalized)");
+
+		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
+
+			@Override
+			public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(
+					final MoreNetwork<T, EdgeType> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction() {
+
+					@Override
+					public void execute() {
+						logger.info("Calculate " + Short.NET_MOD_INFOMAP.getName() + " for " + network.getName()
+								+ "...");
+
+						MNetworkManager.setNetworkMeasure(network,
+								new MMeasureDescription(Short.NET_MOD_INFOMAP.getName()),
+								MNetworkModularityR.getModularityR(network.getJungGraph(),
+										MCommunityDetectionAlgorithms.INFOMAP.getCommand()));
+						logger.info("... finished.");
+					}
+
+					@Override
+					public String toString() {
+						return Short.NET_MOD_INFOMAP.getName() + "(" + network.getName() + ")";
+					}
+				};
+			}
+		});
+
+
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_MODULARITY, Short.NET_MOD_FASTGREEDY
+				.getName(), "Modularity based on FastGreedy community detection (not normalized)");
+
+		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
+
+			@Override
+			public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(
+					final MoreNetwork<T, EdgeType> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction() {
+
+					@Override
+					public void execute() {
+						logger.info("Calculate " + Short.NET_MOD_FASTGREEDY.getName() + " for " + network.getName()
+								+ "...");
+
+						MNetworkManager.setNetworkMeasure(network,
+								new MMeasureDescription(Short.NET_MOD_FASTGREEDY.getName()),
+								MNetworkModularityR.getModularityR(network.getJungGraph(),
+										MCommunityDetectionAlgorithms.FAST_GREEDY.getCommand()));
+						logger.info("... finished.");
+					}
+
+					@Override
+					public String toString() {
+						return Short.NET_MOD_FASTGREEDY.getName() + "(" + network.getName() + ")";
+					}
+				};
+			}
+		});
+
 		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_MODULARITY, Short.NET_MOD_EDGEBETWEEN
-				.getName(), "Modularity based on EdgeBetweenness (not normalized)");
+				.getName(), "Modularity based on EdgeBetweenness community detection (not normalized)");
 
 		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
 
@@ -118,7 +186,8 @@ public class MModularityMeasureSupplier extends MAbstractMeasureSupplier {
 
 						MNetworkManager.setNetworkMeasure(network,
 								new MMeasureDescription(Short.NET_MOD_EDGEBETWEEN.getName()),
-								MNetworkModularityR.getModularityR(network.getJungGraph()));
+								MNetworkModularityR.getModularityR(network.getJungGraph(),
+										MCommunityDetectionAlgorithms.EDGE_BETWEENNESS.getCommand()));
 						logger.info("... finished.");
 					}
 

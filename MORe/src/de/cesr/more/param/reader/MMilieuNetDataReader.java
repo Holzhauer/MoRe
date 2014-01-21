@@ -44,6 +44,10 @@ import de.cesr.parma.reader.PmDbParameterReader;
 /**
  * MoRe
  * 
+ * Retrieves milieu-specific (i.e. agent type specific) parameters from DB tables defined in
+ * {@link MSqlPa#TBLNAME_NET_PREFS} and {@link MSqlPa#TBLNAME_NET_PREFS_LINKS} for param ID
+ * {@link MNetworkBuildingPa#MILIEU_NETPREFS_PARAMID} and sets them at ParMa.
+ * 
  * @author Sascha Holzhauer
  * @date 30.07.2010
  * 

@@ -33,6 +33,7 @@ import de.cesr.more.measures.util.MRService;
 import edu.uci.ics.jung.graph.Graph;
 
 
+
 /**
  * MORe
  *
@@ -42,12 +43,42 @@ import edu.uci.ics.jung.graph.Graph;
  */
 public class MNetworkModularityR {
 
+	public enum MCommunityDetectionAlgorithms {
+
+		FAST_GREEDY("fastgreedy.community"),
+
+		WALK_TRAP("walktrap.community"),
+
+		INFOMAP("infomap.community"),
+
+		EDGE_BETWEENNESS("edge.betweenness.community");
+
+		private final String	command;
+
+		MCommunityDetectionAlgorithms(String command) {
+			this.command = command;
+		}
+
+		public String getCommand() {
+			return this.command;
+		}
+	}
+
 	/**
 	 * Logger
 	 */
 	static private Logger	logger	= Logger.getLogger(MNetworkModularityR.class);
 
-	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph) {
+	/**
+	 * @param <V>
+	 * @param <E>
+	 * @param graph
+	 * @param communityDetection
+	 *        Possible values: {@link MCommunityDetectionAlgorithms}.
+	 * @return modularity score
+	 */
+	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph,
+			String communityDetection) {
 		logger.info("Calculate Modularity (R) for a graph containing " + graph.getVertexCount() + " nodes.");
 
 		if (graph.getEdgeCount() == 0) {
@@ -67,9 +98,21 @@ public class MNetworkModularityR {
 		// LOGGING ->
 
 		logger.info("Calculate Modularity...");
-		re.eval("comunity =	edge.betweenness.community(g)");
+		re.eval("comunity =	" + communityDetection + "(g)");
 		result = re.eval("modularity(comunity)");
 		logger.info("Result: " + result);
 		return result.asDouble();
+	}
+
+	/**
+	 * Uses InfoMap community detection
+	 * 
+	 * @param <V>
+	 * @param <E>
+	 * @param graph
+	 * @return
+	 */
+	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph) {
+		return getModularityR(graph, MCommunityDetectionAlgorithms.INFOMAP.getCommand());
 	}
 }

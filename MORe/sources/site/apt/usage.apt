@@ -58,6 +58,7 @@ MNetworkManager.setNetwork(network, socialNetworkName);
     
     	* Parameters for network builders, e.g. <<<MNetBuildBhPa>>> for <<<MBaselineDhhRadiusNetworkBuilder>>>
     
+    	* Milieu-specific (i.e. agent type specific) parameters (see {{{Milieu-specific Parameters}}})
     	* Random seeds
     
     * Call <<<MManager.init()>>> to initialise default random streams (according to parameter settings for random seeds,
@@ -73,8 +74,28 @@ MNetworkManager.setNetwork(network, socialNetworkName);
 	Two basic configuration file can be found in <<<config/log4j>>> (with specific settings mostly out-commented). Note that the
 	configuration file needs to be within the Java classpath.  
 
+** Milieu-specific Parameters
 
-*Configuring Network Measures
+	The {{{../apidocs/de/cesr/more/param/reader/MMilieuNetDataReader.html}<<<MMilieuNetDataReader}}
+	can be used to read milieu-specific parameters (often used for generating heterogeneous, agent type 
+	specific networks). First, set according parameters in your model:
+	
++--
+PmParameterManager.setParameter(MSqlPa.TBLNAME_NET_PREFS, "param_milieu_net");
+PmParameterManager.setParameter(MSqlPa.TBLNAME_NET_PREFS_LINKS, "param_milieu_links");
+
+PmParameterManager.setParameter(MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID, new Integer(1));
++--
+
+	Make also sure general DB settings are set correctly (see {{{Initialising MoRe}}}).
+	Then, call the data reader:
+
++--
+new MMilieuNetDataReader().initParameters();
++--
+
+
+* Configuring Network Measures
 
 	The concept of network measures works as follows:
 	
@@ -112,7 +133,8 @@ MNetworkMeasureManager.setSchedule(new MRsSchedule(RunEnvironment.getInstance().
 
 **Setting Parameters for Node Measure Calculation
 	
-	Every MoreMeasure has a parameter map. The map contains key - (default)value pairs of parameters. the user may walk through the map and alter
+	Every MoreMeasure has a parameter map. The map contains key - (default)value pairs of parameters. 
+	the user may walk through the map and alter
 	parameter values to adjust measure calculations. For instance, to set scheduling parameters: 
 
 +---
@@ -128,8 +150,10 @@ params.put(MNetworkMeasureManager.ParameterKeys.PRIORITY.name(), MScheduleParame
 	NOTE: It is not guaranteed that a MoreMeasure provides a non-empty map!
 	
 
-** Define parameters and trigger measure calculation for nodes
+** Trigger measure calculation for nodes
 
+	The params map (see above) is then passed when triggering a measure calculation:
+	
 +---
 // add measures for overall network:
 MNetworkMeasureManager.getInstance().addMeasureCalculation(ModelManager.SOCNET_NAME,

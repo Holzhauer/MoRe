@@ -34,6 +34,10 @@ MoRe's features
   * Input/Ouput
   
   	* GraphML import / export (including node/network attributes)
+  
+  * Integeration of ParMa parameter management
+   
+    * Support milieu-specific parameter definition
 
   * Support for geo-referenced nodes and edges
   
