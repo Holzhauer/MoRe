@@ -59,6 +59,8 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	MMilieuNetworkParameterMap	networkParams;
 
+	static final int			AGENT_LIST_SIZE_THRESHOLD	= 200;
+
 	public MMilieuPartnerFinder(MMilieuNetworkParameterMap networkParams) {
 		this.networkParams = networkParams;
 	}
@@ -85,6 +87,21 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			desiredMilieu = getProbabilisticMilieu(networkParams, focal);
 		}
 
+		return agents.size() > AGENT_LIST_SIZE_THRESHOLD ?
+				findPartnerLargeAgentList(agents, graph, focal, incoming, desiredMilieu) :
+					findPartnerSmallAgentList(agents, graph, focal, incoming, desiredMilieu);
+	}
+
+	/**
+	 * @param agents
+	 * @param graph
+	 * @param focal
+	 * @param incoming
+	 * @param desiredMilieu
+	 * @return
+	 */
+	protected AgentType findPartnerLargeAgentList(Collection<AgentType> agents, Graph<AgentType, EdgeType> graph,
+			AgentType focal, boolean incoming, int desiredMilieu) {
 		AgentType random = null;
 		List<AgentType> list;
 		if (agents instanceof List) {
@@ -94,14 +111,26 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		}
 		
 		Collection<AgentType> blacklist = new HashSet<AgentType>();
-		blacklist.add(focal);
+		if (list.contains(focal)) {
+			blacklist.add(focal);
+		}
 
-		if (incoming) {
-			blacklist.addAll(graph.getPredecessors(focal));
-		} else {
-			blacklist.addAll(graph.getSuccessors(focal));
+		for (AgentType predecessor : (incoming ? graph.getPredecessors(focal) : graph.getSuccessors(focal))) {
+			if (list.contains(predecessor)) {
+				blacklist.add(predecessor);
+			}
 		}
 		
+		assert list.size() >= blacklist.size();
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			if (list.size() == blacklist.size()) {
+				logger.debug("All potential partners are blacklisted!");
+			}
+		}
+		// LOGGING ->
+
 		boolean rewired = false;
 		// fetch random partner:
 		while (!rewired && list.size() > blacklist.size()) {
@@ -117,7 +146,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			if (!blacklist.contains(random)) {
 				blacklist.add(random);
 
-				if (checkPartner(graph, networkParams, focal, random, desiredMilieu)) {
+				if (checkPartnerMilieu(networkParams, focal, random, desiredMilieu)) {
 					rewired = true;
 
 					// <- LOGGING
@@ -129,6 +158,54 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			}
 		}
 
+		return rewired ? random : null;
+	}
+
+	/**
+	 * @param agents
+	 * @param graph
+	 * @param focal
+	 * @param incoming
+	 * @param desiredMilieu
+	 * @return
+	 */
+	protected AgentType findPartnerSmallAgentList(Collection<AgentType> agents, Graph<AgentType, EdgeType> graph,
+			AgentType focal, boolean incoming, int desiredMilieu) {
+
+		AgentType random = null;
+		List<AgentType> list = new ArrayList<AgentType>(agents);
+
+		for (AgentType potPartner : agents) {
+			if ((incoming ? graph.isPredecessor(potPartner, focal) : graph.isSuccessor(potPartner, focal))
+					&& potPartner != focal) {
+				list.add(potPartner);
+			}
+		}
+
+		boolean rewired = false;
+
+		// fetch random partner:
+		while (!rewired && list.size() > 0) {
+			random = list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
+			list.remove(random);
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(focal + "> Random object from context: "
+						+ random);
+			}
+			// LOGGING ->
+
+			if (checkPartnerMilieu(networkParams, focal, random, desiredMilieu)) {
+				rewired = true;
+
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug(focal + "> Selected " + random);
+				}
+				// LOGGING ->
+			}
+		}
 		return rewired ? random : null;
 	}
 
@@ -166,8 +243,12 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	/**
 	 * Returns false if source is already a successor of target. Otherwise, the milieu is checked based on paraMap.
 	 * 
+	 * @param network
 	 * @param paraMap
-	 * @param partnerMilieu
+	 * @param ego
+	 * @param potPartner
+	 * @param desiredMilieu
+	 *        desired milieu - 0 to select milieu probabilistically
 	 * @return true if the check was positive
 	 */
 	public boolean checkPartner(Graph<AgentType, EdgeType> network,
@@ -184,12 +265,28 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 			return false;
 		}
+		return checkPartnerMilieu(paraMap, ego, potPartner, desiredMilieu);
+	}
+
+	/**
+	 * Potential partner's milieu is checked based on probabilities in paraMap. Does not check if the potential partner
+	 * is already connected to ego!
+	 * 
+	 * @param paraMap
+	 * @param ego
+	 * @param potPartner
+	 * @param desiredMilieu
+	 *        desired milieu - 0 to select milieu probabilistically
+	 * @return
+	 */
+	public boolean checkPartnerMilieu(MMilieuNetworkParameterMap paraMap, AgentType ego, AgentType potPartner,
+			int desiredMilieu) {
 		// find agent that belongs to the milieu
 		if ((Boolean) PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
 			if ((potPartner).getMilieuGroup() == desiredMilieu) {
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug(ego + "> Link with distant partner");
+					logger.debug(ego + "> Link with partner");
 				}
 				// LOGGING ->
 

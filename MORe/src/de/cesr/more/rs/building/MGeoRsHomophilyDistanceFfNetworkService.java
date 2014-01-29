@@ -84,21 +84,22 @@ import de.cesr.parma.core.PmParameterManager;
  * <li>Assign agents to hexagons and determine distances between hexagons</li>
  * <li>Init degree distributions for milieu groups and degree target for each agent</li>
  * <li>Shuffle agents</li>
- * <li>Do as long as agent degree targets are not fulfilled:
+ * <li>Do as long as agents' degree targets are not fulfilled:
  * <ol>
  * <li>For every agents with degree less than degree target
  * <ol>
- * <li>Draw a distance from milieu-specific distance distribution and randomly choose an agent within that distance
- * according to milieu preferences (inbreeding homophily) using {@link MMilieuPartnerFinder}</li>
+ * <li>Draw a distance from milieu-specific distance distribution, identify the according distant hexagon, and randomly
+ * choose an agent within that hexagon according to milieu preferences (inbreeding homophily) using
+ * {@link MMilieuPartnerFinder}</li>
  * <li>Link the agent to that ambassador, update degree target and explore its neighbours:
  * <ol>
- * <li>Check a neighbour as backward link considering distance, partner milieu, and backward probability</li>
- * <li>Create edge and explore links recursively if check is positive</li>
- * <li>Check a neighbour as forward link considering distance, partner milieu, and forward probability</li>
- * <li>Create edge and explore links recursively if check is positive</li>
+ * <li>If degree target is positive, check a neighbour as backward link considering distance, partner milieu, and
+ * backward probability</li>
+ * <li>If check is positive, create an edge and explore links recursively</li>
+ * <li>If degree target is positive, check a neighbour as forward link considering distance, partner milieu, and forward
+ * probability</li>
+ * <li>If check is positive, create an edge and explore links recursively</li>
  * </ol>
- * </li>
- * <li>
  * </li>
  * </ol>
  * </li>
@@ -158,6 +159,9 @@ import de.cesr.parma.core.PmParameterManager;
  * Social Network Groups, PLOS ONE, PUBLIC LIBRARY SCIENCE, 2011, 6
  * 
  * <br>
+ * 
+ * TODO let backward and forward burning take place synchronously because otherwise backward links are likely to
+ * recursively fulfill target without any forward burning.
  * 
  * @author Sascha Holzhauer
  * @date 20.06.2013
@@ -383,8 +387,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		Map<AgentType, Integer> degreeTargets = new HashMap<AgentType, Integer>();
 		for (AgentType agent : agents) {
 			degreeTargets.put(agent,
-					new Integer(Math.round(this.degreeDistributions.get(new Integer(agent.getMilieuGroup()))
-							.sample())));
+					Math.min(new Integer(Math.round(this.degreeDistributions.get(new Integer(agent.getMilieuGroup()))
+							.sample())), agents.size() - 1));
 		}
 		return degreeTargets;
 	}
@@ -402,7 +406,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug(agent + "> Explore partner " + partner + " (degreeTarget: "
+			logger.debug(agent + "> Explore partner " + partner + " (remaining degreeTarget: "
 					+ degreeTargets.get(agent).intValue() + ")");
 		}
 		// LOGGING ->
@@ -415,7 +419,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			// explore incoming neighbours:
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug(agent + "> Indegree: " + network.getInDegree(agent) + " | target: " +
+				logger.debug(agent + "> Indegree: " + network.getInDegree(agent) + " | remaining target: " +
 						degreeTargets.get(agent).intValue());
 			}
 			// LOGGING ->
@@ -424,10 +428,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				if (neighbour != agent && degreeTargets.get(agent) > 0) {
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
-						logger.debug(agent + "> Check neighbour (" + neighbour + ") of partner (" + partner
-								+ ") - distProb: "
-								+ getDistanceProb(agent, neighbour));
-
+						logger.debug(agent + "> Check neighbour (" + neighbour + ") of partner (" + partner + ")");
 						logger.debug("Is not successor? " + !network.isSuccessor(agent, neighbour));
 						logger.debug("Consider Distance? " + considerDistance);
 					}
@@ -842,4 +843,11 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		}
 	}
 	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "MGeoHomophily Distance ForestFire Network Service";
+	}
 }

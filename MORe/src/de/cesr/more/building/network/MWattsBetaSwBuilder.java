@@ -24,7 +24,12 @@
 package de.cesr.more.building.network;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -109,6 +114,10 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
 
+		// <- LOGGING
+		logger.info("Building Small-World network for " + agents.size() + " agents...");
+		// LOGGING ->
+
 		checkAgentCollection(agents);
 
 		MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager
@@ -135,7 +144,88 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network,
 			AgentType node) {
-		// TODO Auto-generated method stub
-		return false;
+
+		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
+				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>();
+
+		params.setNetwork(network);
+		params.setEdgeModifier(getEdgeModifier());
+
+
+		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
+				params);
+
+		List<EdgeType> edges = new ArrayList<EdgeType>();
+		ArrayList<AgentType> agents = new ArrayList<AgentType>();
+		Set<EdgeType> removedEdges = new HashSet<EdgeType>();
+
+		for (AgentType agent : network.getNodes()) {
+			agents.add(agent);
+		}
+
+		network.addNode(node);
+
+		// request random node to connect with
+		AgentType initialPartner = params.getRewireManager().findPartner(network.getJungGraph(), node);
+		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+			params.getEdgeModifier().createEdge(network, initialPartner, node);
+		} else {
+			params.getEdgeModifier().createEdge(network, node, initialPartner);
+		}
+
+		// request k neighbors of this node to connect with (since the node was initially connected to k nodes this is
+		// possible)
+		Iterator<AgentType> initialAgentNeighbours;
+		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+			initialAgentNeighbours = network.getSuccessors(initialPartner).iterator();
+		} else {
+			initialAgentNeighbours = network.getPredecessors(initialPartner).iterator();
+		}
+
+		// there is already on link to initial partner...:
+		for (int i = 1; i < params.getkProvider().getKValue(node) && initialAgentNeighbours.hasNext(); i++) {
+			AgentType next = initialAgentNeighbours.next();
+			if (next != node) {
+				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+					edges.add(params.getEdgeModifier().createEdge(network, next, node));
+				} else {
+					edges.add(params.getEdgeModifier().createEdge(network, node, next));
+				}
+			}
+		}
+
+		// randomly rewire these links
+		for (EdgeType edge : edges) {
+			gen.rewireEdge(agents, removedEdges, edge);
+		}
+
+		// add additional global links if required (in case initialPartner's milieu k is smaller than node one's)
+		int missing = params.getkProvider().getKValue(node)
+				- ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ?
+						network.getInDegree(node) : network.getOutDegree(node));
+		if (missing > 0) {
+			for (int j = 0; j < missing; j++) {
+				AgentType partner;
+				do {
+					partner = params.getRewireManager().findPartner(network.getJungGraph(), node);
+				} while (partner == node || network.isSuccessor(partner, node));
+
+				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+					params.getEdgeModifier().createEdge(network, partner, node);
+				} else {
+					params.getEdgeModifier().createEdge(network, node, partner);
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "MWattsBetaSW Network Service";
 	}
 }

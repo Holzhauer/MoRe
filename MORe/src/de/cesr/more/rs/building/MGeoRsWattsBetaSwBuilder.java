@@ -229,6 +229,17 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	/**
 	 * TODO test
 	 * 
+	 * Links a new node to an existing Watts-Beta Small-World Network in the following way:
+	 * 
+	 * <ol>
+	 * <li>Selects a random node in the network</li>
+	 * <li>Connects the new node to k of the selected node's predecessors
+	 * (MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES is false) or successors (otherwise)</li>
+	 * <li>Rewires any newly created link with defined probability</li>
+	 * <li>In case the selected node's in/out-degree is less than k because of meantime manipulations the difference is
+	 * made up by creating distant links to/from the new node</li>
+	 * </ol>
+	 * 
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
@@ -254,10 +265,16 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 
 		// request k neighbors of this node to connect with (since the node was initially connected to k nodes this is
 		// possible)
-		Iterator<AgentType> initialAgentPredecessors = network.getPredecessors(initialPartner).iterator();
+		Iterator<AgentType> initialAgentNeighbours;
+		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+			initialAgentNeighbours = network.getSuccessors(initialPartner).iterator();
+		} else {
+			initialAgentNeighbours = network.getPredecessors(initialPartner).iterator();
+		}
+
 		// there is already on link to initial partner...:
-		for (int i = 1; i < params.getkProvider().getKValue(node) && initialAgentPredecessors.hasNext(); i++) {
-			AgentType next = initialAgentPredecessors.next();
+		for (int i = 1; i < params.getkProvider().getKValue(node) && initialAgentNeighbours.hasNext(); i++) {
+			AgentType next = initialAgentNeighbours.next();
 			if (next != node) {
 				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
 					edges.add(params.getEdgeModifier().createEdge(network, next, node));
