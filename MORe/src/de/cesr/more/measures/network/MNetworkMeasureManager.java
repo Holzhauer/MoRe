@@ -381,4 +381,11 @@ public class MNetworkMeasureManager extends MAbstractMeasureManager {
 			return addMeasureCalculation(bundle.getNetwork(), bundle.getMeasure(), bundle.getParams());
 		}
 	}
+
+	/**
+	 * Sets the static instance of this class to <code>null</code>.
+	 */
+	public static void reset() {
+		instance = null;
+	}
 }

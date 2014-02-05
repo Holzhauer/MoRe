@@ -215,8 +215,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 		this.name = name;
 
-		this.paraMap = (MMilieuNetworkParameterMap) PmParameterManager
-				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
+		assignMilieuParamMap();
 
 		for (Integer milieu : this.paraMap.keySet()) {
 			if (this.paraMap.getForwardProb(milieu.intValue()) > 0.0) {
@@ -642,16 +641,24 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			logger.warn("Use default uniform distribution");
 		}
 
+		assignMilieuParamMap();
+	}
+
+	/**
+	 * 
+	 */
+	protected void assignMilieuParamMap() {
 		if (((MMilieuNetworkParameterMap) PmParameterManager
 				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)) == null) {
 			new MMilieuNetDataReader().initParameters();
 
-			if (this.paraMap == null) {
-				// <- LOGGING
-				logger.warn("Parameter MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has not been set! (Re-)Initialise it.");
-				// LOGGING ->
-			}
+			// <- LOGGING
+			logger.warn("Parameter MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has not been set! (Re-)Initialise it.");
+			// LOGGING ->
 		}
+
+		this.paraMap = (MMilieuNetworkParameterMap) PmParameterManager
+				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 	}
 
 	/**
@@ -691,7 +698,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			for (AgentType agent : agents) {
-				logger.debug(agent + "> cetroid: " + geography.getGeometry(agent).getCentroid());
+				logger.debug(agent + "> centroid: " + geography.getGeometry(agent).getCentroid());
 			}
 		}
 		// LOGGING ->

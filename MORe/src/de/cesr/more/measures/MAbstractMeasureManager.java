@@ -23,10 +23,10 @@
  */
 package de.cesr.more.measures;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import de.cesr.more.basic.network.MoreNetwork;
@@ -58,7 +58,6 @@ public abstract class MAbstractMeasureManager extends MAbstractMeasureSupplier i
 	/**
 	 * Adds a {@link NetworkMeasureUtilitiesListener}.
 	 * @param listener the {@link NetworkMeasureUtilitiesListener} to add
-	 * Created by Sascha Holzhauer on 06.04.2010
 	 */
 	public void addMeasureManagerListener(MoreMeasureManagerListener listener) {
 		listeners.add(listener);
@@ -67,26 +66,10 @@ public abstract class MAbstractMeasureManager extends MAbstractMeasureSupplier i
 	/**
 	 * Removes a {@link NetworkMeasureUtilitiesListener}.
 	 * @param listener the {@link NetworkMeasureUtilitiesListener} to remove
-	 * Created by Sascha Holzhauer on 06.04.2010
 	 */
 	public void removeMeasureManagerListener(MoreMeasureManagerListener listener) {
 		listeners.remove(listener);
 	}
-	
-
-	
-	/**
-	 * The Type that specifies content of <code>ContextContextContextJungNetwork</code> needs to extend 
-	 * <code>NetworkMeasureSupport</code> since the <code>NetworkMeasureSupport</code> needs to
-	 * access methods to get and set measure at the node.
-	 * @date 24.05.2008
-	 *
-	 * @param <T> Parameter of <code>ContextContextContextJungNetwork</code>  
-	 * @param network
-	 * @param key
-	 * @param params
-	 * @return
-	 */
 
 	/**
 	 * Returns a <code>Set</code> of <code>MeasureDescription</code>s that are dedicated to be calculated
