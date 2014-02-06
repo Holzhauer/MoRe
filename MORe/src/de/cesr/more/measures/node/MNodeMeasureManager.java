@@ -326,4 +326,10 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 		addMeasureCalculation(network, new MMeasureDescription(shortname), params);
 	}
 
+	/**
+	 * Reset the static instance variable. Called by {@link MManager#reset()}.
+	 */
+	public static void reset() {
+		instance = null;
+	}
 }

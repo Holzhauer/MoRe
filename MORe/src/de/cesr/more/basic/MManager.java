@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import repast.simphony.context.Context;
 import cern.jet.random.engine.MersenneTwister;
 import de.cesr.more.measures.network.MNetworkMeasureManager;
+import de.cesr.more.measures.node.MNodeMeasureManager;
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.parma.core.PmParameterManager;
@@ -240,5 +241,6 @@ public class MManager {
 		floatPointFormat = null;
 		MNetworkManager.reset();
 		MNetworkMeasureManager.reset();
+		MNodeMeasureManager.reset();
 	}
 }
