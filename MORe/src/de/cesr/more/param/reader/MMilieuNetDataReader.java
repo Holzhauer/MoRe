@@ -202,11 +202,11 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 					}
 
 					if (colNames.contains("PROB_BACKWARD")) {
-						map.setBackwardProb(milieu, result.getInt("PROB_BACKWARD"));
+						map.setBackwardProb(milieu, result.getDouble("PROB_BACKWARD"));
 					}
 
 					if (colNames.contains("PROB_FORWARD")) {
-						map.setForwardProb(milieu, result.getInt("PROB_FORWARD"));
+						map.setForwardProb(milieu, result.getDouble("PROB_FORWARD"));
 					}
 
 					if (colNames.contains("K_DISTRIBUTION_CLASS")) {

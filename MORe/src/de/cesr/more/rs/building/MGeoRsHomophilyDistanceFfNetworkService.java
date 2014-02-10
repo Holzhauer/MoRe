@@ -177,6 +177,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 	static final public int								DISTANCE_FACTOR_FOR_DISTRIBUTION	= 1000;
 
+	static final public double							TOLERANCE_VALUE_DIM_WEIGHTS			= 0.01;
+
 	protected String									name	= "Not Defined";
 
 	protected MMilieuNetworkParameterMap				paraMap;
@@ -393,6 +395,9 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
+	 * 
+	 * Assumes that the distance distribution's density is highest at supported lower bound (p_local / x_min).
+	 * 
 	 * @param agent
 	 *        agent/ambassador
 	 * @param partner
@@ -405,10 +410,11 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug(agent + "> Explore partner " + partner + " (remaining degreeTarget: "
+			logger.debug(agent + ">Explore partner " + partner + " (remaining degreeTarget: "
 					+ degreeTargets.get(agent).intValue() + ")");
 		}
 		// LOGGING ->
+
 		if (degreeTargets.get(agent).intValue() == 0) {
 			orderedAgents.remove(agent);
 		} else {
@@ -418,11 +424,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			// explore incoming neighbours:
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug(agent + "> Indegree: " + network.getInDegree(agent) + " | remaining target: " +
+				logger.debug(agent + ">Linked! Indegree: " + network.getInDegree(agent) + " | remaining target: " +
 						degreeTargets.get(agent).intValue());
 			}
 			// LOGGING ->
 
+			MRealDistribution agentDistanceDist = this.distanceDistributions.get(agent.getMilieuGroup());
 			for (AgentType neighbour : network.getPredecessors(partner)) {
 				if (neighbour != agent && degreeTargets.get(agent) > 0) {
 					// <- LOGGING
@@ -433,16 +440,27 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					}
 					// LOGGING ->
 
+					Double distanceProb = (considerDistance ? getDistanceProb(agent, neighbour) : 1.0) /
+							agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
+							* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
+
+					Double milieuProb = (considerMilieus ? this.paraMap.getP_Milieu(agent.getMilieuGroup(),
+							neighbour.getMilieuGroup()) : 1.0)
+							* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
+
+					Double probability = (distanceProb + milieuProb)
+							* this.paraMap.getBackwardProb(agent.getMilieuGroup());
+
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Probability for linking " + agent + " with " + neighbour + ": " + probability
+								+ "\n\t(distance: " + distanceProb + ")"
+								+ "\n\t(milieu: " + milieuProb + ")");
+					}
+					// LOGGING ->
+
 					if ((!network.isSuccessor(agent, neighbour))
-							&& (considerDistance ? getDistanceProb(agent, neighbour)
-									* this.paraMap.getDimWeightGeo(agent.getMilieuGroup()) : 1.0)
-									* (considerMilieus ? this.paraMap.getP_Milieu(agent.getMilieuGroup(),
-											neighbour.getMilieuGroup())
-											* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup()) : 1.0)
-									* this.paraMap.getBackwardProb(agent.getMilieuGroup()) < rand.nextDouble()) {
-						this.edgeModifier.createEdge(network, neighbour, agent);
-						// For each connected partner, decrease k_target
-						degreeTargets.put(agent, new Integer(degreeTargets.get(agent) - 1));
+							&& probability >= rand.nextDouble()) {
 						linkAndExplorePartner(agent, neighbour, network, orderedAgents, degreeTargets);
 					}
 				}
@@ -619,15 +637,60 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
-	 * Checks... ...context ...random distribution (rand) ...whether MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has been
-	 * initialised
+	 * TODO test
+	 */
+	protected void adjustProbabilityWeights() {
+		if (!considerDistance) {
+			if (considerMilieus) {
+				for (Integer milieu : this.paraMap.keySet()){
+					if (this.paraMap.getDimWeightMilieu(milieu) != 1.0) {
+						this.paraMap.setDimWeightMilieu(milieu, 1.0);
+						logger.warn("DimWeightMilieu adjusted to 1.0 for milieu " + milieu);
+					}
+					if (this.paraMap.getDimWeightGeo(milieu) != 0.0) {
+						this.paraMap.setDimWeightGeo(milieu, 0.0);
+						logger.warn("DimWeightGeo adjusted to 0.0 for milieu " + milieu);
+					}
+				}
+			}
+		} else {
+			if (!considerMilieus) {
+				for (Integer milieu : this.paraMap.keySet()){
+					if (this.paraMap.getDimWeightGeo(milieu) != 1.0) {
+						this.paraMap.setDimWeightGeo(milieu, 1.0);
+						logger.warn("DimWeightGeo adjusted to 1.0 for milieu " + milieu);
+					}
+					if (this.paraMap.getDimWeightMilieu(milieu) != 0.0) {
+						this.paraMap.setDimWeightMilieu(milieu, 0.0);
+						logger.warn("DimWeightMilieu adjusted to 0.0 for milieu " + milieu);
+					}
+				}
+			} else {
+				for (Integer milieu : this.paraMap.keySet()){
+					if (Math.abs((this.paraMap.getDimWeightGeo(milieu) +
+							this.paraMap.getDimWeightMilieu(milieu)) - 1.0) < TOLERANCE_VALUE_DIM_WEIGHTS) {
+						logger.error("DimWeightGeo and DimWeightMilieu do not sum up to 1.0 for milieu " +
+								milieu);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks...
+	 * <ul>
+	 * <li>...context</li>
+	 * <li>...random distribution (rand)</li>
+	 * <li>...whether MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has been initialised.</li>
+	 * </ul>
 	 */
 	private void checkParameter() {
 		if (context == null) {
 			throw new IllegalStateException(
 					"Context needs to be set before building the network!");
 		}
-
+		
 		AbstractDistribution abstractDis = MManager
 				.getURandomService()
 				.getDistribution(

@@ -88,7 +88,7 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	DIST_PARAM_B(Double.class, new Double(174.24)),
 
 	/**
-	 * XMin parameter of distribution for distance. Default: <code>20.00</code> (empirical value of r of the total
+	 * XMin parameter of distribution for distance in KM. Default: <code>20.00</code> (empirical value of r of the total
 	 * network, see [1]). Values are normally taken from {@link MMilieuNetworkParameterMap}, However, this parameter
 	 * definition is required to access values in the map.
 	 */
