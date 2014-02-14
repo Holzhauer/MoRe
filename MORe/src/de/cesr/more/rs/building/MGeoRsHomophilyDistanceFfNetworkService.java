@@ -65,6 +65,9 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeoHexagon;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MRuntimeDbWriter;
+import de.cesr.more.util.MoreRunIdProvider;
+import de.cesr.more.util.MoreRuntimeAnalysable;
 import de.cesr.more.util.distributions.MGeneralDistributionParameter;
 import de.cesr.more.util.distributions.MIntegerDistribution;
 import de.cesr.more.util.distributions.MRandomEngineGenerator;
@@ -168,7 +171,7 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  */
 public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuAgent & MoreNetworkAgent<AgentType, EdgeType>, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
-		extends MGeoRsNetworkService<AgentType, EdgeType> {
+		extends MGeoRsNetworkService<AgentType, EdgeType> implements MoreRuntimeAnalysable {
 
 	/**
 	 * Logger
@@ -194,6 +197,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	protected double									distanceStep;
 
 	protected double									areaDiameter	= -1.0;
+
+	protected MRuntimeDbWriter							runtimeWriter;
 
 	// these Bools are used for efficiency reasons:
 	protected boolean									considerForwardLinks	= false;
@@ -239,6 +244,18 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				break;
 			}
 		}
+		
+	}
+
+	/**
+	 * Initialises the {@link MRuntimeDbWriter}. Runtimes are only recorded when this method was called before {@link
+	 * this#buildNetwork(Collection)}.
+	 * 
+	 * @param provider
+	 */
+	@Override
+	public void initRuntimeDbWriter(MoreRunIdProvider provider) {
+		this.runtimeWriter = new MRuntimeDbWriter(provider);
 	}
 
 	/**
@@ -248,6 +265,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 */
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
+
+		if (this.runtimeWriter != null) {
+			this.runtimeWriter.start();
+		}
 
 		checkAgentCollection(agents);
 		
@@ -266,9 +287,21 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		// to be persistent till the last link is established...
 		ArrayList<AgentType> orderedAgents = null;
 
+		if (this.runtimeWriter != null) {
+			this.runtimeWriter.addMeasurement("Instanciations");
+		}
+
 		initHexagons();
+
+		if (this.runtimeWriter != null) {
+			this.runtimeWriter.addMeasurement("Init hexagons");
+		}
 		
 		initDistanceMatrix(agents, agentHexagons);
+
+		if (this.runtimeWriter != null) {
+			this.runtimeWriter.addMeasurement("Init distance matrix");
+		}
 
 		initDegreeDistributions();
 
@@ -276,10 +309,18 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 		degreeTargets = initDegreeTargets(agents);
 
+		if (this.runtimeWriter != null) {
+			this.runtimeWriter.addMeasurement("Init distributions");
+		}
+
 		orderedAgents = createRandomAgentList(agents);
 		
 		for (AgentType agent : orderedAgents) {
 			network.addNode(agent);
+		}
+
+		if (this.runtimeWriter != null) {
+			this.runtimeWriter.addMeasurement("Add agents");
 		}
 
 		int turn = 0;
@@ -348,6 +389,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			agentsToGo.clear();
 			agentsToGo.addAll(orderedAgents);
 		}
+
+		if (this.runtimeWriter != null) {
+			this.runtimeWriter.addMeasurement("Build up links");
+			this.runtimeWriter.stopAndStore();
+		}
+
 		return network;
 	}
 

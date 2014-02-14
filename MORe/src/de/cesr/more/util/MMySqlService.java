@@ -35,6 +35,15 @@ import de.cesr.more.param.MSqlPa;
 import de.cesr.parma.core.PmParameterManager;
 
 
+/**
+ * MORe
+ * 
+ * Provides means to connect to the DB defined in parameters of {@link MSqlPa} and disconnect.
+ * 
+ * @author Sascha Holzhauer
+ * @date 11.02.2014
+ * 
+ */
 public class MMySqlService {
 	
 	/**
@@ -53,16 +62,6 @@ public class MMySqlService {
 	 * Retrieve parameter manager
 	 */
 	private MMySqlService() {
-	}
-
-	/**
-	 * @return an instance of this class
-	 */
-	public static MMySqlService getInstance() {
-		if (instance == null) {
-			instance = new MMySqlService();
-		}
-		return instance;
 	}
 
 	/**
@@ -116,7 +115,7 @@ public class MMySqlService {
 	 * @throws InstantiationException
 	 * @throws SQLException
 	 */
-	public ResultSet connect(String sql) throws SQLException, InstantiationException, IllegalAccessException,
+	public static ResultSet connect(String sql) throws SQLException, InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
 		
 		if (logger.isDebugEnabled()) {
@@ -153,5 +152,4 @@ public class MMySqlService {
 		}
 		// LOGGING ->
 	}
-
 }

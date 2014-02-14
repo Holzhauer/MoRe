@@ -23,7 +23,9 @@
 package de.cesr.more.param;
 
 
+import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.util.MDbNetworkDataWriter;
+import de.cesr.more.util.MRuntimeDbWriter;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.parma.definition.PmFrameworkPa;
@@ -69,6 +71,10 @@ public enum MSqlPa implements PmParameterDefinition {
 	 */
 	TBLNAME_NET_PREFS(String.class, "more_netprefs"),
 	
+	/**
+	 * Table for runtime information gathered by {@link MRuntimeDbWriter}.
+	 */
+	TBLNAME_RUNTIME_INFO(String.class, "more_runtime"),
 	
 	/**
 	 * Table from which agent network link preferences are retrieved

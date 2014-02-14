@@ -25,13 +25,10 @@ package de.cesr.more.util;
 
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -70,8 +67,6 @@ public class MDbNetworkDataWriter {
 
 	private final Map<String, String>	values;
 
-	private Connection			con;
-
 	/**
 	 * @param network network for which data is to be stored
 	 * @param externalVersion simulation code version
@@ -100,6 +95,14 @@ public class MDbNetworkDataWriter {
 	 * ({@link MSqlPa#LOCATION}, {@link MSqlPa#DBNAME}, {@link MSqlPa#USER}, {@link MSqlPa#PASSWORD}).
 	 */
 	public void writeData() {
+		this.writeData(true);
+	}
+
+	/**
+	 * Finally writes the stored network measures to table ({@link MSqlPa#TBLNAME_NETWORK_MEASURES} the database (
+	 * {@link MSqlPa#LOCATION}, {@link MSqlPa#DBNAME}, {@link MSqlPa#USER}, {@link MSqlPa#PASSWORD}).
+	 */
+	public void writeData(boolean closeConnection) {
 
 		String t1 = (String) PmParameterManager.getParameter(MSqlPa.TBLNAME_NETWORK_MEASURES);
 
@@ -123,90 +126,16 @@ public class MDbNetworkDataWriter {
 		sql.append(";");
 		logger.debug("SQL-statement to write data: " + sql);
 
-		connect(sql.toString());
-		disconnect(con);
-	}
-
-	/**
-	 * @param sql
-	 * @return true if connection could be established
-	 */
-	protected boolean connect(String sql) {
 		try {
-			if (con == null || con.isClosed()) {
-				con = getConnection();
-			}
-
-			if (sql.startsWith("update:")) {
-				con.createStatement().executeUpdate(sql.substring(7));
-				return true;
-			} else {
-				return con.createStatement().execute(sql);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-
-	/**
-	 * Tries to establish a JDBC Connection to the MySQL database given the settings provided to the constructor.
-	 * 
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
-	public static Connection getConnection() throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException,
-			SQLException {
-
-		Properties properties = new Properties();
-		properties.put("user", PmParameterManager.getParameter(MSqlPa.USER));
-		properties.put("password", PmParameterManager.getParameter(MSqlPa.PASSWORD));
-		String connectTo = "jdbc:mysql://" + PmParameterManager.getParameter(MSqlPa.LOCATION)
-				+ (((String) PmParameterManager.getParameter(MSqlPa.LOCATION)).endsWith("/") ? "" : "/")
-				+ PmParameterManager.getParameter(MSqlPa.DBNAME);
-
-		// error handling:
-		if (PmParameterManager.getParameter(MSqlPa.LOCATION) == null) {
-			throw new IllegalArgumentException("Invalid database settings: Invalid database location!");
-		}
-		if (PmParameterManager.getParameter(MSqlPa.DBNAME) == null) {
-			throw new IllegalArgumentException("Invalid database settings: Invalid database name!");
-		}
-		if (PmParameterManager.getParameter(MSqlPa.USER) == null) {
-			throw new IllegalArgumentException("Invalid database settings: Invalid user name!");
-		}
-		if (PmParameterManager.getParameter(MSqlPa.PASSWORD) == null) {
-			throw new IllegalArgumentException("Invalid database settings: Invalid password!");
-		}
-
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		logger.info("Connect to DB: " + connectTo);
-		return DriverManager.getConnection(connectTo, properties);
-	}
-
-	/**
-	 * 
-	 */
-	public static void disconnect(Connection con) {
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Connection (" + con + ") closing...");
-		}
-		// LOGGING ->
-
-		try {
-			con.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			MMySqlService.connect(sql.toString());
+		} catch (SQLException exception) {
+			exception.printStackTrace();
+		} catch (InstantiationException exception) {
+			exception.printStackTrace();
+		} catch (IllegalAccessException exception) {
+			exception.printStackTrace();
+		} catch (ClassNotFoundException exception) {
+			exception.printStackTrace();
 		}
 	}
 }

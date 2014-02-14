@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
-import de.cesr.more.lara.agent.MAbstractLaraNetworkAgent;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MNodeMeasures;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
@@ -51,7 +50,7 @@ public abstract class MAbstractNetworkAgent<A, E extends MoreEdge<? super A>> im
 	/**
 	 * Logger
 	 */
-	static private Logger		logger		= Log4jLogger.getLogger(MAbstractLaraNetworkAgent.class);
+	static private Logger					logger		= Log4jLogger.getLogger(MAbstractNetworkAgent.class);
 
 	/**
 	 * constructor

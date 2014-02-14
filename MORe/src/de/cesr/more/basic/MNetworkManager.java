@@ -81,6 +81,15 @@ public class MNetworkManager {
 	}
 	
 	/**
+	 * @param name
+	 *        network's identifier
+	 * @return true if a network with the given name is registed.
+	 */
+	public static boolean isNetworkRegistered(String name) {
+		return networks.containsKey(name);
+	}
+
+	/**
 	 * @param name name of requested network
 	 * @return
 	 */
@@ -130,6 +139,11 @@ public class MNetworkManager {
 	}
 	
 	public static void writeNetworkMeasuresToDb(String network, String externalVersion, MoreRunIdProvider prov, int tick) {
+		writeNetworkMeasuresToDb(network, externalVersion, prov, tick, true);
+	}
+
+	public static void writeNetworkMeasuresToDb(String network, String externalVersion, MoreRunIdProvider prov,
+			int tick, boolean closeConnection) {
 		MDbNetworkDataWriter dbWriter = new MDbNetworkDataWriter(network, externalVersion, prov);
 		
 		// <- LOGGING
@@ -142,7 +156,7 @@ public class MNetworkManager {
 			dbWriter.addValue(e.getKey().getShort(), e.getValue().toString());
 		}
 		dbWriter.addValue("tick", "" + tick );
-		dbWriter.writeData();
+		dbWriter.writeData(closeConnection);
 	}
 
 	public static void writeNetworkClusterMeasuresToDb(String network, String externalVersion, MoreRunIdProvider prov, int tick) {

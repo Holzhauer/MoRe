@@ -148,8 +148,15 @@ public abstract class MAbstractAnalyseNetworkAgent<A extends MoreNetworkAgent<A,
 		return netComp.getNetworkDistanceWeight(meanDistance, distance);
 	}
 
+	/**
+	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#getBlacklistSize()
+	 */
 	@Override
 	public int getBlacklistSize() {
+		if (!MNetworkManager.isNetworkRegistered((String) PmParameterManager.
+				getParameter(MNetManipulatePa.DYN_BLACKLIST_NAME))) {
+			return 0;
+		}
 		return ((MoreNetwork<A, E>) MNetworkManager.getNetwork((String) PmParameterManager.
 				getParameter(MNetManipulatePa.DYN_BLACKLIST_NAME))).
 				getInDegree((A) this);

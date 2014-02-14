@@ -86,7 +86,7 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 			}
 
 			try {
-				ResultSet result = MMySqlService.getInstance().connect(sql);
+				ResultSet result = MMySqlService.connect(sql);
 				
 				boolean hasNext = result.next();
 				boolean hasNextInner = false;
@@ -251,7 +251,7 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 						logger.debug("MySQL-Satement in init(): " + sql2);
 					}
 
-					ResultSet resultInner = MMySqlService.getInstance().connect(sql2);
+					ResultSet resultInner = MMySqlService.connect(sql2);
 
 					hasNextInner = resultInner.next();
 					if (!hasNextInner) {
