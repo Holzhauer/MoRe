@@ -1,0 +1,5 @@
+milieu,MNetBuildWsPa:K,MNetBuildWsPa:BETA,MNetBuildBhPa:SEARCH_RADIUS,MNetBuildHdffPa:DIST_DISTRIBUTION_CLASS
+1,10,0.01,200,de.cesr.more.util.distributions.MWeibullDistanceDistribution
+2,11,0.01,200,de.cesr.more.util.distributions.MWeibullDistanceDistribution
+3,12,0.1,200,de.cesr.more.util.distributions.MWeibullDistanceDistribution
+4,13,0.01,200,de.cesr.more.util.distributions.MWeibullDistanceDistribution

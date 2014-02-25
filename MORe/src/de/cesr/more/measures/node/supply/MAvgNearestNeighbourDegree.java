@@ -85,7 +85,6 @@ public class MAvgNearestNeighbourDegree extends MAbstractMeasureSupplier {
 
 	/**
 	 * 
-	 * Created by Sascha Holzhauer on 04.03.2011
 	 */
 	private void addCategories() {
 		categories.add(MNodeMeasureCategory.NODE_MISC);
@@ -93,7 +92,6 @@ public class MAvgNearestNeighbourDegree extends MAbstractMeasureSupplier {
 
 	/**
 	 * 
-	 * Created by Sascha Holzhauer on 04.03.2011
 	 */
 	private void addMeasures() {
 		description = new MMeasureDescription(MNodeMeasureCategory.NODE_MISC, Short.MC_AVG_NN_DEGREE_UNDIRECTED.getName(),

@@ -98,8 +98,8 @@ public class MNetworkModularityR {
 		// LOGGING ->
 
 		logger.info("Calculate Modularity...");
-		re.eval("comunity =	" + communityDetection + "(g)");
-		result = re.eval("modularity(comunity)");
+		re.eval("community =	" + communityDetection + "(g)");
+		result = re.eval("modularity(community)");
 		logger.info("Result: " + result);
 		return result.asDouble();
 	}

@@ -24,10 +24,6 @@
 package de.cesr.more.param;
 
 
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-import de.cesr.more.param.reader.MMilieuNetDataReader;
-import de.cesr.more.rs.building.MGeoRsNetworkService;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -38,37 +34,7 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 23.09.2011 
  *
  */
-public enum MNetworkBuildingPa implements PmParameterDefinition {
-	
-	/**
-	 * The milieu network parameter map is usually read by {@link MMilieuNetDataReader}.
-	 * Default is <code>null</code>.
-	 */
-	MILIEU_NETWORK_PARAMS(MMilieuNetworkParameterMap.class, null),
-	
-	MILIEU_NETWORK_CSV_MILIEUS(String.class, ""),
-
-	MILIEU_NETWORK_CSV_MILIEULINKS(String.class, ""),
-	
-	MILIEU_NETWORK_CSV_DELIMITER(Character.class, ','),
-
-	MILIEU_NETWORK_CSV_COLUMNPREFIX(String.class, "de.cesr.more.param."),
-
-	/**
-	 * The parameter id used to retrieve network preference data
-	 * from tables {@link MSqlPa#TBLNAME_NET_PREFS} and {@link MSqlPa#TBLNAME_NET_PREFS_LINKS}.
-	 * Default: <code>0</code>
-	 */
-	MILIEU_NETPREFS_PARAMID(Integer.class, 0),
-
-	/*****************************************************
-	 * Random network Builder
-	 *****************************************************/
-	
-	/**
-	 * The average degree of a node in the resulting network. Determines p ( 1/#agents * AVG_DEGREE).
-	 */
-	BUILD_RANDOM_AVG_DEGREE(Integer.class, 6),
+public enum MNetBuildWsPa implements PmParameterDefinition {
 	
 	/*****************************************************
 	 * Watts-Strogats Small-World network Builder
@@ -78,13 +44,13 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * The probability of an edge being rewired randomly; the proportion of randomly
 	 * rewired edges in a graph. Range: <code>(0,1)</code>; Default: <code>0.1</code>.
 	 */
-	BUILD_WSSM_BETA(Double.class, 0.1),
+	BETA(Double.class, 0.1),
 
 	/**
 	 * Initial degree that is used to build to regular network (local neighbourhood size) to start from. Must be an even
 	 * number. Default: <code>4</code>. If BUILD_WSSM_CONSIDER_SOURCES is TRUE, this value is considered as in-degree!
 	 */
-	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
+	K(Integer.class, 4),
 	
 	
 	/**
@@ -93,43 +59,9 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * However, in some models we consider the influencer as source and seek to build the network according
 	 * to the influenced' properties. In this case, set this parameter to FALSE.
 	 */
-	BUILD_WSSM_CONSIDER_SOURCES(Boolean.class, Boolean.TRUE),
-	
-	/*****************************************************
-	 * Restore network Builder
-	 *****************************************************/
-	
-	RESTORE_NETWORK_SOURCE_FILE(String.class, "network"),
-	
-	/*****************************************************
-	 * General network Settings
-	 *****************************************************/
-	
-	/**
-	 * "Directedness" of the generated networks.
-	 * Default:<code>true</code>.
-	 */
-	BUILD_DIRECTED(Boolean.class, true),
+	CONSIDER_SOURCES(Boolean.class, Boolean.TRUE);
 	
 	
-	
-	/*****************************************************
-	 * General Geography Settings
-	 *****************************************************/
-	
-	/**
-	 * If true, edges are added to the geography (adding many edges to the geography is a
-	 * performance issue). Default: <code>true</code>.
-	 */
-	ADD_EDGES_TO_GEOGRAPHY(Boolean.class, true),
-	
-	/**
-	 * Used to initialize the {@link GeometryFactory} in {@link MGeoRsNetworkService}.
-	 * Default: <code>4326</code> (WGS 84)
-	 */
-	SPATIAL_REFERENCE_ID(Integer.class, new Integer(4326))
-	;
-
 	
 	private Class<?>	type;
 	private Object		defaultValue;
@@ -137,7 +69,7 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	/**
 	 * @param type
 	 */
-	MNetworkBuildingPa(Class<?> type) {
+	MNetBuildWsPa(Class<?> type) {
 		this(type, null);
 	}
 
@@ -145,7 +77,7 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * @param type
 	 * @param defaultValue
 	 */
-	MNetworkBuildingPa(Class<?> type, Object defaultValue) {
+	MNetBuildWsPa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
 	}
@@ -153,7 +85,7 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	/**
 	 * 
 	 */
-	private MNetworkBuildingPa(Class<?> type, PmParameterDefinition defaultDefinition) {
+	private MNetBuildWsPa(Class<?> type, PmParameterDefinition defaultDefinition) {
 		this.type = type;
 		if (defaultDefinition != null) {
 			this.defaultValue = defaultDefinition.getDefaultValue();

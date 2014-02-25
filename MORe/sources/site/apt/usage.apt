@@ -76,9 +76,11 @@ MNetworkManager.setNetwork(network, socialNetworkName);
 
 ** Milieu-specific Parameters
 
+*** Storing in DB
+
 	The {{{../apidocs/de/cesr/more/param/reader/MMilieuNetDataReader.html}<<<MMilieuNetDataReader}}
-	can be used to read milieu-specific parameters (often used for generating heterogeneous, agent type 
-	specific networks). First, set according parameters in your model:
+	can be used to read milieu-specific parameters from a database (often used for generating heterogeneous,
+	agent type specific networks). First, set according parameters in your model:
 	
 +--
 PmParameterManager.setParameter(MSqlPa.TBLNAME_NET_PREFS, "param_milieu_net");
@@ -95,6 +97,41 @@ new MMilieuNetDataReader().initParameters();
 +--
 
 
+*** Storing as CSV files
+
+	The {{{../apidocs/de/cesr/more/param/reader/MMilieuNetDataCsvReader.html}<<<MMilieuNetDataCsvReader}} and
+	{{{../apidocs/de/cesr/more/param/reader/MMilieuNetLinkDataCsvReader.html}<<<MMilieuNetLinkDataCsvReader}} parameter readers
+	are able to import milieu-specific parameters from CSV files.
+	
+	The first one requires parameters to be specified in the first row (header). The parameter <<<MNetworkBuildingPa.MILIEU_NETWORK_CSV_COLUMNPREFIX>>>
+	defines a prefix for parameter definitions that needs to be omitted from the fully qualified classname in the header.
+
++--
+PmParameterManager.getNewInstance pm = PmParameterManager.getNewInstance();
+pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEUS, "./path/to/SocialNetworkMilieuParameter.csv");
+new MMilieuNetDataCsvReader(pm).initParameters();
++--
+
+	The second reader loads milieu-specific composition preferences and may not contain a header:
+	
++--
+PmParameterManager.getNewInstance pm = PmParameterManager.getNewInstance();
+pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEU_LINKS, "./path/to/SocialNetworkMilieuLinksParameter.csv");
+new MMilieuNetDataCsvReader(pm).initParameters();
++--	
+	
+	Setting <<<MNetworkBuildingPa.MILIEU_NETWORK_CSV_DELIMITER>>> can be use to adjust the readers to the 
+	applied delimiter (default is ','):
+	
++--
+pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_DELIMITER, ',')
++--
+ 
+	The test classes <<<de.cesr.more.testing.param.reader.MMilieuNetDataCsvReaderTest>>> and 
+	<<<de.cesr.more.testing.param.reader.MMilieuNetLinkDataCsvReaderTest>>> contain working examples. According
+	CSV files are located at <<<./test/res/>>>.
+	
+	
 * Configuring Network Measures
 
 	The concept of network measures works as follows:
@@ -117,7 +154,7 @@ new MMilieuNetDataReader().initParameters();
 
 **Basics
 
-	The central class for managing node measures is {{{../apidocs/de/cesr/more/measures/node/MNodeMeasureManager.html}<<<MNodeMeasureManager}}.
+	The central class for managing node measures is {{{../apidocs/de/cesr/more/measures/node/MNodeMeasureManager.html}<<<MNodeMeasureManager>>>}}.
 	To obtain an instance of the node measure manager call <<<MNodeMeasureManager.getInstance()>>>.
 	However, make sure to set the schedule before:
 

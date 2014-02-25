@@ -64,26 +64,60 @@ public class MMilieuNetworkParameterMap extends
 	private static Map<PmParameterDefinition, Set<Integer>>	warningsReducerMap	= new HashMap<PmParameterDefinition, Set<Integer>>();
 
 
-	public int getK(int milieu) {
-		return warnDefault(MNetBuildBhPa.K, milieu) ? 
-				((Integer)PmParameterManager.getParameter(MNetBuildBhPa.K)).intValue() :
-		((Integer) this.get(new Integer(milieu)).get(
-						MNetBuildBhPa.K)).intValue();
+	/**
+	 * Generic function to set milieu-specific parameter values
+	 * 
+	 * @param definition
+	 * @param milieu
+	 * @param value
+	 */
+	public void setMilieuParam(PmParameterDefinition definition, int milieu, Object value) {
+		if (!this.containsKey(new Integer(milieu))) {
+			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
+		}
+		this.get(new Integer(milieu)).put(definition, value);
 	}
 
+	public Object getMilieuParam(PmParameterDefinition definition, int milieu) {
+		return warnDefault(definition, milieu) ?
+				PmParameterManager.getParameter(definition) :
+				this.get(new Integer(milieu)).get(definition);
+	}
+
+	/**
+	 * @param milieu
+	 * @return
+	 * 
+	 * @deprecated use {@link #getMilieuParam(PmParameterDefinition, int)} instead!
+	 */
+	@Deprecated
+	public int getK(int milieu) {
+		return warnDefault(MNetBuildWsPa.K, milieu) ?
+				((Integer) PmParameterManager.getParameter(MNetBuildWsPa.K)).intValue() :
+		((Integer) this.get(new Integer(milieu)).get(
+						MNetBuildWsPa.K)).intValue();
+	}
+
+	/**
+	 * @param milieu
+	 * @param k
+	 * 
+	 * @deprecated use {@link #setMilieuParam(PmParameterDefinition, int, Object)} instead!
+	 */
+	@Deprecated
 	public void setK(int milieu, int k) {
 		if (!this.containsKey(new Integer(milieu))) {
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
-		this.get(new Integer(milieu)).put(MNetBuildBhPa.K,
+		this.get(new Integer(milieu)).put(MNetBuildWsPa.K,
 				new Integer(k));
 	}
 
 	public double getP_Rewire(int milieu) {
-		return warnDefault(MNetBuildBhPa.P_REWIRE, milieu) ?  
-				((Double)PmParameterManager.getParameter(MNetBuildBhPa.P_REWIRE)).doubleValue() :
+		return warnDefault(MNetBuildWsPa.BETA, milieu) ?
+				((Double) PmParameterManager.getParameter(MNetBuildWsPa.BETA)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-						MNetBuildBhPa.P_REWIRE)).doubleValue();
+						MNetBuildWsPa.BETA)).doubleValue();
 	}
 
 	public void setP_Rewire(int milieu, double p) {
@@ -91,7 +125,7 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildBhPa.P_REWIRE, new Double(p));
+				MNetBuildWsPa.BETA, new Double(p));
 	}
 
 	public double getSearchRadius(int milieu) {

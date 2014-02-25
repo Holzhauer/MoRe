@@ -48,12 +48,18 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 
 	/**
 	 * (In-) Degree. Default: <code>4</code>
+	 * 
+	 * @deprecated use {@link MNetBuildWsPa#K} instead.
 	 */
+	@Deprecated
 	K(Integer.class, new Integer(4)),
-	
+
 	/**
 	 * Probability to rewire a link. Default: <code>0.1</code>
+	 * 
+	 * @deprecated use {@link MNetBuildWsPa#BETA} instead.
 	 */
+	@Deprecated
 	P_REWIRE(Double.class, new Double(0.1)),
 	
 	/**

@@ -34,7 +34,7 @@ Using Network Generators
 * Adding and Removal of Edges
  
   Network generators that support addition and removal of edges extend 
-  {{{../apidocs/de/cesr/more/manipulate/network/MoreNetworkEdgeModifier.html}<<<MoreNetworkEdgeModifier>>>}}.
+  {{{../apidocs/de/cesr/more/manipulate/edge/MoreNetworkEdgeModifier.html}<<<MoreNetworkEdgeModifier>>>}}.
   Implementations often depend on the target system like Repast Simphony ({{{../apidocs/de/cesr/more/rs/building/MGeoRsNetworkEdgeModifier.html}<<<MGeoRsNetworkEdgeModifier>>>}}).
   Example: <<<MBaselineDhhRadiusNetworkBuilder>>> extends <<<MGeoRsNetworkService>>>, which uses a <<<MGeoRsNetworkEdgeModifier>>>.
   

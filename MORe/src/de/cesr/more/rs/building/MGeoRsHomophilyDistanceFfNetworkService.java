@@ -152,6 +152,9 @@ import de.cesr.parma.core.PmParameterManager;
  * <li>{@link MNetBuildHdffPa#AGENT_SHUFFLE_INTERVAL}</li>
  * </ul>
  * 
+ * NOTE: The hexagon shapefile must cover all agent positions and should not be much larger since it is used to
+ * calculated the area's diameter which is used to initialised the distance distributions.
+ * 
  * <br>
  * <br>
  * 
@@ -407,7 +410,9 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
-	 * @return
+	 * Calculates the area diameter from hexagon shapefiles.
+	 * 
+	 * @return diameter
 	 */
 	protected double getAreaDiameter() {
 		if (this.areaDiameter < 0.0) {
@@ -487,12 +492,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					}
 					// LOGGING ->
 
-					Double distanceProb = (considerDistance ? getDistanceProb(agent, neighbour) : 1.0) /
+					Double distanceProb = getDistanceProb(agent, neighbour) /
 							agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
 							* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
 
-					Double milieuProb = (considerMilieus ? this.paraMap.getP_Milieu(agent.getMilieuGroup(),
-							neighbour.getMilieuGroup()) : 1.0)
+					Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
+							neighbour.getMilieuGroup())
 							* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
 
 					Double probability = (distanceProb + milieuProb)
@@ -521,17 +526,39 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				}
 				// LOGGING ->
 				for (AgentType neighbour : network.getSuccessors(partner)) {
-					if ((!network.isSuccessor(neighbour, agent) && neighbour != agent && degreeTargets.get(agent) > 0)
-							&& (considerDistance ? getDistanceProb(agent, neighbour)
-									* this.paraMap.getDimWeightGeo(agent.getMilieuGroup()) : 1.0)
-									* (considerMilieus ? this.paraMap.getP_Milieu(agent.getMilieuGroup(),
-											neighbour.getMilieuGroup())
-											* this.paraMap.getDimWeightGeo(agent.getMilieuGroup()) : 1.0)
-									* this.paraMap.getForwardProb(agent.getMilieuGroup()) < rand.nextDouble()) {
-						this.edgeModifier.createEdge(network, neighbour, agent);
-						// For each connected partner, decrease k_target
-						degreeTargets.put(agent, new Integer(degreeTargets.get(agent) - 1));
-						linkAndExplorePartner(agent, neighbour, network, orderedAgents, degreeTargets);
+
+					if (neighbour != agent && degreeTargets.get(agent) > 0) {
+						// <- LOGGING
+						if (logger.isDebugEnabled()) {
+							logger.debug(agent + "> Check neighbour (" + neighbour + ") of partner (" + partner + ")");
+							logger.debug("Is not successor? " + !network.isSuccessor(agent, neighbour));
+							logger.debug("Consider Distance? " + considerDistance);
+						}
+						// LOGGING ->
+
+						Double distanceProb = getDistanceProb(agent, neighbour) /
+								agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
+								* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
+
+						Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
+								neighbour.getMilieuGroup())
+								* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
+
+						Double probability = (distanceProb + milieuProb)
+								* this.paraMap.getForwardProb(agent.getMilieuGroup());
+
+						// <- LOGGING
+						if (logger.isDebugEnabled()) {
+							logger.debug("Probability for linking " + agent + " with " + neighbour + ": " + probability
+									+ "\n\t(distance: " + distanceProb + ")"
+									+ "\n\t(milieu: " + milieuProb + ")");
+						}
+						// LOGGING ->
+
+						if ((!network.isSuccessor(agent, neighbour))
+								&& probability >= rand.nextDouble()) {
+							linkAndExplorePartner(agent, neighbour, network, orderedAgents, degreeTargets);
+						}
 					}
 				}
 			}
