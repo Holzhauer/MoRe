@@ -38,7 +38,8 @@ import de.cesr.more.rs.building.MGeoRsHomophilyDistanceFfNetworkService;
 /**
  * MORe
  * 
- * Wrapper for {@link PascalDistribution} to be used in e.g. {@link MGeoRsHomophilyDistanceFfNetworkService}.
+ * Wrapper for {@link PascalDistribution} (also known as negative binomial distribution) to be used in e.g.
+ * {@link MGeoRsHomophilyDistanceFfNetworkService}.
  * 
  * @author Sascha Holzhauer
  * @date 14.09.2013

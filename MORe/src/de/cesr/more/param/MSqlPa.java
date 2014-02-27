@@ -75,11 +75,17 @@ public enum MSqlPa implements PmParameterDefinition {
 	 * Table for runtime information gathered by {@link MRuntimeDbWriter}.
 	 */
 	TBLNAME_RUNTIME_INFO(String.class, "more_runtime"),
-	
+
 	/**
-	 * Table from which agent network link preferences are retrieved
-	 * by {@link MMilieuNetDataReader}.
-	 * Default: <code>more_netprefs_links</code>
+	 * Table for runtime information gathered by {@link MRuntimeDbWriter}.
+	 */
+	TBLNAME_EDGE_LENGTH(String.class, "more_edgeLength"),
+
+	FLUSH_INTERVAL(Integer.class, new Integer(10000)),
+
+	/**
+	 * Table from which agent network link preferences are retrieved by {@link MMilieuNetDataReader}. Default:
+	 * <code>more_netprefs_links</code>
 	 */
 	TBLNAME_NET_PREFS_LINKS(String.class, "more_netprefs_links"),
 	

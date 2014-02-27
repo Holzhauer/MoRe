@@ -140,6 +140,23 @@ public abstract class MAbstractAnalyseNetworkAgent<A extends MoreNetworkAgent<A,
 		return netComp.getNetKDev();
 	}
 
+	public void addAmbassador() {
+		netComp.setNumAmbassadors(getNumAmbassadors() + 1);
+	}
+
+	@Override
+	public int getNumAmbassadors() {
+		return netComp.getNumAmbassadors();
+	}
+
+	/**
+	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#setNumAmbassadors(int)
+	 */
+	@Override
+	public void setNumAmbassadors(int number) {
+		netComp.setNumAmbassadors(number);
+	}
+
 	/**
 	 * @see de.cesr.more.basic.agent.MoreAgentAnalyseNetworkComp#getNetworkDistanceWeight(double, double)
 	 */

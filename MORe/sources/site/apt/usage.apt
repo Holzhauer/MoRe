@@ -3,7 +3,7 @@
 	----------------
 	Sascha Holzhauer
 	----------------
-	2011-10-27
+	2014-02-26
 
 MORe Usage
 
@@ -78,7 +78,7 @@ MNetworkManager.setNetwork(network, socialNetworkName);
 
 *** Storing in DB
 
-	The {{{../apidocs/de/cesr/more/param/reader/MMilieuNetDataReader.html}<<<MMilieuNetDataReader}}
+	The {{{../apidocs/de/cesr/more/param/reader/MMilieuNetDataReader.html}<<<MMilieuNetDataReader>>>}}
 	can be used to read milieu-specific parameters from a database (often used for generating heterogeneous,
 	agent type specific networks). First, set according parameters in your model:
 	
@@ -99,8 +99,8 @@ new MMilieuNetDataReader().initParameters();
 
 *** Storing as CSV files
 
-	The {{{../apidocs/de/cesr/more/param/reader/MMilieuNetDataCsvReader.html}<<<MMilieuNetDataCsvReader}} and
-	{{{../apidocs/de/cesr/more/param/reader/MMilieuNetLinkDataCsvReader.html}<<<MMilieuNetLinkDataCsvReader}} parameter readers
+	The {{{../apidocs/de/cesr/more/param/reader/MMilieuNetDataCsvReader.html}<<<MMilieuNetDataCsvReader>>>}} and
+	{{{../apidocs/de/cesr/more/param/reader/MMilieuNetLinkDataCsvReader.html}<<<MMilieuNetLinkDataCsvReader>>>}} parameter readers
 	are able to import milieu-specific parameters from CSV files.
 	
 	The first one requires parameters to be specified in the first row (header). The parameter <<<MNetworkBuildingPa.MILIEU_NETWORK_CSV_COLUMNPREFIX>>>

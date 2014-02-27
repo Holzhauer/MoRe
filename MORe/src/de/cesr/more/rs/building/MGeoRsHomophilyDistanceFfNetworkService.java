@@ -51,6 +51,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.agent.MAbstractAnalyseNetworkAgent;
 import de.cesr.more.basic.agent.MoreNetworkAgent;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
@@ -159,7 +160,7 @@ import de.cesr.parma.core.PmParameterManager;
  * <br>
  * 
  * [1] McPherson, M.; Smith-Lovin, L. & Cook, J. Birds of a feather: Homophily in social networks Annual Review of
- * Sociology, Annual Reviews, 2001, 27, 415-444
+ * Sociology, Annual Reviews, 2001, 27, 415-444 <br>
  * 
  * [2] Onnela, J.-P.; Arbesman, S.; Gonzalez, M. C.; Barabasi, A.-L. & Christakis, N. A. Geographic Constraints on
  * Social Network Groups, PLOS ONE, PUBLIC LIBRARY SCIENCE, 2011, 6
@@ -339,6 +340,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				// <- LOGGING
 				logger.info("Connect agent " + agent);
 				// LOGGING ->
+
+				if (agent instanceof MAbstractAnalyseNetworkAgent) {
+					((MAbstractAnalyseNetworkAgent) agent).addAmbassador();
+				}
 
 				AgentType ambassador = null;
 				// Select a distance range probabilistically according to distance function
@@ -740,9 +745,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					}
 				}
 			} else {
+				// consider both
 				for (Integer milieu : this.paraMap.keySet()){
 					if (Math.abs((this.paraMap.getDimWeightGeo(milieu) +
-							this.paraMap.getDimWeightMilieu(milieu)) - 1.0) < TOLERANCE_VALUE_DIM_WEIGHTS) {
+							this.paraMap.getDimWeightMilieu(milieu)) - 1.0) > TOLERANCE_VALUE_DIM_WEIGHTS) {
 						logger.error("DimWeightGeo and DimWeightMilieu do not sum up to 1.0 for milieu " +
 								milieu);
 					}
@@ -759,7 +765,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * <li>...whether MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has been initialised.</li>
 	 * </ul>
 	 */
-	private void checkParameter() {
+	protected void checkParameter() {
 		if (context == null) {
 			throw new IllegalStateException(
 					"Context needs to be set before building the network!");
@@ -779,6 +785,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		}
 
 		assignMilieuParamMap();
+		adjustProbabilityWeights();
 	}
 
 	/**

@@ -37,7 +37,7 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  * Default parameter values are based on [1]
  * 
- * [1] Holzhauer, Sascha. Dynamic Social Networks in Agent-based Modelling Unpublished dissertation.
+ * [1] Holzhauer, Sascha. Dynamic Social Networks in Agent-based Modelling. Unpublished dissertation.
  * 
  * @author holzhauer
  * @date 21.06.2013

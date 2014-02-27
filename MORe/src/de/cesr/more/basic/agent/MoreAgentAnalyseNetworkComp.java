@@ -24,6 +24,7 @@
 package de.cesr.more.basic.agent;
 
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.rs.building.MGeoRsHomophilyDistanceFfNetworkService;
 import de.cesr.more.rs.building.MoreDistanceAttachableAgent;
 
 /**
@@ -95,4 +96,13 @@ public interface MoreAgentAnalyseNetworkComp<A, E extends MoreEdge<? super A>>
 	 * @return number of agents in blacklist (with respect to DofN)
 	 */
 	public int getBlacklistSize();
+
+	/**
+	 * USed in combination with {@link MGeoRsHomophilyDistanceFfNetworkService}.
+	 * 
+	 * @param number
+	 */
+	public void setNumAmbassadors(int number);
+
+	public int getNumAmbassadors();
 }
