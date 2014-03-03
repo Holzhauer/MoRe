@@ -96,16 +96,17 @@ import de.cesr.parma.core.PmParameterManager;
  * <li>Draw a distance from milieu-specific distance distribution, identify the according distant hexagon, and randomly
  * choose an agent within that hexagon according to milieu preferences (inbreeding homophily) using
  * {@link MMilieuPartnerFinder}</li>
- * <li>Link the agent to that ambassador, update degree target and explore its neighbours:
+ * <li>Link the agent to that ambassador, update degree target and explore its neighbours (breadth first traversing):
  * <ol>
- * <li>If degree target is positive, check a neighbour as backward link considering distance, partner milieu, and
- * backward probability</li>
- * <li>If check is positive, create an edge and explore links recursively</li>
- * <li>If degree target is positive, check a neighbour as forward link considering distance, partner milieu, and forward
- * probability</li>
- * <li>If check is positive, create an edge and explore links recursively</li>
+ * <li>Add predecessor neighbours to a list</li>
+ * <li>Add successor neighbours to the list</li>
+ * <lI>Traverse the list in a random order until degree target fulfilled or list's end</li>
+ * <li>Check a preceding neighbour as backward link considering distance, partner milieu, and backward probability</li>
+ * <li>If check is positive, create an edge and add to exploration queue</li>
+ * <li>Check a succeeding neighbour as forward link considering distance, partner milieu, and forward probability</li>
+ * <li>If check is positive, create an edge and add to exploration queue</li>
  * </ol>
- * </li>
+ * Repeat the steps under 2. with the queue's head and remove it until queue is empty or degree target fulfilled.</li>
  * </ol>
  * </li>
  * <li>Shuffle agents with respect to <code>MNetBuildHdffPa.AGENT_SHUFFLE_INTERVAL</code>.</li>
@@ -407,13 +408,18 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					// hexagons
 					ambassador = partnerFinder.findPartner(potPartners, network.getJungGraph(), agent, true);
 				}
-				linkPartner(agent, ambassador, network, orderedAgents, degreeTargets);
+				linkPartner(agent, ambassador, network, degreeTargets);
 
 				// Follow links of ambassador with respect to forward probability, distance term, milieu preference
 				// (baseline homophily)
-				LinkedList<AgentType> toExplore = new LinkedList<AgentType>();
-				toExplore.add(ambassador);
-				explorePartner(agent, toExplore, network, orderedAgents, degreeTargets);
+				if (degreeTargets.get(agent) > 0) {
+					LinkedList<AgentType> toExplore = new LinkedList<AgentType>();
+					toExplore.add(ambassador);
+					explorePartner(agent, toExplore, network, degreeTargets);
+				}
+				if (degreeTargets.get(agent).intValue() == 0) {
+					orderedAgents.remove(agent);
+				}
 			}
 
 			// shuffle agents if required:
@@ -492,8 +498,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * @param degreeTargets
 	 */
 	protected void explorePartner(AgentType agent, LinkedList<AgentType> toExplore,
-			MoreNetwork<AgentType, EdgeType> network,
-			ArrayList<AgentType> orderedAgents, Map<AgentType, Integer>	degreeTargets) {
+			MoreNetwork<AgentType, EdgeType> network, Map<AgentType, Integer> degreeTargets) {
 
 		AgentType partner = null;
 		if (!toExplore.isEmpty()) {
@@ -557,19 +562,20 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 			if (agent != neighbour && (!network.isSuccessor(agent, neighbour))) {
 
+				// its a forward link...
+				Double distanceProb = getDistanceProb(agent, neighbour) /
+						agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
+						* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
+
+				Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
+						neighbour.getMilieuGroup())
+						* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
+
+				Double probability = 0.0;
 				if (index < indegree) {
-					// its a forward link...
-					Double distanceProb = getDistanceProb(agent, neighbour) /
-							agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
-							* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
-	
-					Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
-							neighbour.getMilieuGroup())
-							* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
-	
-					Double probability = (distanceProb + milieuProb)
+					probability = (distanceProb + milieuProb)
 							* this.paraMap.getForwardProb(agent.getMilieuGroup());
-	
+
 					// <- LOGGING
 					if (logger.isDebugEnabled()) {
 						logger.debug("Probability for forward linking " + agent + " with " + neighbour + ": "
@@ -578,22 +584,9 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 								+ "\n\t(milieu: " + milieuProb + ")");
 					}
 					// LOGGING ->
-	
-					if (probability >= rand.nextDouble()) {
-						toExplore.add(neighbour);
-						linkPartner(agent, neighbour, network, orderedAgents, degreeTargets);
-					}
 
 				} else {
-					Double distanceProb = getDistanceProb(agent, neighbour) /
-							agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
-							* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
-
-					Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
-							neighbour.getMilieuGroup())
-							* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
-
-					Double probability = (distanceProb + milieuProb)
+					probability = (distanceProb + milieuProb)
 							* this.paraMap.getBackwardProb(agent.getMilieuGroup());
 
 					// <- LOGGING
@@ -604,16 +597,16 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 								+ "\n\t(milieu: " + milieuProb + ")");
 					}
 					// LOGGING ->
+				}
 
-					if (probability >= rand.nextDouble()) {
-						toExplore.add(neighbour);
-						linkPartner(agent, neighbour, network, orderedAgents, degreeTargets);
-					}
+				if (probability >= rand.nextDouble()) {
+					toExplore.add(neighbour);
+					linkPartner(agent, neighbour, network, degreeTargets);
 				}
 			}
 		}
 		if (degreeTargets.get(agent) > 0) {
-			explorePartner(agent, toExplore, network, orderedAgents, degreeTargets);
+			explorePartner(agent, toExplore, network, degreeTargets);
 		}
 	}
 
@@ -625,13 +618,9 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * @param degreeTargets
 	 */
 	protected void linkPartner(AgentType agent, AgentType partner, MoreNetwork<AgentType, EdgeType> network,
-			ArrayList<AgentType> orderedAgents, Map<AgentType, Integer> degreeTargets) {
-		if (degreeTargets.get(agent).intValue() == 0) {
-			orderedAgents.remove(agent);
-		} else {
-			this.edgeModifier.createEdge(network, partner, agent);
-			degreeTargets.put(agent, new Integer(degreeTargets.get(agent) - 1));
-		}
+			Map<AgentType, Integer> degreeTargets) {
+		this.edgeModifier.createEdge(network, partner, agent);
+		degreeTargets.put(agent, new Integer(degreeTargets.get(agent) - 1));
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
@@ -1022,11 +1011,11 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			// (baseline homophily)
 			ArrayList<AgentType> orderedAgents = new ArrayList<AgentType>();
 			Map<AgentType, Integer> degreeTargets = new HashMap<AgentType, Integer>();
-			orderedAgents.add(node);
+
 			degreeTargets.put(node, new Integer(degreetarget));
 			LinkedList<AgentType> toExplore = new LinkedList<AgentType>();
 			toExplore.add(ambassador);
-			explorePartner(node, toExplore, network, orderedAgents, degreeTargets);
+			explorePartner(node, toExplore, network, degreeTargets);
 		}
 		return true;
 	}
