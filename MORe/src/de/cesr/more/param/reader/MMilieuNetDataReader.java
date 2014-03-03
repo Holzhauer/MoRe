@@ -59,12 +59,22 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 	 */
 	static private Logger	logger	= Logger.getLogger(MMilieuNetDataReader.class);
 
+	protected PmParameterManager	pm;
+
+	public MMilieuNetDataReader(PmParameterManager pm) {
+		this.pm = pm;
+	}
+
+	public MMilieuNetDataReader() {
+		this(PmParameterManager.getInstance(null));
+	}
+
 	/**
 	 * @see param.framework.ParameterReader#initParameters()
 	 */
 	@Override
 	public void initParameters() {
-		MMilieuNetworkParameterMap map = new MMilieuNetworkParameterMap();
+		MMilieuNetworkParameterMap map = new MMilieuNetworkParameterMap(pm);
 
 		if (((String) PmParameterManager.getParameter(PmFrameworkPa.TBLNAME_PARAMS))
 				.equals(PmDbParameterReader.NOT_DEFINED)) {

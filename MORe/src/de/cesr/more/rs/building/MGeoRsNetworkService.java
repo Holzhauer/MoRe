@@ -76,11 +76,15 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	
 	protected Class<? extends AgentType>	geoRequestClass	= null;
 
+	protected PmParameterManager			pm;
+
 	/**
 	 * @param areasGeography
 	 */
-	public MGeoRsNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+	public MGeoRsNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac,
+			PmParameterManager pm) {
 		super(edgeFac);
+		this.pm = pm;
 		this.geography = areasGeography;
 		this.geoFactory = new GeometryFactory(new PrecisionModel(),
 				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.SPATIAL_REFERENCE_ID)).intValue());
@@ -94,9 +98,17 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	/**
 	 * @param areasGeography
 	 */
+	public MGeoRsNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this(areasGeography, edgeFac, PmParameterManager.getInstance(null));
+	}
+
+	/**
+	 * @param areasGeography
+	 */
 	@SuppressWarnings("unchecked")
 	public MGeoRsNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
-		this((Geography<Object>)PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac);
+		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac,
+				PmParameterManager.getInstance(null));
 	}
 	
 	/**
@@ -105,7 +117,8 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	@SuppressWarnings("unchecked") // risky but not avoidable
 	@Deprecated
 	public MGeoRsNetworkService() {
-		this(null, (MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
+		this(null, (MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>(),
+				PmParameterManager.getInstance(null));
 	}
 
 
@@ -158,7 +171,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 			// LOGGING ->
 		}
 		Collections.shuffle(neighbourslist, new Random(
-				((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
+				((Integer) pm.getParam(MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 	}
 	
 	/*************************************

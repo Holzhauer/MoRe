@@ -70,6 +70,8 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	
 	Geography<Object> geography;
 	
+	PmParameterManager		pm;
+
 	int						numAmbassadors	= 0;
 	
 	/**
@@ -77,15 +79,17 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	 */
 	@SuppressWarnings("unchecked")
 	public MAgentAnalyseNetworkComp(A agent) {
-		this(agent, (Geography<Object>)PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY));
+		this(agent, (Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY),
+				PmParameterManager.getInstance(null));
 	}
 	
 	/**
 	 * @param env
 	 * @param name
 	 */
-	public MAgentAnalyseNetworkComp(A agent, Geography<Object> geography) {
+	public MAgentAnalyseNetworkComp(A agent, Geography<Object> geography, PmParameterManager pm) {
 		super(agent);
+		this.pm = pm;
 		if (geography.getCRS().getCoordinateSystem().getAxis(0).getUnit() == SI.METER) {
 			this.geography = geography;
 		} else {
@@ -102,9 +106,14 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 		this.geography = geography;
 	}
 
+	public MAgentAnalyseNetworkComp(A agent, Geography<Object> geography) {
+		this(agent, geography, PmParameterManager.getInstance(null));
+	}
+
 	/**
 	 * @return the numAmbassadors
 	 */
+	@Override
 	public int getNumAmbassadors() {
 		return numAmbassadors;
 	}
@@ -113,6 +122,7 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	 * @param numAmbassadors
 	 *        the numAmbassadors to set
 	 */
+	@Override
 	public void setNumAmbassadors(int numAmbassadors) {
 		this.numAmbassadors = numAmbassadors;
 	}
@@ -190,8 +200,8 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	 */
 	@Override
 	public double getNetPrefDev() {
-		MMilieuNetworkParameterMap map = ((MMilieuNetworkParameterMap) PmParameterManager
-				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
+		MMilieuNetworkParameterMap map = ((MMilieuNetworkParameterMap) pm
+				.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
 
 		MoreNetwork<A, E> network = getMainNetwork();
 		double deviation = 0.0;
@@ -216,8 +226,8 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	 */
 	@Override
 	public int getNetKDev() {
-		MMilieuNetworkParameterMap map = ((MMilieuNetworkParameterMap) PmParameterManager
-				.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
+		MMilieuNetworkParameterMap map = ((MMilieuNetworkParameterMap) pm
+				.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
 		MoreNetwork<A, E> network = getMainNetwork();
 
 		// <- LOGGING
@@ -245,8 +255,8 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	 */
 	@Override
 	public int getBlacklistSize() {
-		return ((MoreNetwork<A, E>) MNetworkManager.getNetwork((String) PmParameterManager.
-				getParameter(MNetManipulatePa.DYN_BLACKLIST_NAME))).
+		return ((MoreNetwork<A, E>) MNetworkManager.getNetwork((String) pm.
+				getParam(MNetManipulatePa.DYN_BLACKLIST_NAME))).
 				getInDegree((A) this);
 	}
 }

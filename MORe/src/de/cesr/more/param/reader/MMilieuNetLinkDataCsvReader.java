@@ -71,7 +71,7 @@ public class MMilieuNetLinkDataCsvReader extends PmAbstractParameterReader {
 		this.map = (MMilieuNetworkParameterMap) pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 		
 		if (this.map == null) {
-			this.map = new MMilieuNetworkParameterMap();
+			this.map = new MMilieuNetworkParameterMap(pm);
 			pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS, this.map);
 		}
 
