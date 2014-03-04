@@ -310,7 +310,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
-		Map<AgentType, Integer> degreeTargets;
+		Map<AgentType, Integer> degreeTargets = null;
 
 		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
 		
@@ -344,9 +344,9 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			this.runtimeWriter.addMeasurement("Init distributions");
 		}
 
-		orderedAgents = createRandomAgentList(agents);
+		orderedAgents = createRandomAgentList(agents, degreeTargets);
 		
-		for (AgentType agent : orderedAgents) {
+		for (AgentType agent : agents) {
 			network.addNode(agent);
 		}
 
@@ -360,7 +360,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			turn++;
 
 			// <- LOGGING
-			logger.info("Enter turn " + turn);
+			logger.info("Enter turn " + turn + " (agents in orderedAgents: " + orderedAgents.size() + ")");
 			// LOGGING ->
 
 			for (AgentType agent : agentsToGo) {
@@ -417,7 +417,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					toExplore.add(ambassador);
 					explorePartner(agent, toExplore, network, degreeTargets);
 				}
-				if (degreeTargets.get(agent).intValue() == 0) {
+				if (degreeTargets.get(agent).intValue() <= 0) {
+					assert degreeTargets.get(agent).intValue() == 0;
 					orderedAgents.remove(agent);
 				}
 			}
@@ -509,7 +510,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
-			logger.debug(agent + ">Explore partner " + partner + " (remaining degreeTarget: "
+			logger.debug(agent + "> Explore partner " + partner + " (remaining degreeTarget: "
 					+ degreeTargets.get(agent).intValue() + ")");
 		}
 		// LOGGING ->
@@ -554,15 +555,13 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
-				logger.debug(agent + "> Outdegree: " + network.getOutDegree(agent));
-				logger.debug(agent + "> Check neighbour (" + neighbour + ") of partner (" + partner + ")");
-				logger.debug("Is not successor? " + !network.isSuccessor(agent, neighbour));
+				logger.debug(agent + ">> Check neighbour (" + neighbour + ") of partner (" + partner + ")");
+				logger.debug(agent + "> Is not successor? " + !network.isSuccessor(agent, neighbour));
 			}
 			// LOGGING ->
 
 			if (agent != neighbour && (!network.isSuccessor(agent, neighbour))) {
 
-				// its a forward link...
 				Double distanceProb = getDistanceProb(agent, neighbour) /
 						agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
 						* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
@@ -573,6 +572,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 				Double probability = 0.0;
 				if (index < indegree) {
+					// its a forward link...
 					probability = (distanceProb + milieuProb)
 							* this.paraMap.getForwardProb(agent.getMilieuGroup());
 
@@ -586,6 +586,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					// LOGGING ->
 
 				} else {
+					// it's a backward link...
 					probability = (distanceProb + milieuProb)
 							* this.paraMap.getBackwardProb(agent.getMilieuGroup());
 
@@ -866,17 +867,18 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * @param agents
 	 */
 	// checked before casting
-	protected ArrayList<AgentType> createRandomAgentList(Collection<AgentType> agents) {
+	protected ArrayList<AgentType> createRandomAgentList(Collection<AgentType> agents,
+			Map<AgentType, Integer> degreeTargets) {
 		// <- LOGGING
 		logger.info("Create random agent list...");
 		// LOGGING ->
 
 		ArrayList<AgentType> orderedAgents = new ArrayList<AgentType>();
 		
-		if (!(agents instanceof ArrayList)) {
-			orderedAgents.addAll(agents);
-		} else {
-			orderedAgents = new ArrayList<AgentType>(agents);
+		for (AgentType a : agents) {
+			if ((degreeTargets.get(a) > 0)) {
+				orderedAgents.add(a);
+			}
 		}
 		
 		Collections.shuffle(orderedAgents, new Random(((Integer) pm.getParam(
