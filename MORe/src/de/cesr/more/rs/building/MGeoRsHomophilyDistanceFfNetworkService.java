@@ -527,7 +527,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		
 
 		if (this.considerForwardLinks) {
-			indegree = network.getInDegree(agent);
+			indegree = network.getInDegree(partner);
 			for (AgentType p : network.getPredecessors(partner)) {
 				neighbours.add(p);
 				indices.add(new Integer(counter++));
