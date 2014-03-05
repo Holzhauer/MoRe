@@ -21,7 +21,7 @@
  * 
  * Created by Sascha Holzhauer on 20.06.2013
  */
-package de.cesr.more.rs.building;
+package de.cesr.more.geo.building.network;
 
 
 import java.io.File;
@@ -44,7 +44,6 @@ import repast.simphony.query.space.gis.ContainsQuery;
 import repast.simphony.query.space.gis.WithinQuery;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.ShapefileLoader;
-import repast.simphony.space.graph.UndirectedJungNetwork;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
 
@@ -55,6 +54,7 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.agent.MAbstractAnalyseNetworkAgent;
 import de.cesr.more.basic.agent.MoreNetworkAgent;
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MBasicPa;
@@ -63,10 +63,10 @@ import de.cesr.more.param.MNetBuildHdffPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
+import de.cesr.more.rs.building.MMilieuPartnerFinder;
+import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeoHexagon;
-import de.cesr.more.rs.network.MRsContextJungNetwork;
-import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.MRuntimeDbWriter;
 import de.cesr.more.util.MoreRunIdProvider;
 import de.cesr.more.util.MoreRuntimeAnalysable;
@@ -80,8 +80,6 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
- * 
- * TODO test and make component of RS version (?)
  * 
  * This network builder considers baseline homophily [1] and distance distributions [2]. The network is build as
  * follows:
@@ -176,13 +174,13 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 20.06.2013
  * 
  */
-public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuAgent & MoreNetworkAgent<AgentType, EdgeType>, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
-		extends MGeoRsNetworkService<AgentType, EdgeType> implements MoreRuntimeAnalysable {
+public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuAgent & MoreNetworkAgent<AgentType, EdgeType>, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+		extends MGeoNetworkService<AgentType, EdgeType> implements MoreRuntimeAnalysable {
 
 	/**
 	 * Logger
 	 */
-	static private Logger								logger	= Logger.getLogger(MGeoRsHomophilyDistanceFfNetworkService.class);
+	static private Logger								logger								= Logger.getLogger(MGeoHomophilyDistanceFfNetworkService.class);
 
 	static final public int								DISTANCE_FACTOR_FOR_DISTRIBUTION	= 1000;
 
@@ -219,7 +217,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * @param name
 	 */
 	@SuppressWarnings("unchecked")
-	public MGeoRsHomophilyDistanceFfNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
+	public MGeoHomophilyDistanceFfNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
 		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, name);
 	}
 
@@ -228,17 +226,15 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * 
 	 * @param areasGeography
 	 */
-	public MGeoRsHomophilyDistanceFfNetworkService(Geography<Object> geography,
+	public MGeoHomophilyDistanceFfNetworkService(Geography<Object> geography,
 			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
 		this(geography, edgeFac, name, PmParameterManager.getInstance(null));
 	}
 
 	/**
-	 * - builder constructor - edge modifier - builder set - parma
-	 * 
 	 * @param areasGeography
 	 */
-	public MGeoRsHomophilyDistanceFfNetworkService(Geography<Object> geography,
+	public MGeoHomophilyDistanceFfNetworkService(Geography<Object> geography,
 			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name, PmParameterManager pm) {
 		super(geography, edgeFac, pm);
 
@@ -295,7 +291,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
+	public MoreNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
+
+		MoreNetwork<AgentType, EdgeType> network = new MDirectedNetwork<AgentType, EdgeType>(
+				this.edgeModifier.getEdgeFactory(), name);
 
 		if (this.runtimeWriter != null) {
 			this.runtimeWriter.start();
@@ -306,9 +305,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		checkParameter();
 
 		Map<AgentType, MGeoHexagon<AgentType>> agentHexagons = new HashMap<AgentType, MGeoHexagon<AgentType>>();
-
-		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
-						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
 		Map<AgentType, Integer> degreeTargets = null;
 
@@ -825,11 +821,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * </ul>
 	 */
 	protected void checkParameter() {
-		if (context == null) {
-			throw new IllegalStateException(
-					"Context needs to be set before building the network!");
-		}
-		
 		AbstractDistribution abstractDis = MManager
 				.getURandomService()
 				.getDistribution(

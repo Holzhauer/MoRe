@@ -61,20 +61,49 @@ Using Network Generators
 	
 	[[*]] Milieu-specific distance distributions
 	
-	[[*]] Milieu-specific milieu composition prefereces
+	[[*]] Milieu-specific milieu composition preferences
 	
 	[[*]] Focus on modularity
+	
 	
 ** Algorithm
 
 [./res/setup_init_hdff_algo.png] HDFF Network Generator
 	
+	Apart from the milieu composition preferences, degree and distance distributions, the algorithm considers
+	two important parameters that allow to control the resulting networks modularity quite well:
+	
+	[<<<MNetBuildHdffPa#PROB_FORWARD>>>] While exploring an ambassador's neighbours this probability determines
+	the likelihood that the focal agent is linked from ambassador's <<outgoing>> links. 
+	
+	[<<<MNetBuildHdffPa#PROB_BACKWARD>>>] While exploring an ambassador's neighbours this probability determines
+	the likelihood that the focal agent is linked from ambassador's <<incoming>> links. This seems especially important
+	for relations of social influence. 
+	
+	[]
+	
+	Two more parameters are important to adjust the precision for milieu composition and distance distribution (Note that
+	the sum of both has to be <<<1.0>>>):
+	
+	[<<<MNetBuildHdffPa#DIM_WEIGHTS_MILIEU>>>] Determines the weight for milieu composition preferences when
+	calculating a link's probability. The higher the value the more accurate milieu composition preferences can be 
+	fulfilled.
+	
+	[<<<MNetBuildHdffPa#DIM_WEIGHTS_GEO>>>] Determines the weight for distance related link probability when
+	calculating a link's probability. The higher the value the more accurate distance distributions can be 
+	fulfilled.
+	
+	[]
+	
+	See {{{../apidocs/de/cesr/more/rs/building/MGeoRsHomophilyDistanceFfNetworkService.html}
+	<<<MGeoRsHomophilyDistanceFfNetworkService>>>}} for a list of all relevant parameters.
+	
 	
 ** Creating Hexagon Shapefiles
 
 	Hexagon shapefiles are required to determine distances between agents. Since the size of hexagons
-	depends on the simuulation region and desired performance, often according hexagon shapefiles
-	need to be created anew:
+	depends on the simulation region and desired performance, often according hexagon shapefiles
+	need to be created anew (and the filename assigned to parameter <<<MNetBuildHdffPa#HEXAGON_SHAPEFILE>>>:
 	
 	[[1]] Download and install {{{http://www.qgis.org}QuantumGIS}}
 	

@@ -23,7 +23,7 @@
  */
 package de.cesr.more.rs.building;
 
-import de.cesr.more.geo.manipulate.MoreGeoNetworkService;
+import de.cesr.more.geo.building.network.MoreGeoNetworkService;
 import de.cesr.more.rs.edge.MRepastEdge;
 
 /**

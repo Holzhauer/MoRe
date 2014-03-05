@@ -88,7 +88,7 @@ public abstract class MAbstractGeoRsNetworkBuilder<AgentType, EdgeType extends M
 	
 	
 	/**
-	 * @see de.cesr.more.geo.building.MoreGeoNetworkBuilder#setGeography(repast.simphony.space.gis.Geography)
+	 * @see de.cesr.more.geo.building.network.MoreGeoNetworkBuilder#setGeography(repast.simphony.space.gis.Geography)
 	 */
 	@Override
 	public void setGeography(Geography<Object> geography) {

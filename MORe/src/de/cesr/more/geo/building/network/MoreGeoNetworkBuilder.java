@@ -21,7 +21,7 @@
  * 
  * Created by holzhauer on 23.09.2011
  */
-package de.cesr.more.geo.building;
+package de.cesr.more.geo.building.network;
 
 import repast.simphony.space.gis.Geography;
 import de.cesr.more.basic.edge.MoreEdge;

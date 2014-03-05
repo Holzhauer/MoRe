@@ -21,10 +21,9 @@
  * 
  * Created by Sascha Holzhauer on 26.11.2011
  */
-package de.cesr.more.geo.manipulate;
+package de.cesr.more.geo.building.network;
 
 import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.geo.building.MoreGeoNetworkBuilder;
 import de.cesr.more.manipulate.network.MoreNetworkModifier;
 
 /**

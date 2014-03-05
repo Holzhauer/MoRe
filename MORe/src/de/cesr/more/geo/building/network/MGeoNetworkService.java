@@ -21,7 +21,7 @@
  * 
  * Created by holzhauer on 23.09.2011
  */
-package de.cesr.more.rs.building;
+package de.cesr.more.geo.building.network;
 
 
 import java.util.Collections;
@@ -33,7 +33,6 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -42,9 +41,11 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.building.network.MNetworkService;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
+import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MoreRsNetwork;
@@ -58,13 +59,13 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 23.09.2011 
  *
  */
-public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
-		extends MRsNetworkService<AgentType, EdgeType> implements MoreGeoRsNetworkService<AgentType, EdgeType> {
+public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+		extends MNetworkService<AgentType, EdgeType> implements MoreGeoNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger			logger			= Log4jLogger.getLogger(MGeoRsNetworkService.class);
+	static private Logger					logger			= Log4jLogger.getLogger(MGeoNetworkService.class);
 
 	
 	/**
@@ -81,7 +82,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	/**
 	 * @param areasGeography
 	 */
-	public MGeoRsNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac,
+	public MGeoNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac,
 			PmParameterManager pm) {
 		super(edgeFac);
 		this.pm = pm;
@@ -98,7 +99,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	/**
 	 * @param areasGeography
 	 */
-	public MGeoRsNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+	public MGeoNetworkService(Geography<Object> areasGeography, MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this(areasGeography, edgeFac, PmParameterManager.getInstance(null));
 	}
 
@@ -106,7 +107,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 * @param areasGeography
 	 */
 	@SuppressWarnings("unchecked")
-	public MGeoRsNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+	public MGeoNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
 		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac,
 				PmParameterManager.getInstance(null));
 	}
@@ -116,7 +117,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	 */
 	@SuppressWarnings("unchecked") // risky but not avoidable
 	@Deprecated
-	public MGeoRsNetworkService() {
+	public MGeoNetworkService() {
 		this(null, (MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>(),
 				PmParameterManager.getInstance(null));
 	}
@@ -192,16 +193,6 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 		this.geography = geography;
 		this.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(this.edgeFac, geography, geoFactory);
 	}
-	
-	/**
-	 * Set the (root) context the network shall span
-	 * 
-	 * @param context
-	 */
-	@Override
-	public void setContext(Context<AgentType> context) {
-		this.context = context;
-	}
 
 	/**
 	 * @return the geoRequestClass
@@ -210,10 +201,7 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 		return geoRequestClass;
 	}
 
-	/**
-	 * @see de.cesr.more.rs.building.MoreGeoRsNetworkService#setGeoRequestClass(java.lang.Class)
-	 */
-	@Override
+
 	public void setGeoRequestClass(Class<? extends AgentType> geoRequestClass) {
 		this.geoRequestClass = geoRequestClass;
 	}
