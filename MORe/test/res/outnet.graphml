@@ -5,7 +5,7 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <!-- Network Builder: de.cesr.more.basic.network.MNetworkBuilderNotSpecified -->
 <!-- MNetworkBuildingPa.MILIEU_NETPREFS_PARAMID: 0 -->
 <!-- MRandomPa.RANDOM_SEED_NETWORK_BUILDING: 42 -->
-<!-- More Revision Number: 398 -->
+<!-- More Revision Number: 402 -->
 <!-- Network Size (Vertices): 5 -->
 <!-- Network Size (Edges): 10 -->
 <key id="id" for="graph" attr.name="id" attr.type="string">
@@ -15,19 +15,19 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
 <graph edgedefault="directed">
 <data key="id">TestNet</data>
 <node id="MTestNode495"/>
-<node id="MTestNode496"/>
-<node id="MTestNode497"/>
 <node id="MTestNode494"/>
 <node id="MTestNode493"/>
+<node id="MTestNode497"/>
+<node id="MTestNode496"/>
+<edge source="MTestNode494" target="MTestNode496"/>
 <edge source="MTestNode495" target="MTestNode497"/>
-<edge source="MTestNode495" target="MTestNode496"/>
+<edge source="MTestNode493" target="MTestNode496"/>
 <edge source="MTestNode493" target="MTestNode495"/>
 <edge source="MTestNode494" target="MTestNode495"/>
-<edge source="MTestNode493" target="MTestNode494"/>
-<edge source="MTestNode493" target="MTestNode497"/>
-<edge source="MTestNode494" target="MTestNode496"/>
-<edge source="MTestNode496" target="MTestNode497"/>
-<edge source="MTestNode493" target="MTestNode496"/>
 <edge source="MTestNode494" target="MTestNode497"/>
+<edge source="MTestNode496" target="MTestNode497"/>
+<edge source="MTestNode493" target="MTestNode494"/>
+<edge source="MTestNode495" target="MTestNode496"/>
+<edge source="MTestNode493" target="MTestNode497"/>
 </graph>
 </graphml>

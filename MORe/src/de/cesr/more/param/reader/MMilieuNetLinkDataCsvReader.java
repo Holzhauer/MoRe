@@ -79,16 +79,17 @@ public class MMilieuNetLinkDataCsvReader extends PmAbstractParameterReader {
 		try {
 			reader = new CsvReader(((String) pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEULINKS)),
 					((Character) pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_DELIMITER)).charValue());
-			Integer milieuAlter = 0;
+			int milieuEgo = 0;
 			
 			while( reader.readRecord() )
 			{
+				milieuEgo++;
 				double sum = 0.0;
-				for (int milieuEgo = 0; milieuEgo < reader.getColumnCount(); milieuEgo++) {
-					map.setP_Milieu(milieuEgo, milieuAlter, Double.parseDouble(reader.get(milieuEgo)));
-					sum += Double.parseDouble(reader.get(milieuEgo));
+				for (int milieuAlter = 1; milieuAlter <= reader.getColumnCount(); milieuAlter++) {
+					map.setP_Milieu(milieuEgo, milieuAlter, Double.parseDouble(reader.get(milieuAlter - 1)));
+					sum += Double.parseDouble(reader.get(milieuAlter - 1));
 					logger.debug("Read link probbaility for Milieu " + milieuAlter + " to Milieu "
-									+ milieuEgo + " from database. Value: " + reader.get(milieuEgo));
+									+ milieuEgo + " from database. Value: " + reader.get(milieuAlter - 1));
 				}
 				
 				if (Math.abs(sum - 1.0) > 0.001) {
@@ -96,7 +97,7 @@ public class MMilieuNetLinkDataCsvReader extends PmAbstractParameterReader {
 				}
 			}
 		} catch (FileNotFoundException exception) {
-			logger.error("File " + pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEUS) + " not found");
+			logger.error("File " + pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEULINKS) + " not found");
 			exception.printStackTrace();
 		} catch (IOException exception) {
 			exception.printStackTrace();

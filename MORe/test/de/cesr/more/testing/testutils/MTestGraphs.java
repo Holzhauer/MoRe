@@ -39,7 +39,7 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.MNodeMeasures;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
-import de.cesr.more.rs.building.MoreMilieuAgent;
+import de.cesr.more.rs.building.MoreContextMilieuAgent;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -60,7 +60,7 @@ public class MTestGraphs {
 	
 	static int TestAgentId = 0;
 	
-	public static class MTestNode implements MoreNodeMeasureSupport, MoreMilieuAgent {
+	public static class MTestNode implements MoreNodeMeasureSupport, MoreContextMilieuAgent {
 		
 		int id = MTestGraphs.TestAgentId++;
 		int						milieu		= 1;

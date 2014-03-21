@@ -55,7 +55,7 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  * <table>
  * <th>Parameter</th><th>Value</th>
- * <tr><td>#Vertices</td><td>N (via collection of agents; must be quadratic)</td></tr>
+ * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
  * <th>Property</th><th>Value</th>
  * <tr><td>#Edges:</td><td>Directed: kN</td></tr>
  * <tr><td>Parameter provider</td><td>MSmallWorldBetaModelNetworkGeneratorParams</td></tr>
@@ -86,6 +86,8 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 
 	protected String		name;
 
+	protected PmParameterManager	pm;
+
 	/**
 		 * 
 		 */
@@ -102,8 +104,16 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 	 * @param eFac
 	 */
 	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+		this(eFac, name, PmParameterManager.getInstance(null));
+	}
+
+	/**
+	 * @param eFac
+	 */
+	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager pm) {
 		super(eFac);
 		this.name = name;
+		this.pm = pm;
 	}
 
 	/**
@@ -120,13 +130,13 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 
 		checkAgentCollection(agents);
 
-		MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager
-				.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
+		MoreNetwork<AgentType, EdgeType> network = ((Boolean) pm
+				.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 				new MDirectedNetwork<AgentType, EdgeType>(getEdgeFactory(),
 						name) : new MUndirectedNetwork<AgentType, EdgeType>(getEdgeFactory(), name);
 
 		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
-				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>();
+				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>(this.pm);
 
 		params.setNetwork(network);
 		params.setEdgeModifier(getEdgeModifier());
@@ -146,7 +156,7 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 			AgentType node) {
 
 		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
-				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>();
+				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>(this.pm);
 
 		params.setNetwork(network);
 		params.setEdgeModifier(getEdgeModifier());
@@ -167,26 +177,25 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 
 		// request random node to connect with
 		AgentType initialPartner = params.getRewireManager().findPartner(network.getJungGraph(), node);
-		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+		if (params.isConsiderSources()) {
 			params.getEdgeModifier().createEdge(network, initialPartner, node);
 		} else {
 			params.getEdgeModifier().createEdge(network, node, initialPartner);
 		}
 
-		// request k neighbors of this node to connect with (since the node was initially connected to k nodes this is
-		// possible)
+		// request neighbors of this node to connect with
 		Iterator<AgentType> initialAgentNeighbours;
-		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+		if (params.isConsiderSources()) {
 			initialAgentNeighbours = network.getSuccessors(initialPartner).iterator();
 		} else {
 			initialAgentNeighbours = network.getPredecessors(initialPartner).iterator();
 		}
 
-		// there is already on link to initial partner...:
+		// there is already one link to initial partner...:
 		for (int i = 1; i < params.getkProvider().getKValue(node) && initialAgentNeighbours.hasNext(); i++) {
 			AgentType next = initialAgentNeighbours.next();
 			if (next != node) {
-				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+				if (params.isConsiderSources()) {
 					edges.add(params.getEdgeModifier().createEdge(network, next, node));
 				} else {
 					edges.add(params.getEdgeModifier().createEdge(network, node, next));
@@ -201,7 +210,7 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 
 		// add additional global links if required (in case initialPartner's milieu k is smaller than node one's)
 		int missing = params.getkProvider().getKValue(node)
-				- ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ?
+				- (params.isConsiderSources() ?
 						network.getInDegree(node) : network.getOutDegree(node));
 		if (missing > 0) {
 			for (int j = 0; j < missing; j++) {
@@ -210,7 +219,7 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 					partner = params.getRewireManager().findPartner(network.getJungGraph(), node);
 				} while (partner == node || network.isSuccessor(partner, node));
 
-				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+				if (params.isConsiderSources()) {
 					params.getEdgeModifier().createEdge(network, partner, node);
 				} else {
 					params.getEdgeModifier().createEdge(network, node, partner);

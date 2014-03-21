@@ -220,7 +220,7 @@
  		  	</scp>
  	 </target>
  	
- 	<target name="copyJavaDoc2sourceforge" depends="queryPassword, Make_SVG">
+ 	<target name="copyJavaDoc2sourceforge" depends="queryPassword">
  		<!--sshexec host="${remote_host}"
  						username="${user}"
  						password="${passphrase}"

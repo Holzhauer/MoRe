@@ -24,11 +24,8 @@
 package de.cesr.more.param;
 
 
-import java.util.Map;
-
 import de.cesr.more.rs.building.MGeoRsHomophilyDistanceFfNetworkService;
 import de.cesr.parma.core.PmParameterDefinition;
-import de.cesr.parma.core.PmParameterManager;
 
 
 /**
@@ -102,19 +99,6 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	DIST_PARAM_PLOCAL(Double.class, new Double(0.70)),
 
 	/**
-	 * Probability to connect to a specific milieu. Actually a map with double for each milieu. Default:
-	 * <code>1.0/MNetworkBuildingPa.MILIEUS</code> (if not null - 0.5 otherwise). Values are normally taken from
-	 * {@link MMilieuNetworkParameterMap} but this parameter definition is required to access values in the map.
-	 */
-	@SuppressWarnings("unchecked")
-	// parameter definition
-	P_MILIEUS(Double.class, new Double(1.0 / 
-			(PmParameterManager.
-					getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null ?
-					((Map<Integer, Map<PmParameterDefinition, Object>>) PmParameterManager.
-							getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).size() : 2))),
-
-	/**
 	 * Max. radius to potential partner agents that are considered as ambassadors in meters. This is sometimes useful to
 	 * reduce computational effort since it reduces the collections that need to be initialised. Default:
 	 * <code>{@link Double#MAX_VALUE}</code>.
@@ -123,13 +107,6 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	 * access values in the map.
 	 */
 	MAX_SEARCH_RADIUS(Double.class, new Double(Double.MAX_VALUE)),
-
-	/**
-	 * To calculate the distance dependent link probability (d_r)^\alpha. Default: <code>1.0</code>. Values are normally
-	 * taken from {@link MMilieuNetworkParameterMap} but this parameter definition is required to access values in the
-	 * map.
-	 */
-	DISTANCE_PARAM_A(Double.class, new Double(1.0)),
 
 	/**
 	 * Determines the probability of establishing links from partners of the focal agent (e.g. ambassador) (and

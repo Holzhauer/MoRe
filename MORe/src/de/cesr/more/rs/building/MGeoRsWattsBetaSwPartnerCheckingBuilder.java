@@ -40,7 +40,6 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
-import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
@@ -56,8 +55,10 @@ import edu.uci.ics.jung.graph.Graph;
 /**
  * MORe
  * 
+ * TODO use MMilieuPartnerFinder
  * 
- * - uses MSmallWorldBetaModelNetworkGeneratorMilieuParams from MGeoRsWattsBetaSwBuilder
+ * - uses MSmallWorldBetaModelNetworkGeneratorMilieuParams from MGeoRsWattsBetaSwBuilder - respects milieu preferences
+ * for global links (rewired ones)
  * 
  * @author Sascha Holzhauer
  * @date 16.03.2012
@@ -125,14 +126,6 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 		params.setEdgeModifier(edgeModifier);
 		params.setRandomDist(randomDist);
 
-		// TODO Check if required
-		params.setkProvider(new MoreKValueProvider<AgentType>() {
-			@Override
-			public int getKValue(AgentType node) {
-				return paraMap.getK(node.getMilieuGroup());
-			}
-		});
-
 		AbstractDistribution abstractDis = MManager
 				.getURandomService()
 				.getDistribution(
@@ -150,9 +143,8 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 
 			@Override
 			public AgentType findPartner(Graph<AgentType, EdgeType> graph, AgentType focus) {
-				Class<? extends AgentType> requestClass = getRequestClass(focus);
 
-				return findDistantTarget(paraMap, network, focus, requestClass);
+				return findDistantTarget(paraMap, network, focus);
 			}
 		});
 
@@ -162,28 +154,7 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 		return (MoreRsNetwork<AgentType, EdgeType>) gen.buildNetwork(agents);
 	}
 
-	/**
-	 * @param hh
-	 * @param requestClass
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	// handled by try/catch
-	protected Class<? extends AgentType> getRequestClass(AgentType hh) {
-		Class<? extends AgentType> requestClass;
-		if (geoRequestClass == null) {
-			try {
-				requestClass = (Class<AgentType>) hh.getClass().getSuperclass();
-			} catch (ClassCastException e) {
-				logger.error("Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
-				throw new ClassCastException(
-						"Agent's super class is not of type AgentType. Please use setGeoRequestClass!");
-			}
-		} else {
-			requestClass = geoRequestClass;
-		}
-		return requestClass;
-	}
+
 
 	/**
 	 * @param networkParams
@@ -195,7 +166,7 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 	@SuppressWarnings("unchecked")
 	protected AgentType findDistantTarget(MMilieuNetworkParameterMap networkParams,
 			MoreNetwork<AgentType, EdgeType> network,
-			AgentType focus, Class<? extends AgentType> requestClass) {
+			AgentType focus) {
 		boolean rewired;
 
 		rewired = false;
@@ -209,7 +180,7 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 
 		// fetch random partner:
 		ArrayList<AgentType> notCheckedPartners = new ArrayList<AgentType>();
-		for (AgentType potPartner : context.getObjects(requestClass)) {
+		for (AgentType potPartner : network.getNodes()) {
 			notCheckedPartners.add(potPartner);
 		}
 		do {

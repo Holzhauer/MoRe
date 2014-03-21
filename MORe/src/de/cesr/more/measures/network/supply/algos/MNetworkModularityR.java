@@ -78,7 +78,7 @@ public class MNetworkModularityR {
 	 * @return modularity score
 	 */
 	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph,
-			String communityDetection) {
+			String communityDetection, String argumentString) {
 		logger.info("Calculate Modularity (R) for a graph containing " + graph.getVertexCount() + " nodes.");
 
 		if (graph.getEdgeCount() == 0) {
@@ -98,7 +98,7 @@ public class MNetworkModularityR {
 		// LOGGING ->
 
 		logger.info("Calculate Modularity...");
-		re.eval("community =	" + communityDetection + "(g)");
+		re.eval("community =	" + communityDetection + "(g" + argumentString + ")");
 		result = re.eval("modularity(community)");
 		logger.info("Result: " + result);
 		return result.asDouble();
@@ -113,6 +113,22 @@ public class MNetworkModularityR {
 	 * @return
 	 */
 	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph) {
-		return getModularityR(graph, MCommunityDetectionAlgorithms.INFOMAP.getCommand());
+		return getModularityR(graph, MCommunityDetectionAlgorithms.INFOMAP.getCommand(), "");
+	}
+
+	/**
+	 * Uses InfoMap community detection
+	 * 
+	 * @param <V>
+	 * @param <E>
+	 * @param graph
+	 * @param argumentString
+	 *        passed to R community detection function
+	 * @return
+	 */
+	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph,
+			String argumentString) {
+		return getModularityR(graph, MCommunityDetectionAlgorithms.INFOMAP.getCommand(),
+				(argumentString.length() > 0 ? ", " : "") + argumentString);
 	}
 }

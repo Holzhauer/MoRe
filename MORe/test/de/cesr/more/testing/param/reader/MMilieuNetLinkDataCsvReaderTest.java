@@ -33,7 +33,7 @@ import org.junit.Test;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.param.reader.MMilieuNetDataCsvReader;
+import de.cesr.more.param.reader.MMilieuNetLinkDataCsvReader;
 import de.cesr.parma.core.PmParameterManager;
 
 
@@ -67,10 +67,11 @@ public class MMilieuNetLinkDataCsvReaderTest {
 	@Test
 	public void testInitParameters() {
 
-		pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEUS, "./test/res/SocialNetworkMilieuLinksParameter.csv");
+		pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEULINKS,
+				"./test/res/SocialNetworkMilieuLinksParameter.csv");
 		pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_DELIMITER, ',');
 
-		new MMilieuNetDataCsvReader(pm).initParameters();
+		new MMilieuNetLinkDataCsvReader(pm).initParameters();
 
 		MMilieuNetworkParameterMap map = (MMilieuNetworkParameterMap) pm
 				.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);

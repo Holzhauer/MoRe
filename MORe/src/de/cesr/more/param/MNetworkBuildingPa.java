@@ -24,6 +24,8 @@
 package de.cesr.more.param;
 
 
+import java.util.Map;
+
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.cesr.more.param.reader.MMilieuNetDataReader;
@@ -46,6 +48,19 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 */
 	MILIEU_NETWORK_PARAMS(MMilieuNetworkParameterMap.class, null),
 	
+	/**
+	 * Probability to connect to a specific milieu. Actually a map with double for each milieu. Default:
+	 * <code>1.0/MNetworkBuildingPa.MILIEUS</code> (if not null - 0.5 otherwise). Values are normally taken from
+	 * {@link MMilieuNetworkParameterMap} but this parameter definition is required to access values in the map.
+	 */
+	@SuppressWarnings("unchecked")
+	// parameter definition
+	P_MILIEUS(Double.class, new Double(1.0 /
+			(PmParameterManager.
+					getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null ?
+					((Map<Integer, Map<PmParameterDefinition, Object>>) PmParameterManager.
+							getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).size() : 2))),
+
 	MILIEU_NETWORK_CSV_MILIEUS(String.class, ""),
 
 	MILIEU_NETWORK_CSV_MILIEULINKS(String.class, ""),
@@ -73,16 +88,20 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	/*****************************************************
 	 * Watts-Strogats Small-World network Builder
 	 *****************************************************/
-	
+
 	/**
-	 * The probability of an edge being rewired randomly; the proportion of randomly
-	 * rewired edges in a graph. Range: <code>(0,1)</code>; Default: <code>0.1</code>.
+	 * The probability of an edge being rewired randomly; the proportion of randomly rewired edges in a graph. Range:
+	 * <code>(0,1)</code>; Default: <code>0.1</code>.
+	 * 
+	 * @deprecated use {@link MNetBuildWsPa#BETA}
 	 */
 	BUILD_WSSM_BETA(Double.class, 0.1),
 
 	/**
 	 * Initial degree that is used to build to regular network (local neighbourhood size) to start from. Must be an even
 	 * number. Default: <code>4</code>. If BUILD_WSSM_CONSIDER_SOURCES is TRUE, this value is considered as in-degree!
+	 * 
+	 * @deprecated use {@link MNetBuildWsPa#K}
 	 */
 	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
 	

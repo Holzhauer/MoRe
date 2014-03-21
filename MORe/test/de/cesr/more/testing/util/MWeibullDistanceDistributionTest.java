@@ -52,12 +52,14 @@ public class MWeibullDistanceDistributionTest {
 
 	MRealDistribution		weibull;
 
-	public final String	OUTPUT_FILE_DENSITY	= "./logs/WeibullDistribution_density.csv";
-	public final String	OUTPUT_FILE_RANDOM	= "./logs/WeibullDistribution_random.csv";
+	public final String		OUTPUT_FILE_DENSITY	= "./logs/pascal/WeibullDistribution_density.csv";
+	public final String		OUTPUT_FILE_CUMULATIV	= "./logs/pascal/WeibullDistribution_cumulativ.csv";
+	public final String		OUTPUT_FILE_RANDOM	= "./logs/pascal/WeibullDistribution_random.csv";
+	public final String		OUTPUT_FILE_INVERSE	= "./logs/pascal/WeibullDistribution_inverse.csv";
 
 	public final double	DIAMETER			= 1000.0;
 
-	public final boolean	OUTPUT				= false;
+	public final boolean	OUTPUT				= true;
 
 	/**
 	 * @throws java.lang.Exception
@@ -92,7 +94,7 @@ public class MWeibullDistanceDistributionTest {
 	public void testDensity() {
 		double density = 0.0;
 		try {
-			FileWriter fileWriter = new FileWriter(new File(OUTPUT_FILE_DENSITY), true);
+			FileWriter fileWriter = new FileWriter(new File(OUTPUT_FILE_DENSITY), false);
 			for (int i = 0; i < 1000; i++) {
 				density = this.weibull.density(i);
 				assertTrue(density <= 1);
@@ -114,7 +116,7 @@ public class MWeibullDistanceDistributionTest {
 	public void testCumulativeProbabilityDouble() {
 		double sample = 0.0;
 		try {
-			FileWriter fileWriter = new FileWriter(new File(OUTPUT_FILE_RANDOM), true);
+			FileWriter fileWriter = new FileWriter(new File(OUTPUT_FILE_RANDOM), false);
 			for (int i = 0; i < 100000; i++) {
 				sample = this.weibull.sample();
 				assertTrue("" + sample, sample <= DIAMETER);
@@ -124,9 +126,39 @@ public class MWeibullDistanceDistributionTest {
 			}
 			fileWriter.close();
 
+			fileWriter = new FileWriter(new File(OUTPUT_FILE_CUMULATIV), false);
+			for (int i = 0; i < 10000; i++) {
+				if (OUTPUT) {
+					fileWriter.append(i / 10.0 + ", " + this.weibull.cumulativeProbability(i / 10.0) + "\n");
+				}
+			}
+			fileWriter.close();
+
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}
 	}
 
+	/**
+	 * Test method for
+	 * {@link de.cesr.more.util.distributions.MWeibullDistanceDistribution#inverseCumulativeProbability(double)}.
+	 */
+	@Test
+	public void testInverseCumulativeProbabilityDouble() {
+		double sample = 0.0;
+		try {
+			FileWriter fileWriter = new FileWriter(new File(OUTPUT_FILE_INVERSE), false);
+			for (int i = 0; i < 10000; i++) {
+				sample = this.weibull.inverseCumulativeProbability(i / 10000.0);
+				assertTrue("" + sample, sample <= DIAMETER);
+				if (OUTPUT) {
+					fileWriter.append(i / 10000.0 + ", " + sample + "\n");
+				}
+			}
+			fileWriter.close();
+
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+	}
 }

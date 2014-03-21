@@ -62,6 +62,8 @@ public class MModularityMeasureSupplier extends MAbstractMeasureSupplier {
 		 */
 		NET_MOD_INFOMAP("Net-Mod-InfoMap"),
 
+		NET_MOD_INFOMAP_UNDIRECTED("Net-Mod-InfoMapUndirected"),
+
 		NET_MOD_FASTGREEDY("Net-Mod-FastGreedy"),
 
 		NET_MOD_EDGEBETWEEN("Net-Mod-EdgeBetweenness");
@@ -136,6 +138,38 @@ public class MModularityMeasureSupplier extends MAbstractMeasureSupplier {
 			}
 		});
 
+		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_MODULARITY,
+				Short.NET_MOD_INFOMAP_UNDIRECTED
+						.getName(), "Modularity based on undirected InfoMap community detection (not normalized)");
+
+		measures.put(description, new MAbstractNetworkMeasure(description, Double.class) {
+
+			@Override
+			public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(
+					final MoreNetwork<T, EdgeType> network,
+					Map<String, Object> parameters) {
+				return new MAbstractAction() {
+
+					@Override
+					public void execute() {
+						logger.info("Calculate " + Short.NET_MOD_INFOMAP_UNDIRECTED.getName() + " for "
+								+ network.getName()
+								+ "...");
+
+						MNetworkManager.setNetworkMeasure(network,
+								new MMeasureDescription(Short.NET_MOD_INFOMAP_UNDIRECTED.getName()),
+								MNetworkModularityR.getModularityR(network.getJungGraph(),
+										MCommunityDetectionAlgorithms.INFOMAP.getCommand(), "forceIndirected=TRUE"));
+						logger.info("... finished.");
+					}
+
+					@Override
+					public String toString() {
+						return Short.NET_MOD_INFOMAP_UNDIRECTED.getName() + "(" + network.getName() + ")";
+					}
+				};
+			}
+		});
 
 		description = new MMeasureDescription(MNetworkMeasureCategory.NETWORK_MODULARITY, Short.NET_MOD_FASTGREEDY
 				.getName(), "Modularity based on FastGreedy community detection (not normalized)");

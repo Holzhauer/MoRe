@@ -142,12 +142,12 @@ import de.cesr.parma.core.PmParameterManager;
  * <ul>
  * <li>{@link MNetBuildHdffPa#HEXAGON_SHAPEFILE}</li>
  * <li>{@link MNetworkBuildingPa#BUILD_DIRECTED}</li>
+ * <li>{@link MNetworkBuildingPa#P_MILIEUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#K_DISTRIBUTION_CLASS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#K_PARAM_A} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#K_PARAM_B} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#DISTANCE_PROBABILITY_EXPONENT} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#MAX_SEARCH_RADIUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
- * <li>{@link MNetBuildHdffPa#P_MILIEUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#PROB_FORWARD} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#PROB_BACKWARD} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#DIM_WEIGHTS_GEO} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
@@ -934,9 +934,9 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					// LOGGING ->
 				}
 			}
-			// For each remaining hexagon h
+			// For each remaining hexagon p_rest
 			for (MGeoHexagon<AgentType> h : hexagons) {
-				// Determine distance between hexagon and h
+				// Determine distance between hexagon and p_rest
 				double distance = hexagonCentroid.distance(geography.getGeometry(h).getCentroid());
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {

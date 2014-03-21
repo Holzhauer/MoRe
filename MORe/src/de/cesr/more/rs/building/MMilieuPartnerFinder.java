@@ -59,7 +59,8 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	MMilieuNetworkParameterMap	networkParams;
 
-	static final int			AGENT_LIST_SIZE_THRESHOLD	= 200;
+	// UNDO 200
+	static final int			AGENT_LIST_SIZE_THRESHOLD	= 10000;
 
 	public MMilieuPartnerFinder(MMilieuNetworkParameterMap networkParams) {
 		this.networkParams = networkParams;
@@ -87,12 +88,20 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			desiredMilieu = getProbabilisticMilieu(networkParams, focal);
 		}
 
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Desired Milieu: " + desiredMilieu);
+		}
+		// LOGGING ->
+
 		return agents.size() > AGENT_LIST_SIZE_THRESHOLD ?
 				findPartnerLargeAgentList(agents, graph, focal, incoming, desiredMilieu) :
 					findPartnerSmallAgentList(agents, graph, focal, incoming, desiredMilieu);
 	}
 
 	/**
+	 * TODO black list does not work correctly if no agent can be found in list!
+	 * 
 	 * @param agents
 	 * @param graph
 	 * @param focal

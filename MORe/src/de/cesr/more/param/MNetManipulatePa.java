@@ -71,22 +71,22 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	/**
 	 * Probability for a reciprocal link to be established
 	 */
-	DYN_PROP_RECIPROCITY(Double.class, 1.0),
+	DYN_PROB_RECIPROCITY(Double.class, 1.0),
 
 	/**
 	 * Probability for a transitive link to be established
 	 */
-	DYN_PROP_TRANSITIVIY(Double.class, 1.0),
+	DYN_PROB_TRANSITIVITY(Double.class, 1.0),
 
 	/**
 	 * Probability for a global link to be established
 	 */
-	DYN_PROP_GLOBAL(Double.class, 1.0),
+	DYN_PROB_GLOBAL(Double.class, 1.0),
 
 	/**
 	 * Probability for a local link to be established
 	 */
-	DYN_PROP_LOCAL(Double.class, 1.0),
+	DYN_PROB_LOCAL(Double.class, 1.0),
 	
 	/**
 	 * Determines the radius to draw local links for network dynamics.

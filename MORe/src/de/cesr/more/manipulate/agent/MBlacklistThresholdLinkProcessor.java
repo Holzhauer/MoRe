@@ -388,7 +388,7 @@ public class MBlacklistThresholdLinkProcessor<A extends MoreLinkManipulatableAge
 
 	/**
 	 * For each transitive/reciprocal/local link a global one is added with probability
-	 * MNetManipulatePa.DYN_PROP_GLOBAL.
+	 * MNetManipulatePa.DYN_PROB_GLOBAL.
 	 * 
 	 * @param agent
 	 * @param potPartners

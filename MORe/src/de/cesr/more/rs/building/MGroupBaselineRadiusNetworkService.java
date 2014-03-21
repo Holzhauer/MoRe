@@ -94,7 +94,7 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 02.12.2011
  * 
  */
-public class MGroupBaselineRadiusNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
+public class MGroupBaselineRadiusNetworkService<AgentType extends MoreContextMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
 		extends MGeoRsBaselineRadiusNetworkService<AgentType, EdgeType> {
 	
 	/**

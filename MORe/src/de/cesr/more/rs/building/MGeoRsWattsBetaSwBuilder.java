@@ -38,6 +38,7 @@ import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
@@ -45,6 +46,7 @@ import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWor
 import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildWsPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
@@ -80,8 +82,16 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 	 * @param <AgentT>
 	 * @param <EdgeT>
 	 */
-	static class MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentT extends MoreMilieuAgent, EdgeT extends MRepastEdge<AgentT>>
+	static public class MSmallWorldBetaModelNetworkGeneratorMilieuParams<AgentT extends MoreMilieuAgent, EdgeT extends MoreEdge<AgentT>>
 		extends MSmallWorldBetaModelNetworkGeneratorParams<AgentT, EdgeT>{
+
+		public MSmallWorldBetaModelNetworkGeneratorMilieuParams() {
+			super(PmParameterManager.getInstance(null));
+		}
+
+		public MSmallWorldBetaModelNetworkGeneratorMilieuParams(PmParameterManager pm) {
+			super(pm);
+		}
 
 		/**
 		 * If the k provider has not been set yet, it assigns a provider using MNetworkBuildingPa.MILIEU_NETWORK_PARAMS
@@ -92,13 +102,13 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		@Override
 		public MoreKValueProvider<AgentT> getkProvider() {
 			if (kProvider == null) {
-				if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
-					final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) PmParameterManager.getParameter(
+				if (pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
+					final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) pm.getParam(
 							MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
 					kProvider =  new MoreKValueProvider<AgentT>() {
 						@Override
 						public int getKValue(AgentT node) {
-							return netParams.getK(node.getMilieuGroup());
+							return (Integer) netParams.getMilieuParam(MNetBuildWsPa.K, node.getMilieuGroup());
 						}};
 				} else {
 					super.getkProvider();
@@ -116,8 +126,8 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		@Override
 		public MoreBetaProvider<AgentT> getBetaProvider() {
 			if (betaProvider == null) {
-				if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
-					final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) PmParameterManager.getParameter(
+				if (pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
+					final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) pm.getParam(
 							MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
 					betaProvider = new MoreBetaProvider<AgentT>() {
 						@Override
@@ -164,7 +174,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		this.eFac = eFac;
 		this.randomDist = MManager.getURandomService().getNewUniformDistribution(
 				MManager.getURandomService().getGenerator(
-						(String) PmParameterManager.getParameter(MRandomPa.RND_STREAM)));
+						(String) pm.getParam(MRandomPa.RND_STREAM)));
 	}
 
 	/**
@@ -206,7 +216,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		}
 
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
-				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ? new DirectedJungNetwork<AgentType>(
+				((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ? new DirectedJungNetwork<AgentType>(
 						this.name) : new UndirectedJungNetwork<AgentType>(
 								this.name), context, this.edgeModifier.getEdgeFactory());
 		
@@ -257,7 +267,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 
 		// request random node to connect with
 		AgentType initialPartner = params.getRewireManager().findPartner(network.getJungGraph(), node);
-		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+		if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
 			params.getEdgeModifier().createEdge(network, initialPartner, node);
 		} else {
 			params.getEdgeModifier().createEdge(network, node, initialPartner);
@@ -266,7 +276,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		// request k neighbors of this node to connect with (since the node was initially connected to k nodes this is
 		// possible)
 		Iterator<AgentType> initialAgentNeighbours;
-		if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+		if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
 			initialAgentNeighbours = network.getSuccessors(initialPartner).iterator();
 		} else {
 			initialAgentNeighbours = network.getPredecessors(initialPartner).iterator();
@@ -276,7 +286,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 		for (int i = 1; i < params.getkProvider().getKValue(node) && initialAgentNeighbours.hasNext(); i++) {
 			AgentType next = initialAgentNeighbours.next();
 			if (next != node) {
-				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+				if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
 					edges.add(params.getEdgeModifier().createEdge(network, next, node));
 				} else {
 					edges.add(params.getEdgeModifier().createEdge(network, node, next));
@@ -291,7 +301,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 
 		// add additional global links if required (in case initialPartner's milieu k is smaller than node one's)
 		int missing = params.getkProvider().getKValue(node)
-				- ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ?
+				- ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ?
 						network.getInDegree(node) : network.getOutDegree(node));
 		if (missing > 0) {
 			for (int j = 0; j < missing; j++) {
@@ -300,7 +310,7 @@ public class MGeoRsWattsBetaSwBuilder<AgentType extends MoreMilieuAgent, EdgeTyp
 					partner = params.getRewireManager().findPartner(network.getJungGraph(), node);
 				} while (partner == node || network.isSuccessor(partner, node));
 
-				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
+				if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES)) {
 					params.getEdgeModifier().createEdge(network, partner, node);
 				} else {
 					params.getEdgeModifier().createEdge(network, node, partner);

@@ -36,4 +36,13 @@ import de.cesr.more.manipulate.network.MoreNetworkModifier;
 public interface MoreGeoNetworkService<AgentType, EdgeType extends MoreEdge<? super AgentType>> extends
 	MoreGeoNetworkBuilder<AgentType, EdgeType>,
 	MoreNetworkModifier<AgentType, EdgeType> {
+
+	/**
+	 * Set the class of which the geography wrapper requests agents. Default is the agent's superclass (in case geo
+	 * request class is null).
+	 * 
+	 * @param geoRequestClass
+	 *        the geoRequestClass to set
+	 */
+	public void setGeoRequestClass(Class<? extends AgentType> geoRequestClass);
 }

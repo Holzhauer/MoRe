@@ -94,7 +94,7 @@ public class MWeibullDistanceDistribution extends AbstractRealDistribution imple
 				WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
 	}
 
-	private RealDistribution getWeibull() {
+	protected RealDistribution getWeibull() {
 		if (this.weibull == null) {
 			// <- LOGGING
 			logger.error("init() has to be called before!");
@@ -103,6 +103,7 @@ public class MWeibullDistanceDistribution extends AbstractRealDistribution imple
 		}
 		return this.weibull;
 	}
+
 	/**
 	 * @see org.apache.commons.math3.distribution.RealDistribution#density(double)
 	 */
@@ -114,7 +115,7 @@ public class MWeibullDistanceDistribution extends AbstractRealDistribution imple
 
 		// local distances
 		if (x <= xmin) {
-			return this.pLocal / this.xmin;
+			return this.pLocal / (this.xmin - this.getSupportLowerBound());
 
 			// Weibull distributed
 		} else {
@@ -136,13 +137,14 @@ public class MWeibullDistanceDistribution extends AbstractRealDistribution imple
 
 			// local distances:
 		} else if (x <= xmin) {
-			return (x - this.getSupportLowerBound()) / (this.xmin - this.getSupportLowerBound()) * this.pLocal;
+			return (x - this.getSupportLowerBound()) * this.pLocal / (this.xmin - this.getSupportLowerBound());
 
 			// Weibull distributed:
 		} else {
 			double gXmin = getWeibull().cumulativeProbability(xmin);
-			return this.pLocal + (getWeibull().cumulativeProbability(Math.max(Math.min(x, this.xmax), this.xmin)) -
-					gXmin) / (getWeibull().cumulativeProbability(xmax) - gXmin);
+			// normalize Weibull for the range between xmin and xmax:
+			return this.pLocal + (1.0 - this.pLocal) * (getWeibull().cumulativeProbability(x) - gXmin) /
+					(getWeibull().cumulativeProbability(xmax) - gXmin);
 		}
 	}
 
@@ -152,7 +154,7 @@ public class MWeibullDistanceDistribution extends AbstractRealDistribution imple
 	@Override
 	public double inverseCumulativeProbability(double random) {
 		if (random < this.pLocal) {
-			return random * (this.xmin - this.getSupportLowerBound()) + this.getSupportLowerBound();
+			return random / this.pLocal * (this.xmin - this.getSupportLowerBound()) + this.getSupportLowerBound();
 		} else {
 			double gXmin = getWeibull().cumulativeProbability(xmin);
 			double x = gXmin + ((random - this.pLocal) / (1 - this.pLocal)) * 

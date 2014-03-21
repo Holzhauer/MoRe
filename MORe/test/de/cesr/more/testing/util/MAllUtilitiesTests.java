@@ -39,7 +39,9 @@ import org.junit.runners.Suite.SuiteClasses;
 * run all adapter tests at once
 */
 @RunWith(Suite.class)
-@SuiteClasses({ MoreUtilitiesTest.class, MScheduleTest.class, MWeibullDistanceDistributionTest.class })
+@SuiteClasses({ MoreUtilitiesTest.class, MScheduleTest.class, MWeibullDistanceDistributionTest.class,
+		MLinearLocalWeibullDistanceDistributionTest.class,
+		MPascalDistributionTest.class })
 public class MAllUtilitiesTests {
 
 }

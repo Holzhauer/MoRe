@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="libs/geoapi-nogenerics-2.1-M2.jar"/>
 	<classpathentry kind="lib" path="libs/gt2-epsg-wkt-2.3.3.jar"/>
 	<classpathentry kind="lib" path="libs/gt2-main-2.3.3.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/gt2-2.3.3/module/main/src"/>
-	<classpathentry kind="lib" path="libs/gt2-referencing-2.3.3.jar"/>
+	<classpathentry kind="lib" path="libs/gt2-referencing-2.3.3.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/gt2-2.3.3/module/referencing/src"/>
 	<classpathentry kind="lib" path="libs/JRI.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/holzhauer/Documents/R/win-library/3.01/rJava/jri/x64"/>
