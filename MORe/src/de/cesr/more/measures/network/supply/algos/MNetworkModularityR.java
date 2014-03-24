@@ -75,6 +75,8 @@ public class MNetworkModularityR {
 	 * @param graph
 	 * @param communityDetection
 	 *        Possible values: {@link MCommunityDetectionAlgorithms}.
+	 * @param argumentString
+	 *        passed to R community detection function
 	 * @return modularity score
 	 */
 	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph,
@@ -98,8 +100,12 @@ public class MNetworkModularityR {
 		// LOGGING ->
 
 		logger.info("Calculate Modularity...");
-		re.eval("community =	" + communityDetection + "(g" + argumentString + ")");
-		result = re.eval("modularity(community)");
+
+		if (communityDetection == MCommunityDetectionAlgorithms.FAST_GREEDY.getCommand()) {
+			re.eval("if(is.directed(g)) g = as.undirected(g, mode=\"collapse\")");
+		}
+		re.eval("community =	" + communityDetection + "(g)");
+		result = re.eval("modularity(community" + (argumentString.length() > 0 ? ", " : "") + argumentString + ")");
 		logger.info("Result: " + result);
 		return result.asDouble();
 	}
@@ -112,8 +118,9 @@ public class MNetworkModularityR {
 	 * @param graph
 	 * @return
 	 */
-	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph) {
-		return getModularityR(graph, MCommunityDetectionAlgorithms.INFOMAP.getCommand(), "");
+	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph,
+			String communityDetection) {
+		return getModularityR(graph, communityDetection, "");
 	}
 
 	/**
@@ -122,13 +129,9 @@ public class MNetworkModularityR {
 	 * @param <V>
 	 * @param <E>
 	 * @param graph
-	 * @param argumentString
-	 *        passed to R community detection function
 	 * @return
 	 */
-	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph,
-			String argumentString) {
-		return getModularityR(graph, MCommunityDetectionAlgorithms.INFOMAP.getCommand(),
-				(argumentString.length() > 0 ? ", " : "") + argumentString);
+	public static <V, E extends MoreEdge<? super V>> double getModularityR(final Graph<V, E> graph) {
+		return getModularityR(graph, MCommunityDetectionAlgorithms.INFOMAP.getCommand(), "");
 	}
 }
