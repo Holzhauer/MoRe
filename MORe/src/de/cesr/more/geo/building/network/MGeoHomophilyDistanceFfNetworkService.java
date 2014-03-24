@@ -381,7 +381,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					// LOGGING ->
 
 					// Determine according hexagons and agent within
-					Set<AgentType> potPartners = new HashSet<AgentType>();
+					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
 					MGeoHexagon<AgentType> h = agentHexagons.get(agent);
 					if (h == null) {

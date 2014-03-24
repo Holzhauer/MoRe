@@ -263,9 +263,85 @@ MNetworkManager.storeVertexSubnetwork(network, predicate, subnetwork_name)
 
 *Implementing Custom Measures
 
+	[[1]] Create a subclass of {{{../apidocs/de/cesr/more/measures/MAbstractMeasureSupplier.html}<<<MAbstractMeasureSupplier>>>}}.
+	
+	[[2]] It is a good idea to define the measures' names as <<<enum Short>>>.
+
++--
+public enum Short {
+	YOUR_MEASURE("YourMeasureName");
+
+	String	name;
+
+	private Short(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+}
++--	
+
+	[[3]] In the constructor, add the categories the defined measures belong to (see
+	{{{../apidocs/de/cesr/more/measures/MNetworkMeasureCategory.html}<<<MNetworkMeasureCategory>>>}};
+	you may also define your own <<<MoreMeasureCategory>>>).
+	 
++--
+private DirectedInfoMapModularitySupplier() {
+	categories.add(MNetworkMeasureCategory.NETWORK_MODULARITY);
+	addMeasures();
+}
++--
+	
 	A <<<MNetworkMeasureSupplier>>> should be implemented as singleton since it does not make sense to have more than one supplier.
 	However, the <<<MAbstractMeasureSupplier>>> overrides <<<equals()>>> and compares regarding the class name but does not prevent subclasses
 	from overriding its <<<equals()>>> method.
+
+	[[4]] Add the measure calculation:
+	
++--
+private void addMeasures() {
+	MMeasureDescription description = new MMeasureDescription(
+			MNetworkMeasureCategory.NETWORK_MODULARITY,
+			Short.YOUR_MEASURE.getName(),
+			"Your measure description");
+
+	measures.put(description, new MAbstractNetworkMeasure(description,
+			Double.class) {
+
+		@Override
+		public <T, EdgeType extends MoreEdge<? super T>> MoreAction getAction(
+				final MoreNetwork<T, EdgeType> network,
+				Map<String, Object> parameters) {
+			return new MAbstractAction() {
+
+				@Override
+				public void execute() {
+					double value = <calculate your measure here>;
+					MNetworkManager.setNetworkMeasure(
+							network,
+							new MMeasureDescription(
+									Short.NET_MOD_UNDIRECTED_INFOMAP
+											.getName()), value);
+				}
+
+				@Override
+				public String toString() {
+					return Short.YOUR_MEASURE.getName() + "(" + network.getName() + ")";
+				}
+			};
+		}
+	});
+}
++--
+
+	[[5]] Add your measure supplier:
+	
++--
+MNetworkMeasureManager.getInstance().addMeasureSupplier(
+					YourMeasureSupplier.getInstance());
++--
 
 	The scheduling parameters (start, interval, end) are defined in the parameter map that is interpreted by <<<MNetworkMeasureManager>>> or 
 	<<<MNodeMeasureManager>>>. Therefore, generating <<<MoreActions>>> does not need to define a <<<MSchedulingParameter>>>.
