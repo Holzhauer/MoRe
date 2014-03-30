@@ -33,7 +33,7 @@ import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
  * 
  * The {@link MoreNetworkEdgeModifier} provides features to consistently add and remove
  * edges to or from a network. This is particularly important when using networks within
- * a geography (see {@link MGeoRsNetworkEdgeModifier}). It thus goes beyond a 
+ * a geography (see {@link MGeoNetworkEdgeModifier}). It thus goes beyond a 
  * {@link MoreEdgeFactory} and rather uses {@link MoreEdgeFactory}s to create edges.
  *
  * @author Sascha Holzhauer

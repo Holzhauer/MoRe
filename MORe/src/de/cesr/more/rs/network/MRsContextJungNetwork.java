@@ -96,7 +96,7 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 
 	/**
 	 * @see de.cesr.more.basic.network.MoreNetwork#connect(java.lang.Object, java.lang.Object)
-	 * Tries to use the {@link MDefaultEdgeFactory} in case no {@link MoreEdgeFactory} has been
+	 * Tries to use the {@link MDefaultGeoEdgeFactory} in case no {@link MoreEdgeFactory} has been
 	 * set before. This fails if EdgeT is not {@link MoreEdge<AgentT}.
 	 */
 	@Override
@@ -296,7 +296,7 @@ public class MRsContextJungNetwork<AgentT, EdgeT extends RepastEdge<AgentT> & Mo
 
 	/**
 	 * @see de.cesr.more.basic.network.MoreNetwork#reverseNetwork()
-	 * Tries to use the {@link MDefaultEdgeFactory} in case no {@link MoreEdgeFactory} has been
+	 * Tries to use the {@link MDefaultGeoEdgeFactory} in case no {@link MoreEdgeFactory} has been
 	 * set before. This fails if EdgeT is not {@link MoreEdge<AgentT}.
 	 */
 	@Override

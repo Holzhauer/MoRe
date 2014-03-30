@@ -40,6 +40,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.log4j.Logger;
 
+import repast.simphony.context.DefaultContext;
 import repast.simphony.query.space.gis.ContainsQuery;
 import repast.simphony.query.space.gis.WithinQuery;
 import repast.simphony.space.gis.Geography;
@@ -57,6 +58,7 @@ import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildHdffPa;
@@ -65,7 +67,6 @@ import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.building.MMilieuPartnerFinder;
 import de.cesr.more.rs.building.MoreMilieuAgent;
-import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeoHexagon;
 import de.cesr.more.util.MRuntimeDbWriter;
 import de.cesr.more.util.MoreRunIdProvider;
@@ -174,7 +175,7 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 20.06.2013
  * 
  */
-public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuAgent & MoreNetworkAgent<AgentType, EdgeType>, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuAgent & MoreNetworkAgent<AgentType, EdgeType>, EdgeType extends MoreGeoEdge<AgentType> & MoreEdge<AgentType>>
 		extends MGeoNetworkService<AgentType, EdgeType> implements MoreRuntimeAnalysable {
 
 	/**
@@ -231,6 +232,11 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		this(geography, edgeFac, name, PmParameterManager.getInstance(null));
 	}
 
+	public MGeoHomophilyDistanceFfNetworkService(
+			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name, PmParameterManager pm) {
+		this(null, edgeFac, name, pm);
+	}
+
 	/**
 	 * @param areasGeography
 	 */
@@ -258,19 +264,18 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		}
 
 		for (Integer milieu : this.paraMap.keySet()) {
-			if (this.paraMap.getDimWeightMilieu(milieu.intValue()) > 0.0) {
+			if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu.intValue()) > 0.0) {
 				this.considerMilieus = true;
 				break;
 			}
 		}
 
 		for (Integer milieu : this.paraMap.keySet()) {
-			if (this.paraMap.getDimWeightGeo(milieu.intValue()) > 0.0) {
+			if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu.intValue()) > 0.0) {
 				this.considerDistance = true;
 				break;
 			}
 		}
-		
 	}
 
 	/**
@@ -560,11 +565,12 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 				Double distanceProb = getDistanceProb(agent, neighbour) /
 						agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
-						* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
+						* (Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, agent.getMilieuGroup());
 
 				Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
 						neighbour.getMilieuGroup())
-						* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
+						* (Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU,
+								agent.getMilieuGroup());
 
 				Double probability = 0.0;
 				if (index < indegree) {
@@ -777,12 +783,12 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		if (!considerDistance) {
 			if (considerMilieus) {
 				for (Integer milieu : this.paraMap.keySet()){
-					if (this.paraMap.getDimWeightMilieu(milieu) != 1.0) {
-						this.paraMap.setDimWeightMilieu(milieu, 1.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu) != 1.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu, 1.0);
 						logger.warn("DimWeightMilieu adjusted to 1.0 for milieu " + milieu);
 					}
-					if (this.paraMap.getDimWeightGeo(milieu) != 0.0) {
-						this.paraMap.setDimWeightGeo(milieu, 0.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) != 0.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu, 0.0);
 						logger.warn("DimWeightGeo adjusted to 0.0 for milieu " + milieu);
 					}
 				}
@@ -790,20 +796,20 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		} else {
 			if (!considerMilieus) {
 				for (Integer milieu : this.paraMap.keySet()){
-					if (this.paraMap.getDimWeightGeo(milieu) != 1.0) {
-						this.paraMap.setDimWeightGeo(milieu, 1.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) != 1.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu, 1.0);
 						logger.warn("DimWeightGeo adjusted to 1.0 for milieu " + milieu);
 					}
-					if (this.paraMap.getDimWeightMilieu(milieu) != 0.0) {
-						this.paraMap.setDimWeightMilieu(milieu, 0.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu) != 0.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu, 0.0);
 						logger.warn("DimWeightMilieu adjusted to 0.0 for milieu " + milieu);
 					}
 				}
 			} else {
 				// consider both
 				for (Integer milieu : this.paraMap.keySet()){
-					if (Math.abs((this.paraMap.getDimWeightGeo(milieu) +
-							this.paraMap.getDimWeightMilieu(milieu)) - 1.0) > TOLERANCE_VALUE_DIM_WEIGHTS) {
+					if (Math.abs(((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) +
+							(Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu)) - 1.0) > TOLERANCE_VALUE_DIM_WEIGHTS) {
 						logger.error("DimWeightGeo and DimWeightMilieu do not sum up to 1.0 for milieu " +
 								milieu);
 					}
@@ -952,6 +958,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	}
 
 	/**
+	 * Assumes that the agent to add is already within the geography!
+	 * 
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
@@ -1031,11 +1039,12 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 		ShapefileLoader<MGeoHexagon> areasLoader = null;
 
+		// TODO care about context...
 		try {
 			areasLoader = new ShapefileLoader<MGeoHexagon>(
 					MGeoHexagon.class,
 					hexagonShapeFile.toURI().toURL(),
-					this.geography, MManager.getRootContext());
+					this.geography, new DefaultContext<Object>());
 			while (areasLoader.hasNext()) {
 				areasLoader.next(new MGeoHexagon<AgentType>());
 			}

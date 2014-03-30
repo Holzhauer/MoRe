@@ -39,16 +39,16 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MNetworkService;
+import de.cesr.more.geo.MoreGeoEdge;
+import de.cesr.more.geo.building.edge.MGeoNetworkEdgeModifier;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
-import de.cesr.more.rs.building.edge.MGeoRsNetworkEdgeModifier;
-import de.cesr.more.rs.edge.MRepastEdge;
-import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.Log4jLogger;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -59,7 +59,7 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 23.09.2011 
  *
  */
-public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType> & MoreEdge<AgentType>>
+public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MoreGeoEdge<AgentType> & MoreEdge<AgentType>>
 		extends MNetworkService<AgentType, EdgeType> implements MoreGeoNetworkService<AgentType, EdgeType> {
 
 	/**
@@ -89,7 +89,7 @@ public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, Edge
 		this.geography = areasGeography;
 		this.geoFactory = new GeometryFactory(new PrecisionModel(),
 				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.SPATIAL_REFERENCE_ID)).intValue());
-		this.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(edgeFac);
+		this.edgeModifier = new MGeoNetworkEdgeModifier<AgentType, EdgeType>(edgeFac);
 
 		// <- LOGGING
 		logger.info("Initialised " + this + " with edge factory " + edgeFac);
@@ -127,7 +127,8 @@ public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, Edge
 	 * Specify super type method for MilieuAgents
 	 * @param network
 	 */
-	protected void logEdges(Logger logger, MoreRsNetwork<AgentType, EdgeType> network, String prestring) {
+	@Override
+	protected void logEdges(Logger logger, MoreNetwork<AgentType, EdgeType> network, String prestring) {
 		if (logger.isDebugEnabled()) {
 			Set<MoreEdge<AgentType>> edges = new TreeSet<MoreEdge<AgentType>>(
 					new Comparator<MoreEdge<AgentType>>() {
@@ -191,7 +192,7 @@ public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, Edge
 		// LOGGING ->
 
 		this.geography = geography;
-		this.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(this.edgeFac, geography, geoFactory);
+		this.edgeModifier = new MGeoNetworkEdgeModifier<AgentType, EdgeType>(this.edgeFac, geography, geoFactory);
 	}
 
 	/**
@@ -202,6 +203,7 @@ public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, Edge
 	}
 
 
+	@Override
 	public void setGeoRequestClass(Class<? extends AgentType> geoRequestClass) {
 		this.geoRequestClass = geoRequestClass;
 	}

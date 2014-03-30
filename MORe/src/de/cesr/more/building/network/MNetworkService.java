@@ -39,6 +39,7 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.util.Log4jLogger;
+import de.cesr.parma.core.PmParameterManager;
 
 
 /**
@@ -60,6 +61,10 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 
 	protected MoreEdgeFactory<AgentType, EdgeType>			edgeFac	= null;
 
+	protected String										name;
+
+	protected PmParameterManager							pm;
+
 	/**
 	 * should be accessed via getEdgeModifer...
 	 */
@@ -68,9 +73,17 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 	/**
 	 * @param areasGeography
 	 */
-	public MNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+	public MNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, PmParameterManager pm) {
 		this.edgeFac = edgeFac;
 		this.edgeModifier = new MDefaultNetworkEdgeModifier<AgentType, EdgeType>(edgeFac);
+		this.pm = pm;
+	}
+
+	/**
+	 * @param areasGeography
+	 */
+	public MNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this(edgeFac, PmParameterManager.getInstance(null));
 	}
 
 	/**

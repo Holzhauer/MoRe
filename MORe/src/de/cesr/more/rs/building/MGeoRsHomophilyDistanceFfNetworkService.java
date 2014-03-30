@@ -263,14 +263,14 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		}
 
 		for (Integer milieu : this.paraMap.keySet()) {
-			if (this.paraMap.getDimWeightMilieu(milieu.intValue()) > 0.0) {
+			if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu.intValue()) > 0.0) {
 				this.considerMilieus = true;
 				break;
 			}
 		}
 
 		for (Integer milieu : this.paraMap.keySet()) {
-			if (this.paraMap.getDimWeightGeo(milieu.intValue()) > 0.0) {
+			if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu.intValue()) > 0.0) {
 				this.considerDistance = true;
 				break;
 			}
@@ -567,11 +567,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 				Double distanceProb = getDistanceProb(agent, neighbour) /
 						agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
-						* this.paraMap.getDimWeightGeo(agent.getMilieuGroup());
+						* (Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, agent.getMilieuGroup());
 
 				Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
 						neighbour.getMilieuGroup())
-						* this.paraMap.getDimWeightMilieu(agent.getMilieuGroup());
+						* (Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU,
+								agent.getMilieuGroup());
 
 				Double probability = 0.0;
 				if (index < indegree) {
@@ -784,12 +785,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		if (!considerDistance) {
 			if (considerMilieus) {
 				for (Integer milieu : this.paraMap.keySet()){
-					if (this.paraMap.getDimWeightMilieu(milieu) != 1.0) {
-						this.paraMap.setDimWeightMilieu(milieu, 1.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu) != 1.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu, 1.0);
 						logger.warn("DimWeightMilieu adjusted to 1.0 for milieu " + milieu);
 					}
-					if (this.paraMap.getDimWeightGeo(milieu) != 0.0) {
-						this.paraMap.setDimWeightGeo(milieu, 0.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) != 0.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu, 0.0);
 						logger.warn("DimWeightGeo adjusted to 0.0 for milieu " + milieu);
 					}
 				}
@@ -797,12 +798,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		} else {
 			if (!considerMilieus) {
 				for (Integer milieu : this.paraMap.keySet()){
-					if (this.paraMap.getDimWeightGeo(milieu) != 1.0) {
-						this.paraMap.setDimWeightGeo(milieu, 1.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) != 1.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu, 1.0);
 						logger.warn("DimWeightGeo adjusted to 1.0 for milieu " + milieu);
 					}
-					if (this.paraMap.getDimWeightMilieu(milieu) != 0.0) {
-						this.paraMap.setDimWeightMilieu(milieu, 0.0);
+					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu) != 0.0) {
+						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu, 0.0);
 						logger.warn("DimWeightMilieu adjusted to 0.0 for milieu " + milieu);
 					}
 				}

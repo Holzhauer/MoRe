@@ -222,6 +222,13 @@ public class MMilieuNetworkParameterMap extends
 				new Double(radius));
 	}
 
+	/**
+	 * @param milieu
+	 * @return
+	 * 
+	 * @deprecated
+	 */
+	@Deprecated
 	public double getDimWeightGeo(int milieu) {
 		return warnDefault(MNetBuildBhPa.DIM_WEIGHTS_GEO, milieu) ?  
 				((Double) pm.getParam(MNetBuildBhPa.DIM_WEIGHTS_GEO)).doubleValue() :
@@ -239,6 +246,13 @@ public class MMilieuNetworkParameterMap extends
 				new Double(weight));
 	}
 
+	/**
+	 * @param milieu
+	 * @return
+	 * 
+	 * @deprecated
+	 */
+	@Deprecated
 	public double getDimWeightMilieu(int milieu) {
 		return warnDefault(MNetBuildBhPa.DIM_WEIGHTS_MILIEU, milieu) ?  
 				((Double) pm.getParam(MNetBuildBhPa.DIM_WEIGHTS_MILIEU)).doubleValue() :

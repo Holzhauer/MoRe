@@ -50,21 +50,26 @@ public interface MoreNetworkModifier<AgentType, EdgeType extends MoreEdge<? supe
 	extends MoreNetworkEdgeModifier<AgentType, EdgeType>{
 
 	/**
-	 * Removes an agent from the given network and deletes all its links. Basically,
-	 * this method reverses all the action that {@link #addAgent(Object, MoreRsNetwork)}
-	 * performed.
-	 * @param agent the agent to remove
-	 * @param network the network to remove the given agent from
-	 * @return true if the agent could be completely removed
+	 * Adds an agent to the given network. In combination with {@link MoreNetworkBuilder} this method should connect the
+	 * agent in a way the initial algorithm of the network builder did with every agent of the initial agent population.
+	 * 
+	 * @param agent
+	 *        the agent to add
+	 * @param network
+	 *        the network the given agent is added to
+	 * @return true if the agent could be added an all additional steps could be performed
 	 */
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node);
-	
+
 	/**
-	 * Adds an agent to the given network. In combination with {@link MoreNetworkBuilder}
-	 * this method should connect the agent in a way the 
-	 * @param agent the agent to add
-	 * @param network the network the given agent is added to
-	 * @return true if the agent could be added an all additional steps could be performed
+	 * Removes an agent from the given network and deletes all its links. Basically, this method reverses all the action
+	 * that {@link #addAgent(Object, MoreRsNetwork)} performed.
+	 * 
+	 * @param agent
+	 *        the agent to remove
+	 * @param network
+	 *        the network to remove the given agent from
+	 * @return true if the agent could be completely removed
 	 */
 	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node);
 	

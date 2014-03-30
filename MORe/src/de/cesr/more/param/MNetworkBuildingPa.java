@@ -28,6 +28,7 @@ import java.util.Map;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import de.cesr.more.geo.building.network.MGeoRestoreNetworkService;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.building.MGeoRsNetworkService;
 import de.cesr.parma.core.PmParameterDefinition;
@@ -60,6 +61,11 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 					getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null ?
 					((Map<Integer, Map<PmParameterDefinition, Object>>) PmParameterManager.
 							getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).size() : 2))),
+
+	/**
+	 * Used by e.g. {@link MGeoRestoreNetworkService}.
+	 */
+	MAINTAINING_NETWORK_SERVICE(Class.class, null),
 
 	MILIEU_NETWORK_CSV_MILIEUS(String.class, ""),
 

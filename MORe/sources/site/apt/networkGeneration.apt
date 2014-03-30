@@ -132,7 +132,9 @@ H Spacing | 200
 V Spacing | auto
 *-------------*--------------*
 	
-	[[1]] Make sure that the shapefile defines the correct CRS (usually the plugin does not assign a CRS)
+	[[1]] Make sure that the shapefile defines the correct CRS by inspecting the <<<*.prj>>> file
+	(usually the plugin does not assign a CRS). If not, right-click on the layer in QGIS and save as a new file.
+	You can choose the CRS in the "Save vector layer as..." dialog.
 	
 Implementing Network Builders
 

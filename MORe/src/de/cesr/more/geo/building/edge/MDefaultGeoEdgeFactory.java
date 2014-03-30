@@ -19,40 +19,48 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 28.09.2011
+ * Created by holzhauer on 24.06.2011
  */
-package de.cesr.more.rs.building.edge;
+package de.cesr.more.geo.building.edge;
 
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.graph.RepastEdge;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.apache.log4j.Logger;
 
+import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.geo.MoreGeoEdge;
-import de.cesr.more.geo.building.edge.MGeoNetworkEdgeModifier;
 
 /**
  * MORe
  *
  * @author holzhauer
- * @date 28.09.2011 
+ * @date 24.06.2011 
  *
  */
-public class MGeoRsNetworkEdgeModifier<AgentType, EdgeType extends RepastEdge<? super AgentType> & MoreGeoEdge<? super AgentType>>
-		extends
-		MGeoNetworkEdgeModifier<AgentType, EdgeType> {
-	
-	public MGeoRsNetworkEdgeModifier() {
-		super();
-	}
-	
-	public MGeoRsNetworkEdgeModifier(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
-		super(edgeFac);
-	}
-	
-	public MGeoRsNetworkEdgeModifier(MoreEdgeFactory<AgentType, EdgeType> edgeFac, Geography<Object> geography,
-			GeometryFactory geoFactory) {
-		super(edgeFac, geography, geoFactory);
-	}
+public class MDefaultGeoEdgeFactory<V> implements MoreEdgeFactory<V, MoreEdge<V>> {
+
+	/**
+	 * Logger
+	 */
+	static private Logger	logger	= Logger.getLogger(MDefaultGeoEdgeFactory.class);
+
+	/**
+	 * @see de.cesr.more.building.edge.MoreEdgeFactory#createEdge(java.lang.Object, java.lang.Object, boolean)
+	 */
+	@Override
+	public MoreEdge<V> createEdge(V source, V target, boolean directed) {
+		if (source == null) {
+			// <- LOGGING
+			logger.error("Source node is null!");
+			// LOGGING ->
+			throw new IllegalStateException("Source node is null!");
+		}
+
+		if (target == null) {
+			// <- LOGGING
+			logger.error("Target node is null!");
+			// LOGGING ->
+			throw new IllegalStateException("Target node is null!");
+		}
+		return new MGeoEdge<V>(source, target, directed);
+	} 
 }
