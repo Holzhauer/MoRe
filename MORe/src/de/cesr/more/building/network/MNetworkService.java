@@ -119,10 +119,20 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 	 */
 	@Override
 	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		Collection<AgentType> partners = new HashSet<AgentType>();
 		for (AgentType partner : network.getSuccessors(node)) {
+			partners.add(partner);
+		}
+		for (AgentType partner : partners) {
 			edgeModifier.removeEdge(network, node, partner);
 		}
+
+		partners.clear();
+
 		for (AgentType partner : network.getPredecessors(node)) {
+			partners.add(partner);
+		}
+		for (AgentType partner : partners) {
 			edgeModifier.removeEdge(network, partner, node);
 		}
 		network.removeNode(node);

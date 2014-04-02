@@ -26,8 +26,11 @@ package de.cesr.more.building.network;
 
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.geo.building.edge.MDefaultGeoEdgeFactory;
 import de.cesr.more.geo.building.network.MoreGeoNetworkService;
@@ -45,6 +48,11 @@ import de.cesr.parma.core.PmParameterManager;
  */
 public class MRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MoreEdge<AgentType>>
 		extends MNetworkService<AgentType, EdgeType> {
+
+	/**
+	 * Logger
+	 */
+	static private Logger								logger						= Logger.getLogger(MRestoreNetworkService.class);
 
 	protected MoreNetworkService<AgentType, EdgeType>	maintainingNetworkService	= null;
 
@@ -69,14 +77,22 @@ public class MRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeType 
 			Class<? extends MoreNetworkService<AgentType, EdgeType>> serviceClass =
 					(Class<? extends MoreNetworkService<AgentType, EdgeType>>) pm
 							.getParam(MNetworkBuildingPa.MAINTAINING_NETWORK_SERVICE);
-			if (MoreGeoNetworkService.class.isAssignableFrom(serviceClass)) {
-				try {
+			// <- LOGGING
+			logger.info("Maintaining network service is: " + serviceClass);
+			// LOGGING ->
+
+			try {
+				if (MoreGeoNetworkService.class.isAssignableFrom(serviceClass)) {
 					this.maintainingNetworkService = serviceClass
 							.getConstructor(MoreEdgeFactory.class, String.class, PmParameterManager.class)
 							.newInstance(new MDefaultGeoEdgeFactory<AgentType>(), this.name, this.pm);
-				} catch (Exception exception) {
-					exception.printStackTrace();
+				} else {
+					this.maintainingNetworkService = serviceClass
+							.getConstructor(MoreEdgeFactory.class, String.class, PmParameterManager.class)
+							.newInstance(new MDefaultEdgeFactory<AgentType>(), this.name, this.pm);
 				}
+			} catch (Exception exception) {
+				exception.printStackTrace();
 			}
 		}
 	}
@@ -101,6 +117,7 @@ public class MRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeType 
 			this.maintainingNetworkService.addAndLinkNode(network, node);
 			return true;
 		}
+		logger.warn("AddAndLinkNode: No maintaining network service assigned!");
 		return false;
 	}
 
