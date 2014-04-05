@@ -141,12 +141,12 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	/*****************************************************
 	 * General Geography Settings
 	 *****************************************************/
-	
+
 	/**
-	 * If true, edges are added to the geography (adding many edges to the geography is a
-	 * performance issue). Default: <code>true</code>.
+	 * If true, edges are added to the geography (adding many edges to the geography is a performance issue). Default:
+	 * <code>false</code>.
 	 */
-	ADD_EDGES_TO_GEOGRAPHY(Boolean.class, true),
+	ADD_EDGES_TO_GEOGRAPHY(Boolean.class, false),
 	
 	/**
 	 * Used to initialize the {@link GeometryFactory} in {@link MGeoRsNetworkService}.

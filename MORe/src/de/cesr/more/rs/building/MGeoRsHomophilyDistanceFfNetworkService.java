@@ -1016,11 +1016,14 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			// Follow links of ambassador with respect to forward probability, distance term, milieu preference
 			// (baseline homophily)
 			Map<AgentType, Integer> degreeTargets = new HashMap<AgentType, Integer>();
-
 			degreeTargets.put(node, new Integer(degreetarget));
+
+			linkPartner(node, ambassador, network, degreeTargets);
+
 			LinkedList<AgentType> toExplore = new LinkedList<AgentType>();
 			toExplore.add(ambassador);
 			explorePartner(node, toExplore, network, degreeTargets);
+			degreetarget = degreeTargets.get(node);
 		}
 		return true;
 	}
