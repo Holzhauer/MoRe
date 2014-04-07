@@ -82,9 +82,9 @@ import de.cesr.parma.core.PmParameterManager;
 /**
  * MORe
  * 
- * TODO test and make component of RS version (?)
+ * TODO make MGeoHomophilyDistanceFfNetworkService component of this version
  * 
- * This network builder considers baseline homophily [1] and distance distributions [2]. The network is build as
+ * This network service considers baseline homophily [1] and distance distributions [2]. The network is build as
  * follows:
  * 
  * <ol>
@@ -162,6 +162,16 @@ import de.cesr.parma.core.PmParameterManager;
  * NOTE: The hexagon shapefile must cover all agent positions and should not be much larger since it is used to
  * calculated the area's diameter which is used to initialised the distance distributions.
  * 
+ * NOTE: In general, it is possible to build several networks by means of a single network service instance of this
+ * type. However, it must be understood that a hexagon-agent-relationship needs to be maintained. Consequently, when
+ * agents are removed from the simulation {@link #removeNode(MoreNetwork, Object)} must be called which deletes the node
+ * also from the hexagon infrastructure. Contrary, if a node shall only be removed from one of several networks based on
+ * the same network service, the node may only be removed from the network and {@link #removeNode(MoreNetwork, Object)}
+ * may not be called. Also, the node needs to remain in the geography in that case.
+ * 
+ * NOTE: If several instances of this type shall exist for the same spatial extent, distinct geographies need to be used
+ * for the instances. Otherwise, overlaying hexagons belonging to different instances are most likely to cause problems.
+ * 
  * <br>
  * <br>
  * 
@@ -201,6 +211,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 	protected Map<Integer, MRealDistribution>			distanceDistributions;
 
+	protected Map<AgentType, MGeoHexagon<AgentType>>	agentHexagons						= new HashMap<AgentType, MGeoHexagon<AgentType>>();
+
 	protected double									distanceStep;
 
 	protected double									areaDiameter	= -1.0;
@@ -235,7 +247,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
-	 * - builder constructor - edge modifier - builder set - parma
+	 * Service constructor - edge modifier - builder set - parma
 	 * 
 	 * @param areasGeography
 	 */
@@ -275,7 +287,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				break;
 			}
 		}
-		
 	}
 
 	/**
@@ -305,8 +316,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		checkAgentCollection(agents);
 		
 		checkParameter();
-
-		Map<AgentType, MGeoHexagon<AgentType>> agentHexagons = new HashMap<AgentType, MGeoHexagon<AgentType>>();
 
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
 				((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
@@ -810,8 +819,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			} else {
 				// consider both
 				for (Integer milieu : this.paraMap.keySet()){
-					if (Math.abs((this.paraMap.getDimWeightGeo(milieu) +
-							this.paraMap.getDimWeightMilieu(milieu)) - 1.0) > TOLERANCE_VALUE_DIM_WEIGHTS) {
+					if (Math.abs(((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) +
+							(Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu)) - 1.0) > TOLERANCE_VALUE_DIM_WEIGHTS) {
 						logger.error("DimWeightGeo and DimWeightMilieu do not sum up to 1.0 for milieu " +
 								milieu);
 					}
@@ -965,6 +974,17 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
+	 * @see de.cesr.more.building.network.MNetworkService#removeNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		super.removeNode(network, node);
+		this.agentHexagons.get(node).removeAgent(node);
+		return this.agentHexagons.remove(node) != null;
+	}
+
+	/**
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
@@ -975,10 +995,21 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				.sample());
 		network.addNode(node);
 
+		if (this.geography.getGeometry(node) == null) {
+			logger.error("Node " + node + " has not been added to geography " + this.geography);
+			throw new IllegalStateException("Node " + node + " has not been added to geography " + this.geography);
+		}
+
+		Geometry nodeGeom = this.geography.getGeometry(node);
+		if (nodeGeom == null) {
+			logger.error("Node " + node + " has not been added to geography " + this.geography);
+			throw new IllegalStateException("Node " + node + " has not been added to geography " + this.geography);
+		}
+
 		// determine surrounding hexagon:
 		MGeoHexagon<AgentType> hexagon = null;
 		WithinQuery<Object> containsQuery = new WithinQuery<Object>(
-				this.geography, this.geography.getGeometry(node));
+				this.geography, nodeGeom);
 		for (Object o : containsQuery.query()) {
 			if (o instanceof MGeoHexagon) {
 				hexagon = (MGeoHexagon<AgentType>) o;
@@ -987,6 +1018,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 		if (node instanceof MoreMilieuAgent) {
 			hexagon.addAgent(node);
+			this.agentHexagons.put(node, hexagon);
 		}
 
 		while (degreetarget > 0) {
@@ -1002,7 +1034,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			while (ambassador == null) {
 				double startDistance = getDistance(node.getMilieuGroup());
 				// Determine according hexagons and agent within
-				Set<AgentType> potPartners = new HashSet<AgentType>();
+				Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
 				for (MGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(startDistance)) {
 					potPartners.addAll(h.getAgents());

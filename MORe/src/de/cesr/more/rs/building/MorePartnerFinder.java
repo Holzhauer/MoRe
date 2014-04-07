@@ -63,6 +63,7 @@ public interface MorePartnerFinder<AgentType, EdgeType> {
 	 * agent is already linked to the potential partner.
 	 * 
 	 * @param agents
+	 *        should be a determined-randomisation-secure collection
 	 * @param graph
 	 * @param focal
 	 * @return

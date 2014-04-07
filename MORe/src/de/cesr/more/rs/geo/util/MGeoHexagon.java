@@ -26,7 +26,7 @@ package de.cesr.more.rs.geo.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -111,6 +111,13 @@ public class MGeoHexagon<AgentType> implements Comparable<MGeoHexagon<AgentType>
 	}
 
 	/**
+	 * @param agent
+	 */
+	public void removeAgent(AgentType agent) {
+		agents.remove(agent);
+	}
+
+	/**
 	 * @return list of agents within this hexagon
 	 */
 	public ArrayList<AgentType> getAgents() {
@@ -135,7 +142,7 @@ public class MGeoHexagon<AgentType> implements Comparable<MGeoHexagon<AgentType>
 	}
 
 	public Set<MGeoHexagon<AgentType>> getHexagonsOfDistance(double distance) {
-		Set<MGeoHexagon<AgentType>> hexagons = new HashSet<MGeoHexagon<AgentType>>();
+		Set<MGeoHexagon<AgentType>> hexagons = new LinkedHashSet<MGeoHexagon<AgentType>>();
 		// to capture agents of the given distances, hexagons need to be considered whose centroid
 		// is +/- (hexagonHeight/2.0) away (if we assume that the agents coordinates can deviate from
 		// its hexagons centroid by (hexagonHeight/2.0) we would need to apply +/- hexagonHeight).

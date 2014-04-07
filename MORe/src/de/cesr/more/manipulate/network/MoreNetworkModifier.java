@@ -29,7 +29,6 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.building.network.MoreNetworkService;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
-import de.cesr.more.rs.network.MoreRsNetwork;
 
 /**
  * MORe
@@ -63,7 +62,7 @@ public interface MoreNetworkModifier<AgentType, EdgeType extends MoreEdge<? supe
 
 	/**
 	 * Removes an agent from the given network and deletes all its links. Basically, this method reverses all the action
-	 * that {@link #addAgent(Object, MoreRsNetwork)} performed.
+	 * that {@link #addAndLinkNode(MoreNetwork, Object)} performed.
 	 * 
 	 * @param agent
 	 *        the agent to remove

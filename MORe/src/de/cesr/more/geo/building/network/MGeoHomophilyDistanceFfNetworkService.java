@@ -82,7 +82,7 @@ import de.cesr.parma.core.PmParameterManager;
 /**
  * MORe
  * 
- * This network builder considers baseline homophily [1] and distance distributions [2]. The network is build as
+ * This network service considers baseline homophily [1] and distance distributions [2]. The network is build as
  * follows:
  * 
  * <ol>
@@ -160,6 +160,16 @@ import de.cesr.parma.core.PmParameterManager;
  * NOTE: The hexagon shapefile must cover all agent positions and should not be much larger since it is used to
  * calculated the area's diameter which is used to initialised the distance distributions.
  * 
+ * NOTE: In general, it is possible to build several networks by means of a single network service instance of this
+ * type. However, it must be understood that a hexagon-agent-relationship needs to be maintained. Consequently, when
+ * agents are removed from the simulation {@link #removeNode(MoreNetwork, Object)} must be called which deletes the node
+ * also from the hexagon infrastructure. Contrary, if a node shall only be removed from one of several networks based on
+ * the same network service, the node may only be removed from the network and {@link #removeNode(MoreNetwork, Object)}
+ * may not be called. Also, the node needs to remain in the geography in that case.
+ * 
+ * NOTE: If several instances of this type shall exist for the same spatial extent, distinct geographies need to be used
+ * for the instances. Otherwise, overlaying hexagons belonging to different instances are most likely to cause problems.
+ * 
  * <br>
  * <br>
  * 
@@ -198,6 +208,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	protected Map<Integer, MIntegerDistribution>		degreeDistributions;
 
 	protected Map<Integer, MRealDistribution>			distanceDistributions;
+
+	protected Map<AgentType, MGeoHexagon<AgentType>>	agentHexagons						= new HashMap<AgentType, MGeoHexagon<AgentType>>();
 
 	protected double									distanceStep;
 
@@ -308,8 +320,6 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		checkAgentCollection(agents);
 		
 		checkParameter();
-
-		Map<AgentType, MGeoHexagon<AgentType>> agentHexagons = new HashMap<AgentType, MGeoHexagon<AgentType>>();
 
 		Map<AgentType, Integer> degreeTargets = null;
 
@@ -958,6 +968,17 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	}
 
 	/**
+	 * @see de.cesr.more.building.network.MNetworkService#removeNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		super.removeNode(network, node);
+		this.agentHexagons.get(node).removeAgent(node);
+		return this.agentHexagons.remove(node) != null;
+	}
+	
+	/**
 	 * Assumes that the agent to add is already within the geography!
 	 * 
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
@@ -970,10 +991,16 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				.sample());
 		network.addNode(node);
 
+		Geometry nodeGeom = this.geography.getGeometry(node);
+		if (nodeGeom == null) {
+			logger.error("Node " + node + " has not been added to geography " + this.geography);
+			throw new IllegalStateException("Node " + node + " has not been added to geography " + this.geography);
+		}
+
 		// determine surrounding hexagon:
 		MGeoHexagon<AgentType> hexagon = null;
 		WithinQuery<Object> containsQuery = new WithinQuery<Object>(
-				this.geography, this.geography.getGeometry(node));
+				this.geography, nodeGeom);
 		for (Object o : containsQuery.query()) {
 			if (o instanceof MGeoHexagon) {
 				hexagon = (MGeoHexagon<AgentType>) o;
@@ -982,6 +1009,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 		if (node instanceof MoreMilieuAgent) {
 			hexagon.addAgent(node);
+			this.agentHexagons.put(node, hexagon);
 		}
 
 		while (degreetarget > 0) {
@@ -997,7 +1025,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			while (ambassador == null) {
 				double startDistance = getDistance(node.getMilieuGroup());
 				// Determine according hexagons and agent within
-				Set<AgentType> potPartners = new HashSet<AgentType>();
+				Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
 				for (MGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(startDistance)) {
 					potPartners.addAll(h.getAgents());
