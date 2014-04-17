@@ -110,13 +110,15 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * @deprecated use {@link MNetBuildWsPa#K}
 	 */
 	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
-	
-	
+
 	/**
-	 * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction.
-	 * Generally, the small world algorithm considers given k and beta values for the source of a direction.
-	 * However, in some models we consider the influencer as source and seek to build the network according
-	 * to the influenced' properties. In this case, set this parameter to FALSE.
+	 * TODO check if implemented correctly according to the following understanding (see also Somonode etc.):
+	 * 
+	 * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction. Generally, the
+	 * small world algorithm implemented in MoRe considers given k and beta values of the target node regarding the
+	 * source of a direction (i.e. the influenced is target and carefully considers its sources). However, in some
+	 * models the influencer is focused at and his preferences shall determine links (the influencer is source and
+	 * carefully considers its targets). In this case, set this parameter to FALSE.
 	 */
 	BUILD_WSSM_CONSIDER_SOURCES(Boolean.class, Boolean.TRUE),
 	

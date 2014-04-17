@@ -371,7 +371,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			turn++;
 
 			// <- LOGGING
-			logger.info("Enter turn " + turn + " (agents in orderedAgents: " + orderedAgents.size() + ")");
+			logger.info("Enter turn " + turn + " (agents in orderedAgents: " + orderedAgents.size()
+					+ " - some probably had degree target = 0)");
 			// LOGGING ->
 
 			for (AgentType agent : agentsToGo) {
@@ -401,9 +402,9 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					MGeoHexagon<AgentType> h = agentHexagons.get(agent);
 					if (h == null) {
 						logger.error("Agent " + agent + " is not assigned to a hexagon. " +
-								"Check that hexagon shapefile covers all agent positions!");
+								"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
 						throw new IllegalStateException("Agent " + agent + " is not assigned to a hexagon. " +
-								"Check that hexagon shapefile covers all agent positions!");
+										"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
 					}
 					for (MGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(startDistance)) {
 						potPartners.addAll(hexagon.getAgents());
@@ -977,7 +978,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		this.agentHexagons.get(node).removeAgent(node);
 		return this.agentHexagons.remove(node) != null;
 	}
-	
+
 	/**
 	 * Assumes that the agent to add is already within the geography!
 	 * 

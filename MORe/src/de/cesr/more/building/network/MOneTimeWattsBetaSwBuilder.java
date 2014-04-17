@@ -19,13 +19,12 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 22.11.2011
+ * Created by Sascha Holzhauer on 10.04.2014
  */
 package de.cesr.more.building.network;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -34,22 +33,21 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.basic.network.MDirectedNetwork;
-import de.cesr.more.basic.network.MUndirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
-import de.cesr.more.building.util.MoreBetaProvider;
-import de.cesr.more.building.util.MoreKValueProvider;
-import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 
 /**
  * MORe
+ * 
+ * More efficient version of {@link MWattsBetaSwBuilder} since it does not need to initialise
+ * {@link MSmallWorldBetaModelNetworkGenerator}, {@link MSmallWorldBetaModelNetworkGeneratorParams} 
+ * and the agent list anew  each time when adding an agent to the network. However, due to this
+ * change it may not be applied to generator different networks from the same network service!
  * 
  * @formatter:off
  * 
@@ -69,82 +67,66 @@ import de.cesr.parma.core.PmParameterManager;
  * <li>{@link MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG} (used as default {@link MoreKValueProvider} in parameter provider)</li>
  * </ul>
  *
- * TODO undirected?
- * 
- * @author holzhauer
- * @date 22.11.2011 
+ * @author Sascha Holzhauer
+ * @date 10.04.2014 
  *
  */
-public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> 
-	extends MNetworkService<AgentType, EdgeType> {
-
-		/**
-		 * @formatter:on
-		 * Logger
-		 */
-	static private Logger	logger	= Logger.getLogger(MWattsBetaSwBuilder.class);
-
-	protected String		name;
-
-	protected PmParameterManager	pm;
+public class MOneTimeWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> extends
+		MWattsBetaSwBuilder<AgentType, EdgeType> {
 
 	/**
-		 * 
-		 */
+	 * Logger
+	 */
+	static private Logger											logger	= Logger.getLogger(MOneTimeWattsBetaSwBuilder.class);
+
+	MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>	params;
+	MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>		gen;
+
+	ArrayList<AgentType>											agents;
+
+	/**
+	 * 
+	 */
 	@SuppressWarnings("unchecked")
-	public MWattsBetaSwBuilder() {
+	public MOneTimeWattsBetaSwBuilder() {
 		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
 	}
 
-	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+	public MOneTimeWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		this(eFac, "Network");
 	}
 
 	/**
 	 * @param eFac
 	 */
-	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MOneTimeWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		this(eFac, name, PmParameterManager.getInstance(null));
+	}
+
+	/**
+	 * @return
+	 * @see de.cesr.more.building.network.MNetworkService#removeNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		super.removeNode(network, node);
+		agents.remove(node);
+		return true;
 	}
 
 	/**
 	 * @param eFac
 	 */
-	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager pm) {
+	public MOneTimeWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager pm) {
 		super(eFac);
 		this.name = name;
 		this.pm = pm;
-	}
 
-	/**
-	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection) Parameters are assigned
-	 *      through the parameter framework to allow network builders to be initialises automatically.
-	 */
-	@Override
-	public MoreNetwork<AgentType, EdgeType> buildNetwork(
-			Collection<AgentType> agents) {
-
-		// <- LOGGING
-		logger.info("Building Small-World network for " + agents.size() + " agents...");
-		// LOGGING ->
-
-		checkAgentCollection(agents);
-
-		MoreNetwork<AgentType, EdgeType> network = ((Boolean) pm
-				.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
-				new MDirectedNetwork<AgentType, EdgeType>(getEdgeFactory(),
-						name) : new MUndirectedNetwork<AgentType, EdgeType>(getEdgeFactory(), name);
-
-		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
+		params =
 				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>(this.pm);
 
-		params.setNetwork(network);
 		params.setEdgeModifier(getEdgeModifier());
-
-		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
-				params);
-
-		return gen.buildNetwork(agents);
 	}
 
 	/**
@@ -155,22 +137,22 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network,
 			AgentType node) {
 
-		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
-				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>(this.pm);
-
 		params.setNetwork(network);
-		params.setEdgeModifier(getEdgeModifier());
+		if (gen == null) {
+			this.gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
+					params);
+		}
 
-
-		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
-				params);
-
-		List<EdgeType> edges = new ArrayList<EdgeType>();
-		ArrayList<AgentType> agents = new ArrayList<AgentType>();
 		Set<EdgeType> removedEdges = new HashSet<EdgeType>();
 
-		for (AgentType agent : network.getNodes()) {
-			agents.add(agent);
+		List<EdgeType> edges = new ArrayList<EdgeType>();
+
+		if (agents == null) {
+			agents = new ArrayList<AgentType>();
+
+			for (AgentType agent : network.getNodes()) {
+				agents.add(agent);
+			}
 		}
 
 		network.addNode(node);
@@ -205,6 +187,12 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 
 		// randomly rewire these links
 		for (EdgeType edge : edges) {
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Rewire edge " + edge + " (removed edges: " + removedEdges + ")");
+			}
+			// LOGGING ->
+
 			gen.rewireEdge(agents, removedEdges, edge);
 		}
 
@@ -233,15 +221,8 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 				}
 			}
 		}
+		agents.add(node);
 
 		return true;
-	}
-
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "MWattsBetaSW Network Service";
 	}
 }

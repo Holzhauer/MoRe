@@ -379,14 +379,15 @@ this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();
 * Random Numbers in MoRe
 
 	MoRe uses its own instance of {{{http://uranus4abm.sourceforge.net/javadoc/de/cesr/uranus/core/URandomService.html}
-	<<<URandomService>>>}}. Basically, it manages two different random number generators:
+	<<<URandomService>>>}}. Basically, it defines two different random number generators:
 	
 	* <<<RND_STREAM_NETWORK_BUILDING>>>
 	
 	* <<<RND_STREAM_NETWORK_DYNAMICS>>>
 	
 	
-	These streams are fed by distinct random seeds which default to <<<RANDOM_SEED>>>
+	By default, and when only a global random seed (<<<RANDOM_SEED>>>) is defined, these point to a single global random number generators (<<<RND_STREAM>>>).
+	However, these streams can be fed by distinct random seeds:	
 	
 	* <<<RANDOM_SEED_NETWORK_BUILDING>>>
 	
@@ -421,6 +422,6 @@ MManager.getURandomService().registerGenerator((String) PmParameterManager
 	Alternatively, you may register your custom random number generator and adapt the stream name parameter
 	accordingly. 
 	
-	See the {{{http://uranus4abm.sourceforge.net/}URaNuS manual} for further information, especially
-	{{{http://uranus4abm.sourceforge.net/http://uranus4abm.sourceforge.net/usage.html#Full_Flexibility}
+	See the {{{http://uranus4abm.sourceforge.net/}URaNuS manual}} for further information, especially
+	{{{http://uranus4abm.sourceforge.net/usage.html#Full_Flexibility}
 	Full Flexibility}}.

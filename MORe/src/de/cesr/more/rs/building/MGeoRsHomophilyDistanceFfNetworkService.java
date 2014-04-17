@@ -372,7 +372,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			turn++;
 
 			// <- LOGGING
-			logger.info("Enter turn " + turn + " (agents in orderedAgents: " + orderedAgents.size() + ")");
+			logger.info("Enter turn " + turn + " (agents in orderedAgents: " + orderedAgents.size()
+					+ " - some probably had degree target = 0)");
 			// LOGGING ->
 
 			for (AgentType agent : agentsToGo) {
@@ -402,9 +403,9 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					MGeoHexagon<AgentType> h = agentHexagons.get(agent);
 					if (h == null) {
 						logger.error("Agent " + agent + " is not assigned to a hexagon. " +
-								"Check that hexagon shapefile covers all agent positions!");
+								"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
 						throw new IllegalStateException("Agent " + agent + " is not assigned to a hexagon. " +
-								"Check that hexagon shapefile covers all agent positions!");
+										"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
 					}
 					for (MGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(startDistance)) {
 						potPartners.addAll(hexagon.getAgents());
@@ -985,6 +986,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
+	 * Assumes that the agent to add is already within the geography!
+	 * 
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
@@ -994,11 +997,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		int degreetarget = Math.round(this.degreeDistributions.get(new Integer(node.getMilieuGroup()))
 				.sample());
 		network.addNode(node);
-
-		if (this.geography.getGeometry(node) == null) {
-			logger.error("Node " + node + " has not been added to geography " + this.geography);
-			throw new IllegalStateException("Node " + node + " has not been added to geography " + this.geography);
-		}
 
 		Geometry nodeGeom = this.geography.getGeometry(node);
 		if (nodeGeom == null) {

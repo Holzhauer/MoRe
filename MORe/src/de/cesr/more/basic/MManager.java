@@ -100,10 +100,16 @@ public class MManager {
 							((Integer) PmParameterManager.getParameter(MRandomPa.RANDOM_SEED)).intValue()));
 		}
 
+		/*
+		 * When a generator defaults to a super-generator (same String) an alternative name is required in case of
+		 * customisation to indicate that it is now customised and may no longer point to the super-generator
+		 * (otherwise, the customized generator would overwrite the super-generator).
+		 */
+
 		// init random streams if not done before, but only if random seed is customized:
 		if (PmParameterManager.isCustomised(MRandomPa.RANDOM_SEED_NETWORK_BUILDING) &&
-				(!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_BUILDING) ||
-				!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
+				!(PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_BUILDING) &&
+				getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
 						MRandomPa.RND_STREAM_NETWORK_BUILDING)))) {
 
 			PmParameterManager.setParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING,
@@ -128,8 +134,8 @@ public class MManager {
 
 		// init random streams if not done before:
 		if (PmParameterManager.isCustomised(MRandomPa.RANDOM_SEED_NETWORK_DYNAMICS) &&
-				(!PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_DYNAMICS) ||
-				!getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
+				!(PmParameterManager.isCustomised(MRandomPa.RND_STREAM_NETWORK_DYNAMICS) &&
+				getURandomService().isGeneratorRegistered((String) PmParameterManager.getParameter(
 						MRandomPa.RND_STREAM_NETWORK_DYNAMICS)))) {
 
 			PmParameterManager.setParameter(MRandomPa.RND_STREAM_NETWORK_DYNAMICS,

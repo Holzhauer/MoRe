@@ -483,9 +483,9 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 	public void rewireEdge(ArrayList<AgentType> list, Set<E> removedEdges, E edge) {
 		if (!removedEdges.contains(edge)) {
 			AgentType start = this.isConsiderSources ?
-					edge.getStart() : edge.getEnd();
-			AgentType end = this.isConsiderSources ?
 					edge.getEnd() : edge.getStart();
+			AgentType end = this.isConsiderSources ?
+					edge.getStart() : edge.getEnd();
 
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {

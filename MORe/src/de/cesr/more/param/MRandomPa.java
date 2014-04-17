@@ -110,12 +110,27 @@ public enum MRandomPa implements PmParameterDefinition {
 		}
 	}
 	
+	/**
+	 * When a generator defaults to a super-generator (same String) an alternative name is required in case of
+	 * customisation to indicate that it is now customised and may no longer point to the super-generator (otherwise,
+	 * the customized generator would overwrite the super-generator).
+	 */
 	final public static String	RND_STREAM_NETWORK_BUILDING_CUSTOMISED			=
 																				"MoRe Random Stream Network Building customised";
 
+	/**
+	 * When a generator defaults to a super-generator (same String) an alternative name is required in case of
+	 * customisation to indicate that it is now customised and may no longer point to the super-generator (otherwise,
+	 * the customized generator would overwrite the super-generator).
+	 */
 	final public static String	RND_STREAM_NETWORK_DYNAMICS_CUSTOMISED			=
 																				"MoRe Random Stream Network Dynamics customised";
 
+	/**
+	 * When a generator defaults to a super-generator (same String) an alternative name is required in case of
+	 * customisation to indicate that it is now customised and may no longer point to the super-generator (otherwise,
+	 * the customized generator would overwrite the super-generator).
+	 */
 	final public static String	RND_STREAM_RANDOM_NETWORK_BUILDING_CUSTOMISED	=
 																				"MoRe Random Stream Random Network Building customised";
 
