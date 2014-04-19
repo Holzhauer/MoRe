@@ -11,7 +11,7 @@
     </style>
     <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
       <meta name="author" content="Sascha Holzhauer" />
-    <meta name="Date-Creation-yyyymmdd" content="20140226" />
+    <meta name="Date-Creation-yyyymmdd" content="20140417" />
     <meta name="Date-Revision-yyyymmdd" content="20140417" />
     <meta http-equiv="Content-Language" content="en" />
         
@@ -61,6 +61,9 @@
                           <a href="features.html" title="Features">Features</a>
             </li>
                   <li class="none">
+                          <a href="changes.html" title="Changes">Changes</a>
+            </li>
+                  <li class="none">
                           <a href="https://sourceforge.net/projects/more4abm/files" class="externalLink" title="Downloads">Downloads</a>
             </li>
                   <li class="none">
@@ -108,6 +111,12 @@
                   <li class="none">
                           <a href="http://lara-framework.sourceforge.net" class="externalLink" target="new" title="LARA">LARA</a>
             </li>
+          </ul>
+                       <h5>Project Documentation</h5>
+                  <ul>
+                                                                                                                                                              <li class="collapsed">
+                          <a href="project-info.html" title="Project Information">Project Information</a>
+                  </li>
           </ul>
                              <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
         <img class="poweredBy" alt="Built by Maven" src="./images/logos/maven-feather.png" />
@@ -241,7 +250,7 @@ netMan.addMeasureCalculation(net, MCentralityNetMSupplier.Short.NET_CEN_DEGREE.g
 </pre></div><p>To influence the random number generation of certain parts of MoRe change the according random number seed, e.g.:</p><div class="source"><pre>PmParameterManager.setParameter(MRandomPa.RANDOM_SEED_NETWORK_BUILDING, new Integer(2));
 </pre></div><p>Furthermore, it is possible to register custom random number generators for a certain part of MoRe:</p><div class="source"><pre>MManager.getURandomService().registerGenerator((String) PmParameterManager
         .getParameter(MRandomPa.RND_STREAM_NETWORK_BUILDING), new MersenneTwister(3));
-</pre></div><p>Alternatively, you may register your custom random number generator and adapt the stream name parameter accordingly. </p><p>See the <a class="externalLink" href="http://uranus4abm.sourceforge.net/">URaNuS manual</a> for further information, especially <a class="externalLink" href="http://uranus4abm.sourceforge.net/http://uranus4abm.sourceforge.net/usage.html#Full_Flexibility"> Full Flexibility</a>.</p></li></ul></div></div>
+</pre></div><p>Alternatively, you may register your custom random number generator and adapt the stream name parameter accordingly. </p><p>See the <a class="externalLink" href="http://uranus4abm.sourceforge.net/">URaNuS manual</a> for further information, especially <a class="externalLink" href="http://uranus4abm.sourceforge.net/usage.html#Full_Flexibility"> Full Flexibility</a>.</p></li></ul></div></div>
       </div>
     </div>
     <div class="clear">

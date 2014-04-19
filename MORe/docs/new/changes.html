@@ -11,7 +11,7 @@
     </style>
     <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
       <meta name="author" content="Sascha Holzhauer" />
-    <meta name="Date-Creation-yyyymmdd" content="20120604" />
+    <meta name="Date-Creation-yyyymmdd" content="20140417" />
     <meta name="Date-Revision-yyyymmdd" content="20140417" />
     <meta http-equiv="Content-Language" content="en" />
         
@@ -61,8 +61,8 @@
                           <a href="features.html" title="Features">Features</a>
             </li>
                   <li class="none">
-                          <a href="changes.html" title="Changes">Changes</a>
-            </li>
+            <strong>Changes</strong>
+          </li>
                   <li class="none">
                           <a href="https://sourceforge.net/projects/more4abm/files" class="externalLink" title="Downloads">Downloads</a>
             </li>
@@ -91,8 +91,8 @@
                           <a href="networkGeneration.html" title="Network Generation">Network Generation</a>
             </li>
                   <li class="none">
-            <strong>Network Processors</strong>
-          </li>
+                          <a href="networkProcessors.html" title="Network Processors">Network Processors</a>
+            </li>
                   <li class="none">
                           <a href="geographies.html" title="Geographies">Geographies</a>
             </li>
@@ -127,22 +127,7 @@
     </div>
     <div id="bodyColumn">
       <div id="contentBox">
-        <div class="section"><h2>Using Network Processors<a name="Using_Network_Processors"></a></h2><ul><li><a href="#Introduction">Introduction</a></li><li><a href="#Events_and_Processors">Events and Processors</a></li><li><a href="#Requirements_for_using_network_processors">Requirements for using network processors</a></li></ul><div class="section"><h3>Introduction<a name="Introduction"></a></h3><p>Network processors allow to manipulate network links according to differences between partners regarding some node property. There is an agent component (<tt>MEgoNetworkManagerComp</tt>) that takes care of updating link weights and removing and establishing links if required.</p></div><div class="section"><h3>Events and Processors<a name="Events_and_Processors"></a></h3><p>Predefined <tt>MoreEgoNetworkEvent</tt>s:</p><ul><li><tt>MLinkManagingEvent</tt>: Handles removing and creation of new links.</li><li><tt>MLinkWeightUpdatingEvent</tt>: Updates link weights.<p>Predefined Processors</p></li><li><tt>MThresholdWeightProcessor</tt>: In case the node properties undergo a certain threshold (<tt>MNetManipulatePa#DYN_INCREASE_THRESHOLD</tt>), weights are increased by <tt>MNetManipulatePa#DYN_INCREASE_AMOUNT</tt>. As the opposite, if properties exceed a threshold <tt>MNetManipulatePa#DYN_INCREASE_THRESHOLD</tt>), weights get decreased by <tt>MNetManipulatePa#DYN_DECREASE_THRESHOLD</tt>.</li><li><tt>MThresholdLinkProcessor</tt>:</li><li><tt>MMilieuThresholdWeightProcessor</tt>: Considers milieu-specific parameter values for thresholds and change amounts.</li></ul></div><div class="section"><h3>Requirements for using network processors<a name="Requirements_for_using_network_processors"></a></h3><ul><li>Agents need to be assigned the <tt>MEgoNetworkManagerComp</tt>.</li><li>Agents need to implement <tt>MoreNetStructureManageable</tt> that provides access to the <tt>MEgoNetworkManagerComp</tt>.</li><li>The network processor component is initialised...<div class="source"><pre>Map&lt;MoreEgoNetworkEvent, MoreEgoNetworkProcessor&lt;V, E&gt;&gt; map = MEgoNetworkManagerComp
-                        .getEmptyProcessorMap();
-
-MoreNetworkEdgeModifier&lt;V, E&gt; edgeModifier = new MDefaultNetworkEdgeModifier&lt;V; E&gt;(new MDefaultEdgeFactory&lt;V&gt;());
-
-map.put(MLinkManagingEvent.getInstance(),
-                (Class&lt;MoreEgoNetworkProcessor&lt;V, E&gt;&gt;) DYN_EDGE_MANAGER);
-map.put(MLinkWeightUpdatingEvent.getInstance(),
-                ((Class&lt;MoreEgoNetworkProcessor&lt;V, E&gt;&gt;&gt;) DYN_EDGE_WEIGHT_UPDATER);
-
-MoreEgoNetworkManagerComp&lt;V, E&gt; egoNetManager = new MEgoNetworkManagerComp&lt;V, E&gt;(map);
-</pre></div></li><li>... and assigned to all agents:<div class="source"><pre>for (V agent : agents) {
-        agent.setEgoNetworkManager(egoNetManager);
-}
-</pre></div></li><li>Agents need to call regularly the agent component's process method for certain events:<div class="source"><pre>getEgoNetworkManager().process(MLinkManagingEvent.getInstance(), this, getMainNetwork());
-</pre></div></li><li>Analysis<p>In case an agent implements <tt>MoreLinkManipulationAnalysableAgent</tt>, some processors (e.g. <tt>MBlacklistThresholdLinkProcessor</tt> provide information about link manipulations.</p></li></ul></div></div>
+        <div class="section"><h2>Changes in version 0.86<a name="Changes_in_version_0.86"></a></h2><ul><li>BugFix: MGeoRsHomophilyDistanceFfNetworkService (adding and linking new nodes)</li><li>BugFix: MGeoRsHomophilyDistanceFfNetworkService (fixing exceeding degree targets)</li><li>BugFix: MGeoRsHomophilyDistanceFfNetworkService (enable directed networks)</li><li>BugFix: MGeoRsHomophilyDistanceFfNetworkService (guarantee determined randomization)</li><li>BugFix: MWeibullDistanceDistribution#cumulativeProbability()</li><li>BugFix: MWeibullDistanceDistribution#inverseCumulativeProbability()</li><li>Bugfix: MMilieuNetLinkDataCsvReader (milieu indices)</li><li>BugFix: concurrent modification error in MNertworkService#removeNode()</li><li>BugFix: MSmallWorldBetaModelNetworkGenerator#rewireEdge() (start and end node were mixed up)</li><li>Feature added: More efficient one-time network service for Watts-beta ()</li><li>Feature added: MGeoHomophilyDistanceFfNetworkService</li><li>Feature added: MRestoreNetworkBuilder</li><li>Feature added: MRestoreNetworkService (refers to another network service that deals adding new nodes, added MNetworkBuilderPa#MAINTAINING_NETWORK_SERVICE)</li><li>Feature added: MGeoRestoreNetworkService</li><li>Feature added: integrate PmParameterManager instance approach into MSmallWorldBetaModelNetworkGenerator, MNetworkService</li><li>Feature added: MWattsBetaSwMilieuBuilder</li><li>Feature added: MOneTimeWattsBetaSwBuilder (more efficient than MWattsBetaSwBuilder)</li><li>Feature added: MLinearLocalWeibullDistanceDistribution</li><li>Feature added: network level measure NET_MOD_INFOMAP_UNDIRECTED</li><li>Feature added: MNetworkModularityR#getModularityR() added support for directed network for fast greedy modularity algorithm (converted to undirected)</li><li>Major change: IMPORTANT: MNetworkBuildingPa#ADD_EDGES_TO_GEOGRAPHY: setting default to false</li><li>Major change: added MoreContextMilieuAgent (moved getParentContext() there from MoreMilieuAgent)</li><li>Major change: rename MNetManipulatePa#DYN_PROB_RECIPROCITY, MNetManipulatePa#DYN_PROB_GLOBAL, MNetManipulatePa#DYN_PROB_LOCAL, and MNetManipulatePa#DYN_PROB_TRANSITIVITY (from misspelled *_PROP_* names)</li><li>Major change: moved parameter P_MILIEUS to MNetowrkBuildingPa</li><li>Medium change: Doc for MGeoRsHomophilyDistanceFfNetworkService</li><li>Medium change: Doc for measure supplier implementation</li><li>Medium change: Refactoring in package assignment of some geo classes </li><li>Medium change: MGeoHexagon &gt; improve determined-randomisation</li><li>Medium change: added MGeoEdge</li><li>Medium change: added MGeoNetworkEdgeModifier</li></ul></div>
       </div>
     </div>
     <div class="clear">

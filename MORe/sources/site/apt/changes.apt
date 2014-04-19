@@ -1,0 +1,70 @@
+	----------------
+	MoRe
+	----------------
+	Sascha Holzhauer
+	----------------
+	2014-04-17
+	
+Changes in version 0.86
+
+ * BugFix: MGeoRsHomophilyDistanceFfNetworkService (adding and linking new nodes)
+ 
+ * BugFix: MGeoRsHomophilyDistanceFfNetworkService (fixing exceeding degree targets)
+ 
+ * BugFix: MGeoRsHomophilyDistanceFfNetworkService (enable directed networks)
+ 
+ * BugFix: MGeoRsHomophilyDistanceFfNetworkService (guarantee determined randomization)
+ 
+ * BugFix: MWeibullDistanceDistribution#cumulativeProbability()
+ 
+ * BugFix: MWeibullDistanceDistribution#inverseCumulativeProbability()
+ 
+ * Bugfix: MMilieuNetLinkDataCsvReader (milieu indices)
+ 
+ * BugFix: concurrent modification error in MNertworkService#removeNode()
+ 
+ * BugFix: MSmallWorldBetaModelNetworkGenerator#rewireEdge() (start and end node were mixed up)
+ 
+ * Feature added: More efficient one-time network service for Watts-beta ()
+ 
+ * Feature added: MGeoHomophilyDistanceFfNetworkService
+ 
+ * Feature added: MRestoreNetworkBuilder
+
+ * Feature added: MRestoreNetworkService (refers to another network service that deals adding new nodes, added MNetworkBuilderPa#MAINTAINING_NETWORK_SERVICE)
+ 
+ * Feature added: MGeoRestoreNetworkService
+
+ * Feature added: integrate PmParameterManager instance approach into MSmallWorldBetaModelNetworkGenerator,
+   MNetworkService
+ 
+ * Feature added: MWattsBetaSwMilieuBuilder
+ 
+ * Feature added: MOneTimeWattsBetaSwBuilder (more efficient than MWattsBetaSwBuilder)
+ 
+ * Feature added: MLinearLocalWeibullDistanceDistribution
+ 
+ * Feature added: network level measure NET_MOD_INFOMAP_UNDIRECTED
+ 
+ * Feature added: MNetworkModularityR#getModularityR() added support for directed network for fast greedy modularity algorithm (converted to undirected)
+ 
+ * Major change: IMPORTANT: MNetworkBuildingPa#ADD_EDGES_TO_GEOGRAPHY: setting default to false
+ 
+ * Major change: added MoreContextMilieuAgent (moved getParentContext() there from MoreMilieuAgent)
+ 
+ * Major change: rename MNetManipulatePa#DYN_PROB_RECIPROCITY, MNetManipulatePa#DYN_PROB_GLOBAL, MNetManipulatePa#DYN_PROB_LOCAL, and
+   MNetManipulatePa#DYN_PROB_TRANSITIVITY (from misspelled *_PROP_* names)
+   
+ * Major change: moved parameter P_MILIEUS to MNetowrkBuildingPa
+ 
+ * Medium change: Doc for MGeoRsHomophilyDistanceFfNetworkService
+ 
+ * Medium change: Doc for measure supplier implementation
+ 
+ * Medium change: Refactoring in package assignment of some geo classes 
+ 
+ * Medium change: MGeoHexagon > improve determined-randomisation
+ 
+ * Medium change: added MGeoEdge
+ 
+ * Medium change: added MGeoNetworkEdgeModifier

@@ -7,7 +7,8 @@
  	
  	<property file="../../project.properties"/>
  	
- 	<property name="dest_dir" location="//Usf/home/holzhauer/Generell/Releases/MoRe/" />
+ 	<!--property name="dest_dir" location="//Usf/home/holzhauer/Generell/Releases/MoRe/" /-->
+ 	<property name="dest_dir" location="C:\Users\holzhauer\Desktop\WORK\Generell\Releases\MoRe" />
  	
  	<property name="src_java_dir" location="../../" />
  	<property name="src_doc_dir" location="../../doc" />
@@ -173,7 +174,7 @@
 		/>
  	</target>
 			
- 	<target name="copySiteOnly2sourceforge" depends="queryPassword, make_website, Make_SVG">
+ 	<target name="copySiteOnly2sourceforge" depends="queryPassword, make_website">
  		<!--sshexec host="${remote_host}"
  						username="${user}"
  						password="${passphrase}"

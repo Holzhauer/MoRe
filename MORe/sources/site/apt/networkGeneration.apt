@@ -3,7 +3,7 @@
 	----------------
 	Sascha Holzhauer
 	----------------
-	2014-02-27
+	2014-04-17
 
 %{toc|section=0|fromDepth=1|toDepth=3}
 
@@ -104,6 +104,9 @@ Using Network Generators
 	Hexagon shapefiles are required to determine distances between agents. Since the size of hexagons
 	depends on the simulation region and desired performance, often according hexagon shapefiles
 	need to be created anew (and the filename assigned to parameter <<<MNetBuildHdffPa#HEXAGON_SHAPEFILE>>>:
+	
+	NOTE: The hexagon shapefile must cover all agent positions and should not be much larger since it is used to calculated 
+	the area's diameter which is used to initialised the distance distributions! 
 	
 	[[1]] Download and install {{{http://www.qgis.org}QuantumGIS}}
 	

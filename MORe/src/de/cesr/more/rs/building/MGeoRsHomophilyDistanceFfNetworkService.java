@@ -116,7 +116,8 @@ import de.cesr.parma.core.PmParameterManager;
  * </ol>
  * </li>
  * </ol>
- * See <a href="../networkGeneration.html">MoRe Network Building</a> for a guide to create hexagon shapefiles.
+ * See <a href="../../../../../../networkGeneration.html">MoRe Network Building</a> for a guide to create hexagon
+ * shapefiles.
  * 
  * The class is such constructed that it enables the building of several networks with same parameters one after
  * another.

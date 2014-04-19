@@ -70,6 +70,9 @@ public class MNetworkModularityR {
 	static private Logger	logger	= Logger.getLogger(MNetworkModularityR.class);
 
 	/**
+	 * Return the modularity measure calculated by the community detection method call. Only when an argumentString with
+	 * length larger 0 is given, the method modularity(graph, community, argumentString) is called.
+	 * 
 	 * @param <V>
 	 * @param <E>
 	 * @param graph
@@ -105,7 +108,11 @@ public class MNetworkModularityR {
 			re.eval("if(is.directed(g)) g = as.undirected(g, mode=\"collapse\")");
 		}
 		re.eval("community =	" + communityDetection + "(g)");
-		result = re.eval("modularity(community" + (argumentString.length() > 0 ? ", " : "") + argumentString + ")");
+		if (argumentString.length() > 0) {
+			result = re.eval("modularity(g, community" + ", " + argumentString + ")");
+		} else {
+			result = re.eval("modularity(community)");
+		}
 		logger.info("Result: " + result);
 		return result.asDouble();
 	}
