@@ -109,7 +109,7 @@ public class MNetworkModularityR {
 		}
 		re.eval("community =	" + communityDetection + "(g)");
 		if (argumentString.length() > 0) {
-			result = re.eval("modularity(g, community" + ", " + argumentString + ")");
+			result = re.eval("modularity(g, membership(community), " + argumentString + ")");
 		} else {
 			result = re.eval("modularity(community)");
 		}
