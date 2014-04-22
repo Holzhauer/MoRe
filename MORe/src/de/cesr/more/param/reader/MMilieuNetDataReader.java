@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildHdffPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MSqlPa;
 import de.cesr.more.util.MMySqlService;
@@ -137,10 +138,13 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 
 					if (colNames.contains("DIM_WEIGHT_GEO")) {
 						map.setDimWeightGeo(milieu, result.getDouble("DIM_WEIGHT_GEO"));
+						map.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu, result.getDouble("DIM_WEIGHT_GEO"));
 					}
 
 					if (colNames.contains("DIM_WEIGHT_MILIEU")) {
 						map.setDimWeightMilieu(milieu, result.getDouble("DIM_WEIGHT_MILIEU"));
+						map.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu,
+								result.getDouble("DIM_WEIGHT_MILIEU"));
 					}
 
 					if (colNames.contains("DYN_DECREASE_AMOUNT")) {
