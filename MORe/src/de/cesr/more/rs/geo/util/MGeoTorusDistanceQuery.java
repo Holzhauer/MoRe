@@ -33,10 +33,11 @@ import org.geotools.geometry.jts.JTS;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.opengis.spatialschema.geometry.MismatchedDimensionException;
+
 
 import repast.simphony.query.space.gis.AbstractGeometryQuery;
 import repast.simphony.space.gis.Geography;

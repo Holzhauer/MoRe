@@ -2,30 +2,23 @@
 <classpath>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Repast S"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libs/collections-generic-4.01.jar"/>
 	<classpathentry kind="lib" path="libs/colt-1.2.0.jar"/>
-	<classpathentry kind="lib" path="libs/geoapi-nogenerics-2.1-M2.jar"/>
-	<classpathentry kind="lib" path="libs/gt2-epsg-wkt-2.3.3.jar"/>
-	<classpathentry kind="lib" path="libs/gt2-main-2.3.3.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/gt2-2.3.3/module/main/src"/>
-	<classpathentry kind="lib" path="libs/gt2-referencing-2.3.3.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/gt2-2.3.3/module/referencing/src"/>
 	<classpathentry kind="lib" path="libs/JRI.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/holzhauer/Documents/R/win-library/3.01/rJava/jri/x64"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/sholzhau/Documents/R/win-library/3.1/rJava/jri/x64"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/jscience.jar"/>
-	<classpathentry kind="lib" path="libs/jts-1.7.1.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/jts-1.7.1/src"/>
 	<classpathentry kind="lib" path="libs/jung-algorithms-2.0.1.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/JUNG_2.0.1/src/jung-algorithms-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-api-2.0.1.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/jung/jung-api-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-graph-impl-2.0.1.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/jung/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-io-2.0.1.jar" sourcepath="C:/Sascha/General/Software/JavaLibraries/JUNG_2.0.1/src/jung-io-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="libs/ParMa.jar"/>
-	<classpathentry kind="lib" path="libs/repast.simphony.bin_and_src.jar"/>
 	<classpathentry kind="lib" path="libs/saf.core.runtime.jar"/>
 	<classpathentry kind="lib" path="libs/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/units-0.01.jar"/>
@@ -35,5 +28,17 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/LARA_Base"/>
 	<classpathentry kind="lib" path="libs/commons-math3-3.2.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/commons-math3-3.2/commons-math3-3.2-sources.jar"/>
 	<classpathentry kind="lib" path="libs/javacsv.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/javaCSV/src"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-api-9.0.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-epsg-wkt-9.0.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-main-9.0.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-referencing-9.0.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-shapefile-9.0.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/jts-1.13.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-opengis-9.0.jar" sourcepath="C:/Data/General/JavaLibraries/geotools-9.0/modules/library/opengis/src/main/java"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/jscience.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-metadata-9.0.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/repast.simphony.bin_and_src.jar"/>
+	<classpathentry kind="lib" path="libs/RS-2.1.0/gt-data-9.0.jar"/>
+	<classpathentry kind="lib" path="C:/Data/General/JavaLibraries/jai-1_1_3/lib/jai_core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

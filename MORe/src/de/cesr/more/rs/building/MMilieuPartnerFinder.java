@@ -1,24 +1,24 @@
 /**
  * This file is part of
- * 
+ *
  * MORe - Managing Ongoing Relationships
  *
  * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
- * 
- * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ *
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute
  * it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- *  
+ *
  * MORe - Managing Ongoing Relationships is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Center for Environmental Systems Research, Kassel
- * 
+ *
  * Created by Sascha Holzhauer on 02.04.2012
  */
 package de.cesr.more.rs.building;
@@ -46,7 +46,7 @@ import edu.uci.ics.jung.graph.Graph;
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 02.04.2012 
+ * @date 02.04.2012
  *
  */
 public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType extends MoreEdge<? super AgentType>>
@@ -101,7 +101,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	/**
 	 * TODO black list does not work correctly if no agent can be found in list!
-	 * 
+	 *
 	 * @param agents
 	 * @param graph
 	 * @param focal
@@ -118,7 +118,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		} else {
 			list = new ArrayList<AgentType>(agents);
 		}
-		
+
 		Collection<AgentType> blacklist = new HashSet<AgentType>();
 		if (list.contains(focal)) {
 			blacklist.add(focal);
@@ -129,7 +129,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 				blacklist.add(predecessor);
 			}
 		}
-		
+
 		assert list.size() >= blacklist.size();
 
 		// <- LOGGING
@@ -228,7 +228,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		double randFloat = getRandomDist().nextDouble();
 		if (randFloat < 0.0 || randFloat > 1.0) {
 			throw new IllegalStateException(rand
-					+ "> Make sure min = 0.0 and max = 1.0");
+					+ "> Make sure min = 0.0 and max = 1.0 (random number was " + randFloat + ")");
 		}
 
 		float pointer = 0.0f;
@@ -240,10 +240,10 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		}
 		if (pointer < 1.0) {
 			// <- LOGGING
-			logger.error("Partner link probabilities do not sum up to 1.0 for milieu " + focus.getMilieuGroup() + "!");
+			logger.error("Partner link probabilities do not sum up to 1.0 (but " + pointer + ") for milieu " + focus.getMilieuGroup() + "!");
 			// LOGGING ->
 			throw new IllegalParameterException(
-					"Partner link probabilities do not sum up to 1.0 for milieu " + focus.getMilieuGroup() + "!");
+					"Partner link probabilities do not sum up to 1.0 (but " + pointer + ") for milieu " + focus.getMilieuGroup() + "!");
 
 		}
 		throw new IllegalStateException("This code should never be reached!");
@@ -251,7 +251,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	/**
 	 * Returns false if source is already a successor of target. Otherwise, the milieu is checked based on paraMap.
-	 * 
+	 *
 	 * @param network
 	 * @param paraMap
 	 * @param ego
@@ -280,7 +280,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	/**
 	 * Potential partner's milieu is checked based on probabilities in paraMap. Does not check if the potential partner
 	 * is already connected to ego!
-	 * 
+	 *
 	 * @param paraMap
 	 * @param ego
 	 * @param potPartner

@@ -24,7 +24,7 @@
 package de.cesr.more.basic.agent;
 
 
-import javax.units.SI;
+import javax.measure.unit.SI;
 
 import org.apache.log4j.Logger;
 

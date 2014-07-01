@@ -1,24 +1,24 @@
 /**
  * This file is part of
- * 
+ *
  * MORe - Managing Ongoing Relationships
  *
  * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
- * 
- * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ *
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute
  * it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- *  
+ *
  * MORe - Managing Ongoing Relationships is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Center for Environmental Systems Research, Kassel
- * 
+ *
  * Created by Sascha Holzhauer on 06.03.2014
  */
 package de.cesr.more.building.network;
@@ -28,9 +28,7 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
-import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MUndirectedNetwork;
@@ -41,7 +39,6 @@ import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.MDefaultPartnerFinder;
 import de.cesr.more.rs.building.MGeoRsWattsBetaSwBuilder.MSmallWorldBetaModelNetworkGeneratorMilieuParams;
 import de.cesr.more.rs.building.MMilieuPartnerFinder;
@@ -54,7 +51,7 @@ import edu.uci.ics.jung.graph.Graph;
  * MORe
  *
  * @author Sascha Holzhauer
- * @date 06.03.2014 
+ * @date 06.03.2014
  *
  */
 public class MWattsBetaSwMilieuBuilder<AgentType extends MoreMilieuAgent, EdgeType extends MoreEdge<AgentType>>
@@ -68,7 +65,7 @@ public class MWattsBetaSwMilieuBuilder<AgentType extends MoreMilieuAgent, EdgeTy
 	protected Uniform		rand;
 
 	/**
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	public MWattsBetaSwMilieuBuilder() {
@@ -89,12 +86,16 @@ public class MWattsBetaSwMilieuBuilder<AgentType extends MoreMilieuAgent, EdgeTy
 	/**
 	 * @param eFac
 	 */
-	public MWattsBetaSwMilieuBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager pm) {
+	public MWattsBetaSwMilieuBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager param) {
 		super(eFac);
 		this.name = name;
-		this.pm = pm;
+		this.pm = param;
 	}
 
+	/**
+	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection) Parameters are assigned
+	 *      through the parameter framework to allow network builders to be initialised automatically.
+	 */
 	@Override
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(
 			Collection<AgentType> agents) {
@@ -105,20 +106,7 @@ public class MWattsBetaSwMilieuBuilder<AgentType extends MoreMilieuAgent, EdgeTy
 
 		checkAgentCollection(agents);
 
-		AbstractDistribution abstractDis = MManager
-				.getURandomService()
-				.getDistribution(
-						(String) PmParameterManager
-								.getParameter(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING));
-
-		if (abstractDis instanceof Uniform) {
-			this.rand = (Uniform) abstractDis;
-		} else {
-			this.rand = MManager.getURandomService().getUniform();
-			logger.warn("Use default uniform distribution");
-		}
-
-		final MoreNetwork<AgentType, EdgeType> network = ((Boolean) pm
+		final MoreNetwork<AgentType, EdgeType> network = ((Boolean) this.pm
 				.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 				new MDirectedNetwork<AgentType, EdgeType>(getEdgeFactory(),
 						name) : new MUndirectedNetwork<AgentType, EdgeType>(getEdgeFactory(), name);
@@ -139,7 +127,7 @@ public class MWattsBetaSwMilieuBuilder<AgentType extends MoreMilieuAgent, EdgeTy
 			}
 		});
 
-		
+
 
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
 				params);

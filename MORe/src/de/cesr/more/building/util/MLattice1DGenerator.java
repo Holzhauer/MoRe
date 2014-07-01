@@ -1,28 +1,27 @@
 /**
  * This file is part of
- * 
+ *
  * MORe - Managing Ongoing Relationships
  *
  * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
- * 
- * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ *
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute
  * it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- *  
+ *
  * MORe - Managing Ongoing Relationships is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Center for Environmental Systems Research, Kassel
- * 
+ *
  * Created by Sascha Holzhauer on 24.01.2011
  */
 package de.cesr.more.building.util;
-
 
 
 import java.util.ArrayList;
@@ -43,18 +42,18 @@ import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe
- * 
+ *
  * Considers {@link MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES} (this class is mainly used by
  * {@link MSmallWorldBetaModelNetworkGenerator}).
- * 
+ *
  * NOTE: For undirected networks, the k provider values are not fully respected (because of links from other nodes that
  * increase in-degree)
- * 
+ *
  * TODO (see NOTE, also check if it is possible to distribute links across nodes to satisfy k provider values)
- * 
+ *
  * @author Sascha Holzhauer
  * @date 24.01.2011
- * 
+ *
  */
 public class MLattice1DGenerator<V, E extends MoreEdge<? super V>> implements GraphGenerator<V, E> {
 	protected int								numVertices;
@@ -67,7 +66,7 @@ public class MLattice1DGenerator<V, E extends MoreEdge<? super V>> implements Gr
 	protected MoreNetworkEdgeModifier<V, E>			edge_modifier;
 	protected boolean							considerSource;
 	private List<V>								v_array;
-	
+
 	/**
 	 * Logger
 	 */
@@ -76,7 +75,7 @@ public class MLattice1DGenerator<V, E extends MoreEdge<? super V>> implements Gr
 
 	/**
 	 * Constructs a generator of square lattices of size {@code latticeSize} with the specified parameters.
-	 * 
+	 *
 	 * @param graph_factory
 	 *        used to create the {@code Graph} for the lattice
 	 * @param vertex_factory
@@ -116,6 +115,11 @@ public class MLattice1DGenerator<V, E extends MoreEdge<? super V>> implements Gr
 		int vertex_count = numVertices;
 		MoreNetwork<V, E> graph = graph_factory.create();
 		v_array = new ArrayList<V>(vertex_count);
+
+		// <- LOGGING
+		logger.info(this + "> Add nodes...");
+		// LOGGING ->
+
 		for (int i = 0; i < vertex_count; i++) {
 			V v = vertex_factory.create();
 			graph.addNode(v);
@@ -131,6 +135,14 @@ public class MLattice1DGenerator<V, E extends MoreEdge<? super V>> implements Gr
 		// clockwise:
 		for (int i = 0; i < numVertices; i++) {
 			// degree <= |nodes| !
+
+			// <- LOGGING
+			if ((i + 1) % (numVertices / 10) == 0) {
+				logger.info("Connect nodes clockwise (" + Math.round((i + 1.0) /
+						(numVertices / 100.0)) + " %)...");
+			}
+			// LOGGING ->
+
 			if (kProvider.getKValue(v_array.get(i)) > graph.numNodes()) {
 				String msg = "Degree/K value (" + kProvider.getKValue(v_array.get(i))
 						+ ") may not exceed the number of nodes ("
@@ -153,7 +165,16 @@ public class MLattice1DGenerator<V, E extends MoreEdge<? super V>> implements Gr
 		// if the graph is directed, fill in the edges going the other direction...
 		if (graph.isDirected()) {
 			// counter-clockwise
+
 			for (int i = 0; i < numVertices; i++) {
+
+				// <- LOGGING
+				if ((i + 1) % (numVertices / 10) == 0) {
+					logger.info("Connect nodes counter-clockwise (" + Math.round((i + 1.0) /
+							(numVertices / 100.0)) + "%)...");
+				}
+				// LOGGING ->
+
 				for (int j = 1; j <= kProvider.getKValue(v_array.get(i)) * 0.5; j++) {
 					if (is_toroidal || (!is_toroidal && i - j >= 0)) {
 						start = this.considerSource ? i : i - j;

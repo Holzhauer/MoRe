@@ -1,24 +1,24 @@
 /**
  * This file is part of
- * 
+ *
  * MORe - Managing Ongoing Relationships
  *
  * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
- * 
- * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ *
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute
  * it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- *  
+ *
  * MORe - Managing Ongoing Relationships is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Center for Environmental Systems Research, Kassel
- * 
+ *
  * Created by holzhauer on 22.11.2011
  */
 package de.cesr.more.building.network;
@@ -50,9 +50,9 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
- * 
+ *
  * @formatter:off
- * 
+ *
  * <table>
  * <th>Parameter</th><th>Value</th>
  * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
@@ -70,12 +70,12 @@ import de.cesr.parma.core.PmParameterManager;
  * </ul>
  *
  * TODO undirected?
- * 
+ *
  * @author holzhauer
- * @date 22.11.2011 
+ * @date 22.11.2011
  *
  */
-public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> 
+public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>>
 	extends MNetworkService<AgentType, EdgeType> {
 
 		/**
@@ -86,10 +86,8 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 
 	protected String		name;
 
-	protected PmParameterManager	pm;
-
 	/**
-		 * 
+		 *
 		 */
 	@SuppressWarnings("unchecked")
 	public MWattsBetaSwBuilder() {
@@ -110,10 +108,10 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 	/**
 	 * @param eFac
 	 */
-	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager pm) {
+	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager param) {
 		super(eFac);
 		this.name = name;
-		this.pm = pm;
+		this.pm = param;
 	}
 
 	/**
@@ -130,12 +128,12 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 
 		checkAgentCollection(agents);
 
-		MoreNetwork<AgentType, EdgeType> network = ((Boolean) pm
+		final MoreNetwork<AgentType, EdgeType> network = ((Boolean) this.pm
 				.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 				new MDirectedNetwork<AgentType, EdgeType>(getEdgeFactory(),
 						name) : new MUndirectedNetwork<AgentType, EdgeType>(getEdgeFactory(), name);
 
-		MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
+		final MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType> params =
 				new MSmallWorldBetaModelNetworkGeneratorParams<AgentType, EdgeType>(this.pm);
 
 		params.setNetwork(network);

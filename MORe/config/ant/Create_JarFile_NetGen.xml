@@ -3,7 +3,7 @@
 <project default="MoRe-jar-creation">
 	
 	
-	<property name="dir_target" value="${basedir}/../../../NetworkGenerator/libs" />
+	<property name="dir_target" value="${basedir}/../../../../../Dis/workspace/NetworkGenerator/libs" />
 	<property name="svn.info.rev" value="NOT DEFINED" />
 	
 	<property file="../../project.properties"/>

@@ -1,19 +1,19 @@
 /**
  * This file is part of
- * 
+ *
  * MORe - Managing Ongoing Relationships
  *
  * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
- * 
- * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ *
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute
  * it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- *  
+ *
  * MORe - Managing Ongoing Relationships is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -31,12 +31,13 @@ import de.cesr.parma.core.PmParameterDefinition;
 /**
  * Basic parameter definitions for MORe (e.g. Torus boundaries)
  * @author Sascha Holzhauer
- * @date 29.06.2010 
+ * @date 29.06.2010
  *
  */
 public enum MBasicPa implements PmParameterDefinition {
-	
-	
+
+	MILIEU_START_ID(Integer.class, new Integer(1)),
+
 	/**
 	 * Lower X corner coordinate of the torus
 	 * used in {@link MTorusCoordinate} to calculate distances.
@@ -54,27 +55,27 @@ public enum MBasicPa implements PmParameterDefinition {
 	 * used in {@link MTorusCoordinate} to calculate distances.
 	 */
 	TORUS_FIELD_UPPER_X(Double.class, new Double(100.0)),
-	
+
 	/**
 	 * Upper Y corner coordinate of the torus
 	 * used in {@link MTorusCoordinate} to calculate distances.
 	 */
 	TORUS_FIELD_UPPER_Y(Double.class, new Double(100.0)),
-	
+
 	/**
 	 * Used to initialise the {@link GeometryFactory}. Should be UTM
 	 */
 	SPATIALREFERENCEID(Integer.class, new Integer(32632 )),
-	
+
 	/**
 	 * Geography in the RS root context
 	 */
 	ROOT_GEOGRAPHY(Geography.class, null);
-	
-	
+
+
 	private Class<?> type;
 	private Object defaultValue;
-	
+
 	MBasicPa(Class<?> type) {
 		this(type, null);
 	}
@@ -88,7 +89,7 @@ public enum MBasicPa implements PmParameterDefinition {
 	public Class<?> getType() {
 		return type;
 	}
-	
+
 	@Override
 	public Object getDefaultValue() {
 		return defaultValue;

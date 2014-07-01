@@ -1,36 +1,34 @@
 /**
  * This file is part of
- * 
+ *
  * MORe - Managing Ongoing Relationships
  *
  * Copyright (C) 2010 Center for Environmental Systems Research, Kassel, Germany
- * 
- * MORe - Managing Ongoing Relationships is free software: You can redistribute 
+ *
+ * MORe - Managing Ongoing Relationships is free software: You can redistribute
  * it and/or modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- *  
+ *
  * MORe - Managing Ongoing Relationships is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Center for Environmental Systems Research, Kassel
- * 
+ *
  * Created by Sascha Holzhauer on 20.06.2013
  */
 package de.cesr.more.geo.building.network;
 
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -40,11 +38,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.log4j.Logger;
 
-import repast.simphony.context.DefaultContext;
-import repast.simphony.query.space.gis.ContainsQuery;
 import repast.simphony.query.space.gis.WithinQuery;
 import repast.simphony.space.gis.Geography;
-import repast.simphony.space.gis.ShapefileLoader;
 import cern.jet.random.AbstractDistribution;
 import cern.jet.random.Uniform;
 
@@ -68,7 +63,10 @@ import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.building.MMilieuPartnerFinder;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.rs.geo.util.MGeoHexagon;
+import de.cesr.more.rs.geo.util.MoreGeoHexagon;
+import de.cesr.more.rs.geo.util.MoreGeoHexagonInitialiser;
 import de.cesr.more.util.MRuntimeDbWriter;
+import de.cesr.more.util.MRuntimeMemoryDbWriter;
 import de.cesr.more.util.MoreRunIdProvider;
 import de.cesr.more.util.MoreRuntimeAnalysable;
 import de.cesr.more.util.distributions.MGeneralDistributionParameter;
@@ -81,10 +79,10 @@ import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
- * 
+ *
  * This network service considers baseline homophily [1] and distance distributions [2]. The network is build as
  * follows:
- * 
+ *
  * <ol>
  * <li>Read hexagon shapefile, init {@link MGeoHexagon}s, and add them to the geography and the root context.</li>
  * <li>Assign agents to hexagons and determine distances between hexagons</li>
@@ -116,10 +114,10 @@ import de.cesr.parma.core.PmParameterManager;
  * </ol>
  * See <a href="../../../../../../../networkGeneration.html">MoRe Network Building</a> for a guide to create hexagon
  * shapefiles.
- * 
+ *
  * The class is such constructed that it enables the building of several networks with same parameters one after
  * another.
- * 
+ *
  * <table>
  * <th>Property</th>
  * <th>Value</th>
@@ -136,10 +134,10 @@ import de.cesr.parma.core.PmParameterManager;
  * <td>undefined</td>
  * </tr>
  * </table>
- * 
+ *
  * <br>
  * <br>
- * 
+ *
  * Considered {@link PmParameterDefinition}s:
  * <ul>
  * <li>{@link MNetBuildHdffPa#HEXAGON_SHAPEFILE}</li>
@@ -157,34 +155,34 @@ import de.cesr.parma.core.PmParameterManager;
  * <li>{@link MNetBuildHdffPa#AGENT_SHUFFLE_INTERVAL} (specifies the number of turns - selection of new ambassador for
  * each agent - after which agents are shuffled)</li>
  * </ul>
- * 
+ *
  * NOTE: The hexagon shapefile must cover all agent positions and should not be much larger since it is used to
  * calculated the area's diameter which is used to initialised the distance distributions.
- * 
+ *
  * NOTE: In general, it is possible to build several networks by means of a single network service instance of this
  * type. However, it must be understood that a hexagon-agent-relationship needs to be maintained. Consequently, when
  * agents are removed from the simulation {@link #removeNode(MoreNetwork, Object)} must be called which deletes the node
  * also from the hexagon infrastructure. Contrary, if a node shall only be removed from one of several networks based on
  * the same network service, the node may only be removed from the network and {@link #removeNode(MoreNetwork, Object)}
  * may not be called. Also, the node needs to remain in the geography in that case.
- * 
+ *
  * NOTE: If several instances of this type shall exist for the same spatial extent, distinct geographies need to be used
  * for the instances. Otherwise, overlaying hexagons belonging to different instances are most likely to cause problems.
- * 
+ *
  * <br>
  * <br>
- * 
+ *
  * [1] McPherson, M.; Smith-Lovin, L. & Cook, J. Birds of a feather: Homophily in social networks Annual Review of
  * Sociology, Annual Reviews, 2001, 27, 415-444 <br>
- * 
+ *
  * [2] Onnela, J.-P.; Arbesman, S.; Gonzalez, M. C.; Barabasi, A.-L. & Christakis, N. A. Geographic Constraints on
  * Social Network Groups, PLOS ONE, PUBLIC LIBRARY SCIENCE, 2011, 6
- * 
+ *
  * <br>
- * 
+ *
  * @author Sascha Holzhauer
  * @date 20.06.2013
- * 
+ *
  */
 public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuAgent & MoreNetworkAgent<AgentType, EdgeType>, EdgeType extends MoreGeoEdge<AgentType> & MoreEdge<AgentType>>
 		extends MGeoNetworkService<AgentType, EdgeType> implements MoreRuntimeAnalysable {
@@ -202,6 +200,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 	protected MMilieuNetworkParameterMap				paraMap;
 
+	protected MoreGeoHexagonInitialiser<AgentType>		hexagonInitialiser;
+
 	protected MMilieuPartnerFinder<AgentType, EdgeType>	partnerFinder;
 
 	protected Uniform									rand;
@@ -210,7 +210,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 	protected Map<Integer, MRealDistribution>			distanceDistributions;
 
-	protected Map<AgentType, MGeoHexagon<AgentType>>	agentHexagons						= new HashMap<AgentType, MGeoHexagon<AgentType>>();
+	protected Map<AgentType, MoreGeoHexagon<AgentType>>	agentHexagons						= new HashMap<AgentType, MoreGeoHexagon<AgentType>>();
 
 	protected double									distanceStep;
 
@@ -226,7 +226,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 	/**
 	 * Takes the geography from {@link MBasicPa#ROOT_GEOGRAPHY}.
-	 * 
+	 *
 	 * @param edgeFac
 	 * @param name
 	 */
@@ -237,7 +237,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 	/**
 	 * Uses main instance of {@link PmParameterManager}.
-	 * 
+	 *
 	 * @param areasGeography
 	 */
 	public MGeoHomophilyDistanceFfNetworkService(Geography<Object> geography,
@@ -294,17 +294,17 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	/**
 	 * Initialises the {@link MRuntimeDbWriter}. Runtimes are only recorded when this method was called before {@link
 	 * this#buildNetwork(Collection)}.
-	 * 
+	 *
 	 * @param provider
 	 */
 	@Override
 	public void initRuntimeDbWriter(MoreRunIdProvider provider) {
-		this.runtimeWriter = new MRuntimeDbWriter(provider);
+		this.runtimeWriter = new MRuntimeMemoryDbWriter(provider);
 	}
 
 	/**
 	 * The returned network is always directed!
-	 * 
+	 *
 	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#buildNetwork(java.util.Collection)
 	 */
 	@SuppressWarnings("unchecked")
@@ -319,13 +319,13 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		}
 
 		checkAgentCollection(agents);
-		
+
 		checkParameter();
 
 		Map<AgentType, Integer> degreeTargets = null;
 
 		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
-		
+
 		// an additional agent collection is required since all alternative collections need
 		// to be persistent till the last link is established...
 		ArrayList<AgentType> orderedAgents = null;
@@ -334,13 +334,13 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			this.runtimeWriter.addMeasurement("Instanciations");
 		}
 
-		initHexagons();
+		this.hexagonInitialiser.init(this.pm, this.geography);
 
 		if (this.runtimeWriter != null) {
 			this.runtimeWriter.addMeasurement("Init hexagons");
 		}
-		
-		initDistanceMatrix(agents, agentHexagons);
+
+		this.hexagonInitialiser.initDistanceMatrix(agents, agentHexagons, this.geography);
 
 		if (this.runtimeWriter != null) {
 			this.runtimeWriter.addMeasurement("Init distance matrix");
@@ -357,7 +357,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		}
 
 		orderedAgents = createRandomAgentList(agents, degreeTargets);
-		
+
 		for (AgentType agent : agents) {
 			network.addNode(agent);
 		}
@@ -400,14 +400,14 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
-					MGeoHexagon<AgentType> h = agentHexagons.get(agent);
+					MoreGeoHexagon<AgentType> h = agentHexagons.get(agent);
 					if (h == null) {
-						logger.error("Agent " + agent + " is not assigned to a hexagon. " +
+						logger.error("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")" + " is not assigned to a hexagon. " +
 								"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
-						throw new IllegalStateException("Agent " + agent + " is not assigned to a hexagon. " +
+						throw new IllegalStateException("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")"+ " is not assigned to a hexagon. " +
 										"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
 					}
-					for (MGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(startDistance)) {
+					for (MoreGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(agent, startDistance)) {
 						potPartners.addAll(hexagon.getAgents());
 					}
 
@@ -465,13 +465,14 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 	/**
 	 * Calculates the area diameter from hexagon shapefiles.
-	 * 
+	 *
 	 * @return diameter
 	 */
 	protected double getAreaDiameter() {
 		if (this.areaDiameter < 0.0) {
 			Envelope envelope = new Envelope();
-			for (Object o : this.geography.getLayer(MGeoHexagon.class).getAgentSet()) {
+			
+			for (Object o : this.geography.getLayer(this.hexagonInitialiser.getHexagonType()).getAgentSet()) {
 				envelope.expandToInclude(this.geography.getGeometry(o).getEnvelopeInternal());
 			}
 			this.areaDiameter = Math.min(
@@ -501,9 +502,9 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	}
 
 	/**
-	 * 
+	 *
 	 * Assumes that the distance distribution's density is highest at supported lower bound (p_local / x_min).
-	 * 
+	 *
 	 * @param agent
 	 *        agent/ambassador
 	 * @param partner
@@ -529,15 +530,15 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		// LOGGING ->
 
 		MRealDistribution agentDistanceDist = this.distanceDistributions.get(agent.getMilieuGroup());
-		
+
 		Uniform uniform = (Uniform) MManager.getURandomService().getDistribution(
 				(String) pm.getParam(MRandomPa.RND_UNIFORM_DIST_NETWORK_BUILDING));
-		
+
 		int indegree = 0;
 		ArrayList<AgentType> neighbours = new ArrayList<AgentType>();
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		int counter = 0;
-		
+
 
 		if (this.considerForwardLinks) {
 			indegree = network.getInDegree(partner);
@@ -546,26 +547,26 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				indices.add(new Integer(counter++));
 			}
 		}
-			
+
 		assert counter == indegree;
-		
+
 		if (this.considerBackwardLinks) {
 			for (AgentType s : network.getSuccessors(partner)) {
 				neighbours.add(s);
 				indices.add(new Integer(counter++));
 			}
 		}
-		
+
 		Collections.shuffle(indices, new Random(((Integer) pm.getParam(
 				MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
-	
+
 		while (degreeTargets.get(agent) > 0 && indices.size() > 0) {
 			int random = uniform.nextIntFromTo(0, indices.size() - 1);
 			int index = indices.get(random);
 			indices.remove(random);
-	
+
 			AgentType neighbour = neighbours.get(index);
-			
+
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug(agent + ">> Check neighbour (" + neighbour + ") of partner (" + partner + ")");
@@ -657,11 +658,12 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initDegreeDistributions() {
 		this.degreeDistributions = new HashMap<Integer, MIntegerDistribution>();
-		for (int i = 1; i <= paraMap.size(); i++) {
+		for (int i = (Integer)pm.getParam(MBasicPa.MILIEU_START_ID); 
+				i < paraMap.size() + (Integer)pm.getParam(MBasicPa.MILIEU_START_ID); i++) {
 
 			MIntegerDistribution dist = null;
 
@@ -671,52 +673,68 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 								new MRandomEngineGenerator(MManager.getURandomService().getGenerator(
 										(String) pm.getParam(MRandomPa.RND_STREAM_NETWORK_BUILDING))));
 
-				dist.setParameter(MGeneralDistributionParameter.PARAM_A, paraMap.getKparamA(i));
-				dist.setParameter(MGeneralDistributionParameter.PARAM_B, paraMap.getKparamB(i));
+				dist.setParameter(MGeneralDistributionParameter.PARAM_A, ((Double) paraMap.
+						getMilieuParam(MNetBuildHdffPa.K_PARAM_A, i)).doubleValue());
+				dist.setParameter(MGeneralDistributionParameter.PARAM_B, ((Double) paraMap.
+						getMilieuParam(MNetBuildHdffPa.K_PARAM_B, i)).doubleValue());
 				dist.init();
 
 			} catch (NoSuchMethodException exception) {
 				exception.printStackTrace();
+
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
 				// LOGGING ->
+
 			} catch (IllegalArgumentException exception) {
 				exception.printStackTrace();
+
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
 				// LOGGING ->
+
 			} catch (SecurityException exception) {
 				exception.printStackTrace();
+
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
 				// LOGGING ->
+
 			} catch (InstantiationException exception) {
 				exception.printStackTrace();
+
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
 				// LOGGING ->
+
 			} catch (IllegalAccessException exception) {
 				exception.printStackTrace();
+
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
 				// LOGGING ->
+
 			} catch (InvocationTargetException exception) {
 				exception.printStackTrace();
+
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
 				// LOGGING ->
+
 			} catch (ClassNotFoundException exception) {
 				exception.printStackTrace();
+
 				// <- LOGGING
 				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
 						" could not be initialised!");
 				// LOGGING ->
+
 			}
 			this.degreeDistributions.put(new Integer(i), dist);
 		}
@@ -724,7 +742,9 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 	private void initDistanceDistributions() {
 		this.distanceDistributions = new HashMap<Integer, MRealDistribution>();
-		for (int i = 1; i <= paraMap.size(); i++) {
+		
+		for (int i = (Integer)PmParameterManager.getParameter(MBasicPa.MILIEU_START_ID); 
+				i < paraMap.size() + (Integer)pm.getParam(MBasicPa.MILIEU_START_ID); i++) {
 			MRealDistribution dist = null;
 
 			try {
@@ -732,6 +752,15 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 						getConstructor(RandomGenerator.class).newInstance(
 								new MRandomEngineGenerator(MManager.getURandomService().getGenerator(
 										(String) pm.getParam(MRandomPa.RND_STREAM_NETWORK_BUILDING))));
+				dist.setParameter(MGeneralDistributionParameter.PARAM_A, paraMap.getDistParamA(i));
+				dist.setParameter(MGeneralDistributionParameter.PARAM_B, paraMap.getDistParamB(i));
+				dist.setParameter(MGeneralDistributionParameter.PARAM_C, paraMap.getDistParamXMin(i));
+				dist.setParameter(MGeneralDistributionParameter.PARAM_D, this.getAreaDiameter()
+						/ DISTANCE_FACTOR_FOR_DISTRIBUTION);
+				dist.setParameter(MGeneralDistributionParameter.PARAM_E, paraMap.getDistParamPLocal(i));
+				dist.init();
+
+				this.distanceDistributions.put(new Integer(i), dist);
 			} catch (IllegalArgumentException exception) {
 				exception.printStackTrace();
 				// <- LOGGING
@@ -775,16 +804,6 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 						" could not be initialised!");
 				// LOGGING ->
 			}
-
-			dist.setParameter(MGeneralDistributionParameter.PARAM_A, paraMap.getDistParamA(i));
-			dist.setParameter(MGeneralDistributionParameter.PARAM_B, paraMap.getDistParamB(i));
-			dist.setParameter(MGeneralDistributionParameter.PARAM_C, paraMap.getDistParamXMin(i));
-			dist.setParameter(MGeneralDistributionParameter.PARAM_D, this.getAreaDiameter()
-					/ DISTANCE_FACTOR_FOR_DISTRIBUTION);
-			dist.setParameter(MGeneralDistributionParameter.PARAM_E, paraMap.getDistParamPLocal(i));
-			dist.init();
-
-			this.distanceDistributions.put(new Integer(i), dist);
 		}
 	}
 
@@ -838,6 +857,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	 * <li>...whether MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has been initialised.</li>
 	 * </ul>
 	 */
+	@SuppressWarnings("unchecked") // class
 	protected void checkParameter() {
 		AbstractDistribution abstractDis = MManager
 				.getURandomService()
@@ -851,12 +871,23 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			logger.warn("Use default uniform distribution");
 		}
 
+		try {
+			this.hexagonInitialiser = (MoreGeoHexagonInitialiser<AgentType>) Class.forName((String) pm.getParam(
+					MNetBuildHdffPa.HEXAGON_INITIALISER_CLASS)).newInstance();
+		} catch (ClassNotFoundException exception) {
+			exception.printStackTrace();
+		} catch (InstantiationException exception) {
+			exception.printStackTrace();
+		} catch (IllegalAccessException exception) {
+			exception.printStackTrace();
+		}
+
 		assignMilieuParamMap();
 		adjustProbabilityWeights();
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void assignMilieuParamMap() {
 		if (((MMilieuNetworkParameterMap) pm
@@ -883,90 +914,19 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		// LOGGING ->
 
 		ArrayList<AgentType> orderedAgents = new ArrayList<AgentType>();
-		
+
 		for (AgentType a : agents) {
 			if ((degreeTargets.get(a) > 0)) {
 				orderedAgents.add(a);
 			}
 		}
-		
+
 		Collections.shuffle(orderedAgents, new Random(((Integer) pm.getParam(
 				MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
-		
+
 		logger.debug("Shuffle order: " + agents);
 
 		return orderedAgents;
-	}
-
-	/**
-	 * @param agents
-	 */
-	@SuppressWarnings("unchecked")
-	private void initDistanceMatrix(Collection<AgentType> agents, Map<AgentType, MGeoHexagon<AgentType>> agentHexagons) {
-		// <- LOGGING
-		logger.info("Init distance matrix...");
-		// LOGGING ->
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			for (AgentType agent : agents) {
-				logger.debug(agent + "> centroid: " + geography.getGeometry(agent).getCentroid());
-			}
-		}
-		// LOGGING ->
-
-		Set<MGeoHexagon<AgentType>> hexagons = new HashSet<MGeoHexagon<AgentType>>();
-		for (Object o : this.geography.getLayer(MGeoHexagon.class).getAgentSet()) {
-			hexagons.add((MGeoHexagon<AgentType>) o);
-		}
-
-		// height is required to determine distance ranges
-		MGeoHexagon.setHexagonHeight(geography.getGeometry(hexagons.iterator().next()).getEnvelopeInternal()
-				.getHeight());
-
-		// Use the geography's agent set because elements get removed from hexagons in the loop:
-		for (Object o : this.geography.getLayer(MGeoHexagon.class).getAgentSet()) {
-			MGeoHexagon<AgentType> hexagon = (MGeoHexagon<AgentType>)o;
-			Geometry hexagonGeo = this.geography.getGeometry(hexagon);
-			Geometry hexagonCentroid = this.geography.getGeometry(hexagon).getCentroid();
-
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("Hexagons centroid: " + hexagonCentroid);
-			}
-			// LOGGING ->
-
-			// Assign Agents to hexagons
-			ContainsQuery<Object> containsQuery = new ContainsQuery<Object>(
-					this.geography, hexagonGeo);
-			for (Object a : containsQuery.query()) {
-				// Search agents within hexagon and init map agent > hexagon
-				if (a instanceof MoreMilieuAgent) {
-					agentHexagons.put((AgentType) a, hexagon);
-					hexagon.addAgent((AgentType) a);
-
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug("Added agent " + a + " to hexagon " + hexagon);
-					}
-					// LOGGING ->
-				}
-			}
-			// For each remaining hexagon p_rest
-			for (MGeoHexagon<AgentType> h : hexagons) {
-				// Determine distance between hexagon and p_rest
-				double distance = hexagonCentroid.distance(geography.getGeometry(h).getCentroid());
-				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug("Distance between " + hexagon + " and " + h + ": " + distance);
-				}
-				// LOGGING ->
-
-				hexagon.setDistance(h, distance);
-				h.setDistance(hexagon, distance);
-			}
-			hexagons.remove(hexagon);
-		}
 	}
 
 	/**
@@ -982,7 +942,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 	/**
 	 * Assumes that the agent to add is already within the geography!
-	 * 
+	 *
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
@@ -1009,84 +969,53 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			}
 		}
 
-		if (node instanceof MoreMilieuAgent) {
+		if (hexagon != null) {
 			hexagon.addAgent(node);
 			this.agentHexagons.put(node, hexagon);
-		}
 
-		while (degreetarget > 0) {
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug("Connect agent " + node);
-			}
-			// LOGGING ->
+			while (degreetarget > 0) {
+				// <- LOGGING
+				if (logger.isDebugEnabled()) {
+					logger.debug("Connect agent " + node);
+				}
+				// LOGGING ->
 
-			AgentType ambassador = null;
-			// Select a distance range probabilistically according to distance function
+				AgentType ambassador = null;
+				// Select a distance range probabilistically according to distance function
 
-			while (ambassador == null) {
-				double startDistance = getDistance(node.getMilieuGroup());
-				// Determine according hexagons and agent within
-				Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
+				while (ambassador == null) {
+					double startDistance = getDistance(node.getMilieuGroup());
+					// Determine according hexagons and agent within
+					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
-				for (MGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(startDistance)) {
-					potPartners.addAll(h.getAgents());
+					for (MoreGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(node, startDistance)) {
+						potPartners.addAll(h.getAgents());
+					}
+
+					// Select a random ambassador according to milieu preferences (inbreeding homophily) from these
+					// hexagons
+					ambassador = partnerFinder.findPartner(potPartners, network.getJungGraph(), node, true);
 				}
 
-				// Select a random ambassador according to milieu preferences (inbreeding homophily) from these
-				// hexagons
-				ambassador = partnerFinder.findPartner(potPartners, network.getJungGraph(), node, true);
+				// Follow links of ambassador with respect to forward probability, distance term, milieu preference
+				// (baseline homophily)
+				Map<AgentType, Integer> degreeTargets = new HashMap<AgentType, Integer>();
+				degreeTargets.put(node, new Integer(degreetarget));
+
+				linkPartner(node, ambassador, network, degreeTargets);
+
+				LinkedList<AgentType> toExplore = new LinkedList<AgentType>();
+				toExplore.add(ambassador);
+				explorePartner(node, toExplore, network, degreeTargets);
+				degreetarget = degreeTargets.get(node);
 			}
-
-			// Follow links of ambassador with respect to forward probability, distance term, milieu preference
-			// (baseline homophily)
-			Map<AgentType, Integer> degreeTargets = new HashMap<AgentType, Integer>();
-			degreeTargets.put(node, new Integer(degreetarget));
-
-			linkPartner(node, ambassador, network, degreeTargets);
-
-			LinkedList<AgentType> toExplore = new LinkedList<AgentType>();
-			toExplore.add(ambassador);
-			explorePartner(node, toExplore, network, degreeTargets);
-			degreetarget = degreeTargets.get(node);
+		} else {
+			logger.error("Agent " + node + " is not surrounded by a hexagon");
 		}
+
 		return true;
 	}
 
-	/**
-	 * Init hexagons from shapefile into geography.
-	 */
-	@SuppressWarnings("rawtypes")
-	protected void initHexagons() {
-
-		File hexagonShapeFile = new File((String) pm.getParam(MNetBuildHdffPa.HEXAGON_SHAPEFILE));
-		// check if shapefile exists:
-		if (!hexagonShapeFile.exists()) {
-			logger.error("The specified shape file (" + hexagonShapeFile + ") does not exist!");
-			throw new IllegalArgumentException("The specified shape file (" + hexagonShapeFile + ") does not exist!");
-		}
-
-		// <- LOGGING
-		logger.info("Init hexagons from " + hexagonShapeFile);
-		// LOGGING ->
-
-		ShapefileLoader<MGeoHexagon> areasLoader = null;
-
-		// TODO care about context...
-		try {
-			areasLoader = new ShapefileLoader<MGeoHexagon>(
-					MGeoHexagon.class,
-					hexagonShapeFile.toURI().toURL(),
-					this.geography, new DefaultContext<Object>());
-			while (areasLoader.hasNext()) {
-				areasLoader.next(new MGeoHexagon<AgentType>());
-			}
-		} catch (java.net.MalformedURLException e) {
-			logger.error("AreasCreator: malformed URL exception when reading areas shapefile.");
-			e.printStackTrace();
-		}
-	}
-	
 	/**
 	 * @see java.lang.Object#toString()
 	 */

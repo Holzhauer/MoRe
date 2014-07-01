@@ -84,7 +84,7 @@ public class MMilieuNetDataCsvReader extends PmAbstractParameterReader {
 			
 			List<String> columns = Arrays.asList( reader.getHeaders());
 
-			Integer milieu = 0;
+			Integer milieu = ((Integer)pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_MILIEU_ID_START)).intValue() - 1;
 
 			while( reader.readRecord() )
  {
@@ -110,8 +110,8 @@ public class MMilieuNetDataCsvReader extends PmAbstractParameterReader {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void processColumn(String column, String value, int milieu) {
-		column = ((String) pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_COLUMNPREFIX)) + column;
+	protected void processColumn(String columnTail, String value, int milieu) {
+		String column = ((String) pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_COLUMNPREFIX)) + columnTail;
 		if (column.contains(":")) {
 			try {
 				// !!! difficulty! >
