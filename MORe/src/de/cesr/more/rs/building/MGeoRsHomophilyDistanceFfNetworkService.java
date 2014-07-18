@@ -216,6 +216,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	protected Map<AgentType, MoreGeoHexagon<AgentType>>	agentHexagons						= new HashMap<AgentType, MoreGeoHexagon<AgentType>>();
 
 	protected double									distanceStep;
+	
+	protected double									distanceFactorForDistribution;
 
 	protected double									areaDiameter						= -1.0;
 
@@ -249,8 +251,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
-	 * Service constructor - edge modifier - builder set - parma
-	 *
 	 * @param areasGeography
 	 */
 	public MGeoRsHomophilyDistanceFfNetworkService(Geography<Object> geography,
@@ -378,9 +378,18 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					+ " - some probably had degree target = 0)");
 			// LOGGING ->
 
+			int counter = 0;
 			for (AgentType agent : agentsToGo) {
 				// <- LOGGING
-				logger.info("Connect agent " + agent);
+				counter++;
+				if ((counter) % Math.ceil((agentsToGo.size() / 100.0)) == 0) {
+					logger.info(this + "> Connect (" + Math.round((double) counter / agentsToGo.size() * 100.0)
+							+ "%...");
+				}
+				// LOGGING ->
+				
+				// <- LOGGING
+				logger.debug("Connect agent " + agent);
 				// LOGGING ->
 
 				if (agent instanceof MAbstractAnalyseNetworkAgent) {
@@ -391,32 +400,26 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				// Select a distance range probabilistically according to distance function
 
 				while (ambassador == null) {
-					double startDistance = getDistance(agent.getMilieuGroup());
-
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug("Start-Distance: " + startDistance);
-					}
-					// LOGGING ->
-
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
 					MoreGeoHexagon<AgentType> h = agentHexagons.get(agent);
 					if (h == null) {
-						logger.error("Agent "
-								+ agent + "(" + this.geography.getGeometry(agent) + ")" 
-								+ " is not assigned to a hexagon. "
-								+
+						logger.error("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")" + " is not assigned to a hexagon. " +
 								"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
-						throw new IllegalStateException(
-								"Agent "
-										+ agent + "(" + this.geography.getGeometry(agent) + ")" 
-										+ " is not assigned to a hexagon. "
-										+
+						
+						if (this.geography.getGeometry(agent) == null) {
+							logger.error("Check that agents are part of geography!");							
+						} else {
+							logger.error("Check that hexagon shapefile covers all agent positions!");
+						}
+						
+						throw new IllegalStateException("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")"+ " is not assigned to a hexagon. " +
 										"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
 					}
-					for (MoreGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(agent, startDistance)) {
+		
+					for (MoreGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(agent, 
+							this.distanceDistributions.get(new Integer(agent.getMilieuGroup())))) {
 						potPartners.addAll(hexagon.getAgents());
 					}
 
@@ -425,6 +428,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 						logger.debug("Number of potential partners: " + potPartners.size());
 					}
 					// LOGGING ->
+					
+					if (potPartners.size() == agents.size()) {
+						logger.warn("All agents returned as potential partners. It is likely there is an inconsistancy between CRS and distance distribution.");
+					}
 
 					// Select a random ambassador according to milieu preferences (inbreeding homophily) from these
 					// hexagons
@@ -469,7 +476,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 */
 	protected double getDistance(int milieu) {
 		return this.distanceDistributions.get(new Integer(milieu)).sample() *
-				DISTANCE_FACTOR_FOR_DISTRIBUTION;
+				this.distanceFactorForDistribution;
 	}
 
 	/**
@@ -480,6 +487,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	protected double getAreaDiameter() {
 		if (this.areaDiameter < 0.0) {
 			Envelope envelope = new Envelope();
+			
 			for (Object o : this.geography.getLayer(this.hexagonInitialiser.getHexagonType()).getAgentSet()) {
 				envelope.expandToInclude(this.geography.getGeometry(o).getEnvelopeInternal());
 			}
@@ -661,7 +669,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	protected double getDistanceProb(AgentType ego, AgentType partner) {
 		return this.distanceDistributions.get(ego.getMilieuGroup()).
 				density(this.geography.getGeometry(ego).distance(geography.getGeometry(partner)) /
-						DISTANCE_FACTOR_FOR_DISTRIBUTION);
+						this.distanceFactorForDistribution);
 	}
 
 	/**
@@ -763,7 +771,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				dist.setParameter(MGeneralDistributionParameter.PARAM_B, paraMap.getDistParamB(i));
 				dist.setParameter(MGeneralDistributionParameter.PARAM_C, paraMap.getDistParamXMin(i));
 				dist.setParameter(MGeneralDistributionParameter.PARAM_D, this.getAreaDiameter()
-						/ DISTANCE_FACTOR_FOR_DISTRIBUTION);
+						/ this.distanceFactorForDistribution);
 				dist.setParameter(MGeneralDistributionParameter.PARAM_E, paraMap.getDistParamPLocal(i));
 				dist.init();
 
@@ -864,8 +872,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * <li>...whether MNetworkBuildingPa.MILIEU_NETWORK_PARAMS has been initialised.</li>
 	 * </ul>
 	 */
-	@SuppressWarnings("unchecked")
-	// class
+	@SuppressWarnings("unchecked") // class
 	protected void checkParameter() {
 		if (context == null) {
 			throw new IllegalStateException(
@@ -895,6 +902,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			exception.printStackTrace();
 		}
 
+		this.distanceFactorForDistribution = ((Double) pm.getParam(MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
 		assignMilieuParamMap();
 		adjustProbabilityWeights();
 	}
@@ -923,7 +931,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	protected ArrayList<AgentType> createRandomAgentList(Collection<AgentType> agents,
 			Map<AgentType, Integer> degreeTargets) {
 		// <- LOGGING
-		logger.info("Create random agent list...");
+		logger.info("Create random agent list from " + agents.size() + " agents ...");
 		// LOGGING ->
 
 		ArrayList<AgentType> orderedAgents = new ArrayList<AgentType>();
@@ -937,7 +945,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		Collections.shuffle(orderedAgents, new Random(((Integer) pm.getParam(
 				MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 
-		logger.debug("Shuffle order: " + agents);
+		logger.debug("Shuffle order: " + orderedAgents);
 
 		return orderedAgents;
 	}
@@ -1001,7 +1009,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
-					for (MoreGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(node, startDistance)) {
+					for (MoreGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(node, 
+							this.distanceDistributions.get(new Integer(node.getMilieuGroup())))) {
 						potPartners.addAll(h.getAgents());
 					}
 

@@ -25,6 +25,8 @@ package de.cesr.more.testing.basic;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+
 import org.apache.commons.collections15.Factory;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +39,7 @@ import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.manipulate.network.MAggregator;
 import de.cesr.more.util.io.MGraphMLReaderWithEdges;
+import de.cesr.more.util.io.MoreIoUtilities;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -119,6 +122,7 @@ public class MNetworkToolsTest {
 				new MGraphMLReaderWithEdges<Graph<TestAgent, MoreEdge<TestAgent>>, TestAgent, MoreEdge<TestAgent>>(nodeFactory,
 				edgeFactory);
 		
+		TestAgent.reset();
 		graphReader.load(GRAPH_FILENAME, network.getJungGraph());
 		TestAgent.reset();
 		graphReader.load(GRAPH_FILENAME_RESULTING, resultingNetwork.getJungGraph());
@@ -132,8 +136,14 @@ public class MNetworkToolsTest {
 	
 	@Test
 	public void test() {
+		MoreIoUtilities.outputGraph(network, new File("./output/NetworkOrg.graphml"));
+
 		MAggregator.aggregateNodes(network, new TestAgent(0), new TestAgent(3));
 		network.removeNode(new TestAgent(3));
+
+		MoreIoUtilities.outputGraph(network, new File("./output/Network.graphml"));
+		MoreIoUtilities.outputGraph(resultingNetwork, new File("./output/Result.graphml"));
+
 		assertTrue(MNetworkTools.isStructurallyEqual(network, resultingNetwork));
 	}
 }

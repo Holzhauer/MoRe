@@ -8,7 +8,7 @@
  	<property file="../../project.properties"/>
  	
  	<!--property name="dest_dir" location="//Usf/home/holzhauer/Generell/Releases/MoRe/" /-->
- 	<property name="dest_dir" location="C:\Users\holzhauer\Desktop\WORK\Generell\Releases\MoRe" />
+ 	<property name="dest_dir" location="C:\Data\General\Releases\MoRe" />
  	
  	<property name="src_java_dir" location="../../" />
  	<property name="src_doc_dir" location="../../doc" />
@@ -167,11 +167,14 @@
 	</target>
  
  	
+ 	<taskdef name="logindialog" classname="antlogindialog.PasswordTask" classpath="" />
+ 	
  	<target name="queryPassword">
-		<input
+		<!--input
 			message="Enter passwort!"
 			addproperty="passphrase"
-		/>
+		/-->
+		<logindialog message="Login Details: " username="username" defaultusername="${user}" password="passphrase"/>
  	</target>
 			
  	<target name="copySiteOnly2sourceforge" depends="queryPassword, make_website">

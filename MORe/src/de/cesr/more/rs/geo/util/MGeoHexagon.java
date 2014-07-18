@@ -42,6 +42,7 @@ import repast.simphony.query.space.gis.ContainsQuery;
 import repast.simphony.space.gis.Geography;
 import de.cesr.more.param.MNetBuildHdffPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
+import de.cesr.more.util.distributions.MRealDistribution;
 import de.cesr.more.util.io.MShapefileLoader;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -83,13 +84,18 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 
 			MShapefileLoader<MGeoHexagon<AgentType>> areasLoader = null;
 
+			double distanceFactorForDistribution = ((Double) pm.getParam(
+					MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
+			
 			try {
 				areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
 						(Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon.class,
 						hexagonShapeFile.toURI().toURL(),
 						geography);
 				while (areasLoader.hasNext()) {
-					areasLoader.next(new MGeoHexagon<AgentType>());
+					MGeoHexagon<AgentType> hexagon = new MGeoHexagon<AgentType>();
+					areasLoader.next(hexagon);
+					hexagon.distanceFactorForDistribution = distanceFactorForDistribution;
 				}
 			} catch (java.net.MalformedURLException e) {
 				logger.error("AreasCreator: malformed URL exception when reading areas shapefile.");
@@ -170,6 +176,7 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 		/**
 		 * @see de.cesr.more.rs.geo.util.MoreGeoHexagonInitialiser#getHexagonType()
 		 */
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Class<? extends MoreGeoHexagon> getHexagonType() {
 			return MGeoHexagon.class;
@@ -182,11 +189,11 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 	static private Logger								logger			= Logger.getLogger(MGeoHexagon.class);
 
 	/**
-	 * The value may not fall below the largest distance from the centroid to any point on the edge (otherwise, 
-	 * a lower limit may exceed an upper limit which leads to errors from the treeset; if the values is too
+	 * The value may not fall below twice the largest distance from the centroid to any point on the edge (otherwise, 
+	 * a lower limit may exceed an upper limit which leads to errors from the treeset; if the value is too
 	 * large too many hexagons are considered). 
 	 */
-	static protected double								hexagonWidth	= 0.0;
+	static protected double								hexagonHalfWidth	= 0.0;
 
 	protected static int								idCounter		= 1;
 
@@ -195,6 +202,8 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 
 	protected Map<MoreGeoHexagon<AgentType>, Double>	hexagonDistance	= new HashMap<MoreGeoHexagon<AgentType>, Double>();
 	protected TreeSet<Distance>							distanceHexagon	= new TreeSet<Distance>();
+	
+	protected double									distanceFactorForDistribution;
 
 	protected class Distance implements Comparable<Distance> {
 		double						distance;
@@ -219,7 +228,7 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 	 * @param height
 	 */
 	static public void setHexagonWidth(double height) {
-		hexagonWidth = height;
+		hexagonHalfWidth = height / 2.0;
 	}
 
 	/**
@@ -274,13 +283,43 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 	/**
 	 * @see de.cesr.more.rs.geo.util.MoreGeoHexagon#getHexagonsOfDistance(java.lang.Object, double)
 	 */
-	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, double distance) {
+	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, MRealDistribution distribution) {
+		double distance = Double.MAX_VALUE;
+		do {
+			distance = distribution.sample() * this.distanceFactorForDistribution;
+		} while (distance - hexagonHalfWidth > distanceHexagon.last().distance);
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start-Distance: " + distance);
+		}
+		// LOGGING ->
+		
 		Set<MoreGeoHexagon<AgentType>> hexagons = new LinkedHashSet<MoreGeoHexagon<AgentType>>();
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			StringBuffer buffer = new StringBuffer();
+			
+			for (Distance d : distanceHexagon) {
+				buffer.append(d.hexagon + "(" + d.distance + "), ");
+			}
+			logger.debug("Distance hexagon map: " + buffer.toString());
+		}
+		// LOGGING ->
+		
 		// to capture agents of the given distances, hexagons need to be considered whose centroid
 		// is +/- (hexagonHeight/2.0) away (if we assume that the agents coordinates can deviate from
 		// its hexagons centroid by (hexagonHeight/2.0) we would need to apply +/- hexagonHeight).
-		Distance lower = distanceHexagon.higher(new Distance(distance - (hexagonWidth / 2.0), null));
-		Distance upper = distanceHexagon.lower(new Distance(distance + (hexagonWidth / 2.0), null));
+		Distance lower = distanceHexagon.higher(new Distance(distance - hexagonHalfWidth, null));
+		Distance upper = distanceHexagon.lower(new Distance(distance + hexagonHalfWidth, null));
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Lower hexagon: " + lower);
+			logger.debug("Upper hexagon: " + upper);
+		}
+		// LOGGING ->
 		
 		lower = lower != null ? lower : distanceHexagon.first();
 		upper = upper != null ? upper : distanceHexagon.last();

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import repast.simphony.space.gis.Geography;
+import de.cesr.more.util.distributions.MRealDistribution;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -73,8 +74,8 @@ public interface MoreGeoHexagon<AgentType> extends Comparable<MoreGeoHexagon<Age
 	 * Returns a Set of hexagons that may contain agents whose distance to agents
 	 * within this hexagon is the given distance.
 	 * @param agent the focal agent
-	 * @param distance
+	 * @param distance distribution
 	 * @return
 	 */
-	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, double distance);
+	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, MRealDistribution distanceDistribution);
 }

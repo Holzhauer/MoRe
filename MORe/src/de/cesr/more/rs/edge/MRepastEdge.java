@@ -60,6 +60,8 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	protected double		fadeAmount	= 0.0;
 
 	protected boolean active;
+	
+	protected int hashcode = 0;
 
 	/**
 	 * @param source
@@ -143,10 +145,12 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 	 */
 	@Override
 	public int hashCode() {
-		int result = 17;
-		result= 31 * result + getStart().hashCode(); 
-		result= 31 * result + getEnd().hashCode();
-		return result;
+		if (hashcode == 0) {
+			hashcode = 17;
+			hashcode = 31 * hashcode + getStart().hashCode(); 
+			hashcode = 31 * hashcode + getEnd().hashCode();
+		}
+		return hashcode;
 	}
 
 	/**

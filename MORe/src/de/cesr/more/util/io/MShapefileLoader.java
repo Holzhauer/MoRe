@@ -19,7 +19,7 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by sholzhau on 17 Jun 2014
+ * Created by Sascha Holzhauer on 17 Jun 2014
  */
 package de.cesr.more.util.io;
 

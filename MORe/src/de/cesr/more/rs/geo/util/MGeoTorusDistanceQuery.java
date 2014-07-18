@@ -23,26 +23,24 @@
  */
 package de.cesr.more.rs.geo.util;
 
-import javax.units.SI;
+
+import javax.measure.unit.SI;
 
 import org.apache.commons.collections15.Predicate;
 import org.apache.log4j.Logger;
-import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
 import org.geotools.geometry.jts.JTS;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-
+import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-
 
 import repast.simphony.query.space.gis.AbstractGeometryQuery;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.UTMFinder;
 import repast.simphony.util.collections.FilteredIterator;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * MORe

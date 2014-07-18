@@ -65,7 +65,7 @@ public class MAggregator {
 			// LOGGING ->
 			throw new IllegalStateException("Network " + network + " does not contain node to aggregate: " + otherAgent);
 		}
-		if (!network.containsNode(otherAgent)) {
+		if (!network.containsNode(survivingAgent)) {
 			// <- LOGGING
 			logger.error("Network " + network + " does not contain node to aggregate: " + survivingAgent);
 			// LOGGING ->

@@ -36,6 +36,7 @@ import repast.simphony.context.DefaultContext;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.parma.core.PmParameterManager;
+import de.cesr.uranus.core.URandomService;
 import de.cesr.uranus.core.UranusRandomService;
 
 /**
@@ -54,6 +55,10 @@ public class MManagerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		PmParameterManager.reset();
+		URandomService.reset();
+		MManager.reset();
+
 		MManager.setRootContext(new DefaultContext<Object>());
 		randomService = MManager.getURandomService();
 	}

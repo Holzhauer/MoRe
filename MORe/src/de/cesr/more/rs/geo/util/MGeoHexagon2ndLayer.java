@@ -39,6 +39,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import de.cesr.more.param.MNetBuildHdffPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
+import de.cesr.more.util.distributions.MRealDistribution;
 import de.cesr.more.util.io.MShapefileLoader;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -75,18 +76,24 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 			}
 
 			// <- LOGGING
-			logger.info("Init hexagons from " + hexagonShapeFile);
+			logger.debug("Init hexagons from " + hexagonShapeFile);
 			// LOGGING ->
 
 			MShapefileLoader<MGeoHexagon<AgentType>> areasLoader = null;
 
+			double distanceFactorForDistribution = ((Double) pm.getParam(
+					MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
+			
 			try {
 				areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
 						(Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon2ndLayer.class,
 						hexagonShapeFile.toURI().toURL(),
 						geography);
 				while (areasLoader.hasNext()) {
-					areasLoader.next(new MGeoHexagon2ndLayer<AgentType>(((Boolean)pm.getParam(MNetBuildHdffPa.INCREASED_DISTANCE_ACCURACY)).booleanValue()));
+					MGeoHexagon2ndLayer<AgentType> hexagon = new MGeoHexagon2ndLayer<AgentType>(
+							((Boolean)pm.getParam(MNetBuildHdffPa.INCREASED_DISTANCE_ACCURACY)).booleanValue());
+					areasLoader.next(hexagon);
+					hexagon.distanceFactorForDistribution = distanceFactorForDistribution;
 				}
 			} catch (java.net.MalformedURLException e) {
 				logger.error("AreasCreator: malformed URL exception when reading areas shapefile.");
@@ -132,6 +139,9 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 				}
 				if (maximum != null) {
 					maximum.add2ndLayerHexagon(hexagon);
+				} else {
+					logger.warn("No 1st layer hexagon could be identified"
+							+ " (intersectional area: " + intersection + ")");
 				}
 				
 				// add agents to 2nd layer hexagons:
@@ -195,11 +205,11 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 
 	protected void initDistanceMatrix(Collection<AgentType> agents,
 			Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography) {
-
 		if (!distancesInitialised) {
+			
 			// <- LOGGING
-			logger.info(this + "> Init distance matrix...");
 			if (logger.isDebugEnabled()) {
+				logger.debug(this + "> Init distance matrix...");
 				for (AgentType agent : agents) {
 					logger.debug(agent + "> centroid: " + geography.getGeometry(agent).getCentroid());
 				}
@@ -224,7 +234,7 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug("Distance between " + hexagon + " and " + thisHexagonGeo + ": " + distance);
+					logger.debug("Distance between " + hexagon + " and " + this + ": " + distance);
 				}
 				// LOGGING ->
 
@@ -247,29 +257,54 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 
 	public boolean overlapsWithRadius(AgentType agent, double distance) {
 		return geography.getGeometry(agent).distance(geography.getGeometry(this).getCentroid()) - distance <=
-				hexagonWidth2nd / 2.0;
+				hexagonWidth2nd;
 	}
 
 	/**
 	 * @see de.cesr.more.rs.geo.util.MGeoHexagon#getHexagonsOfDistance(java.lang.Object, double)
 	 */
-	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, double distance) {
+	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, MRealDistribution distribution) {
 		if (!distancesInitialised) {
 			this.initDistanceMatrix(agents, null, geography);
 		}
 
+		double distance = Double.MAX_VALUE;
+		do {
+			distance = distribution.sample() * this.distanceFactorForDistribution;
+		} while (distance - hexagonHalfWidth > distanceHexagon.last().distance);
+		
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Start-Distance: " + distance);
+		}
+		// LOGGING ->
+		
 		Set<MoreGeoHexagon<AgentType>> hexagons = new LinkedHashSet<MoreGeoHexagon<AgentType>>();
 
-		Distance lower = distanceHexagon.higher(new Distance(distance - (hexagonWidth / 2.0), null)); 
-		Distance upper = distanceHexagon.lower(new Distance(distance + (hexagonWidth / 2.0), null));
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Distance hexagon map: " + distanceHexagon);
+		}
+		// LOGGING ->
+
+		Distance lower = distanceHexagon.higher(new Distance(distance - (hexagonHalfWidth), null)); 
+		Distance upper = distanceHexagon.lower(new Distance(distance + (hexagonHalfWidth), null));
+
+		// <- LOGGING
+		if (logger.isDebugEnabled()) {
+			logger.debug("Lower hexagon: " + lower);
+			logger.debug("Upper hexagon: " + upper);
+		}
+		// LOGGING ->
 
 		lower = lower != null ? lower : distanceHexagon.first();
 		upper = upper != null ? upper : distanceHexagon.last();
 		
+
 		// Query the subset
 		if (lower == upper) {
 			if (this.increasedDistanceAccuracy && geography.getGeometry(agent).distance(geography .getGeometry(lower.hexagon).getCentroid()) - distance <=
-					hexagonWidth / 2.0) {
+					hexagonHalfWidth) {
 				// check 2nd layer hexagons of lower.hexagon
 				for (MGeoHexagon2ndLayer<AgentType> h2 : ((MGeoHexagon1stLayer<AgentType>)lower.hexagon).get2ndLayerHexagons()) {
 					if (h2.overlapsWithRadius(agent, distance)) {
@@ -280,7 +315,7 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 		} else {
 			for (Distance d : distanceHexagon.subSet(lower, upper)) {
 				if (this.increasedDistanceAccuracy && geography.getGeometry(agent).distance(geography.getGeometry(d.hexagon).getCentroid()) - distance <=
-						hexagonWidth ) {
+						hexagonHalfWidth ) {
 					// check 2nd layer hexagons of d.hexagon
 					for (MGeoHexagon2ndLayer<AgentType> h2 : ((MGeoHexagon1stLayer<AgentType>)d.hexagon).get2ndLayerHexagons()) {
 						if (h2.overlapsWithRadius(agent, distance)) {

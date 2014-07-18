@@ -191,12 +191,12 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	 * Logger
 	 */
 	static private Logger								logger								= Logger.getLogger(MGeoHomophilyDistanceFfNetworkService.class);
-
+	
 	static final public int								DISTANCE_FACTOR_FOR_DISTRIBUTION	= 1000;
 
 	static final public double							TOLERANCE_VALUE_DIM_WEIGHTS			= 0.01;
 
-	protected String									name	= "Not Defined";
+	protected String									name								= "Not Defined";
 
 	protected MMilieuNetworkParameterMap				paraMap;
 
@@ -213,16 +213,18 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	protected Map<AgentType, MoreGeoHexagon<AgentType>>	agentHexagons						= new HashMap<AgentType, MoreGeoHexagon<AgentType>>();
 
 	protected double									distanceStep;
+	
+	protected double									distanceFactorForDistribution;
 
-	protected double									areaDiameter	= -1.0;
+	protected double									areaDiameter						= -1.0;
 
 	protected MRuntimeDbWriter							runtimeWriter;
 
 	// these Bools are used for efficiency reasons:
 	protected boolean									considerBackwardLinks				= false;
-	protected boolean									considerForwardLinks	= false;
-	protected boolean									considerMilieus			= false;
-	protected boolean									considerDistance		= false;
+	protected boolean									considerForwardLinks				= false;
+	protected boolean									considerMilieus						= false;
+	protected boolean									considerDistance					= false;
 
 	/**
 	 * Takes the geography from {@link MBasicPa#ROOT_GEOGRAPHY}.
@@ -376,9 +378,18 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					+ " - some probably had degree target = 0)");
 			// LOGGING ->
 
+			int counter = 0;
 			for (AgentType agent : agentsToGo) {
 				// <- LOGGING
-				logger.info("Connect agent " + agent);
+				counter++;
+				if ((counter) % Math.ceil((agentsToGo.size() / 100.0)) == 0) {
+					logger.info(this + "> Connect (" + Math.round((double) counter / agentsToGo.size() * 100.0)
+							+ "%...");
+				}
+				// LOGGING ->
+				
+				// <- LOGGING
+				logger.debug("Connect agent " + agent);
 				// LOGGING ->
 
 				if (agent instanceof MAbstractAnalyseNetworkAgent) {
@@ -389,14 +400,6 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				// Select a distance range probabilistically according to distance function
 
 				while (ambassador == null) {
-					double startDistance = getDistance(agent.getMilieuGroup());
-
-					// <- LOGGING
-					if (logger.isDebugEnabled()) {
-						logger.debug("Start-Distance: " + startDistance);
-					}
-					// LOGGING ->
-
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
@@ -404,10 +407,19 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					if (h == null) {
 						logger.error("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")" + " is not assigned to a hexagon. " +
 								"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
+						
+						if (this.geography.getGeometry(agent) == null) {
+							logger.error("Check that agents are part of geography!");							
+						} else {
+							logger.error("Check that hexagon shapefile covers all agent positions!");
+						}
+						
 						throw new IllegalStateException("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")"+ " is not assigned to a hexagon. " +
 										"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
 					}
-					for (MoreGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(agent, startDistance)) {
+		
+					for (MoreGeoHexagon<AgentType> hexagon : h.getHexagonsOfDistance(agent, 
+							this.distanceDistributions.get(new Integer(agent.getMilieuGroup())))) {
 						potPartners.addAll(hexagon.getAgents());
 					}
 
@@ -416,6 +428,10 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 						logger.debug("Number of potential partners: " + potPartners.size());
 					}
 					// LOGGING ->
+					
+					if (potPartners.size() == agents.size()) {
+						logger.warn("All agents returned as potential partners. It is likely there is an inconsistancy between CRS and distance distribution.");
+					}
 
 					// Select a random ambassador according to milieu preferences (inbreeding homophily) from these
 					// hexagons
@@ -460,7 +476,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	 */
 	protected double getDistance(int milieu) {
 		return this.distanceDistributions.get(new Integer(milieu)).sample() *
-				DISTANCE_FACTOR_FOR_DISTRIBUTION;
+				this.distanceFactorForDistribution;
 	}
 
 	/**
@@ -538,7 +554,6 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		ArrayList<AgentType> neighbours = new ArrayList<AgentType>();
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		int counter = 0;
-
 
 		if (this.considerForwardLinks) {
 			indegree = network.getInDegree(partner);
@@ -654,7 +669,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	protected double getDistanceProb(AgentType ego, AgentType partner) {
 		return this.distanceDistributions.get(ego.getMilieuGroup()).
 				density(this.geography.getGeometry(ego).distance(geography.getGeometry(partner)) /
-						DISTANCE_FACTOR_FOR_DISTRIBUTION);
+						this.distanceFactorForDistribution);
 	}
 
 	/**
@@ -756,7 +771,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				dist.setParameter(MGeneralDistributionParameter.PARAM_B, paraMap.getDistParamB(i));
 				dist.setParameter(MGeneralDistributionParameter.PARAM_C, paraMap.getDistParamXMin(i));
 				dist.setParameter(MGeneralDistributionParameter.PARAM_D, this.getAreaDiameter()
-						/ DISTANCE_FACTOR_FOR_DISTRIBUTION);
+						/ this.distanceFactorForDistribution);
 				dist.setParameter(MGeneralDistributionParameter.PARAM_E, paraMap.getDistParamPLocal(i));
 				dist.init();
 
@@ -813,7 +828,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	protected void adjustProbabilityWeights() {
 		if (!considerDistance) {
 			if (considerMilieus) {
-				for (Integer milieu : this.paraMap.keySet()){
+				for (Integer milieu : this.paraMap.keySet()) {
 					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu) != 1.0) {
 						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu, 1.0);
 						logger.warn("DimWeightMilieu adjusted to 1.0 for milieu " + milieu);
@@ -826,7 +841,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			}
 		} else {
 			if (!considerMilieus) {
-				for (Integer milieu : this.paraMap.keySet()){
+				for (Integer milieu : this.paraMap.keySet()) {
 					if ((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) != 1.0) {
 						this.paraMap.setMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu, 1.0);
 						logger.warn("DimWeightGeo adjusted to 1.0 for milieu " + milieu);
@@ -838,7 +853,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				}
 			} else {
 				// consider both
-				for (Integer milieu : this.paraMap.keySet()){
+				for (Integer milieu : this.paraMap.keySet()) {
 					if (Math.abs(((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) +
 							(Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu)) - 1.0) > TOLERANCE_VALUE_DIM_WEIGHTS) {
 						logger.error("DimWeightGeo and DimWeightMilieu do not sum up to 1.0 for milieu " +
@@ -882,6 +897,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			exception.printStackTrace();
 		}
 
+		this.distanceFactorForDistribution = ((Double) pm.getParam(MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
 		assignMilieuParamMap();
 		adjustProbabilityWeights();
 	}
@@ -910,7 +926,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	protected ArrayList<AgentType> createRandomAgentList(Collection<AgentType> agents,
 			Map<AgentType, Integer> degreeTargets) {
 		// <- LOGGING
-		logger.info("Create random agent list...");
+		logger.info("Create random agent list from " + agents.size() + " agents ...");
 		// LOGGING ->
 
 		ArrayList<AgentType> orderedAgents = new ArrayList<AgentType>();
@@ -924,7 +940,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		Collections.shuffle(orderedAgents, new Random(((Integer) pm.getParam(
 				MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 
-		logger.debug("Shuffle order: " + agents);
+		logger.debug("Shuffle order: " + orderedAgents);
 
 		return orderedAgents;
 	}
@@ -988,7 +1004,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
-					for (MoreGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(node, startDistance)) {
+					for (MoreGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(node, 
+							this.distanceDistributions.get(new Integer(node.getMilieuGroup())))) {
 						potPartners.addAll(h.getAgents());
 					}
 
@@ -1015,6 +1032,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 		return true;
 	}
+
 
 	/**
 	 * @see java.lang.Object#toString()

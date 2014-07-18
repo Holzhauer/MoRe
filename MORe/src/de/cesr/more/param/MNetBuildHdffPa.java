@@ -99,6 +99,13 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	 * definition is required to access values in the map.
 	 */
 	DIST_PARAM_PLOCAL(Double.class, new Double(0.70)),
+	
+	/**
+	 * Usually, agent coordinates are in meters and the distance distribution assumes kilometres.
+	 * However, sometimes (e.g. for grid based agent coordinates) agent coordinates are already in kilometres
+	 * and this parameter should be set to 1.0)
+	 */
+	DISTANCE_FACTOR_FOR_DISTRIBUTION(Double.class, new Double(1000.0)),
 
 	/**
 	 * Max. radius to potential partner agents that are considered as ambassadors in meters. This is sometimes useful to

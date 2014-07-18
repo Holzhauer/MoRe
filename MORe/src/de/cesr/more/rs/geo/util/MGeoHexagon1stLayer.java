@@ -34,14 +34,13 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.vividsolutions.jts.geom.Geometry;
-
-import repast.simphony.query.space.gis.ContainsQuery;
-import repast.simphony.query.space.gis.IntersectsQuery;
 import repast.simphony.query.space.gis.WithinQuery;
 import repast.simphony.space.gis.Geography;
+
+import com.vividsolutions.jts.geom.Geometry;
+
 import de.cesr.more.param.MNetBuildHdffPa;
-import de.cesr.more.rs.building.MoreMilieuAgent;
+import de.cesr.more.util.distributions.MRealDistribution;
 import de.cesr.more.util.io.MShapefileLoader;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -110,8 +109,8 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 		public void initDistanceMatrix(Collection<AgentType> agents,
 				Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography) {
 			// <- LOGGING
-			logger.info("Init distance matrix...");
 			if (logger.isDebugEnabled()) {
+				logger.debug("Init distance matrix...");
 				for (AgentType agent : agents) {
 					logger.debug(agent + "> centroid: " + geography.getGeometry(agent).getCentroid());
 				}
@@ -130,7 +129,6 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 			// Use the geography's set of hexagons because elements get removed from hexagons in the loop:
 			for (Object o : geography.getLayer(MGeoHexagon1stLayer.class).getAgentSet()) {
 				MGeoHexagon1stLayer<AgentType> hexagon = (MGeoHexagon1stLayer<AgentType>)o;
-				Geometry hexagonGeo = geography.getGeometry(hexagon);
 				Geometry hexagonCentroid = geography.getGeometry(hexagon).getCentroid();
 
 				hexagon.geography = geography;
@@ -162,6 +160,7 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 		/**
 		 * @see de.cesr.more.rs.geo.util.MoreGeoHexagonInitialiser#getHxagonType()
 		 */
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Class<? extends MoreGeoHexagon> getHexagonType() {
 			return MGeoHexagon1stLayer.class;
@@ -192,11 +191,12 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 	/**
 	 * @see de.cesr.more.rs.geo.util.MGeoHexagon#addAgent(java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	public void addAgent(AgentType agent) {
-		WithinQuery<Object> query = new WithinQuery(geography, agent);
+		WithinQuery<Object> query = new WithinQuery<Object>(geography, agent);
 		for (Object o : query.query()) {
 			if (o instanceof MGeoHexagon2ndLayer) {
-				((MGeoHexagon2ndLayer)o).addAgent(agent);
+				((MGeoHexagon2ndLayer<AgentType>)o).addAgent(agent);
 			}
 		}
 	}
@@ -230,9 +230,8 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 	/**
 	 * @see de.cesr.more.rs.geo.util.MGeoHexagon#getHexagonsOfDistance(java.lang.Object, double)
 	 */
-	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, double distance) {
+	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, MRealDistribution distanceDistribution) {
 		initAgentMap();
-		Object o = agent2Hexagon2ndLayer.get(agent);
-		return agent2Hexagon2ndLayer.get(agent).getHexagonsOfDistance(agent, distance);
+		return agent2Hexagon2ndLayer.get(agent).getHexagonsOfDistance(agent, distanceDistribution);
 	}
 }

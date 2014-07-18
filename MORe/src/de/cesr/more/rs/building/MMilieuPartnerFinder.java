@@ -26,6 +26,7 @@ package de.cesr.more.rs.building;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,10 +45,10 @@ import edu.uci.ics.jung.graph.Graph;
 
 /**
  * MORe
- *
+ * 
  * @author Sascha Holzhauer
  * @date 02.04.2012
- *
+ * 
  */
 public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType extends MoreEdge<? super AgentType>>
 		extends MDefaultPartnerFinder<AgentType, EdgeType> {
@@ -55,15 +56,36 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	/**
 	 * Logger
 	 */
-	static private Logger		logger	= Logger.getLogger(MMilieuPartnerFinder.class);
+	static private Logger			logger						= Logger.getLogger(MMilieuPartnerFinder.class);
 
-	MMilieuNetworkParameterMap	networkParams;
+	MMilieuNetworkParameterMap		networkParams;
 
 	// UNDO 200
-	static final int			AGENT_LIST_SIZE_THRESHOLD	= 10000;
+	static final int				AGENT_LIST_SIZE_THRESHOLD	= 10000;
+
+	protected Map<Integer, Integer>	singlePartnerMilieus		= new HashMap<Integer, Integer>();
+	
+	protected PmParameterManager pm;
 
 	public MMilieuPartnerFinder(MMilieuNetworkParameterMap networkParams) {
+		this(networkParams, PmParameterManager.getInstance(null));
+	}
+	
+	public MMilieuPartnerFinder(MMilieuNetworkParameterMap networkParams, PmParameterManager pm) {
 		this.networkParams = networkParams;
+		this.pm = pm;
+
+		for (int focalMilieu : this.networkParams.keySet()) {
+			for (int partnerMilieu : this.networkParams.keySet()) {
+				if (this.networkParams.getP_Milieu(focalMilieu, partnerMilieu) == 1.0) {
+					// <- LOGGING
+					logger.info("Single partner milieu for milieu group " + focalMilieu + ": " + partnerMilieu);
+					// LOGGING ->
+
+					this.singlePartnerMilieus.put(focalMilieu, partnerMilieu);
+				}
+			}
+		}
 	}
 
 	/**
@@ -82,26 +104,30 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	@Override
 	public AgentType findPartner(Collection<AgentType> agents, Graph<AgentType, EdgeType> graph, AgentType focal,
 			boolean incoming) {
+
 		int desiredMilieu = 0;
-		if ((Boolean) PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU)) {
+		if ((Boolean) pm.getParam(MNetBuildBhPa.DISTANT_FORCE_MILIEU)) {
 			// choose milieu to connect with
 			desiredMilieu = getProbabilisticMilieu(networkParams, focal);
-		}
 
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Desired Milieu: " + desiredMilieu);
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Desired Milieu: " + desiredMilieu);
+			}
+			// LOGGING ->
 		}
-		// LOGGING ->
 
 		return agents.size() > AGENT_LIST_SIZE_THRESHOLD ?
 				findPartnerLargeAgentList(agents, graph, focal, incoming, desiredMilieu) :
-					findPartnerSmallAgentList(agents, graph, focal, incoming, desiredMilieu);
+
+				this.singlePartnerMilieus.containsKey(focal.getMilieuGroup()) ?
+						findSingleMilieuPartnerSmallAgentList(agents, graph, focal, incoming) :
+						findPartnerSmallAgentList(agents, graph, focal, incoming, desiredMilieu);
 	}
 
 	/**
 	 * TODO black list does not work correctly if no agent can be found in list!
-	 *
+	 * 
 	 * @param agents
 	 * @param graph
 	 * @param focal
@@ -218,6 +244,37 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		return rewired ? random : null;
 	}
 
+	protected AgentType findSingleMilieuPartnerSmallAgentList(Collection<AgentType> agents,
+			Graph<AgentType, EdgeType> graph,
+			AgentType focal, boolean incoming) {
+
+		AgentType random = null;
+		List<AgentType> list = new ArrayList<AgentType>(agents);
+
+		for (AgentType potPartner : agents) {
+			if (this.singlePartnerMilieus.get(focal.getMilieuGroup()) == potPartner.getMilieuGroup() &&
+					(incoming ? graph.isPredecessor(potPartner, focal) : graph.isSuccessor(potPartner, focal))
+					&& potPartner != focal) {
+				list.add(potPartner);
+			}
+
+		}
+
+		// fetch random partner:
+		if (list.size() > 0) {
+			random = list.get(getRandomDist().nextIntFromTo(0, list.size() - 1));
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug(focal + "> Random object from context: "
+						+ random);
+			}
+			// LOGGING ->
+		}
+
+		return random;
+	}
+
 	protected int getProbabilisticMilieu(MMilieuNetworkParameterMap networkParams, AgentType focus) {
 		Map<Integer, Double> roulette_wheel = new LinkedHashMap<Integer, Double>();
 
@@ -240,10 +297,12 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		}
 		if (pointer < 1.0) {
 			// <- LOGGING
-			logger.error("Partner link probabilities do not sum up to 1.0 (but " + pointer + ") for milieu " + focus.getMilieuGroup() + "!");
+			logger.error("Partner link probabilities do not sum up to 1.0 (but " + pointer + ") for milieu "
+					+ focus.getMilieuGroup() + "!");
 			// LOGGING ->
 			throw new IllegalParameterException(
-					"Partner link probabilities do not sum up to 1.0 (but " + pointer + ") for milieu " + focus.getMilieuGroup() + "!");
+					"Partner link probabilities do not sum up to 1.0 (but " + pointer + ") for milieu "
+							+ focus.getMilieuGroup() + "!");
 
 		}
 		throw new IllegalStateException("This code should never be reached!");
@@ -251,7 +310,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	/**
 	 * Returns false if source is already a successor of target. Otherwise, the milieu is checked based on paraMap.
-	 *
+	 * 
 	 * @param network
 	 * @param paraMap
 	 * @param ego
@@ -280,7 +339,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	/**
 	 * Potential partner's milieu is checked based on probabilities in paraMap. Does not check if the potential partner
 	 * is already connected to ego!
-	 *
+	 * 
 	 * @param paraMap
 	 * @param ego
 	 * @param potPartner
@@ -291,7 +350,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	public boolean checkPartnerMilieu(MMilieuNetworkParameterMap paraMap, AgentType ego, AgentType potPartner,
 			int desiredMilieu) {
 		// find agent that belongs to the milieu
-		if ((Boolean) PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
+		if ((Boolean) pm.getParam(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
 			if ((potPartner).getMilieuGroup() == desiredMilieu) {
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {

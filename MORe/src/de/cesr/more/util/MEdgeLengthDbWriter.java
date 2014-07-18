@@ -76,9 +76,20 @@ public class MEdgeLengthDbWriter {
 
 		try {
 			int counter = 0;
+			int edgeCounter = 0;
+			
 			MMySqlService.getConnection().setAutoCommit(false);
 
 			for (EdgeType e : network.getEdgesCollection()) {
+				
+				// <- LOGGING
+				edgeCounter++;
+				if ((edgeCounter) % Math.ceil((network.numEdges() / 100.0)) == 0) {
+					logger.info(this + "> Write edges (" + Math.round((edgeCounter) / network.numEdges() * 100.0) + "%...");
+				}
+				// LOGGING ->
+				
+				
 				prepStat.setInt(1, ((MoreMilieuAgent) e.getEnd()).getMilieuGroup());
 				prepStat.setFloat(2,
 						(float) geography.getGeometry(e.getStart()).distance(geography.getGeometry(e.getEnd())));

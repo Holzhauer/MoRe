@@ -59,6 +59,7 @@ public class MRuntimeMemoryDbWriter extends MRuntimeDbWriter {
 	
 	public void addMeasurement(String action) {
 		super.addMeasurement(action);
+		System.gc();
 		memoryMeasurements.put(action, new Long(this.runtime.maxMemory() - this.runtime.freeMemory()));
 	}
 
