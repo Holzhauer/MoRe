@@ -202,10 +202,11 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 	}
 
 	/**
-	 * @param agent
+	 * @see de.cesr.more.rs.geo.util.MGeoHexagon#removeAgent(java.lang.Object)
 	 */
-	public void remove(AgentType agent) {
+	public void removeAgent(AgentType agent) {
 		agent2Hexagon2ndLayer.get(agent).removeAgent(agent);
+		agent2Hexagon2ndLayer.remove(agent);
 	}
 
 	public void add2ndLayerHexagon(MGeoHexagon2ndLayer<AgentType> hexagon) {

@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -60,11 +61,15 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	MMilieuNetworkParameterMap		networkParams;
 
-	// UNDO 200
-	static final int				AGENT_LIST_SIZE_THRESHOLD	= 10000;
+	static final int				AGENT_LIST_SIZE_THRESHOLD	= 300;
 
 	protected Map<Integer, Integer>	singlePartnerMilieus		= new HashMap<Integer, Integer>();
+	protected Set<Integer>			noPartnerMilieus			= new HashSet<Integer>();
 	
+	public Set<Integer> getNoPartnerMilieus() {
+		return noPartnerMilieus;
+	}
+
 	protected PmParameterManager pm;
 
 	public MMilieuPartnerFinder(MMilieuNetworkParameterMap networkParams) {
@@ -76,7 +81,9 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		this.pm = pm;
 
 		for (int focalMilieu : this.networkParams.keySet()) {
+			double sum = 0.0;
 			for (int partnerMilieu : this.networkParams.keySet()) {
+				sum += this.networkParams.getP_Milieu(focalMilieu, partnerMilieu);
 				if (this.networkParams.getP_Milieu(focalMilieu, partnerMilieu) == 1.0) {
 					// <- LOGGING
 					logger.info("Single partner milieu for milieu group " + focalMilieu + ": " + partnerMilieu);
@@ -84,6 +91,9 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 					this.singlePartnerMilieus.put(focalMilieu, partnerMilieu);
 				}
+			}
+			if (sum == 0.0) {
+				noPartnerMilieus.add(new Integer(focalMilieu));
 			}
 		}
 	}
@@ -211,8 +221,8 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		List<AgentType> list = new ArrayList<AgentType>(agents);
 
 		for (AgentType potPartner : agents) {
-			if ((incoming ? graph.isPredecessor(potPartner, focal) : graph.isSuccessor(potPartner, focal))
-					&& potPartner != focal) {
+			if (potPartner != focal
+					&& (incoming ? graph.isPredecessor(potPartner, focal) : graph.isSuccessor(potPartner, focal))) {
 				list.add(potPartner);
 			}
 		}

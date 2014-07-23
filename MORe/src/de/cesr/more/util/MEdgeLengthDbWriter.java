@@ -85,7 +85,7 @@ public class MEdgeLengthDbWriter {
 				// <- LOGGING
 				edgeCounter++;
 				if ((edgeCounter) % Math.ceil((network.numEdges() / 100.0)) == 0) {
-					logger.info(this + "> Write edges (" + Math.round((edgeCounter) / network.numEdges() * 100.0) + "%...");
+					logger.info(this + "> Write edges (" + Math.round((double)edgeCounter / network.numEdges() * 100.0) + "%...)");
 				}
 				// LOGGING ->
 				

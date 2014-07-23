@@ -39,7 +39,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
 import de.cesr.more.basic.network.MoreNetwork;
-import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.geo.manipulate.MoreGeoNetworkEdgeModifier;
@@ -81,7 +80,7 @@ public class MGeoNetworkEdgeModifier<AgentType, EdgeType extends MoreGeoEdge<? s
 	protected MoreEdgeFactory<AgentType, EdgeType> edgeFac;
 	
 	public MGeoNetworkEdgeModifier() {
-		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
+		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultGeoEdgeFactory<AgentType>());
 	}
 	
 	public MGeoNetworkEdgeModifier(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {

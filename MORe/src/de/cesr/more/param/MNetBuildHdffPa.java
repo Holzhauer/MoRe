@@ -25,7 +25,6 @@ package de.cesr.more.param;
 
 
 import de.cesr.more.rs.building.MGeoRsHomophilyDistanceFfNetworkService;
-import de.cesr.more.rs.geo.util.MGeoHexagon;
 import de.cesr.parma.core.PmParameterDefinition;
 
 

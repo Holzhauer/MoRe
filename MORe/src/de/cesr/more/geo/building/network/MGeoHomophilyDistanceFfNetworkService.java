@@ -920,6 +920,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	}
 
 	/**
+	 * Skips agents with non-positive degree target and those whose link preferences sum to 0.0
+	 * 
 	 * @param agents
 	 */
 	// checked before casting
@@ -932,7 +934,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		ArrayList<AgentType> orderedAgents = new ArrayList<AgentType>();
 
 		for (AgentType a : agents) {
-			if ((degreeTargets.get(a) > 0)) {
+			if ((degreeTargets.get(a) > 0)
+					&& !this.partnerFinder.getNoPartnerMilieus().contains(new Integer(a.getMilieuGroup()))) {
 				orderedAgents.add(a);
 			}
 		}
@@ -1000,7 +1003,6 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				// Select a distance range probabilistically according to distance function
 
 				while (ambassador == null) {
-					double startDistance = getDistance(node.getMilieuGroup());
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 

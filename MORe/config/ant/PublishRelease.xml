@@ -60,7 +60,7 @@
 		</delete>
 
  		<echo>"Create website..."</echo>
- 		  <artifact:mvn pom="${basedir}/../../pom.xml" mavenHome="C:/Users/holzhauer/Programme/apache-maven-3.0.4" fork="true">
+ 		  <artifact:mvn pom="${basedir}/../../pom.xml" mavenHome="C:/Data/General/Programme/apache-maven-3.2.2" fork="true">
  		    <arg value="site:site"/>
  		  </artifact:mvn>
  	</target>

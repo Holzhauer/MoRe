@@ -153,8 +153,12 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 					if (a instanceof MoreMilieuAgent) {
 						@SuppressWarnings("unchecked")
 						AgentType agent = (AgentType) a;
-						hexagon.addAgent(agent);
 
+						if (maximum == null) {
+							logger.warn("Unmapped 2nd-layer hexagon contains agent " + agent);
+						}
+
+						hexagon.addAgent(agent);
 						agentHexagons.put(agent, maximum);
 						
 						// <- LOGGING
