@@ -102,10 +102,13 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 		}
 
 		/**
-		 * @see de.cesr.more.rs.geo.util.MoreGeoHexagonInitialiser#initDistanceMatrix(java.util.Collection, java.util.Map, repast.simphony.space.gis.Geography)
+		 * NOTE:
+		 * 
+		 * @see de.cesr.more.rs.geo.util.MoreGeoHexagonInitialiser#initDistanceMatrix(java.util.Collection,
+		 *      java.util.Map, repast.simphony.space.gis.Geography)
 		 */
-		public void initDistanceMatrix(Collection<AgentType> agents,
-				Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography) {
+		public void initDistanceMatrix(Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons,
+				Geography<Object> geography) {
 			// height is required to determine distance ranges
 			MGeoHexagon2ndLayer.setHexagonWidth(geography.getGeometry(geography.getLayer(MGeoHexagon2ndLayer.class).
 					getAgentSet().iterator().next()).getEnvelopeInternal().getWidth());
@@ -207,6 +210,13 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 		this.increasedDistanceAccuracy = increasedDisanceAccuracy;
 	}
 
+	/**
+	 * Lazy initialisation!
+	 * 
+	 * @param agents
+	 * @param agentHexagons
+	 * @param geography
+	 */
 	protected void initDistanceMatrix(Collection<AgentType> agents,
 			Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography) {
 		if (!distancesInitialised) {

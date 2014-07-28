@@ -226,6 +226,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	protected boolean									considerMilieus						= false;
 	protected boolean									considerDistance					= false;
 
+	protected boolean									initialised							= false;
+
 	/**
 	 * Takes the geography from {@link MBasicPa#ROOT_GEOGRAPHY}.
 	 *
@@ -342,7 +344,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			this.runtimeWriter.addMeasurement("Init hexagons");
 		}
 
-		this.hexagonInitialiser.initDistanceMatrix(agents, agentHexagons, this.geography);
+		this.hexagonInitialiser.initDistanceMatrix(agentHexagons, this.geography);
 
 		if (this.runtimeWriter != null) {
 			this.runtimeWriter.addMeasurement("Init distance matrix");
@@ -351,6 +353,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		initDegreeDistributions();
 
 		initDistanceDistributions();
+
+		this.initialised = true;
 
 		degreeTargets = initDegreeTargets(agents);
 
@@ -758,7 +762,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	private void initDistanceDistributions() {
 		this.distanceDistributions = new HashMap<Integer, MRealDistribution>();
 		
-		for (int i = (Integer)PmParameterManager.getParameter(MBasicPa.MILIEU_START_ID); 
+		for (int i = (Integer) pm.getParam(MBasicPa.MILIEU_START_ID);
 				i < paraMap.size() + (Integer)pm.getParam(MBasicPa.MILIEU_START_ID); i++) {
 			MRealDistribution dist = null;
 
@@ -900,6 +904,11 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		this.distanceFactorForDistribution = ((Double) pm.getParam(MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
 		assignMilieuParamMap();
 		adjustProbabilityWeights();
+
+		if (this.geography == null) {
+			logger.error("Geography is null. Call setGeography()!");
+			throw new IllegalStateException("Geography is null. Call setGeography()!");
+		}
 	}
 
 	/**
@@ -954,6 +963,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	 */
 	@Override
 	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		checkInitialisation();
 		super.removeNode(network, node);
 		this.agentHexagons.get(node).removeAgent(node);
 		return this.agentHexagons.remove(node) != null;
@@ -968,8 +978,9 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
-		int degreetarget = Math.round(this.degreeDistributions.get(new Integer(node.getMilieuGroup()))
-				.sample());
+		checkInitialisation();
+
+		int degreetarget = Math.round(this.degreeDistributions.get(new Integer(node.getMilieuGroup())).sample());
 		network.addNode(node);
 
 		Geometry nodeGeom = this.geography.getGeometry(node);
@@ -1033,6 +1044,27 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		}
 
 		return true;
+	}
+
+	/**
+	 * 
+	 */
+	protected void checkInitialisation() {
+		if (!this.initialised) {
+
+			checkParameter();
+
+			this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
+
+			this.hexagonInitialiser.init(this.pm, this.geography);
+
+			this.hexagonInitialiser.initDistanceMatrix(agentHexagons, this.geography);
+
+			initDegreeDistributions();
+
+			initDistanceDistributions();
+			this.initialised = true;
+		}
 	}
 
 

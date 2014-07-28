@@ -106,14 +106,11 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public void initDistanceMatrix(Collection<AgentType> agents,
-				Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography) {
+		public void initDistanceMatrix(Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons,
+				Geography<Object> geography) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
 				logger.debug("Init distance matrix...");
-				for (AgentType agent : agents) {
-					logger.debug(agent + "> centroid: " + geography.getGeometry(agent).getCentroid());
-				}
 			}
 			// LOGGING ->
 
@@ -154,7 +151,10 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 				}
 				hexagons.remove(hexagon);
 			}
-			this.secondHexInitialiser.initDistanceMatrix(agents, agentHexagons, geography);
+			this.secondHexInitialiser.initDistanceMatrix(agentHexagons, geography);
+			for (Object o : geography.getLayer(MGeoHexagon1stLayer.class).getAgentSet()) {
+				((MGeoHexagon1stLayer<AgentType>) o).initAgentMap();
+			}
 		}
 
 		/**
@@ -177,6 +177,11 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 	protected Set<MGeoHexagon2ndLayer<AgentType>> hexagons2ndLayer = new LinkedHashSet<MGeoHexagon2ndLayer<AgentType>>();
 
 
+	/**
+	 * NOTE: This method needs to be called in case of restoring since it is required to identify the 2nd layer hexagon
+	 * in case of removal (called in
+	 * {@link MGeoHexagon1stLayer.MGeoHexagonInitialiser#initDistanceMatrix(Map, Geography)}).
+	 */
 	protected void initAgentMap() {
 		if (!this.agentMapInitialised) {
 			for (MGeoHexagon2ndLayer<AgentType> h2 : hexagons2ndLayer) {
@@ -197,6 +202,7 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 		for (Object o : query.query()) {
 			if (o instanceof MGeoHexagon2ndLayer) {
 				((MGeoHexagon2ndLayer<AgentType>)o).addAgent(agent);
+				agent2Hexagon2ndLayer.put(agent, (MGeoHexagon2ndLayer<AgentType>) o);
 			}
 		}
 	}

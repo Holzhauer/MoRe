@@ -23,7 +23,6 @@
  */
 package de.cesr.more.rs.geo.util;
 
-import java.util.Collection;
 import java.util.Map;
 
 import repast.simphony.space.gis.Geography;
@@ -53,7 +52,7 @@ public interface MoreGeoHexagonInitialiser<AgentType> {
 	 * @param agents
 	 * @param agentHexagons
 	 */
-	public void initDistanceMatrix(Collection<AgentType> agents, Map<AgentType,
+	public void initDistanceMatrix(Map<AgentType,
 			MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography);
 	
 	/**

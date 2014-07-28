@@ -77,7 +77,6 @@ public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, Edge
 	
 	protected Class<? extends AgentType>	geoRequestClass	= null;
 
-	protected PmParameterManager			pm;
 
 	/**
 	 * @param areasGeography

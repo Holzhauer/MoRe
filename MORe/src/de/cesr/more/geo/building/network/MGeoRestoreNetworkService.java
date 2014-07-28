@@ -93,10 +93,25 @@ public class MGeoRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 							.getConstructor(
 									MoreEdgeFactory.class, String.class, PmParameterManager.class)
 							.newInstance(new MDefaultGeoEdgeFactory<AgentType>(), this.name, this.pm);
+
+					this.maintainingNetworkService.setGeography(this.geography);
+					this.maintainingNetworkService.setGeoRequestClass(this.geoRequestClass);
+
 				} catch (Exception exception) {
 					exception.printStackTrace();
 				}
 			}
+			// TODO error handling
+		}
+	}
+
+	/**
+	 * @see de.cesr.more.geo.building.network.MGeoNetworkService#setGeography(repast.simphony.space.gis.Geography)
+	 */
+	public void setGeography(Geography<Object> geography) {
+		super.setGeography(geography);
+		if (this.maintainingNetworkService != null) {
+			this.maintainingNetworkService.setGeography(geography);
 		}
 	}
 
@@ -121,5 +136,16 @@ public class MGeoRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @see de.cesr.more.building.network.MNetworkService#removeNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
+	 */
+	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		if (this.maintainingNetworkService != null) {
+			return this.maintainingNetworkService.removeNode(network, node);
+		}
+		return super.removeNode(network, node);
 	}
 }

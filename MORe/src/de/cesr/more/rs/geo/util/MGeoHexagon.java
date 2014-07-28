@@ -26,7 +26,6 @@ package de.cesr.more.rs.geo.util;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -36,10 +35,11 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import repast.simphony.query.space.gis.ContainsQuery;
 import repast.simphony.space.gis.Geography;
+
+import com.vividsolutions.jts.geom.Geometry;
+
 import de.cesr.more.param.MNetBuildHdffPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.util.distributions.MRealDistribution;
@@ -108,15 +108,10 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public void initDistanceMatrix(Collection<AgentType> agents,
-				Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography) {
+		public void initDistanceMatrix(Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons,
+				Geography<Object> geography) {
 			// <- LOGGING
 			logger.info("Init distance matrix...");
-			if (logger.isDebugEnabled()) {
-				for (AgentType agent : agents) {
-					logger.debug(agent + "> centroid: " + geography.getGeometry(agent).getCentroid());
-				}
-			}
 			// LOGGING ->
 
 			Set<MoreGeoHexagon<AgentType>> hexagons = new HashSet<MoreGeoHexagon<AgentType>>();
