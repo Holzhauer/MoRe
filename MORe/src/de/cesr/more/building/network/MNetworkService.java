@@ -66,7 +66,7 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 	protected PmParameterManager							pm;
 
 	/**
-	 * should be accessed via getEdgeModifer...
+	 * Should be accessed via getEdgeModifier...
 	 */
 	protected MoreNetworkEdgeModifier<AgentType, EdgeType>	edgeModifier;
 

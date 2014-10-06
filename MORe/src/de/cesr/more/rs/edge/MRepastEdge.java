@@ -78,7 +78,7 @@ public class MRepastEdge<AgentT> extends RepastEdge<AgentT> implements MoreGeoEd
 		super(source, target, directed, weight);
 
 		// schedule fading out:
-		Object agent = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ? 
+		Object agent = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.CONSIDER_SOURCES) ? 
 				this.getStart() : this.getEnd(); 
 		this.fadeAmount = (agent instanceof MoreMilieuAgent && PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) ? 
 				((MMilieuNetworkParameterMap)PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).

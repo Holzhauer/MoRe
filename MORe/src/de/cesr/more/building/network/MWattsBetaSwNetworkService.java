@@ -56,7 +56,6 @@ import de.cesr.parma.core.PmParameterManager;
  * <table>
  * <th>Parameter</th><th>Value</th>
  * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
- * <th>Property</th><th>Value</th>
  * <tr><td>#Edges:</td><td>Directed: kN</td></tr>
  * <tr><td>Parameter provider</td><td>MSmallWorldBetaModelNetworkGeneratorParams</td></tr>
  * </table>
@@ -65,24 +64,23 @@ import de.cesr.parma.core.PmParameterManager;
  * Considered {@link PmParameterDefinition}s:
  * <ul>
  * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
- * <li>{@link MNetworkBuildingPa.BUILD_WSSM_BETA}(used as default {@link MoreBetaProvider} in parameter provider)</li>
- * <li>{@link MNetworkBuildingPa.BUILD_WSSM_INITIAL_OUTDEG} (used as default {@link MoreKValueProvider} in parameter provider)</li>
+ * <li>{@link MNetworkBuildingPa.CONSIDER_SOURCES}</li>
+ * <li>{@link MNetBuildWbSwPa.BETA}(used as default {@link MoreBetaProvider} in parameter provider)</li>
+ * <li>{@link MNetBuildWbSwPa.K} (used as default {@link MoreKValueProvider} in parameter provider)</li>
  * </ul>
- *
- * TODO undirected?
  *
  * @author holzhauer
  * @date 22.11.2011
  *
  */
-public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>>
+public class MWattsBetaSwNetworkService<AgentType, EdgeType extends MoreEdge<AgentType>>
 	extends MNetworkService<AgentType, EdgeType> {
 
 		/**
 		 * @formatter:on
 		 * Logger
 		 */
-	static private Logger	logger	= Logger.getLogger(MWattsBetaSwBuilder.class);
+	static private Logger	logger	= Logger.getLogger(MWattsBetaSwNetworkService.class);
 
 	protected String		name;
 
@@ -90,25 +88,25 @@ public class MWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>
 		 *
 		 */
 	@SuppressWarnings("unchecked")
-	public MWattsBetaSwBuilder() {
+	public MWattsBetaSwNetworkService() {
 		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>());
 	}
 
-	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+	public MWattsBetaSwNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		this(eFac, "Network");
 	}
 
 	/**
 	 * @param eFac
 	 */
-	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MWattsBetaSwNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		this(eFac, name, PmParameterManager.getInstance(null));
 	}
 
 	/**
 	 * @param eFac
 	 */
-	public MWattsBetaSwBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager param) {
+	public MWattsBetaSwNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, PmParameterManager param) {
 		super(eFac);
 		this.name = name;
 		this.pm = param;

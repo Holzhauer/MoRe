@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 
 import repast.simphony.parameter.IllegalParameterException;
 import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.parma.core.PmParameterManager;
@@ -61,7 +62,10 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	MMilieuNetworkParameterMap		networkParams;
 
+	// TODO make parameter
 	static final int				AGENT_LIST_SIZE_THRESHOLD	= 300;
+
+	protected int					precisionFactor;
 
 	protected Map<Integer, Integer>	singlePartnerMilieus		= new HashMap<Integer, Integer>();
 	protected Set<Integer>			noPartnerMilieus			= new HashSet<Integer>();
@@ -79,6 +83,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	public MMilieuPartnerFinder(MMilieuNetworkParameterMap networkParams, PmParameterManager pm) {
 		this.networkParams = networkParams;
 		this.pm = pm;
+		this.precisionFactor = ((Integer) pm.getParam(MBasicPa.PRECISION_FACTOR)).intValue();
 
 		for (int focalMilieu : this.networkParams.keySet()) {
 			double sum = 0.0;
@@ -115,7 +120,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	public AgentType findPartner(Collection<AgentType> agents, Graph<AgentType, EdgeType> graph, AgentType focal,
 			boolean incoming) {
 
-		int desiredMilieu = 0;
+		int desiredMilieu = Integer.MIN_VALUE;
 		if ((Boolean) pm.getParam(MNetBuildBhPa.DISTANT_FORCE_MILIEU)) {
 			// choose milieu to connect with
 			desiredMilieu = getProbabilisticMilieu(networkParams, focal);
@@ -202,6 +207,9 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 				}
 			}
 		}
+
+		// TODO issue warning if no partner is found several times (meaning AGENT_LIST_SIZE_THRESHOLD is too low for the
+		// kind of difficult milieu probabilities or milieu distribution resp.
 
 		return rewired ? random : null;
 	}
@@ -292,17 +300,27 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 			roulette_wheel.put(new Integer(i), networkParams.getP_Milieu(focus.getMilieuGroup(), i));
 		}
 
-		double randFloat = getRandomDist().nextDouble();
-		if (randFloat < 0.0 || randFloat > 1.0) {
+		double randDouble = getRandomDist().nextDouble();
+		if (randDouble < 0.0 || randDouble > 1.0) {
 			throw new IllegalStateException(rand
-					+ "> Make sure min = 0.0 and max = 1.0 (random number was " + randFloat + ")");
+					+ "> Make sure min = 0.0 and max = 1.0 (random number was " + randDouble + ")");
 		}
 
-		float pointer = 0.0f;
-		for (Entry<Integer, Double> entry : roulette_wheel.entrySet()) {
-			pointer += entry.getValue().doubleValue();
-			if (pointer >= randFloat) {
-				return entry.getKey().intValue();
+		double pointer = 0.0;
+		if (this.precisionFactor > 0) {
+			for (Entry<Integer, Double> entry : roulette_wheel.entrySet()) {
+				pointer += entry.getValue().doubleValue() ;
+				if ((Math.ceil(pointer * this.precisionFactor) / this.precisionFactor) >= randDouble) {
+					return entry.getKey().intValue();
+				}
+			}
+			pointer = Math.ceil(pointer * this.precisionFactor) / this.precisionFactor;
+		} else {
+			for (Entry<Integer, Double> entry : roulette_wheel.entrySet()) {
+				pointer += entry.getValue().doubleValue() ;
+				if (pointer >= randDouble) {
+					return entry.getKey().intValue();
+				}
 			}
 		}
 		if (pointer < 1.0) {
@@ -354,13 +372,13 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	 * @param ego
 	 * @param potPartner
 	 * @param desiredMilieu
-	 *        desired milieu - 0 to select milieu probabilistically
+	 *        desired milieu - Integer.MIN_VALUE to select milieu probabilistically
 	 * @return
 	 */
 	public boolean checkPartnerMilieu(MMilieuNetworkParameterMap paraMap, AgentType ego, AgentType potPartner,
 			int desiredMilieu) {
 		// find agent that belongs to the milieu
-		if ((Boolean) pm.getParam(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
+		if ((Boolean) pm.getParam(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != Integer.MIN_VALUE) {
 			if ((potPartner).getMilieuGroup() == desiredMilieu) {
 				// <- LOGGING
 				if (logger.isDebugEnabled()) {

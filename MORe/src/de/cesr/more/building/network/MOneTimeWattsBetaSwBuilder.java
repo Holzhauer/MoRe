@@ -44,7 +44,7 @@ import de.cesr.parma.core.PmParameterManager;
 /**
  * MORe
  * 
- * More efficient version of {@link MWattsBetaSwBuilder} since it does not need to initialise
+ * More efficient version of {@link MWattsBetaSwNetworkService} since it does not need to initialise
  * {@link MSmallWorldBetaModelNetworkGenerator}, {@link MSmallWorldBetaModelNetworkGeneratorParams} 
  * and the agent list anew  each time when adding an agent to the network. However, due to this
  * change it may not be applied to generator different networks from the same network service!
@@ -72,7 +72,7 @@ import de.cesr.parma.core.PmParameterManager;
  *
  */
 public class MOneTimeWattsBetaSwBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> extends
-		MWattsBetaSwBuilder<AgentType, EdgeType> {
+		MWattsBetaSwNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger

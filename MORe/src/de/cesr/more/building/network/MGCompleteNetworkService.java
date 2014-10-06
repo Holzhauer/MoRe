@@ -28,17 +28,17 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.basic.network.MDirectedNetwork;
-import de.cesr.more.basic.network.MUndirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.rs.building.MGeoRsCompleteNetworkBuilder;
+import de.cesr.more.rs.building.MGeoRsCompleteNetworkService;
 import de.cesr.parma.core.PmParameterDefinition;
-import de.cesr.parma.core.PmParameterManager;
+
 
 /**
  * MORe
+ * 
+ * Generic Complete Network Builder for not pre-defined network implementations.
  * 
  * @formatter:off
  * <table>
@@ -50,51 +50,47 @@ import de.cesr.parma.core.PmParameterManager;
  * </table>
  * <br>
  * 
- * Considered {@link PmParameterDefinition}s:
- * <ul>
- * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
- * </ul>
+ * Considered {@link PmParameterDefinition}s: None
  *
  * @author holzhauer
  * @date 21.11.2011 
  *
  */
-public class MCompleteNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> extends MNetworkService<AgentType, EdgeType> {
+public class MGCompleteNetworkService<AgentType, EdgeType extends MoreEdge<AgentType>,
+				NetworkType extends MoreNetwork<AgentType, EdgeType>> extends MNetworkService<AgentType, EdgeType> {
 
 	
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Logger
-			.getLogger(MGeoRsCompleteNetworkBuilder.class);
+			.getLogger(MGeoRsCompleteNetworkService.class);
 
-	
+	protected NetworkType network;
 	protected String name;
 	
 	/**
 	 * @param eFac
 	 */
-	public MCompleteNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MGCompleteNetworkService(NetworkType network, MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		super(eFac);
+		this.network = network;
 		this.name = name;
 	}
 	
 	/**
 	 * @param eFac
 	 */
-	public MCompleteNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
-		this(eFac, "Network");
+	public MGCompleteNetworkService(NetworkType network, MoreEdgeFactory<AgentType, EdgeType> eFac) {
+		this(network, eFac, "Network");
 	}
 	
 	@Override
-	public MoreNetwork<AgentType, EdgeType> buildNetwork(
+	public NetworkType buildNetwork(
 			Collection<AgentType> agents) {
 		
 		checkAgentCollection(agents);
 		
-		MoreNetwork<AgentType, EdgeType> network = ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED))?
-				new MDirectedNetwork<AgentType, EdgeType >(super.getEdgeFactory(), name) :
-					new MUndirectedNetwork<AgentType, EdgeType >(super.getEdgeFactory(), name);
 		for (AgentType agent : agents) {
 			// <- LOGGING
 			if (logger.isDebugEnabled()) {
@@ -104,7 +100,7 @@ public class MCompleteNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentT
 
 			network.addNode(agent);
 			
-			// connect this agent with every already added other (undirected):
+			// connect this agent with every already added other:
 			for (AgentType other : network.getNodes()) {
 				if (other != agent) {
 					createEdge(network, agent, other);
@@ -113,6 +109,10 @@ public class MCompleteNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentT
 						logger.debug(agent + "> connect to " + other);
 					}
 					// LOGGING ->
+					
+					if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) {
+						createEdge(network, other, agent);
+					}
 				}
 			}
 		}
@@ -127,7 +127,7 @@ public class MCompleteNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentT
 			AgentType node) {
 		network.addNode(node);
 		
-		// connect this agent with every already added other (undirected):
+		// connect this agent with every already added other:
 		for (AgentType other : network.getNodes()) {
 			if (other != node) {
 				createEdge(network, node, other);
@@ -136,6 +136,10 @@ public class MCompleteNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentT
 					logger.debug(node + "> connect to " + other);
 				}
 				// LOGGING ->
+				
+				if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) {
+					createEdge(network, other, node);
+				}
 			}
 		}
 		return true;

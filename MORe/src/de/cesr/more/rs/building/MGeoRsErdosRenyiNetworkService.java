@@ -28,7 +28,6 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-import repast.simphony.context.Context;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import cern.jet.random.Uniform;
@@ -38,52 +37,87 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MRandomNetworkGenerator;
 import de.cesr.more.building.util.MoreLinkProbProvider;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildErdosRenyiPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 
 /**
  * MORe
+ * 
+ * @formatter:off
+ * <table>
+ * <th>Parameter</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
+ * <tr><td>#Edges:</td><td>E(|Edges|) = k*N (directed)</td></tr>
+ * <tr><td></td><td></td></tr>
+ * </table>
+ * <br>
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>{@link MNetBuildErdosRenyiPa.K}</li>
+ * </ul>
  *
+ * 
  * @author Sascha Holzhauer
  * @date 13.06.2012 
  *
  */
-public class MRsErdosRenyiRandomNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
-		extends MRsNetworkService<AgentType, EdgeType> {
+public class MGeoRsErdosRenyiNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
+		extends MGeoRsNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Logger.getLogger(MRsErdosRenyiRandomNetworkService.class);
-
-	protected String		name;
-
-	public MRsErdosRenyiRandomNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	static private Logger logger = Logger.getLogger(MGeoRsErdosRenyiNetworkService.class);
+	
+	
+	/**
+	 * Uses "Network" as name.
+	 * 
+	 * @param eFac
+	 */
+	public MGeoRsErdosRenyiNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+		this(eFac, "Network");
+	}
+	
+	/**
+	 * @param eFac
+	 */
+	public MGeoRsErdosRenyiNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		super(eFac);
 		this.name = name;
 	}
-
+	
 	/**
-	 * @see de.cesr.more.building.network.MoreNetworkBuilder#buildNetwork(java.util.Collection)
+	 * @param eFac
 	 */
+	public MGeoRsErdosRenyiNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name, 
+			PmParameterManager pm) {
+		super(eFac, pm);
+		this.name = name;
+	}
+
 	@Override
 	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(final Collection<AgentType> agents) {
 		
 		checkAgentCollection(agents);
 
 		MoreLinkProbProvider<AgentType> linkProbProvider = null;
-		if (PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
-			final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) PmParameterManager.getParameter(
+		if (pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
+			final MMilieuNetworkParameterMap netParams = ((MMilieuNetworkParameterMap) pm.getParam(
 					MNetworkBuildingPa.MILIEU_NETWORK_PARAMS));
 			linkProbProvider =  new MoreLinkProbProvider<AgentType>() {
 				@Override
 				public double getLinkProb(AgentType node) {
-					return 1.0 / (agents.size() - 1) * netParams.getK(node.getMilieuGroup());
+					return 1.0 / (agents.size() - 1) * ((Double)netParams.getMilieuParam(MNetBuildErdosRenyiPa.K, 
+							node.getMilieuGroup())).doubleValue();
 				}
 			};
 
@@ -91,10 +125,10 @@ public class MRsErdosRenyiRandomNetworkService<AgentType extends MoreMilieuAgent
 			logger.info("Using MoreLinkProbProvider...");
 			// LOGGING ->
 		}
-		MRandomNetworkGenerator<AgentType> generator = new MRandomNetworkGenerator<AgentType>(1.0 / (agents.size() - 1)
-				*
-				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_RANDOM_AVG_DEGREE)).intValue(),
-				false, (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED), linkProbProvider);
+		MRandomNetworkGenerator<AgentType, EdgeType> generator = new MRandomNetworkGenerator<AgentType, EdgeType>(
+				1.0 / (agents.size() - 1) *
+				((Integer) pm.getParam(MNetBuildErdosRenyiPa.K)).intValue(),
+				false, (Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED), linkProbProvider, getEdgeModifier());
 
 		if (context == null) {
 			// <- LOGGING
@@ -104,7 +138,7 @@ public class MRsErdosRenyiRandomNetworkService<AgentType extends MoreMilieuAgent
 		}
 
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType>(
-				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
+				((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
@@ -117,46 +151,51 @@ public class MRsErdosRenyiRandomNetworkService<AgentType extends MoreMilieuAgent
 
 			network.addNode(agent);
 		}
-
+		
 		return (MoreRsNetwork<AgentType, EdgeType>) generator.createNetwork(network);
 	}
 
 	/**
+	 * TODO test!
+	 * 
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
 	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+
 		Uniform uniform = MManager.getURandomService().getNewUniformDistribution(
 				MManager.getURandomService().getGenerator(
-						((String) PmParameterManager.getParameter(MRandomPa.RND_STREAM_RANDOM_NETWORK_BUILDING))));
-		double p = 1.0 / (network.numNodes() - 1) *
-				((Integer) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_RANDOM_AVG_DEGREE)).intValue();
+						((String) pm.getParam(MRandomPa.RND_STREAM_RANDOM_NETWORK_BUILDING))));
+		
+		double p = 0.0;
+		if (pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) {
+			p = 1.0 / (network.numNodes() - 1) *
+					((Integer) ((MMilieuNetworkParameterMap) pm.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).
+							getMilieuParam(MNetBuildErdosRenyiPa.K, node.getMilieuGroup())).intValue();
+			
+		} else {
+			p = 1.0 / (network.numNodes() - 1) *
+					((Integer) pm.getParam(MNetBuildErdosRenyiPa.K)).intValue();
+		}
+
 		network.addNode(node);
 		for (AgentType partner : network.getNodes()) {
 			if (partner != node) {
 				if (uniform.nextDouble() < p) {
-					network.connect(node, partner);
+					createEdge(network, node, partner);
 				}
 				if (uniform.nextDouble() < p
-						&& (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) {
-					network.connect(partner, node);
+						&& (Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) {
+					createEdge(network, partner, node);
 				}
 			}
 		}
 		return true;
 	}
 
-	/**
-	 * @see de.cesr.more.rs.building.MoreRsNetworkBuilder#setContext(repast.simphony.context.Context)
-	 */
-	@Override
-	public void setContext(Context<AgentType> context) {
-		this.context = context;
-	}
-
 	@Override
 	public String toString() {
-		return "MRsErdosRenyiRandomNetworkService";
+		return "MGeoRsErdosRenyiNetworkService";
 	}
 }

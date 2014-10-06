@@ -87,45 +87,6 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 */
 	MILIEU_NETPREFS_PARAMID(Integer.class, 0),
 
-	/*****************************************************
-	 * Random network Builder
-	 *****************************************************/
-
-	/**
-	 * The average degree of a node in the resulting network. Determines p ( 1/#agents * AVG_DEGREE).
-	 */
-	BUILD_RANDOM_AVG_DEGREE(Integer.class, 6),
-
-	/*****************************************************
-	 * Watts-Strogats Small-World network Builder
-	 *****************************************************/
-
-	/**
-	 * The probability of an edge being rewired randomly; the proportion of randomly rewired edges in a graph. Range:
-	 * <code>(0,1)</code>; Default: <code>0.1</code>.
-	 *
-	 * @deprecated use {@link MNetBuildWsPa#BETA}
-	 */
-	BUILD_WSSM_BETA(Double.class, 0.1),
-
-	/**
-	 * Initial degree that is used to build to regular network (local neighbourhood size) to start from. Must be an even
-	 * number. Default: <code>4</code>. If BUILD_WSSM_CONSIDER_SOURCES is TRUE, this value is considered as in-degree!
-	 *
-	 * @deprecated use {@link MNetBuildWsPa#K}
-	 */
-	BUILD_WSSM_INITIAL_OUTDEG(Integer.class, 4),
-
-	/**
-	 * TODO check if implemented correctly according to the following understanding (see also Somonode etc.):
-	 *
-	 * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction. Generally, the
-	 * small world algorithm implemented in MoRe considers given k and beta values of the target node regarding the
-	 * source of a direction (i.e. the influenced is target and carefully considers its sources). However, in some
-	 * models the influencer is focused at and his preferences shall determine links (the influencer is source and
-	 * carefully considers its targets). In this case, set this parameter to FALSE.
-	 */
-	BUILD_WSSM_CONSIDER_SOURCES(Boolean.class, Boolean.TRUE),
 
 	/*****************************************************
 	 * Restore network Builder
@@ -142,6 +103,14 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 	 * Default:<code>true</code>.
 	 */
 	BUILD_DIRECTED(Boolean.class, true),
+	
+	/**
+	 * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction.
+	 * Generally, the small world algorithm considers given k and beta values for the source of a direction.
+	 * However, in some models we consider the influencer as source and seek to build the network according
+	 * to the influenced' properties. In this case, set this parameter to FALSE.
+	 */
+	CONSIDER_SOURCES(Boolean.class, Boolean.TRUE),
 
 	/**
 	 * Class that provides a degree distribution. Default: <code>NegativeBinomial.class</code>. Values are normally

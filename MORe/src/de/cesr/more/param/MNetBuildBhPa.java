@@ -66,6 +66,7 @@ public enum MNetBuildBhPa implements PmParameterDefinition {
 	 * Probability to connect to a specific milieu. Actually a map with double for each milieu.
 	 * Default: <code>1.0/MNetworkBuildingPa.MILIEUS</code> (if not null- 0.5 otherwise)
 	 */
+	@SuppressWarnings("unchecked")
 	P_MILIEUS(Double.class, new Double(1.0 / 
 			(PmParameterManager.
 					getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null ?

@@ -120,12 +120,13 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 			}
 
 			// height is required to determine distance ranges
-			MGeoHexagon.setHexagonWidth(geography.getGeometry(hexagons.iterator().next()).getEnvelopeInternal()
-					.getWidth());
+			double halfWidth = geography.getGeometry(hexagons.iterator().next()).getEnvelopeInternal()
+					.getWidth();
 
 			// Use the geography's set of hexagons because elements get removed from hexagons in the loop:
 			for (Object o : geography.getLayer(MGeoHexagon.class).getAgentSet()) {
 				MGeoHexagon<AgentType> hexagon = (MGeoHexagon<AgentType>)o;
+				hexagon.setHexagonWidth(halfWidth);
 				Geometry hexagonGeo = geography.getGeometry(hexagon);
 				Geometry hexagonCentroid = geography.getGeometry(hexagon).getCentroid();
 
@@ -188,7 +189,7 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 	 * a lower limit may exceed an upper limit which leads to errors from the treeset; if the value is too
 	 * large too many hexagons are considered). 
 	 */
-	static protected double								hexagonHalfWidth	= 0.0;
+	protected double									hexagonHalfWidth	= 0.0;
 
 	protected static int								idCounter		= 1;
 
@@ -215,15 +216,19 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 					this.distance > other.distance ? 1 : (this.hexagon != null && other.hexagon != null) ?
 							this.hexagon.compareTo(other.hexagon) : -1;
 		}
+
+		public String toString() {
+			return "Distance(" + this.distance + " / " + this.hexagon + ")";
+		}
 	}
 
 	/**
 	 * The hexagon height is required to determine the distances
 	 *
-	 * @param height
+	 * @param width
 	 */
-	static public void setHexagonWidth(double height) {
-		hexagonHalfWidth = height / 2.0;
+	public void setHexagonWidth(double width) {
+		hexagonHalfWidth = width / 2.0;
 	}
 
 	/**
@@ -280,45 +285,55 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 	 */
 	public Set<MoreGeoHexagon<AgentType>> getHexagonsOfDistance(AgentType agent, MRealDistribution distribution) {
 		double distance = Double.MAX_VALUE;
+		
+		Distance lower, upper;
 		do {
-			distance = distribution.sample() * this.distanceFactorForDistribution;
-		} while (distance - hexagonHalfWidth > distanceHexagon.last().distance);
-		
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Start-Distance: " + distance);
-		}
-		// LOGGING ->
-		
-		Set<MoreGeoHexagon<AgentType>> hexagons = new LinkedHashSet<MoreGeoHexagon<AgentType>>();
-		
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			StringBuffer buffer = new StringBuffer();
+			do {
+				distance = distribution.sample() * this.distanceFactorForDistribution;
+			} while (distance - hexagonHalfWidth > distanceHexagon.last().distance);
 			
-			for (Distance d : distanceHexagon) {
-				buffer.append(d.hexagon + "(" + d.distance + "), ");
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Start-Distance: " + distance);
 			}
-			logger.debug("Distance hexagon map: " + buffer.toString());
-		}
-		// LOGGING ->
-		
-		// to capture agents of the given distances, hexagons need to be considered whose centroid
-		// is +/- (hexagonHeight/2.0) away (if we assume that the agents coordinates can deviate from
-		// its hexagons centroid by (hexagonHeight/2.0) we would need to apply +/- hexagonHeight).
-		Distance lower = distanceHexagon.higher(new Distance(distance - hexagonHalfWidth, null));
-		Distance upper = distanceHexagon.lower(new Distance(distance + hexagonHalfWidth, null));
-		
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Lower hexagon: " + lower);
-			logger.debug("Upper hexagon: " + upper);
-		}
-		// LOGGING ->
-		
-		lower = lower != null ? lower : distanceHexagon.first();
-		upper = upper != null ? upper : distanceHexagon.last();
-		
+			// LOGGING ->
+			
+			
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				StringBuffer buffer = new StringBuffer();
+				
+				for (Distance d : distanceHexagon) {
+					buffer.append(d.hexagon + "(" + d.distance + "), ");
+				}
+				logger.debug("Distance hexagon map: " + buffer.toString());
+			}
+			// LOGGING ->
+			
+			// to capture agents of the given distances, hexagons need to be considered whose centroid
+			// is +/- (hexagonHeight/2.0) away (if we assume that the agents coordinates can deviate from
+			// its hexagons centroid by (hexagonHeight/2.0) we would need to apply +/- hexagonHeight).
+			lower = distanceHexagon.higher(new Distance(distance - hexagonHalfWidth, null));
+			upper = distanceHexagon.lower(new Distance(distance + hexagonHalfWidth, null));
+			
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Lower hexagon: " + lower);
+				logger.debug("Upper hexagon: " + upper);
+			}
+			// LOGGING ->
+			
+			// Actually, these cases should not occur (tested above):
+			// if lower is null, all hexagons are lower than the requested, thus taking the last.
+			lower = lower != null ? lower : distanceHexagon.first();
+			// if upper is null, all hexagons are higher than the requested, thus taking the first.
+			upper = upper != null ? upper : distanceHexagon.last();
+			
+			// In case hexagons are isolated, sample distance again:
+		} while (lower.distance > upper.distance);
+			
+		Set<MoreGeoHexagon<AgentType>> hexagons = new LinkedHashSet<MoreGeoHexagon<AgentType>>();
+
 		// Query the subset
 		if (lower == upper) {
 			hexagons.add(lower.hexagon);

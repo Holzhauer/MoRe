@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.cesr.more.param.MMilieuNetworkParameterMap;
-import de.cesr.more.param.MNetBuildWsPa;
+import de.cesr.more.param.MNetBuildWbSwPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.reader.MMilieuNetDataCsvReader;
 import de.cesr.parma.core.PmParameterManager;
@@ -75,13 +75,13 @@ public class MMilieuNetDataCsvReaderTest {
 		MMilieuNetworkParameterMap map = (MMilieuNetworkParameterMap) pm
 				.getParam(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS);
 
-		assertEquals(10, map.getMilieuParam(MNetBuildWsPa.K, 1));
-		assertEquals(11, map.getMilieuParam(MNetBuildWsPa.K, 2));
-		assertEquals(12, map.getMilieuParam(MNetBuildWsPa.K, 3));
-		assertEquals(13, map.getMilieuParam(MNetBuildWsPa.K, 4));
+		assertEquals(10, map.getMilieuParam(MNetBuildWbSwPa.K, 1));
+		assertEquals(11, map.getMilieuParam(MNetBuildWbSwPa.K, 2));
+		assertEquals(12, map.getMilieuParam(MNetBuildWbSwPa.K, 3));
+		assertEquals(13, map.getMilieuParam(MNetBuildWbSwPa.K, 4));
 
-		pm.setParam(MNetBuildWsPa.K, new Integer(4));
-		assertEquals(4, map.getMilieuParam(MNetBuildWsPa.K, 5));
+		pm.setParam(MNetBuildWbSwPa.K, new Integer(4));
+		assertEquals(4, map.getMilieuParam(MNetBuildWbSwPa.K, 5));
 
 		assertEquals(0.01, map.getP_Rewire(2), 0.0001);
 		assertEquals(0.1, map.getP_Rewire(3), 0.0001);

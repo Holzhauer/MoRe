@@ -41,12 +41,15 @@ import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
+import de.cesr.more.building.util.MoreBetaProvider;
+import de.cesr.more.building.util.MoreKValueProvider;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MDefaultPartnerFinder;
+import de.cesr.more.rs.building.MGeoRsWattsBetaSwNetworkService.MSmallWorldBetaModelNetworkGeneratorMilieuParams;
 import de.cesr.more.rs.building.MMilieuPartnerFinder;
 import de.cesr.more.rs.building.MoreMilieuAgent;
-import de.cesr.more.rs.building.MGeoRsWattsBetaSwBuilder.MSmallWorldBetaModelNetworkGeneratorMilieuParams;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -54,7 +57,7 @@ import edu.uci.ics.jung.graph.Graph;
 /**
  * MORe
  *
- * More efficient version of {@link MWattsBetaSwMilieuBuilder} since it does not need to initialise
+ * More efficient version of {@link MWattsBetaSwMilieuNetworkService} since it does not need to initialise
  * {@link MSmallWorldBetaModelNetworkGenerator}, {@link MSmallWorldBetaModelNetworkGeneratorParams}
  * and the agent list anew  each time when adding an agent to the network. However, due to this
  * change it may not be applied to generator different networks from the same network service!
@@ -82,7 +85,7 @@ import edu.uci.ics.jung.graph.Graph;
  *
  */
 public class MOneTimeWattsBetaSwMilieuBuilder<AgentType extends MoreMilieuAgent, EdgeType extends MoreEdge<AgentType>> extends
-		MWattsBetaSwBuilder<AgentType, EdgeType> {
+		MWattsBetaSwNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger

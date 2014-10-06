@@ -103,11 +103,19 @@ Using Network Generators
 
 	Hexagon shapefiles are required to determine distances between agents. Since the size of hexagons
 	depends on the simulation region and desired performance, often according hexagon shapefiles
-	need to be created anew (and the filename assigned to parameter <<<MNetBuildHdffPa#HEXAGON_SHAPEFILE>>>:
+	need to be created anew (and the filename assigned to parameter <<<MNetBuildHdffPa#HEXAGON_SHAPEFILE>>>.
 	
 	NOTE: The hexagon shapefile must cover all agent positions and should not be much larger since it is used to calculated 
 	the area's diameter which is used to initialised the distance distributions! 
 	
+	There are two ways to produce appropriate hexagon shapefiles:
+	
+*** Using a python script
+
+	The python scripts are available at {{{https://bitbucket.org/S-Holzhauer/py4abm}}}. There is one for squared model areas
+	and one for arbitrary model regions using a raster file as input (or a shapefile to use subsequently in the process). 
+	
+*** Manually in QGIS
 	[[1]] Download and install {{{http://www.qgis.org}QuantumGIS}}
 	
 	[[1]] Download and install the python plugin {{{http://michaelminn.com/linux/mmqgis/}<<<mmqgis>>>}}

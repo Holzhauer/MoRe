@@ -103,7 +103,7 @@ public class MRsCompleteNetworkBuilderTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.more.rs.building.MGeoRsCompleteNetworkBuilder#buildNetwork(java.util.Collection)}.
+	 * Test method for {@link de.cesr.more.rs.building.MGeoRsCompleteNetworkService#buildNetwork(java.util.Collection)}.
 	 */
 	@Test
 	public void testAddAndLinkNode() {

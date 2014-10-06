@@ -109,14 +109,15 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 		 */
 		public void initDistanceMatrix(Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons,
 				Geography<Object> geography) {
-			// height is required to determine distance ranges
-			MGeoHexagon2ndLayer.setHexagonWidth(geography.getGeometry(geography.getLayer(MGeoHexagon2ndLayer.class).
-					getAgentSet().iterator().next()).getEnvelopeInternal().getWidth());
+			// width is required to determine distance ranges
+			double hexagonWidth = geography.getGeometry(geography.getLayer(MGeoHexagon2ndLayer.class).
+					getAgentSet().iterator().next()).getEnvelopeInternal().getWidth();
 
 			for (Object o : geography.getLayer(MGeoHexagon2ndLayer.class).getAgentSet()) {
 				@SuppressWarnings("unchecked")
 				MGeoHexagon2ndLayer<AgentType> hexagon = (MGeoHexagon2ndLayer<AgentType>)o;
 
+				hexagon.setHexagonWidth(hexagonWidth);
 				hexagon.geography = geography;
 
 				// Assign 2ndLayerHexagons to 1stLayerHexagons
@@ -185,19 +186,12 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 	}
 	
 	/**
-	 * The value may not fall below the largest distance from the centroid to any point on the edge (otherwise, 
-	 * a lower limit may exceed an upper limit which leads to errors from the treeset; if the values is too
-	 * large too many hexagons are considered). 
-	 */
-	static protected double								hexagonWidth2nd	= 0.0;
-	
-	/**
 	 * The hexagon height is required to determine the distances
 	 *
 	 * @param height
 	 */
-	static public void setHexagonWidth(double height) {
-		hexagonWidth2nd = height;
+	public void setHexagonWidth(double height) {
+		hexagonHalfWidth = height / 2.0;
 	}
 
 	protected Geography<Object> geography = null;
@@ -205,6 +199,8 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 	protected boolean distancesInitialised = false;
 
 	protected boolean increasedDistanceAccuracy = true;
+
+	protected double			hexagonHalfWidth1stLayer;
 
 	public MGeoHexagon2ndLayer(boolean increasedDisanceAccuracy) {
 		this.increasedDistanceAccuracy = increasedDisanceAccuracy;
@@ -217,6 +213,7 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 	 * @param agentHexagons
 	 * @param geography
 	 */
+	@SuppressWarnings("unchecked")
 	protected void initDistanceMatrix(Collection<AgentType> agents,
 			Map<AgentType, MoreGeoHexagon<AgentType>> agentHexagons, Geography<Object> geography) {
 		if (!distancesInitialised) {
@@ -240,9 +237,10 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 			}
 			// LOGGING ->
 
+			MGeoHexagon1stLayer<AgentType> hexagon = null;
 			for (Object o : geography.getLayer(MGeoHexagon1stLayer.class).getAgentSet()) {
-				@SuppressWarnings("unchecked")
-				MGeoHexagon1stLayer<AgentType> hexagon = (MGeoHexagon1stLayer<AgentType>)o;
+
+				hexagon = (MGeoHexagon1stLayer<AgentType>)o;
 
 				double distance = thisHexagonCentroid.distance(geography.getGeometry(hexagon).getCentroid());
 
@@ -253,6 +251,12 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 				// LOGGING ->
 
 				this.setDistance(hexagon, distance);
+			}
+			if (hexagon == null) {
+				logger.error("There is not 1st layer hexagon initialised!");
+				throw new IllegalStateException("There is not 1st layer hexagon initialised!");
+			} else {
+				this.hexagonHalfWidth1stLayer = hexagon.hexagonHalfWidth;
 			}
 		}
 		this.distancesInitialised = true;
@@ -271,7 +275,7 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 
 	public boolean overlapsWithRadius(AgentType agent, double distance) {
 		return geography.getGeometry(agent).distance(geography.getGeometry(this).getCentroid()) - distance <=
-				hexagonWidth2nd;
+ hexagonHalfWidth;
 	}
 
 	/**
@@ -283,42 +287,50 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 		}
 
 		double distance = Double.MAX_VALUE;
+		Distance lower, upper;
 		do {
-			distance = distribution.sample() * this.distanceFactorForDistribution;
-		} while (distance - hexagonHalfWidth > distanceHexagon.last().distance);
-		
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Start-Distance: " + distance);
-		}
-		// LOGGING ->
+			do {
+				distance = distribution.sample() * this.distanceFactorForDistribution;
+			} while (distance - hexagonHalfWidth > distanceHexagon.last().distance);
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Start-Distance: " + distance);
+			}
+			// LOGGING ->
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Distance hexagon map: " + distanceHexagon);
+			}
+			// LOGGING ->
+
+			lower = distanceHexagon.higher(new Distance(distance - (hexagonHalfWidth1stLayer), null));
+			upper = distanceHexagon.lower(new Distance(distance + (hexagonHalfWidth1stLayer), null));
+
+			// <- LOGGING
+			if (logger.isDebugEnabled()) {
+				logger.debug("Lower hexagon: " + lower);
+				logger.debug("Upper hexagon: " + upper);
+			}
+			// LOGGING ->
+
+			// Actually, these cases should not occur (tested above):
+			// if lower is null, all hexagons are lower than the requested, thus taking the last.
+			lower = lower != null ? lower : distanceHexagon.first();
+			// if upper is null, all hexagons are higher than the requested, thus taking the first.
+			upper = upper != null ? upper : distanceHexagon.last();
+
+			// In case hexagons are isolated, sample distance again:
+		} while (lower.distance > upper.distance);
 		
 		Set<MoreGeoHexagon<AgentType>> hexagons = new LinkedHashSet<MoreGeoHexagon<AgentType>>();
 
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Distance hexagon map: " + distanceHexagon);
-		}
-		// LOGGING ->
-
-		Distance lower = distanceHexagon.higher(new Distance(distance - (hexagonHalfWidth), null)); 
-		Distance upper = distanceHexagon.lower(new Distance(distance + (hexagonHalfWidth), null));
-
-		// <- LOGGING
-		if (logger.isDebugEnabled()) {
-			logger.debug("Lower hexagon: " + lower);
-			logger.debug("Upper hexagon: " + upper);
-		}
-		// LOGGING ->
-
-		lower = lower != null ? lower : distanceHexagon.first();
-		upper = upper != null ? upper : distanceHexagon.last();
-		
-
 		// Query the subset
 		if (lower == upper) {
-			if (this.increasedDistanceAccuracy && geography.getGeometry(agent).distance(geography .getGeometry(lower.hexagon).getCentroid()) - distance <=
-					hexagonHalfWidth) {
+			if (this.increasedDistanceAccuracy
+					&& geography.getGeometry(agent).distance(geography.getGeometry(lower.hexagon).getCentroid())
+							- distance <= hexagonHalfWidth1stLayer) {
 				// check 2nd layer hexagons of lower.hexagon
 				for (MGeoHexagon2ndLayer<AgentType> h2 : ((MGeoHexagon1stLayer<AgentType>)lower.hexagon).get2ndLayerHexagons()) {
 					if (h2.overlapsWithRadius(agent, distance)) {
@@ -327,16 +339,33 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 				}
 			}
 		} else {
-			for (Distance d : distanceHexagon.subSet(lower, upper)) {
-				if (this.increasedDistanceAccuracy && geography.getGeometry(agent).distance(geography.getGeometry(d.hexagon).getCentroid()) - distance <=
-						hexagonHalfWidth ) {
-					// check 2nd layer hexagons of d.hexagon
-					for (MGeoHexagon2ndLayer<AgentType> h2 : ((MGeoHexagon1stLayer<AgentType>)d.hexagon).get2ndLayerHexagons()) {
-						if (h2.overlapsWithRadius(agent, distance)) {
-							hexagons.add(h2);
+			try {
+				for (Distance d : distanceHexagon.subSet(lower, upper)) {
+					if (this.increasedDistanceAccuracy
+							&& geography.getGeometry(agent).distance(geography.getGeometry(d.hexagon).getCentroid())
+									- distance <= hexagonHalfWidth1stLayer) {
+						// check 2nd layer hexagons of d.hexagon
+						for (MGeoHexagon2ndLayer<AgentType> h2 : ((MGeoHexagon1stLayer<AgentType>) d.hexagon)
+								.get2ndLayerHexagons()) {
+							if (h2.overlapsWithRadius(agent, distance)) {
+								hexagons.add(h2);
+							}
 						}
 					}
 				}
+			} catch (IllegalArgumentException e) {
+
+				StringBuffer buffer = new StringBuffer();
+
+				for (Distance d : distanceHexagon) {
+					buffer.append(d.hexagon + "(" + d.distance + "), ");
+				}
+				logger.info("Distance hexagon map: " + buffer.toString());
+				logger.info("Lower: " + lower);
+				logger.info("Upper: " + upper);
+				logger.info("HexagonHalfWidth1stLayer:" + hexagonHalfWidth1stLayer);
+				e.printStackTrace();
+				throw e;
 			}
 		}
 		return hexagons;

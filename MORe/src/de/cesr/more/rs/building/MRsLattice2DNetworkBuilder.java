@@ -33,6 +33,8 @@ import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MLattice2DNetworkBuilder;
+import de.cesr.more.building.network.MoreNetworkBuilder;
+import de.cesr.more.building.network.MoreNetworkService;
 import de.cesr.more.building.util.MLattice2DGenerator;
 import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.param.MNetBuildLattice2DPa;
@@ -40,11 +42,32 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
  * MORe
  *
+ * RS version of {@link MLattice2DNetworkBuilder}.
+ * 
+ * Since the number of nodes is restricted this {@link MoreNetworkBuilder} cannot
+ * become a {@link MoreNetworkService}.
+ * 
+ * @formatter:off
+ * <table>
+ * <th>Parameter</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents; must be quadratic)</td></tr>
+ * <th>Property</th><th>Value</th>
+ * <tr><td>#Edges:</td><td>Toroidal & Directed: 4N</td></tr>
+ * <tr><td></td><td></td></tr>
+ * </table>
+ * <br>
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>{@link MNetBuildLattice2DPa.TOROIDAL}</li>
+ * </ul>
+ * 
  * @author Sascha Holzhauer
  * @date 14.05.2012 
  *
@@ -67,11 +90,20 @@ public class MRsLattice2DNetworkBuilder<AgentType, EdgeType extends MRepastEdge<
 		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>(), "Network");
 	}
 	
+	/**
+	 * @param eFac
+	 * @param name
+	 */
 	public MRsLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
-		super(eFac, name);
+		this(eFac, name, PmParameterManager.getInstance(null));
+	}
+	
+	public MRsLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name,
+			PmParameterManager pm) {
+		super(eFac, name, pm);
 		this.edgeModifier = new MDefaultNetworkEdgeModifier<AgentType, EdgeType>(eFac);
 		this.latticeGenerator = new MLattice2DGenerator<AgentType, EdgeType>(
-				(Boolean)PmParameterManager.getParameter(MNetBuildLattice2DPa.TOROIDAL));
+				(Boolean)pm.getParam(MNetBuildLattice2DPa.TOROIDAL));
 	}
 	
 	/**
@@ -107,7 +139,7 @@ public class MRsLattice2DNetworkBuilder<AgentType, EdgeType extends MRepastEdge<
 		checkAgentCollection(agents);
 		
 		MoreRsNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
-				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
+				((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 		for (AgentType agent : agents) {

@@ -114,6 +114,14 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	/**
 	 * @param areasGeography
 	 */
+	@SuppressWarnings("unchecked")
+	public MGeoRsNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, PmParameterManager pm) {
+		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, pm);
+	}
+	
+	/**
+	 * @param areasGeography
+	 */
 	@SuppressWarnings("unchecked") // risky but not avoidable
 	@Deprecated
 	public MGeoRsNetworkService() {

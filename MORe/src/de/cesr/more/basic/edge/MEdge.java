@@ -82,7 +82,7 @@ public class MEdge<V> implements MoreEdge<V>, MoreTraceableEdge<V>, MoreFadingWe
 		this.weight = weight;
 
 		// schedule fading out:
-		Object agent = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES) ? this.start : this.end; 
+		Object agent = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.CONSIDER_SOURCES) ? this.start : this.end; 
 		this.fadeAmount = (agent instanceof MoreMilieuAgent && PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) ? 
 				((MMilieuNetworkParameterMap)PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).
 				getDynFadeOutAmount(((MoreMilieuAgent) agent).getMilieuGroup()) :

@@ -27,7 +27,6 @@ import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.building.util.MLattice2DGenerator;
 import de.cesr.more.geo.manipulate.MoreGeoNetworkEdgeModifier;
 import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
@@ -39,12 +38,21 @@ import de.cesr.parma.core.PmParameterManager;
 /**
  * MORe
  * 
- * TODO parameter description
+ * Uses a {@link MGeoRsNetworkEdgeModifier}.
+ * 
+ * <table>
+ * <th>Parameter</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents; must be quadratic)</td></tr>
+ * <th>Property</th><th>Value</th>
+ * <tr><td>#Edges:</td><td>Toroidal & directed: 4N - 2sqrt(N); non-toroidal & directed: 4N - 4sqrt(N)</td></tr>
+ * <tr><td></td><td></td></tr>
+ * </table>
+ * <br>
  * 
  * Considered {@link PmParameterDefinition}s:
  * <ul>
  * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
- * <li>...</li>
+ * <li>{@link MNetBuildLattice2DPa.TOROIDAL}</li>
  * </ul>
  *
  * @author holzhauer
@@ -63,12 +71,19 @@ MRsLattice2DNetworkBuilder<AgentType, EdgeType> implements MoreGeoRsNetworkBuild
 	public MGeoRsLattice2DNetworkBuilder() {
 		this((MoreEdgeFactory<AgentType, EdgeType>) new MDefaultEdgeFactory<AgentType>(), "Network");
 	}
-
+	
+	/**
+	 * @param eFac
+	 * @param name
+	 */
 	public MGeoRsLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
-		super(eFac, name);
+		this(eFac, name, PmParameterManager.getInstance(null));
+	}
+
+	public MGeoRsLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name,
+			PmParameterManager pm) {
+		super(eFac, name, pm);
 		this.edgeModifier = new MGeoRsNetworkEdgeModifier<AgentType, EdgeType>(eFac);
-		this.latticeGenerator = new MLattice2DGenerator<AgentType, EdgeType>(
-				(Boolean)PmParameterManager.getParameter(MNetBuildLattice2DPa.TOROIDAL));
 	}
 	
 	

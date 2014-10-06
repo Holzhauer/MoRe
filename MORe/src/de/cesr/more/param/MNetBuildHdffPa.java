@@ -43,11 +43,11 @@ import de.cesr.parma.core.PmParameterDefinition;
 public enum MNetBuildHdffPa implements PmParameterDefinition {
 
 	/**
-	 * Class that provides a degree distribution. Default: <code>NegativeBinomial.class</code>. Values are normally
+	 * Class that provides a degree distribution. Default: 
+	 * <code>de.cesr.more.util.distributions.MPascalDistribution</code>. Values are normally
 	 * taken from {@link MMilieuNetworkParameterMap}. However, this parameter definition is required to access values in
 	 * the map.
 	 */
-	@Deprecated
 	K_DISTRIBUTION_CLASS(String.class, "de.cesr.more.util.distributions.MPascalDistribution"),
 
 	/**
@@ -110,14 +110,18 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	 * Max. radius to potential partner agents that are considered as ambassadors in meters. This is sometimes useful to
 	 * reduce computational effort since it reduces the collections that need to be initialised. Default:
 	 * <code>{@link Double#MAX_VALUE}</code>.
-	 *
-	 * Values are normally taken from {@link MMilieuNetworkParameterMap} but this parameter definition is required to
-	 * access values in the map.
 	 */
 	MAX_SEARCH_RADIUS(Double.class, new Double(Double.MAX_VALUE)),
 
 	/**
-	 * Determines the probability of establishing links from partners of the focal agent (e.g. ambassador) (and
+	 * Determines the probability of establishing links to partners of the ambassador from the focal agent (and recursively). Default:
+	 * <code>0.0</code>. The values is multiplied by distance and milieu related probabilities (see
+	 * {@link MNetBuildHdffPa#DIM_WEIGHTS_GEO} and {@link MNetBuildHdffPa#DIM_WEIGHTS_MILIEU}).
+	 */
+	PROB_FORWARD(Double.class, new Double(0.0)),
+	
+	/**
+	 * Determines the probability of establishing links from partners of the ambassador to the focal agent (and
 	 * recursively). Default: <code>0.2</code>. The values is multiplied by distance and milieu related probabilities
 	 * (see {@link MNetBuildHdffPa#DIM_WEIGHTS_GEO} and {@link MNetBuildHdffPa#DIM_WEIGHTS_MILIEU}).
 	 *
@@ -126,12 +130,6 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	 */
 	PROB_BACKWARD(Double.class, new Double(0.2)),
 
-	/**
-	 * Determines the probability of establishing links to partners of the ambassador (and recursively). Default:
-	 * <code>0.0</code>. The values is multiplied by distance and milieu related probabilities (see
-	 * {@link MNetBuildHdffPa#DIM_WEIGHTS_GEO} and {@link MNetBuildHdffPa#DIM_WEIGHTS_MILIEU}).
-	 */
-	PROB_FORWARD(Double.class, new Double(0.0)),
 
 	/**
 	 * Weight for geographical proximity regarding partner homophily. Default: <code>0.5</code>. Values are normally

@@ -52,7 +52,7 @@ public class MRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, EdgeTy
 	 * Logger
 	 */
 	static private Logger logger = Logger
-			.getLogger(MGeoRsCompleteNetworkBuilder.class);
+			.getLogger(MGeoRsCompleteNetworkService.class);
 	
 	String name;
 	

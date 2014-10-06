@@ -114,18 +114,19 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 			}
 			// LOGGING ->
 
+			double hexagonWidth = geography.getGeometry(geography.getLayer(MGeoHexagon1stLayer.class).
+					getAgentSet().iterator().next()).getEnvelopeInternal().getWidth();
+
 			Set<MoreGeoHexagon<AgentType>> hexagons = new HashSet<MoreGeoHexagon<AgentType>>();
 			for (Object o : geography.getLayer(MGeoHexagon1stLayer.class).getAgentSet()) {
 				hexagons.add((MoreGeoHexagon<AgentType>) o);
 			}
 
-			// height is required to determine distance ranges
-			MGeoHexagon.setHexagonWidth(geography.getGeometry(hexagons.iterator().next()).getEnvelopeInternal()
-					.getWidth());
 
 			// Use the geography's set of hexagons because elements get removed from hexagons in the loop:
 			for (Object o : geography.getLayer(MGeoHexagon1stLayer.class).getAgentSet()) {
 				MGeoHexagon1stLayer<AgentType> hexagon = (MGeoHexagon1stLayer<AgentType>)o;
+				hexagon.setHexagonWidth(hexagonWidth);
 				Geometry hexagonCentroid = geography.getGeometry(hexagon).getCentroid();
 
 				hexagon.geography = geography;

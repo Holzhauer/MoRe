@@ -40,6 +40,9 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
+import de.cesr.more.building.util.MoreBetaProvider;
+import de.cesr.more.building.util.MoreKValueProvider;
+import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
 import de.cesr.more.param.MNetworkBuildingPa;
@@ -48,6 +51,7 @@ import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -55,7 +59,22 @@ import edu.uci.ics.jung.graph.Graph;
 /**
  * MORe
  * 
- * TODO use MMilieuPartnerFinder
+ * Extension of {@link }
+ * <table>
+ * <th>Parameter</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
+ * <tr><td>#Edges:</td><td>Directed: kN</td></tr>
+ * <tr><td>Parameter provider</td><td>MSmallWorldBetaModelNetworkGeneratorParams</td></tr>
+ * </table>
+ * See {@link MSmallWorldBetaModelNetworkGeneratorParams} for further parameters!
+ * <br>
+ * Considered {@link PmParameterDefinition}s:
+ * <ul>
+ * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
+ * <li>{@link MNetworkBuildingPa.CONSIDER_SOURCES}</li>
+ * <li>{@link MNetBuildWbSwPa.BETA}(used as default {@link MoreBetaProvider} in parameter provider)</li>
+ * <li>{@link MNetBuildWbSwPa.K} (used as default {@link MoreKValueProvider} in parameter provider)</li>
+ * </ul>
  * 
  * - uses MSmallWorldBetaModelNetworkGeneratorMilieuParams from MGeoRsWattsBetaSwBuilder - respects milieu preferences
  * for global links (rewired ones)
@@ -64,13 +83,13 @@ import edu.uci.ics.jung.graph.Graph;
  * @date 16.03.2012
  * 
  */
-public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
-		extends MGeoRsWattsBetaSwBuilder<AgentType, EdgeType> {
+public class MGeoRsWattsBetaSwPartnerCheckNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
+		extends MGeoRsWattsBetaSwNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
 	 */
-	static private Logger	logger	= Logger.getLogger(MGeoRsWattsBetaSwPartnerCheckingBuilder.class);
+	static private Logger	logger	= Logger.getLogger(MGeoRsWattsBetaSwPartnerCheckNetworkService.class);
 
 	protected Uniform		rand;
 
@@ -79,15 +98,23 @@ public class MGeoRsWattsBetaSwPartnerCheckingBuilder<AgentType extends MoreMilie
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsWattsBetaSwPartnerCheckingBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+	public MGeoRsWattsBetaSwPartnerCheckNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		super(eFac);
 	}
 
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsWattsBetaSwPartnerCheckingBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MGeoRsWattsBetaSwPartnerCheckNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		super(eFac, name);
+	}
+	
+	/**
+	 * @param eFac
+	 */
+	public MGeoRsWattsBetaSwPartnerCheckNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name,
+			PmParameterManager pm) {
+		super(eFac, name, pm);
 	}
 
 	@Override

@@ -43,7 +43,7 @@ import edu.uci.ics.jung.graph.Graph;
 /**
  * MORe
  *
- * Considers {@link MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES} (this class is mainly used by
+ * Considers {@link MNetworkBuildingPa.CONSIDER_SOURCES} (this class is mainly used by
  * {@link MSmallWorldBetaModelNetworkGenerator}).
  *
  * NOTE: For undirected networks, the k provider values are not fully respected (because of links from other nodes that
@@ -105,7 +105,7 @@ public class MLattice1DGenerator<V, E extends MoreEdge<? super V>> implements Gr
 		this.edge_modifier = edge_modifier;
 		this.is_directed = (graph_factory.create() instanceof DirectedGraph);
 		this.is_symmetrical = is_symmetrical;
-		this.considerSource = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES);
+		this.considerSource = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.CONSIDER_SOURCES);
 	}
 
 	/**

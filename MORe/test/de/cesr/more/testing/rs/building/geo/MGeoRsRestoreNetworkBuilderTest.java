@@ -45,7 +45,7 @@ import de.cesr.more.basic.MNetworkTools;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MGeoRsRestoreNetworkBuilder;
-import de.cesr.more.rs.building.MGeoRsWattsBetaSwBuilder;
+import de.cesr.more.rs.building.MGeoRsWattsBetaSwNetworkService;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.testing.testutils.MTestGraphs.MTestNode;
@@ -87,8 +87,8 @@ public class MGeoRsRestoreNetworkBuilderTest {
 	 */
 	@Test
 	public void testBuildNetwork() {
-		MGeoRsWattsBetaSwBuilder<MTestNode, MRepastEdge<MTestNode>> netBuilder =
-				new MGeoRsWattsBetaSwBuilder<MTestNode, MRepastEdge<MTestNode>>();
+		MGeoRsWattsBetaSwNetworkService<MTestNode, MRepastEdge<MTestNode>> netBuilder =
+				new MGeoRsWattsBetaSwNetworkService<MTestNode, MRepastEdge<MTestNode>>();
 		Geography<Object> geography = new DefaultGeography<Object>("TestGeogrpahy");
 		netBuilder.setGeography(geography);
 		netBuilder.setContext(new DefaultContext<MTestNode>());

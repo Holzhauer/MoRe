@@ -102,10 +102,10 @@ public class MMilieuNetworkParameterMap extends
 	 */
 	@Deprecated
 	public int getK(int milieu) {
-		return warnDefault(MNetBuildWsPa.K, milieu) ?
-				((Integer) pm.getParam(MNetBuildWsPa.K)).intValue() :
+		return warnDefault(MNetBuildWbSwPa.K, milieu) ?
+				((Integer) pm.getParam(MNetBuildWbSwPa.K)).intValue() :
 		((Integer) this.get(new Integer(milieu)).get(
-						MNetBuildWsPa.K)).intValue();
+						MNetBuildWbSwPa.K)).intValue();
 	}
 
 	/**
@@ -119,15 +119,15 @@ public class MMilieuNetworkParameterMap extends
 		if (!this.containsKey(new Integer(milieu))) {
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
-		this.get(new Integer(milieu)).put(MNetBuildWsPa.K,
+		this.get(new Integer(milieu)).put(MNetBuildWbSwPa.K,
 				new Integer(k));
 	}
 
 	public double getP_Rewire(int milieu) {
-		return warnDefault(MNetBuildWsPa.BETA, milieu) ?
-				((Double) pm.getParam(MNetBuildWsPa.BETA)).doubleValue() :
+		return warnDefault(MNetBuildWbSwPa.BETA, milieu) ?
+				((Double) pm.getParam(MNetBuildWbSwPa.BETA)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-						MNetBuildWsPa.BETA)).doubleValue();
+						MNetBuildWbSwPa.BETA)).doubleValue();
 	}
 
 	public void setP_Rewire(int milieu, double p) {
@@ -135,7 +135,7 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetBuildWsPa.BETA, new Double(p));
+				MNetBuildWbSwPa.BETA, new Double(p));
 	}
 
 	public double getSearchRadius(int milieu) {
@@ -892,15 +892,14 @@ public class MMilieuNetworkParameterMap extends
 		}
 		// LOGGING ->
 
-		if (this.size() < milieu) {
+		if (!this.containsKey(new Integer(milieu))) {
 			if (!(warningsReducerMap.containsKey(null))) {
 				warningsReducerMap.put(null, new HashSet<Integer>());
 			}
 			if (!warningsReducerMap.get(null).contains(new Integer(milieu))) {
 				warningsReducerMap.get(null).add(new Integer(milieu));
-				logger.warn("There are less milieus in the map than reqested (map size: " + this.size()
-						+ " / requested milieu: " +
-						milieu + "; parameter: " + definition.toString() + ")");
+				logger.warn("The reqested milieu (" +
+						milieu + ") is not in the parameter map (requested parameter: " + definition.toString() + ")");
 			}
 			return true;
 		} else if (this.get(new Integer(milieu)).get(

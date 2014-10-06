@@ -34,10 +34,10 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 23.09.2011 
  *
  */
-public enum MNetBuildWsPa implements PmParameterDefinition {
+public enum MNetBuildWbSwPa implements PmParameterDefinition {
 	
 	/*****************************************************
-	 * Watts-Strogats Small-World network Builder
+	 * Watts-Beta Small-World network Builder
 	 *****************************************************/
 	
 	/**
@@ -50,16 +50,7 @@ public enum MNetBuildWsPa implements PmParameterDefinition {
 	 * Initial degree that is used to build to regular network (local neighbourhood size) to start from. Must be an even
 	 * number. Default: <code>4</code>. If BUILD_WSSM_CONSIDER_SOURCES is TRUE, this value is considered as in-degree!
 	 */
-	K(Integer.class, 4),
-	
-	
-	/**
-	 * Regarding the SmallWorldNetworkBuilder one must pay attention because of the network direction.
-	 * Generally, the small world algorithm considers given k and beta values for the source of a direction.
-	 * However, in some models we consider the influencer as source and seek to build the network according
-	 * to the influenced' properties. In this case, set this parameter to FALSE.
-	 */
-	CONSIDER_SOURCES(Boolean.class, Boolean.TRUE);
+	K(Integer.class, 4);
 	
 	
 	
@@ -69,7 +60,7 @@ public enum MNetBuildWsPa implements PmParameterDefinition {
 	/**
 	 * @param type
 	 */
-	MNetBuildWsPa(Class<?> type) {
+	MNetBuildWbSwPa(Class<?> type) {
 		this(type, null);
 	}
 
@@ -77,7 +68,7 @@ public enum MNetBuildWsPa implements PmParameterDefinition {
 	 * @param type
 	 * @param defaultValue
 	 */
-	MNetBuildWsPa(Class<?> type, Object defaultValue) {
+	MNetBuildWbSwPa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
 	}
@@ -85,7 +76,7 @@ public enum MNetBuildWsPa implements PmParameterDefinition {
 	/**
 	 * 
 	 */
-	private MNetBuildWsPa(Class<?> type, PmParameterDefinition defaultDefinition) {
+	private MNetBuildWbSwPa(Class<?> type, PmParameterDefinition defaultDefinition) {
 		this.type = type;
 		if (defaultDefinition != null) {
 			this.defaultValue = defaultDefinition.getDefaultValue();

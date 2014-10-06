@@ -70,7 +70,14 @@ public enum MBasicPa implements PmParameterDefinition {
 	/**
 	 * Geography in the RS root context
 	 */
-	ROOT_GEOGRAPHY(Geography.class, null);
+	ROOT_GEOGRAPHY(Geography.class, null),
+
+	/**
+	 * Used to round double up values that need to sum up to a certain value (e.g. link preferences). If for some
+	 * reason, un-critical errors occur because of many summands that are not exactly represented this parameter can be
+	 * set to around 10000000.
+	 */
+	PRECISION_FACTOR(Integer.class, -1);
 
 
 	private Class<?> type;

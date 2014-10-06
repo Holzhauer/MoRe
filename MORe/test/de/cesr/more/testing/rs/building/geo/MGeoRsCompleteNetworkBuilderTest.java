@@ -35,7 +35,7 @@ import org.junit.Test;
 import repast.simphony.context.DefaultContext;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.param.MNetworkBuildingPa;
-import de.cesr.more.rs.building.MGeoRsCompleteNetworkBuilder;
+import de.cesr.more.rs.building.MGeoRsCompleteNetworkService;
 import de.cesr.more.rs.building.MGeoRsNetworkService;
 import de.cesr.more.rs.building.edge.MRsEdgeFactory;
 import de.cesr.more.rs.edge.MRepastEdge;
@@ -69,7 +69,7 @@ public class MGeoRsCompleteNetworkBuilderTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.more.rs.building.MGeoRsCompleteNetworkBuilder#buildNetwork(java.util.Collection)}.
+	 * Test method for {@link de.cesr.more.rs.building.MGeoRsCompleteNetworkService#buildNetwork(java.util.Collection)}.
 	 */
 	@Test
 	public void testBuildNetwork() {
@@ -81,7 +81,7 @@ public class MGeoRsCompleteNetworkBuilderTest {
 		}
 
 		MGeoRsNetworkService<MTestNode, MRepastEdge<MTestNode>> netService =
-				new MGeoRsCompleteNetworkBuilder<MTestNode, MRepastEdge<MTestNode>>(
+				new MGeoRsCompleteNetworkService<MTestNode, MRepastEdge<MTestNode>>(
 						new MRsEdgeFactory<MTestNode, MRepastEdge<MTestNode>>());
 		netService.setContext(new DefaultContext<MTestNode>());
 		
@@ -111,7 +111,7 @@ public class MGeoRsCompleteNetworkBuilderTest {
 	}
 
 	/**
-	 * Test method for {@link de.cesr.more.rs.building.MGeoRsCompleteNetworkBuilder#buildNetwork(java.util.Collection)}.
+	 * Test method for {@link de.cesr.more.rs.building.MGeoRsCompleteNetworkService#buildNetwork(java.util.Collection)}.
 	 */
 	@Test
 	public void testAddAndLinkNode() {
@@ -121,7 +121,7 @@ public class MGeoRsCompleteNetworkBuilderTest {
 		}
 
 		MGeoRsNetworkService<MTestNode, MRepastEdge<MTestNode>> netService =
-				new MGeoRsCompleteNetworkBuilder<MTestNode, MRepastEdge<MTestNode>>(
+				new MGeoRsCompleteNetworkService<MTestNode, MRepastEdge<MTestNode>>(
 						new MRsEdgeFactory<MTestNode, MRepastEdge<MTestNode>>());
 		netService.setContext(new DefaultContext<MTestNode>());
 

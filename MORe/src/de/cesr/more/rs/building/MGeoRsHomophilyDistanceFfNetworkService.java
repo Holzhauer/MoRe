@@ -143,18 +143,34 @@ import de.cesr.parma.core.PmParameterManager;
  *
  * Considered {@link PmParameterDefinition}s:
  * <ul>
- * <li>{@link MNetBuildHdffPa#HEXAGON_SHAPEFILE}</li>
  * <li>{@link MNetworkBuildingPa#BUILD_DIRECTED}</li>
+ * <li>{@link MNetBuildHdffPa#HEXAGON_SHAPEFILE}</li>
+ * <li>{@link MNetBuildHdffPa#HEXAGON_SHAPEFILE_2ND}</li>
+ * <li>{@link MNetBuildHdffPa#HEXAGON_INITIALISER_CLASS}</li>
+ *
  * <li>{@link MNetworkBuildingPa#P_MILIEUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildHdffPa#PROB_FORWARD} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildHdffPa#PROB_BACKWARD} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * 
  * <li>{@link MNetBuildHdffPa#K_DISTRIBUTION_CLASS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#K_PARAM_A} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#K_PARAM_B} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
- * <li>{@link MNetBuildHdffPa#DISTANCE_PROBABILITY_EXPONENT} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
- * <li>{@link MNetBuildHdffPa#MAX_SEARCH_RADIUS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
- * <li>{@link MNetBuildHdffPa#PROB_FORWARD} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
- * <li>{@link MNetBuildHdffPa#PROB_BACKWARD} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ *
+ * <li>{@link MNetBuildHdffPa#DIST_DISTRIBUTION_CLASS} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildHdffPa#DIST_PARAM_A} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildHdffPa#DIST_PARAM_B} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildHdffPa#DIST_PARAM_XMIN} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildHdffPa#DIST_PARAM_PLOCAL} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * 
  * <li>{@link MNetBuildHdffPa#DIM_WEIGHTS_GEO} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
  * <li>{@link MNetBuildHdffPa#DIM_WEIGHTS_MILIEU} (via {@link MNetworkBuildingPa#MILIEU_NETWORK_PARAMS})</li>
+ * <li>{@link MNetBuildHdffPa#MAX_SEARCH_RADIUS}</li>
+ * </ul>
+ * 
+ * Rather technical parameters:
+ * <ul>
+ * <li>{@link MNetBuildHdffPa#DISTANCE_FACTOR_FOR_DISTRIBUTION}</li>
+ * <li>{@link MNetBuildHdffPa#INCREASED_DISTANCE_ACCURACY}</li>
  * <li>{@link MNetBuildHdffPa#AGENT_SHUFFLE_INTERVAL} (specifies the number of turns - selection of new ambassador for
  * each agent - after which agents are shuffled)</li>
  * </ul>
@@ -327,7 +343,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 		Map<AgentType, Integer> degreeTargets = null;
 
-		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
+		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap, this.pm);
 
 		// an additional agent collection is required since all alternative collections need
 		// to be persistent till the last link is established...
@@ -408,8 +424,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 					MoreGeoHexagon<AgentType> h = agentHexagons.get(agent);
 					if (h == null) {
-						logger.error("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")" + " is not assigned to a hexagon. " +
-								"Check that agents are part of geography and hexagon shapefile covers all agent positions!");
+						logger.error("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")" + " is not assigned to a hexagon. ");
 						
 						if (this.geography.getGeometry(agent) == null) {
 							logger.error("Check that agents are part of geography!");							
@@ -513,6 +528,13 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	protected Map<AgentType, Integer> initDegreeTargets(Collection<AgentType> agents) {
 		Map<AgentType, Integer> degreeTargets = new HashMap<AgentType, Integer>();
 		for (AgentType agent : agents) {
+
+			if (agent.getMilieuGroup() >= paraMap.size() + (Integer) pm.getParam(MBasicPa.MILIEU_START_ID)) {
+				logger.error("There is no parameterisation for milieu " +
+						agent.getMilieuGroup() + "!");
+				throw new IllegalStateException("There is no parameterisation for milieu " +
+						agent.getMilieuGroup() + "!");
+			}
 			degreeTargets.put(agent,
 					Math.min(new Integer(Math.round(this.degreeDistributions.get(new Integer(agent.getMilieuGroup()))
 							.sample())), agents.size() - 1));

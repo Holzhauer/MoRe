@@ -30,9 +30,11 @@ import java.util.Set;
 import org.apache.commons.collections15.BidiMap;
 import org.apache.log4j.Logger;
 
-import repast.simphony.space.graph.Network;
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
+import de.cesr.more.basic.edge.MoreEdge;
+import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.algorithms.util.Indexer;
@@ -58,7 +60,7 @@ import edu.uci.ics.jung.algorithms.util.Indexer;
  * @author Sascha Holzhauer
  * @date 06.02.2012
  */
-public class MRandomNetworkGenerator<AgentType> {
+public class MRandomNetworkGenerator<AgentType, EdgeType extends MoreEdge<AgentType>> {
 
 	/**
 	 * Logger
@@ -72,6 +74,8 @@ public class MRandomNetworkGenerator<AgentType> {
 	Uniform								uniform;
 
 	MoreLinkProbProvider<AgentType>		linkProbProvider	= null;
+	
+	MoreNetworkEdgeModifier<AgentType, EdgeType> edgeModifier = null;
 
 	/**
 	 * Creates a random network.
@@ -86,7 +90,7 @@ public class MRandomNetworkGenerator<AgentType> {
 	 *        Provider of vertex specific link probabilities
 	 */
 	public MRandomNetworkGenerator(double density, boolean allowSelfLoops, boolean symmetric,
-			MoreLinkProbProvider<AgentType> linkProbProvider) {
+			MoreLinkProbProvider<AgentType> linkProbProvider, MoreNetworkEdgeModifier<AgentType, ?> edgeModifier) {
 		this.loops = allowSelfLoops;
 		this.isSymmetric = symmetric;
 		this.density = density;
@@ -111,8 +115,9 @@ public class MRandomNetworkGenerator<AgentType> {
 	 * @param symmetric
 	 *        whether or not ties will be bidirectional in the created network
 	 */
-	public MRandomNetworkGenerator(double density, boolean allowSelfLoops, boolean symmetric) {
-		this(density, allowSelfLoops, symmetric, null);
+	public MRandomNetworkGenerator(double density, boolean allowSelfLoops, boolean symmetric, 
+			MoreNetworkEdgeModifier<AgentType, ?> edgeModifier) {
+		this(density, allowSelfLoops, symmetric, null, edgeModifier);
 	}
 
 	/**
@@ -122,7 +127,7 @@ public class MRandomNetworkGenerator<AgentType> {
 	 *        the network to add edges to
 	 * @return the random network
 	 */
-	public Network<AgentType> createNetwork(Network<AgentType> network) {
+	public MoreNetwork<AgentType, EdgeType> createNetwork(MoreNetwork<AgentType, EdgeType> network) {
 		boolean isDirected = network.isDirected();
 		init(network);
 		if (isDirected) {
@@ -144,16 +149,16 @@ public class MRandomNetworkGenerator<AgentType> {
 		}
 	}
 
-	private Network<AgentType> symmetricLoops(Network<AgentType> network) {
+	private MoreNetwork<AgentType, EdgeType> symmetricLoops(MoreNetwork<AgentType, EdgeType> network) {
 		double nodeDensity;
-		for (int i = 0, n = network.size(); i < n; i++) {
+		for (int i = 0, n = network.numNodes(); i < n; i++) {
 			AgentType source = map.getKey(i);
 			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i; j < n; j++) {
 				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
-					network.addEdge(source, target);
-					network.addEdge(target, source);
+					network.connect(source, target);
+					network.connect(target, source);
 				}
 			}
 		}
@@ -161,7 +166,7 @@ public class MRandomNetworkGenerator<AgentType> {
 		return network;
 	}
 
-	private void init(Network<AgentType> network) {
+	private void init(MoreNetwork<AgentType, EdgeType> network) {
 		Set<AgentType> set = new HashSet<AgentType>();
 		for (AgentType node : network.getNodes()) {
 			set.add(node);
@@ -169,46 +174,46 @@ public class MRandomNetworkGenerator<AgentType> {
 		map = Indexer.create(set);
 	}
 
-	private Network<AgentType> nonSymmetricNoLoops(Network<AgentType> network) {
+	private MoreNetwork<AgentType, EdgeType> nonSymmetricNoLoops(MoreNetwork<AgentType, EdgeType> network) {
 		double nodeDensity;
-		for (int i = 0, n = network.size(); i < n; i++) {
+		for (int i = 0, n = network.numNodes(); i < n; i++) {
 			AgentType source = map.getKey(i);
 			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i + 1; j < n; j++) {
 				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
-					network.addEdge(source, target);
+					edgeModifier.createEdge(network, source, target);
 				}
 			}
 		}
 		return network;
 	}
 
-	private Network<AgentType> nonSymmetricLoops(Network<AgentType> network) {
+	private MoreNetwork<AgentType, EdgeType> nonSymmetricLoops(MoreNetwork<AgentType, EdgeType> network) {
 		double nodeDensity;
-		for (int i = 0, n = network.size(); i < n; i++) {
+		for (int i = 0, n = network.numNodes(); i < n; i++) {
 			AgentType source = map.getKey(i);
 			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i; j < n; j++) {
 				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
-					network.addEdge(source, target);
+					edgeModifier.createEdge(network, source, target);
 				}
 			}
 		}
 		return network;
 	}
 
-	private Network<AgentType> symmetricNoLoops(Network<AgentType> network) {
+	private MoreNetwork<AgentType, EdgeType> symmetricNoLoops(MoreNetwork<AgentType, EdgeType> network) {
 		double nodeDensity;
-		for (int i = 0, n = network.size(); i < n; i++) {
+		for (int i = 0, n = network.numNodes(); i < n; i++) {
 			AgentType source = map.getKey(i);
 			nodeDensity = linkProbProvider != null ? linkProbProvider.getLinkProb(source) : density;
 			for (int j = i + 1; j < n; j++) {
 				if (uniform.nextDouble() < nodeDensity) {
 					AgentType target = map.getKey(j);
-					network.addEdge(source, target);
-					network.addEdge(target, source);
+					edgeModifier.createEdge(network, source, target);
+					edgeModifier.createEdge(network, target, source);
 				}
 			}
 		}

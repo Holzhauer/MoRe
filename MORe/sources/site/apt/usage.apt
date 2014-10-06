@@ -433,6 +433,28 @@ this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();
   The RS networks usually deal with changes of edges in the geography via <<<MoreGeoNetworkEdgeModifier>>>, but do not care about adding and removing
   nodes to and from contexts and geographies. The reason is that these node objects are expected to survive even if they are deleted from the network.
 
+* Network GraphML Output
+
+  Networks can be stored using {{{../apidocs/de/cesr/more/util/io/MoreIoUtilities.html}<<<MoreIoUtilities>>>}}:
++--
+MoreIoUtilities.outputGraph(r.getNetwork(), new File(tickFilename(r)));
++--
+
+** Writing node attributes
+
+  It is furthermore possible to write specific node attributes into the GraphML file:
+  
++--
+Map<String, GraphMLMetadata<Agent>> vertexMetadata = new HashMap<String, GraphMLMetadata<Agent>>();
+vertexMetadata.put("X", new GraphMLMetadata<Agent>("X coordinate", "NA",
+	new Transformer<Agent, String>() {
+		@Override
+		public String transform(Agent agent) {
+			return agent.getX();
+		}
+}));
+MoreIoUtilities.outputGraph(r.getNetwork(), new File(tickFilename(r)), vertexMetadata, null);
++--
 
 * Random Numbers in MoRe
 

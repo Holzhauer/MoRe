@@ -45,7 +45,7 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
-import de.cesr.more.param.MNetBuildWsPa;
+import de.cesr.more.param.MNetBuildWbSwPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.building.MDefaultPartnerFinder;
@@ -198,7 +198,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 			if (betaProvider == null) {
 				betaProvider = new MoreBetaProvider<AType>() {
 					double beta = ((Double) pm
-							.getParam(MNetBuildWsPa.BETA))
+							.getParam(MNetBuildWbSwPa.BETA))
 							.doubleValue();
 					@Override
 					public double getBetaValue(AType node) {
@@ -226,7 +226,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 				kProvider =  new MoreKValueProvider<AType>() {
 					@Override
 					public int getKValue(AType node) {
-						return ((Integer) pm.getParam(MNetBuildWsPa.K))
+						return ((Integer) pm.getParam(MNetBuildWbSwPa.K))
 								.intValue();
 					}};
 			}
@@ -289,7 +289,7 @@ public class MSmallWorldBetaModelNetworkGenerator<AgentType, E extends MoreEdge<
 		 * @return
 		 */
 		public boolean isConsiderSources() {
-			return (Boolean) pm.getParam(MNetworkBuildingPa.BUILD_WSSM_CONSIDER_SOURCES);
+			return (Boolean) pm.getParam(MNetworkBuildingPa.CONSIDER_SOURCES);
 		}
 	}
 

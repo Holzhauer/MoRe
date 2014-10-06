@@ -44,7 +44,7 @@ import de.cesr.more.measures.MMeasureDescription;
 import de.cesr.more.measures.node.supply.MAvgNearestNeighbourDegree;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
-import de.cesr.more.param.MNetBuildWsPa;
+import de.cesr.more.param.MNetBuildWbSwPa;
 import de.cesr.more.param.MNetManipulatePa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
@@ -233,12 +233,12 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 		// <- LOGGING
 		if (logger.isDebugEnabled()) {
 			logger.debug("Actual indegree: " + network.getInDegree(agent) + " / Desired K: "
-					+ ((Integer) map.getMilieuParam(MNetBuildWsPa.K, agent.getMilieuGroup())).intValue());
+					+ ((Integer) map.getMilieuParam(MNetBuildWbSwPa.K, agent.getMilieuGroup())).intValue());
 		}
 		// LOGGING ->
 
 		return network.getInDegree(agent)
-				- ((Integer) map.getMilieuParam(MNetBuildWsPa.K, agent.getMilieuGroup())).intValue();
+				- ((Integer) map.getMilieuParam(MNetBuildWbSwPa.K, agent.getMilieuGroup())).intValue();
 	}
 
 	/**

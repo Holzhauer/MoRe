@@ -30,6 +30,7 @@ import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.MNetworkService;
 import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.rs.edge.MRepastEdge;
+import de.cesr.parma.core.PmParameterManager;
 
 
 /**
@@ -49,7 +50,14 @@ public abstract class MRsNetworkService<AgentType, EdgeType extends MRepastEdge<
 	 * @param areasGeography
 	 */
 	public MRsNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
-		this.edgeFac = edgeFac;
+		this(edgeFac, PmParameterManager.getInstance(null));
+	}
+	
+	/**
+	 * @param areasGeography
+	 */
+	public MRsNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, PmParameterManager pm) {
+		super(edgeFac, pm);
 		this.edgeModifier = new MDefaultNetworkEdgeModifier<AgentType, EdgeType>(edgeFac);
 	}
 

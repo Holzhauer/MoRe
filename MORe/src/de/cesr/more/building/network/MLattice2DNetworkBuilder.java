@@ -4,12 +4,9 @@
 package de.cesr.more.building.network;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import repast.simphony.context.Context;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
 import de.cesr.more.basic.network.MUndirectedNetwork;
@@ -17,13 +14,14 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MLattice2DGenerator;
 import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
-import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
 import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
+ * NetworkBuilder wrapper for {@link MLattice2DGenerator} which corrects HashMap problems in
+ * repast.simphony.context.space.graph.Lattice2DGenerator<T>.
  * 
  * <table>
  * <th>Parameter</th><th>Value</th>
@@ -42,7 +40,8 @@ import de.cesr.parma.core.PmParameterManager;
  * @author Sascha Holzhauer
  *
  */
-public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentType>>
+public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentType>> 
+	extends MNetworkBuilder<AgentType, EdgeType>
 		 implements MoreNetworkBuilder<AgentType, EdgeType> {
 	
 	/**
@@ -52,31 +51,34 @@ public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<Agent
 			.getLogger(MLattice2DNetworkBuilder.class);
 	
 	protected MLattice2DGenerator<AgentType, EdgeType> latticeGenerator;
-	
-	protected MoreNetworkEdgeModifier<AgentType, EdgeType> edgeModifier;
-	
-	protected String name;
+
 	
 	/**
 	 * Uses "Network" as name.
 	 * @param eFac edge factory 
 	 */
 	public MLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
-		this(eFac, "Network");
+		this(eFac, "Network", PmParameterManager.getInstance(null));
+	}
+	
+	/**
+	 * @param eFac
+	 * @param name
+	 */
+	public MLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+		this(eFac, name, PmParameterManager.getInstance(null));
 	}
 	
 	/**
 	 * @param eFac
 	 */
-	public MLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
-		this.name = name;
-		this.edgeModifier = new MDefaultNetworkEdgeModifier<AgentType, EdgeType>(eFac);
+	public MLattice2DNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name,
+			PmParameterManager pm) {
+		super(new MDefaultNetworkEdgeModifier<AgentType, EdgeType>(eFac), name, pm);
 		this.latticeGenerator = new MLattice2DGenerator<AgentType, EdgeType>(
-				(Boolean)PmParameterManager.getParameter(MNetBuildLattice2DPa.TOROIDAL));
+				(Boolean)pm.getParam(MNetBuildLattice2DPa.TOROIDAL));
 	}
 	
-
-	Context<AgentType> context;
 	
 	/**
 	 * The order of elements in agents influences the lattice's characteristic.
@@ -95,7 +97,7 @@ public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<Agent
 		
 		checkAgentCollection(agents);
 
-		MoreNetwork<AgentType, EdgeType> network = (Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED) ?
+		MoreNetwork<AgentType, EdgeType> network = (Boolean)pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED) ?
 				new MDirectedNetwork<AgentType, EdgeType>(edgeModifier.getEdgeFactory(), name) :
 				new MUndirectedNetwork<AgentType, EdgeType>(edgeModifier.getEdgeFactory(), name);
 		for (AgentType agent : agents) {
@@ -109,19 +111,5 @@ public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<Agent
 		}
 		network = latticeGenerator.createNetwork(network, edgeModifier);
 		return  network;
-	}
-
-	protected void checkAgentCollection(Collection<AgentType> agents) {
-		// check agent collection:
-		if (!(agents instanceof Set)) {
-			Set<AgentType> set = new HashSet<AgentType>();
-			set.addAll(agents);
-			if (set.size() != agents.size()) {
-				logger.error("Agent collection contains duplicate entries of at least one agent " +
-							"(Set site: " + set.size() + "; collection size: " + agents.size());
-				throw new IllegalStateException("Agent collection contains duplicate entries of at least one agent " +
-							"(Set site: " + set.size() + "; collection size: " + agents.size());
-			}
-		}
 	}
 }

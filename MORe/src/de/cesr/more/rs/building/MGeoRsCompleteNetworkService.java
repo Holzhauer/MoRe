@@ -11,7 +11,7 @@ import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
-import de.cesr.more.building.network.MCompleteNetworkBuilder;
+import de.cesr.more.building.network.MCompleteNetworkService;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
@@ -23,13 +23,22 @@ import de.cesr.parma.core.PmParameterManager;
  * 
  * Generates a complete network (all possible edges are created).
  * 
- * See {@link MCompleteNetworkBuilder} for information about properties and
+ * See {@link MCompleteNetworkService} for information about properties and
  * considered {@link PmParameterDefinition}s.
  * 
  * TODO tests 
- * TODO document params
  * 
- *  * Considered {@link PmParameterDefinition}s:
+ * @formatter:off
+ * <table>
+ * <th>Parameter</th><th>Value</th>
+ * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
+ * <th>Property</th><th>Value</th>
+ * <tr><td>#Edges:</td><td>N*(N-1)</td></tr>
+ * <tr><td></td><td></td></tr>
+ * </table>
+ * <br>
+ *  
+ *  Considered {@link PmParameterDefinition}s:
  * <ul>
  * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>
  * </ul>
@@ -37,14 +46,14 @@ import de.cesr.parma.core.PmParameterManager;
  * @author Sascha Holzhauer
  *
  */
-public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>> 
+public class MGeoRsCompleteNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>> 
 	extends MGeoRsNetworkService<AgentType, EdgeType> {
 	
 	/**
 	 * Logger
 	 */
 	static private Logger logger = Logger
-			.getLogger(MGeoRsCompleteNetworkBuilder.class);
+			.getLogger(MGeoRsCompleteNetworkService.class);
 
 	MoreEdgeFactory<AgentType, EdgeType> eFac;
 	
@@ -54,15 +63,24 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 	 * Uses "Network" as name.
 	 * @param eFac
 	 */
-	public MGeoRsCompleteNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+	public MGeoRsCompleteNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		this(eFac, "Network");
 	}
 	
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsCompleteNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MGeoRsCompleteNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		super(eFac);
+		this.name = name;
+	}
+	
+	/**
+	 * @param eFac
+	 */
+	public MGeoRsCompleteNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name,
+			PmParameterManager pm) {
+		super(eFac, pm);
 		this.name = name;
 	}
 	
@@ -83,7 +101,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 		checkAgentCollection(agents);
 
 		MRsContextJungNetwork<AgentType, EdgeType> network = new MRsContextJungNetwork<AgentType, EdgeType >(
-				((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) ?
+				((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) ?
 						new DirectedJungNetwork<AgentType>(name) :
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
@@ -100,7 +118,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 				if (other != agent) {
 					createEdge(network, agent, other);
 
-					if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) {
+					if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) {
 						createEdge(network, other, agent);
 					}
 
@@ -130,7 +148,7 @@ public class MGeoRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, Edg
 			if (other != node) {
 				createEdge(network, node, other);
 
-				if ((Boolean) PmParameterManager.getParameter(MNetworkBuildingPa.BUILD_DIRECTED)) {
+				if ((Boolean) pm.getParam(MNetworkBuildingPa.BUILD_DIRECTED)) {
 					createEdge(network, other, node);
 				}
 
