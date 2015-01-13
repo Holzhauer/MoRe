@@ -33,11 +33,11 @@
 			/**
 		 	 * current revision number
 		     */
-			public static final String revisionNumber="409";
+			public static final String revisionNumber="433";
 		
 			/**
 		     * time stamp of last commit action
 		     */
-			public static final String timeStamp="2014-04-08 12:01:04";
+			public static final String timeStamp="2015-01-13 13:50:50";
 		}
 	

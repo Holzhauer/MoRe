@@ -83,7 +83,7 @@
   	        update="false"
   	        compress="true"
   	        duplicate="add">
-  	    	<fileset dir="${src_java_dir}/bin"/>
+  	    	<fileset dir="${src_java_dir}/bin" excludes="res/**/*.*"/>
   	    	<manifest>
  	            <attribute name="Built-By" value="Sascha Holzhauer, CESR"/>
   	            <attribute name="Implementation-Version"  value="${release} (revision ${svn.info.rev})"/>

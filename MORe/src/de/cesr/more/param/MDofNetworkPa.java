@@ -34,7 +34,7 @@ import de.cesr.parma.core.PmParameterManager;
  * @date 28.03.2012 
  *
  */
-public enum MNetManipulatePa implements PmParameterDefinition {
+public enum MDofNetworkPa implements PmParameterDefinition {
 
 	/**
 	 * Threshold for differences between the opinions (e.g.) of two network partners. Smaller values cause the according
@@ -61,12 +61,12 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	/**
 	 * Amount edge weights fade per fading tick.
 	 */
-	DYN_FADE_OUT_AMOUNT(Double.class, 0.000),
+	DYN_FADE_AMOUNT(Double.class, 0.0),
 
 	/**
 	 * Interval of fading ticks.
 	 */
-	DYN_FADE_OUT_INTERVAL(Double.class, 1.0),
+	DYN_FADE_INTERVAL(Double.class, 1.0),
 	
 	/**
 	 * Probability for a reciprocal link to be established
@@ -86,21 +86,12 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	/**
 	 * Probability for a local link to be established
 	 */
-	DYN_PROB_LOCAL(Double.class, 1.0),
+	DYN_PROB_DISTANCE(Double.class, 1.0),
 	
 	/**
 	 * Determines the radius to draw local links for network dynamics.
 	 */
 	DYN_LOCAL_RADIUS(Double.class, 1000.0),
-
-	/**
-	 * Determines the level of perfectionism with which agents
-	 * choose optimal partners. Takes only effect in case
-	 * the instance of {@link MoreEgoNetworkProcessor} considers the parameter.
-	 * The higher the parameter the better the perfectionism. 
-	 * 
-	 */
-	DYN_EDGE_MANAGE_OPTIMUM(Double.class, 1.0),
 
 	/**
 	 * Tick interval for updating edge weights.
@@ -126,7 +117,7 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	/**
 	 * @param type
 	 */
-	MNetManipulatePa(Class<?> type) {
+	MDofNetworkPa(Class<?> type) {
 		this(type, null);
 	}
 
@@ -134,7 +125,7 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	 * @param type
 	 * @param defaultValue
 	 */
-	MNetManipulatePa(Class<?> type, Object defaultValue) {
+	MDofNetworkPa(Class<?> type, Object defaultValue) {
 		this.type = type;
 		this.defaultValue = defaultValue;
 	}
@@ -142,7 +133,7 @@ public enum MNetManipulatePa implements PmParameterDefinition {
 	/**
 	 * 
 	 */
-	private MNetManipulatePa(Class<?> type, PmParameterDefinition defaultDefinition) {
+	private MDofNetworkPa(Class<?> type, PmParameterDefinition defaultDefinition) {
 		this.type = type;
 		if (defaultDefinition != null) {
 			this.defaultValue = defaultDefinition.getDefaultValue();

@@ -272,10 +272,10 @@ public class MMilieuNetworkParameterMap extends
 
 
 	public double getDynProbReciprocity(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_PROB_RECIPROCITY, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_PROB_RECIPROCITY)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_PROB_RECIPROCITY, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_PROB_RECIPROCITY)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-					MNetManipulatePa.DYN_PROB_RECIPROCITY))
+					MDofNetworkPa.DYN_PROB_RECIPROCITY))
 				.doubleValue();
 	}
 
@@ -284,15 +284,15 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_PROB_RECIPROCITY,
+				MDofNetworkPa.DYN_PROB_RECIPROCITY,
 				new Double(weight));
 	}
 
 	public double getDynProbTransitivity(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_PROB_TRANSITIVITY, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_PROB_TRANSITIVITY)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_PROB_TRANSITIVITY, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_PROB_TRANSITIVITY)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-					MNetManipulatePa.DYN_PROB_TRANSITIVITY))
+					MDofNetworkPa.DYN_PROB_TRANSITIVITY))
 				.doubleValue();
 	}
 
@@ -301,15 +301,15 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_PROB_TRANSITIVITY,
+				MDofNetworkPa.DYN_PROB_TRANSITIVITY,
 				new Double(weight));
 	}
 
 	public double getDynProbGlobal(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_PROB_GLOBAL, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_PROB_GLOBAL)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_PROB_GLOBAL, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_PROB_GLOBAL)).doubleValue() :
 			((Double) this.get(new Integer(milieu)).get(
-					MNetManipulatePa.DYN_PROB_GLOBAL))
+					MDofNetworkPa.DYN_PROB_GLOBAL))
 				.doubleValue();
 	}
 
@@ -318,32 +318,32 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_PROB_GLOBAL,
+				MDofNetworkPa.DYN_PROB_GLOBAL,
 				new Double(weight));
 	}
 
-	public double getDynProbLocal(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_PROB_LOCAL, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_PROB_LOCAL)).doubleValue() :
+	public double getDynProbDistance(int milieu) {
+		return warnDefault(MDofNetworkPa.DYN_PROB_DISTANCE, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_PROB_DISTANCE)).doubleValue() :
 				((Double) this.get(new Integer(milieu)).get(
-						MNetManipulatePa.DYN_PROB_LOCAL))
+						MDofNetworkPa.DYN_PROB_DISTANCE))
 						.doubleValue();
 	}
 
-	public void setDynProbLocal(int milieu, double weight) {
+	public void setDynProbDistance(int milieu, double weight) {
 		if (!this.containsKey(new Integer(milieu))) {
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_PROB_LOCAL,
+				MDofNetworkPa.DYN_PROB_DISTANCE,
 				new Double(weight));
 	}
 
 	public double getDynLocalRadius(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_LOCAL_RADIUS, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_LOCAL_RADIUS)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_LOCAL_RADIUS, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_LOCAL_RADIUS)).doubleValue() :
 				((Double) this.get(new Integer(milieu)).get(
-						MNetManipulatePa.DYN_LOCAL_RADIUS))
+						MDofNetworkPa.DYN_LOCAL_RADIUS))
 						.doubleValue();
 	}
 
@@ -352,7 +352,7 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_LOCAL_RADIUS,
+				MDofNetworkPa.DYN_LOCAL_RADIUS,
 				new Double(weight));
 	}
 
@@ -395,10 +395,10 @@ public class MMilieuNetworkParameterMap extends
 	}
 
 	public int getDynEdgeUpdatingInverval(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING, milieu) ?
-				((Integer) pm.getParam(MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING)).intValue() :
+		return warnDefault(MDofNetworkPa.DYN_INTERVAL_EDGE_UPDATING, milieu) ?
+				((Integer) pm.getParam(MDofNetworkPa.DYN_INTERVAL_EDGE_UPDATING)).intValue() :
 				((Integer) this.get(new Integer(milieu)).get(
-						MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING))
+						MDofNetworkPa.DYN_INTERVAL_EDGE_UPDATING))
 						.intValue();
 	}
 
@@ -407,15 +407,15 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_INTERVAL_EDGE_UPDATING,
+				MDofNetworkPa.DYN_INTERVAL_EDGE_UPDATING,
 				new Integer(interval));
 	}
 
 	public int getDynLinkManagementInverval(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT, milieu) ?
-				((Integer) pm.getParam(MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT)).intValue() :
+		return warnDefault(MDofNetworkPa.DYN_INTERVAL_LINK_MANAGEMENT, milieu) ?
+				((Integer) pm.getParam(MDofNetworkPa.DYN_INTERVAL_LINK_MANAGEMENT)).intValue() :
 					((Integer) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT))
+							MDofNetworkPa.DYN_INTERVAL_LINK_MANAGEMENT))
 							.intValue();
 	}
 
@@ -424,17 +424,17 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_INTERVAL_LINK_MANAGEMENT,
+				MDofNetworkPa.DYN_INTERVAL_LINK_MANAGEMENT,
 				new Integer(interval));
 	}
 
 	// INCREASE
 
 	public double getDynIncreaseAmount(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_INCREASE_AMOUNT, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_INCREASE_AMOUNT)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_INCREASE_AMOUNT, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_INCREASE_AMOUNT)).doubleValue() :
 					((Double) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_INCREASE_AMOUNT))
+							MDofNetworkPa.DYN_INCREASE_AMOUNT))
 							.doubleValue();
 	}
 
@@ -443,15 +443,15 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_INCREASE_AMOUNT,
+				MDofNetworkPa.DYN_INCREASE_AMOUNT,
 				new Double(amount));
 	}
 
 	public double getDynIncreaseThreshold(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_INCREASE_THRESHOLD, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_INCREASE_THRESHOLD)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_INCREASE_THRESHOLD, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_INCREASE_THRESHOLD)).doubleValue() :
 					((Double) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_INCREASE_THRESHOLD))
+							MDofNetworkPa.DYN_INCREASE_THRESHOLD))
 							.doubleValue();
 	}
 
@@ -460,16 +460,16 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_INCREASE_THRESHOLD,
+				MDofNetworkPa.DYN_INCREASE_THRESHOLD,
 				new Double(threshold));
 	}
 
 	// DECRESE
 	public double getDynDecreaseAmount(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_DECREASE_AMOUNT, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_DECREASE_AMOUNT)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_DECREASE_AMOUNT, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_DECREASE_AMOUNT)).doubleValue() :
 					((Double) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_DECREASE_AMOUNT))
+							MDofNetworkPa.DYN_DECREASE_AMOUNT))
 							.doubleValue();
 	}
 
@@ -478,15 +478,15 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_DECREASE_AMOUNT,
+				MDofNetworkPa.DYN_DECREASE_AMOUNT,
 				new Double(amount));
 	}
 
 	public double getDynDecreaseThreshold(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_DECREASE_THRESHOLD, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_DECREASE_THRESHOLD)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_DECREASE_THRESHOLD, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_DECREASE_THRESHOLD)).doubleValue() :
 					((Double) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_DECREASE_THRESHOLD))
+							MDofNetworkPa.DYN_DECREASE_THRESHOLD))
 							.doubleValue();
 	}
 
@@ -495,15 +495,15 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_DECREASE_THRESHOLD,
+				MDofNetworkPa.DYN_DECREASE_THRESHOLD,
 				new Double(threshold));
 	}
 
 	public double getDynFadeOutAmount(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_FADE_OUT_AMOUNT, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_FADE_OUT_AMOUNT)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_FADE_AMOUNT, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_FADE_AMOUNT)).doubleValue() :
 					((Double) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
+							MDofNetworkPa.DYN_FADE_AMOUNT))
 							.doubleValue();
 	}
 
@@ -512,7 +512,7 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_FADE_OUT_AMOUNT,
+				MDofNetworkPa.DYN_FADE_AMOUNT,
 				new Double(amount));
 
 		// <- LOGGING
@@ -528,35 +528,18 @@ public class MMilieuNetworkParameterMap extends
 			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
 		}
 		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_FADE_OUT_INTERVAL,
+				MDofNetworkPa.DYN_FADE_INTERVAL,
 				new Double(amount));
 	}
 
 	public double getDynFadeOutInterval(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_FADE_OUT_INTERVAL, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_FADE_OUT_INTERVAL)).doubleValue() :
+		return warnDefault(MDofNetworkPa.DYN_FADE_INTERVAL, milieu) ?
+				((Double) pm.getParam(MDofNetworkPa.DYN_FADE_INTERVAL)).doubleValue() :
 					((Double) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_FADE_OUT_INTERVAL))
+							MDofNetworkPa.DYN_FADE_INTERVAL))
 							.doubleValue();
 	}
-
-	public void setDynEdgeManageOptimum(int milieu, double amount) {
-		if (!this.containsKey(new Integer(milieu))) {
-			this.put(new Integer(milieu), new LinkedHashMap<PmParameterDefinition, Object>());
-		}
-		this.get(new Integer(milieu)).put(
-				MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM,
-				new Double(amount));
-	}
-
-	public double getDynEdgeManageOptimum(int milieu) {
-		return warnDefault(MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM, milieu) ?
-				((Double) pm.getParam(MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM)).doubleValue() :
-					((Double) this.get(new Integer(milieu)).get(
-							MNetManipulatePa.DYN_EDGE_MANAGE_OPTIMUM))
-							.doubleValue();
-	}
-
+	
 	public int getNetUpdateInterval(int milieu) {
 		return warnDefault(MDonNetworksPa.PERCEIVE_SOCNET_INTERVAL, milieu) ?
 				((Integer) pm.getParam(MDonNetworksPa.PERCEIVE_SOCNET_INTERVAL)).intValue() :

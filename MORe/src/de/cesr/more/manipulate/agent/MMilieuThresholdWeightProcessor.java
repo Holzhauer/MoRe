@@ -34,12 +34,16 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
 
+
 /**
  * MORe
- *
+ * 
+ * This extensions applies milieu-specific values for increase/decrease amounts and thresholds. It also defines a
+ * maximum weight of 2.0.
+ * 
  * @author Sascha Holzhauer
- * @date 05.06.2012 
- *
+ * @date 05.06.2012
+ * 
  */
 public class MMilieuThresholdWeightProcessor<A extends MoreLinkManipulatableAgent<A> & MoreMilieuAgent, E extends MoreEdge<? super A>>
 		extends MThresholdWeightProcessor<A, E> {

@@ -1068,7 +1068,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 			checkParameter();
 
-			this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
+			this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap, this.pm);
 
 			this.hexagonInitialiser.init(this.pm, this.geography);
 

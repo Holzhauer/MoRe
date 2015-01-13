@@ -67,6 +67,8 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 
 	protected int					precisionFactor;
 
+	protected int					startMilieu;
+
 	protected Map<Integer, Integer>	singlePartnerMilieus		= new HashMap<Integer, Integer>();
 	protected Set<Integer>			noPartnerMilieus			= new HashSet<Integer>();
 	
@@ -84,6 +86,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 		this.networkParams = networkParams;
 		this.pm = pm;
 		this.precisionFactor = ((Integer) pm.getParam(MBasicPa.PRECISION_FACTOR)).intValue();
+		this.startMilieu = ((Integer) pm.getParam(MBasicPa.MILIEU_START_ID)).intValue();
 
 		for (int focalMilieu : this.networkParams.keySet()) {
 			double sum = 0.0;
@@ -296,7 +299,7 @@ public class MMilieuPartnerFinder<AgentType extends MoreMilieuAgent, EdgeType ex
 	protected int getProbabilisticMilieu(MMilieuNetworkParameterMap networkParams, AgentType focus) {
 		Map<Integer, Double> roulette_wheel = new LinkedHashMap<Integer, Double>();
 
-		for (int i = 1; i <= networkParams.size(); i++) {
+		for (int i = this.startMilieu; i < networkParams.size() + this.startMilieu; i++) {
 			roulette_wheel.put(new Integer(i), networkParams.getP_Milieu(focus.getMilieuGroup(), i));
 		}
 

@@ -30,7 +30,7 @@ import de.cesr.more.basic.MNetworkManager;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.param.MBasicPa;
-import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.param.MDofNetworkPa;
 import de.cesr.more.rs.building.MoreDistanceAttachableAgent;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
@@ -171,11 +171,11 @@ public abstract class MAbstractAnalyseNetworkAgent<A extends MoreNetworkAgent<A,
 	@Override
 	public int getBlacklistSize() {
 		if (!MNetworkManager.isNetworkRegistered((String) PmParameterManager.
-				getParameter(MNetManipulatePa.DYN_BLACKLIST_NAME))) {
+				getParameter(MDofNetworkPa.DYN_BLACKLIST_NAME))) {
 			return 0;
 		}
 		return ((MoreNetwork<A, E>) MNetworkManager.getNetwork((String) PmParameterManager.
-				getParameter(MNetManipulatePa.DYN_BLACKLIST_NAME))).
+				getParameter(MDofNetworkPa.DYN_BLACKLIST_NAME))).
 				getInDegree((A) this);
 	}
 }

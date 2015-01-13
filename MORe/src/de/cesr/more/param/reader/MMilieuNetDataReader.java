@@ -187,16 +187,12 @@ public class MMilieuNetDataReader extends PmAbstractParameterReader {
 						map.setDynProbTransitivity(milieu, result.getDouble("DYN_PROB_TRANSITIVITY"));
 					}
 
-					if (colNames.contains("DYN_EDGE_MANAGE_OPTIMUM")) {
-						map.setDynEdgeManageOptimum(milieu, result.getDouble("DYN_EDGE_MANAGE_OPTIMUM"));
-					}
-
 					if (colNames.contains("DYN_PROB_GLOBAL")) {
 						map.setDynProbGlobal(milieu, result.getDouble("DYN_PROB_GLOBAL"));
 					}
 
 					if (colNames.contains("DYN_PROB_LOCAL")) {
-						map.setDynProbLocal(milieu, result.getDouble("DYN_PROB_LOCAL"));
+						map.setDynProbDistance(milieu, result.getDouble("DYN_PROB_LOCAL"));
 					}
 
 					if (colNames.contains("DYN_PROB_GLOBAL")) {

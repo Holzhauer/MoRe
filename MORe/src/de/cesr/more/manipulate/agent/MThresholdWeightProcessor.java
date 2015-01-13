@@ -28,16 +28,16 @@ import org.apache.log4j.Logger;
 
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
-import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.param.MDofNetworkPa;
 import de.cesr.parma.core.PmParameterManager;
 
 
 /**
  * MORe
  *
- * In case the node properties undergo a certain threshold ({@link MNetManipulatePa#DYN_INCREASE_THRESHOLD}), weights are
- * increased by ({@link MNetManipulatePa#DYN_INCREASE_AMOUNT}). As the opposite, if properties exceed a threshold
- * ({@link MNetManipulatePa#DYN_INCREASE_THRESHOLD}), weights get decreased by ({@link MNetManipulatePa#DYN_DECREASE_THRESHOLD}).
+ * In case the node properties undergo a certain threshold ({@link MDofNetworkPa#DYN_INCREASE_THRESHOLD}), weights are
+ * increased by ({@link MDofNetworkPa#DYN_INCREASE_AMOUNT}). As the opposite, if properties exceed a threshold
+ * ({@link MDofNetworkPa#DYN_INCREASE_THRESHOLD}), weights get decreased by ({@link MDofNetworkPa#DYN_DECREASE_THRESHOLD}).
  * 
  * @author Sascha Holzhauer
  * @date 29.03.2012 
@@ -59,11 +59,11 @@ public class MThresholdWeightProcessor<A extends MoreLinkManipulatableAgent<A>, 
 
 
 	public MThresholdWeightProcessor() {
-		increaseThreshold = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_INCREASE_THRESHOLD);
-		decreaseThreshold = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_DECREASE_THRESHOLD);
+		increaseThreshold = (Double) PmParameterManager.getParameter(MDofNetworkPa.DYN_INCREASE_THRESHOLD);
+		decreaseThreshold = (Double) PmParameterManager.getParameter(MDofNetworkPa.DYN_DECREASE_THRESHOLD);
 
-		increaseAmount = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_INCREASE_AMOUNT);
-		decreaseAmount = (Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_DECREASE_AMOUNT);
+		increaseAmount = (Double) PmParameterManager.getParameter(MDofNetworkPa.DYN_INCREASE_AMOUNT);
+		decreaseAmount = (Double) PmParameterManager.getParameter(MDofNetworkPa.DYN_DECREASE_AMOUNT);
 	}
 
 	/**

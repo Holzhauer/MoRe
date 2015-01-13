@@ -407,26 +407,80 @@ MNetworkMeasureManager.getInstance().addMeasureSupplier(
 	
 *Defining Dynamics of Networks
 
-**Manipulation Agent Components
+**Manipulation Edges
 
-	With <<<MWeightLinksManipulateAgentComp>>> More provides an agent component that manages the agents links according to differences between
-	partners regarding some node property. The agents need to implement <<<MoreNetStructureManageable>>>. The component takes care of updating link
-	weights and removing and establishing links if required. In case the node properties undergo a certain threshold, weights are increased. 
-	As the opposite, if properties exceed a threshold, weights get decreased. When weights fall below zero, the according links is removed and another
-	one is established. Links removal and establishment is done by a <<<MoreEdgeManager>>>. See JavaDoc for more information.
+	With {{{../apidocs/de/cesr/more/manipulating/agent/MoreEgoNetworkManagerComp.html}<<<MoreEgoNetworkManagerComp>>>}} MoRe provides an agent
+	component that can manage agent's links. Agents may implement 
+	{{{../apidocs/de/cesr/more/agent/MoreEgoNetworkManagingAgent.html}<<<MoreEgoNetworkManagingAgent>>>}} to guarantee access to 
+	the component.
 
-	In order to activate the structure manager, the component needs to be assigned to node objects:
+[./res/setup_framework_more_dofn_classes.svg] Processing Network Management 
 
-+---
-agent.netStructure = new MWeightLinksManipulateAgentComp<V, MoreEdge<V>(agent, ModelManager.getMan().getNetwork().getName(),
-		MoreNetworkEdgeModifier<A, E> edgeMan);
-+---
+	The <<<MoreEgoNetworkManagerComp>>> delegates {{{../apidocs/de/cesr/more/manipulating/agent/MoreEgoNetworkEvent.html}<<<MoreEgoNetworkEvent>>>}}s
+	to potentially different {{{../apidocs/de/cesr/more/manipulating/agent/MoreEgoNetworkProcessor.html}<<<MoreEgoNetworkProcessor>>>}}s.
+	To configure the <<<MoreEgoNetworkManagerComp>>> using a map as configuration object, code accordingly:
+	
++--
+MoreEgoNetworkProcessor<MoreNetworkAgent, MoreEdge>> yourEdgeProcessor = 
+	new MoreEgoNetworkProcessor<MoreNetworkAgent, MoreEdge>>() {
+		public void process(A agent, MoreNetwork<A, E> network) {
+			// do something
+		}
+	};
+	
+Map<MoreEgoNetworkEvent, MoreEgoNetworkProcessor<MoreNetworkAgent, MoreEdge>> map = 
+	MEgoNetworkManagerComp.getEmptyProcessorMap();
+map.put(MLinkManagingEvent.getInstance(), yourEdgeProcessor);
+agent.setEgoNetworkManager(new MEgoNetworkManagerComp<MoreNetworkAgent, MoreEdge>(map));
++--
+	
+[./res/setup_framework_more_dofn_sequence.svg] Processing Network Management 
+	
+	<<<MoreEgoNetworkProcessor>>> can handle different kinds of <<<MoreEgoNetworkEvent>>>s which currently are:
+	
+	* {{{../apidocs/de/cesr/more/manipulating/agent/MLinkManagingEvent.html}<<<MLinkManagingEvent>>>}}
+	
+	* {{{../apidocs/de/cesr/more/manipulating/agent/MLinkWeightUpdatingEvent.html}<<<MLinkWeightUpdatingEvent>>>}}
 
-	The update method then needs to be called every time links weights shall be updated:
+	[]
 
-+---
-this.numDissolvedLinks = this.netStructureMan.updateLinkWeight();
-+---
+	There are a number of <<<MoreEgoNetworkProcessor>>> for specific effects available that can be put into the configuration map 
+	directly or be extended (it is recommended to consult the source code since their effects can be quite complex):
+	
+	* {{{../apidocs/de/cesr/more/manipulating/agent/MThresholdWeightProcessor.html}<<<MThresholdWeightProcessor>>>}}
+	Updates link weights. In case the node properties undergo a certain threshold, weights are increased. 
+	As the opposite, if properties exceed a threshold, weights get decreased. Requires agents to implement
+	{{{../apidocs/de/cesr/more/manipulating/agent/MoreLinkManipulatableAgent.html}<<<MoreLinkManipulatableAgent>>>}}
+	
+	* {{{../apidocs/de/cesr/more/manipulating/agent/MMilieuThresholdWeightProcessor.html}<<<MMilieuThresholdWeightProcessor>>>}}
+	This extensions applies milieu-specific values for increase/decrease amounts and thresholds.
+	
+	* {{{../apidocs/de/cesr/more/manipulating/agent/MBlacklistThresholdLinkProcessor.html}<<<MBlacklistThresholdLinkProcessor>>>}}
+	Utilises a blacklist network to prevent creating links that have been discarded before.
+	Considers defined probabilities for transitivity, reciprocal, and near-by links.
+	
+	* {{{../apidocs/de/cesr/more/manipulating/agent/MThresholdLinkProcessor.html}<<<MThresholdLinkProcessor>>>}}
+	When weights fall below zero, the according links are removed and another one is established.
+	
+	* {{{../apidocs/de/cesr/more/manipulating/agent/MPseudoEgoNetworkProcessor.html}<<<MPseudoEgoNetworkProcessor>>>}}
+	Does nothing.
+	
+	[]
+
+	To activate link management, the <<<MoreEgoNetworkManagerComp>>> needs to be called with the according event:
+	
++--
+agent.getEgoNetworkManager().process(MLinkManagingEvent.getInstance(), agent, network);
++--
+
+
+** Constant Fading of Edge Weights
+
+	MoRe provides the {{{../apidocs/de/cesr/more/basic/edge/MoreFadingWeightEdge.html}<<<MoreFadingWeightEdge>>>}} interface
+	which is implemented by all More internal implementations of {{{../apidocs/de/cesr/more/basic/edge/MoreEdge.html}<<<MoreEdge>>>}}
+	and support the automatic, constanst dedcrease or increase of all edge weights. The according method is scheduled using
+	a {{{../apidocs/de/cesr/more/measures/util/MoreAction.html}<<<MoreAction>>>}}.
+	
 
 **Manipulating Repast Simphony networks
 

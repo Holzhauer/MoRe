@@ -130,9 +130,9 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 				Geometry hexagonGeo = geography.getGeometry(hexagon);
 				Geometry hexagonCentroid = geography.getGeometry(hexagon).getCentroid();
 
-				// <- LOGGING
+				//<- LOGGING
 				if (logger.isDebugEnabled()) {
-					logger.debug("Hexagons centroid: " + hexagonCentroid);
+					logger.debug("Hexagons (" + hexagon + ") centroid: " + hexagonCentroid);
 				}
 				// LOGGING ->
 

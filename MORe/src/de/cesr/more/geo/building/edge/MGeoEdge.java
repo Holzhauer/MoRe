@@ -34,7 +34,7 @@ import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.measures.util.MScheduleParameters;
 import de.cesr.more.measures.util.MoreAction;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
-import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.param.MDofNetworkPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.util.exception.MIdentifyCallerException;
@@ -77,7 +77,7 @@ public class MGeoEdge<AgentT> extends MEdge<AgentT> implements MoreGeoEdge<Agent
 		this.fadeAmount = (agent instanceof MoreMilieuAgent && PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS) != null) ? 
 				((MMilieuNetworkParameterMap)PmParameterManager.getParameter(MNetworkBuildingPa.MILIEU_NETWORK_PARAMS)).
 				getDynFadeOutAmount(((MoreMilieuAgent) agent).getMilieuGroup()) :
-				((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT))
+				((Double) PmParameterManager.getParameter(MDofNetworkPa.DYN_FADE_AMOUNT))
 				.doubleValue();
 				
 		// <- LOGGING
@@ -86,9 +86,9 @@ public class MGeoEdge<AgentT> extends MEdge<AgentT> implements MoreGeoEdge<Agent
 		}
 		// LOGGING ->
 				
-		if (fadeAmount > 0.0) {
+		if (fadeAmount != 0.0) {
 			MManager.getSchedule().schedule(MScheduleParameters.getScheduleParameter(1.0,
-					((Double) PmParameterManager.getParameter(MNetManipulatePa.DYN_FADE_OUT_INTERVAL)).doubleValue(),
+					((Double) PmParameterManager.getParameter(MDofNetworkPa.DYN_FADE_INTERVAL)).doubleValue(),
 					Double.POSITIVE_INFINITY, MScheduleParameters.LAST_PRIORITY), new MoreAction() {
 				@Override
 				public void execute() {

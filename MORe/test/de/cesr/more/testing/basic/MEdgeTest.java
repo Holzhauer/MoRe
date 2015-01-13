@@ -34,7 +34,7 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MEdge;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.edge.MoreTraceableEdge;
-import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.param.MDofNetworkPa;
 import de.cesr.more.util.MSchedule;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -86,7 +86,7 @@ public class MEdgeTest {
 	 */
 	@Test
 	public void testfadingWeight() {
-		PmParameterManager.setParameter(MNetManipulatePa.DYN_FADE_OUT_AMOUNT, 0.1);
+		PmParameterManager.setParameter(MDofNetworkPa.DYN_FADE_AMOUNT, 0.1);
 		MoreEdge<Object> edge = new MEdge<Object>(new Object(), new Object());
 		edge.setWeight(1.0);
 		assertEquals(1.0, edge.getWeight(), 0.001);

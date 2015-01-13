@@ -45,7 +45,7 @@ import de.cesr.more.measures.node.supply.MAvgNearestNeighbourDegree;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildWbSwPa;
-import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.param.MDofNetworkPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.parma.core.PmParameterManager;
@@ -256,7 +256,7 @@ public class MAgentAnalyseNetworkComp<A extends MoreNetworkAgent<A, E> & MoreMil
 	@Override
 	public int getBlacklistSize() {
 		return ((MoreNetwork<A, E>) MNetworkManager.getNetwork((String) pm.
-				getParam(MNetManipulatePa.DYN_BLACKLIST_NAME))).
+				getParam(MDofNetworkPa.DYN_BLACKLIST_NAME))).
 				getInDegree((A) this);
 	}
 }

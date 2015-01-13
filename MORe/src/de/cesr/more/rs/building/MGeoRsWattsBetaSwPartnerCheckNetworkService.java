@@ -40,11 +40,12 @@ import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
+import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
-import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
+import de.cesr.more.param.MNetBuildWbSwPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
 import de.cesr.more.param.reader.MMilieuNetDataReader;
@@ -59,15 +60,24 @@ import edu.uci.ics.jung.graph.Graph;
 /**
  * MORe
  * 
- * Extension of {@link }
+ * Extension of {@link MGeoRsWattsBetaSwNetworkService}.
  * <table>
- * <th>Parameter</th><th>Value</th>
- * <tr><td>#Vertices</td><td>N (via collection of agents)</td></tr>
- * <tr><td>#Edges:</td><td>Directed: kN</td></tr>
- * <tr><td>Parameter provider</td><td>MSmallWorldBetaModelNetworkGeneratorParams</td></tr>
+ * <th>Parameter</th>
+ * <th>Value</th>
+ * <tr>
+ * <td>#Vertices</td>
+ * <td>N (via collection of agents)</td>
+ * </tr>
+ * <tr>
+ * <td>#Edges:</td>
+ * <td>Directed: kN</td>
+ * </tr>
+ * <tr>
+ * <td>Parameter provider</td>
+ * <td>MSmallWorldBetaModelNetworkGeneratorParams</td>
+ * </tr>
  * </table>
- * See {@link MSmallWorldBetaModelNetworkGeneratorParams} for further parameters!
- * <br>
+ * See {@link MSmallWorldBetaModelNetworkGeneratorParams} for further parameters! <br>
  * Considered {@link PmParameterDefinition}s:
  * <ul>
  * <li>{@link MNetworkBuildingPa.BUILD_DIRECTED}</li>

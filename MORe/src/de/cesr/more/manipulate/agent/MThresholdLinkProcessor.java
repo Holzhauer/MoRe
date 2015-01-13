@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.manipulate.edge.MoreNetworkEdgeModifier;
+import de.cesr.parma.core.PmParameterManager;
 
 
 /**
@@ -57,9 +58,16 @@ public class MThresholdLinkProcessor<A extends MoreLinkManipulatableAgent<A>, E 
 	static private Logger					logger	= Logger.getLogger(MThresholdLinkProcessor.class);
 
 	protected MoreNetworkEdgeModifier<A, E>	edgeMan;
+	
+	protected PmParameterManager			pm;
 
 	public MThresholdLinkProcessor(MoreNetworkEdgeModifier<A, E> edgeMan) {
+		this(edgeMan, PmParameterManager.getInstance(null));
+	}
+	
+	public MThresholdLinkProcessor(MoreNetworkEdgeModifier<A, E> edgeMan, PmParameterManager pm) {
 		this.edgeMan = edgeMan;
+		this.pm = pm;
 	}
 
 	/**
@@ -84,7 +92,6 @@ public class MThresholdLinkProcessor<A extends MoreLinkManipulatableAgent<A>, E 
 			}
 		}
 		makeNewConnections(counter, agent, net);
-
 	}
 
 	/**

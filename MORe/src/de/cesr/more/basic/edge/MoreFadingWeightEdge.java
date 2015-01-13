@@ -24,18 +24,18 @@
 package de.cesr.more.basic.edge;
 
 
-import de.cesr.more.param.MNetManipulatePa;
+import de.cesr.more.param.MDofNetworkPa;
 
 
 /**
  * MORe
  * 
  * Interface for edges whose weight fade out. The amount of fading weight is determined by
- * {@link MNetManipulatePa#DYN_FADE_OUT_AMOUNT}, the interval of fades by {@link MNetManipulatePa#DYN_FADE_OUT_INTERVAL}
+ * {@link MDofNetworkPa#DYN_FADE_AMOUNT}, the interval of fades by {@link MDofNetworkPa#DYN_FADE_INTERVAL}
  * .
  * 
- * If {@link MNetManipulatePa#DYN_FADE_OUT_AMOUNT} is greater than 0.0 the fading shall be scheduled automatically.
- * NOTE: Relevant is the value of {@link MNetManipulatePa#DYN_FADE_OUT_AMOUNT} at initialisation time of the edge
+ * If {@link MDofNetworkPa#DYN_FADE_AMOUNT} is different than 0.0 the fading shall be scheduled automatically.
+ * NOTE: Relevant is the value of {@link MDofNetworkPa#DYN_FADE_AMOUNT} at initialisation time of the edge
  * object!
  * 
  * @author Sascha Holzhauer
@@ -45,7 +45,7 @@ import de.cesr.more.param.MNetManipulatePa;
 public interface MoreFadingWeightEdge {
 
 	/**
-	 * Fades the edge weight by {@link MNetManipulatePa#DYN_FADE_OUT_AMOUNT}.
+	 * Fades the edge weight by {@link MDofNetworkPa#DYN_FADE_AMOUNT}.
 	 */
 	public void fadeWeight();
 

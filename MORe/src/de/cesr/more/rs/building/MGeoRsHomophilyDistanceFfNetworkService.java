@@ -54,6 +54,7 @@ import de.cesr.more.basic.agent.MoreNetworkAgent;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.manipulate.agent.MBlacklistThresholdDdLinkProcessor;
 import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildHdffPa;
@@ -499,10 +500,11 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 	/**
 	 * Calculates the area diameter from hexagon shapefiles.
+	 * Interface for {@link MBlacklistThresholdDdLinkProcessor}
 	 *
 	 * @return diameter
 	 */
-	protected double getAreaDiameter() {
+	public double getAreaDiameter() {
 		if (this.areaDiameter < 0.0) {
 			Envelope envelope = new Envelope();
 			
@@ -1001,7 +1003,6 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
 		checkInitialisation();
@@ -1010,21 +1011,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				.sample());
 		network.addNode(node);
 
-		Geometry nodeGeom = this.geography.getGeometry(node);
-		if (nodeGeom == null) {
-			logger.error("Node " + node + " has not been added to geography " + this.geography);
-			throw new IllegalStateException("Node " + node + " has not been added to geography " + this.geography);
-		}
-
-		// determine surrounding hexagon:
-		MGeoHexagon<AgentType> hexagon = null;
-		WithinQuery<Object> containsQuery = new WithinQuery<Object>(
-				this.geography, nodeGeom);
-		for (Object o : containsQuery.query()) {
-			if (o instanceof MGeoHexagon) {
-				hexagon = (MGeoHexagon<AgentType>) o;
-			}
-		}
+		MGeoHexagon<AgentType> hexagon = getSurroundingHexagon(node);
 
 		if (hexagon != null) {
 			hexagon.addAgent(node);
@@ -1045,7 +1032,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
 					for (MoreGeoHexagon<AgentType> h : hexagon.getHexagonsOfDistance(node, 
-							this.distanceDistributions.get(new Integer(node.getMilieuGroup())))) {
+							this.getDistanceDistribution(node))) {
 						potPartners.addAll(h.getAgents());
 					}
 
@@ -1074,6 +1061,39 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	}
 
 	/**
+	 * @param node
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public MGeoHexagon<AgentType> getSurroundingHexagon(AgentType node) {
+		Geometry nodeGeom = this.geography.getGeometry(node);
+		if (nodeGeom == null) {
+			logger.error("Node " + node + " has not been added to geography " + this.geography);
+			throw new IllegalStateException("Node " + node + " has not been added to geography " + this.geography);
+		}
+
+		// determine surrounding hexagon:
+		MGeoHexagon<AgentType> hexagon = null;
+		WithinQuery<Object> containsQuery = new WithinQuery<Object>(
+				this.geography, nodeGeom);
+		for (Object o : containsQuery.query()) {
+			if (o instanceof MGeoHexagon) {
+				hexagon = (MGeoHexagon<AgentType>) o;
+			}
+		}
+		return hexagon;
+	}
+	
+	/**
+	 * 
+	 * @param agent
+	 * @return
+	 */
+	protected MRealDistribution getDistanceDistribution(AgentType agent) {
+		return this.distanceDistributions.get(new Integer(agent.getMilieuGroup()));
+	}
+
+	/**
 	 * 
 	 */
 	protected void checkInitialisation() {
@@ -1081,7 +1101,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 
 			checkParameter();
 
-			this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap);
+			this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap, this.pm);
 
 			this.hexagonInitialiser.init(this.pm, this.geography);
 
