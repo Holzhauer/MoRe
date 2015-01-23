@@ -195,6 +195,13 @@ public abstract class MGeoNetworkService<AgentType extends MoreMilieuAgent, Edge
 	}
 
 	/**
+	 * @see de.cesr.more.geo.building.network.MoreGeoNetworkBuilder#getGeography()
+	 */
+	public Geography<Object> getGeography() {
+		return this.geography;
+	}
+
+	/**
 	 * @return the geoRequestClass
 	 */
 	public Class<? extends AgentType> getGeoRequestClass() {

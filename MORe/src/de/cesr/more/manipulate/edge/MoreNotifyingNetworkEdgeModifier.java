@@ -37,7 +37,7 @@ import de.cesr.more.basic.edge.MoreEdge;
  * @date 22 Jul 2014
  * 
  */
-public interface MoreNotifyingNetworkEdgeModifier<AgentType extends MoreObservingNetworkAgent<AgentType>, EdgeType extends MoreEdge<? super AgentType>>
+public interface MoreNotifyingNetworkEdgeModifier<AgentType extends MoreObservingNetworkAgent<? super AgentType>, EdgeType extends MoreEdge<? super AgentType>>
 		extends MoreNetworkEdgeModifier<AgentType, EdgeType> {
 
 }

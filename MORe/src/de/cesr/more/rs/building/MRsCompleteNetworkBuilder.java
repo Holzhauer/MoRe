@@ -37,6 +37,7 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterManager;
 
 /**
@@ -124,6 +125,9 @@ public class MRsCompleteNetworkBuilder<AgentType extends MoreMilieuAgent, EdgeTy
 				}
 			}
 		}
+
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+
 		return network;
 	}
 

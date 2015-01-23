@@ -42,6 +42,7 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -152,7 +153,10 @@ public class MRsLattice2DNetworkBuilder<AgentType, EdgeType extends MRepastEdge<
 			network.addNode(agent);
 			context.add(agent);
 		}
+		
 		network = (MoreRsNetwork<AgentType, EdgeType>) latticeGenerator.createNetwork(network, edgeModifier);
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+		
 		return  network;
 	}
 }

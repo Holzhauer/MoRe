@@ -43,6 +43,8 @@ public enum MNodeMeasureCategory implements MoreMeasureCategory {
 	NODE_PRESTIGE("Prestige"),
 	NODE_AUTHORITY("Authority"),
 	
+	NODE_GEO("Geography"),
+
 	NODE_MISC("Network: Misc");
 
 	private String desc;

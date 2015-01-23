@@ -202,6 +202,13 @@ public abstract class MGeoRsNetworkService<AgentType extends MoreMilieuAgent, Ed
 	}
 	
 	/**
+	 * @see de.cesr.more.geo.building.network.MoreGeoNetworkBuilder#getGeography()
+	 */
+	public Geography<Object> getGeography() {
+		return this.geography;
+	}
+
+	/**
 	 * Set the (root) context the network shall span
 	 * 
 	 * @param context

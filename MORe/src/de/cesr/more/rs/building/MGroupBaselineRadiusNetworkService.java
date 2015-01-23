@@ -38,6 +38,7 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterManager;
 
 
@@ -135,6 +136,8 @@ public class MGroupBaselineRadiusNetworkService<AgentType extends MoreContextMil
 		createRadiusNetwork(agents, paraMap, network);
 		rewire(agents, paraMap, network);
 
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+		
 		return network;
 	}
 

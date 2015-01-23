@@ -41,7 +41,7 @@ import de.cesr.more.manipulate.edge.MoreNotifyingNetworkEdgeModifier;
  * @date 22 Jul 2014
  * 
  */
-public class MGeoNotifyingNetworkEdgeModifier<AgentType extends MoreObservingNetworkAgent<AgentType>, EdgeType extends MoreGeoEdge<? super AgentType>>
+public class MGeoNotifyingNetworkEdgeModifier<AgentType extends MoreObservingNetworkAgent<? super AgentType>, EdgeType extends MoreGeoEdge<? super AgentType>>
 		extends MGeoNetworkEdgeModifier<AgentType, EdgeType> implements
 		MoreNotifyingNetworkEdgeModifier<AgentType, EdgeType> {
 

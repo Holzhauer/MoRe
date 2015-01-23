@@ -19,31 +19,37 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by holzhauer on 23.09.2011
+ * Created by Sascha Holzhauer on 21 Jan 2015
  */
-package de.cesr.more.geo.building.network;
+package de.cesr.more.util;
 
-import repast.simphony.space.gis.Geography;
-import de.cesr.more.basic.edge.MoreEdge;
+import java.util.HashMap;
+import java.util.Map;
+
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.network.MoreNetworkBuilder;
 
 /**
  * MORe
- * Network builder implementing this interface support embedding networks in {@link Geography} projections.
- * 
- * @author holzhauer
- * @date 23.09.2011 
+ *
+ * @author Sascha Holzhauer
+ * @date 21 Jan 2015 
  *
  */
-public interface MoreGeoNetworkBuilder<AgentType, EdgeType extends MoreEdge<? super AgentType>> extends
-		MoreNetworkBuilder<AgentType, EdgeType> {
-	
-	/**
-	 * Sets the geography that defines the spatial proximity of nodes.
-	 * @param geography
-	 */
-	public void setGeography(Geography<Object> geography);
+public class MNetworkBuilderRegistry {
 
-	public Geography<Object> getGeography();
+	static protected Map<MoreNetwork<?, ?>, MoreNetworkBuilder<?, ?>>	networkBuilders	=
+																				new HashMap<MoreNetwork<?, ?>, MoreNetworkBuilder<?, ?>>();
 
+	public static void registerNetworkBuiler(MoreNetwork<?, ?> network, MoreNetworkBuilder<?, ?> nbuilder) {
+		networkBuilders.put(network, nbuilder);
+	}
+
+	public static MoreNetworkBuilder<?, ?> getNetworkBuilder(MoreNetwork<?, ?> network) {
+		return networkBuilders.get(network);
+	}
+
+	public static void reset() {
+		networkBuilders.clear();
+	}
 }

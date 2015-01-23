@@ -36,6 +36,7 @@ import de.cesr.more.geo.building.edge.MDefaultGeoEdgeFactory;
 import de.cesr.more.geo.building.network.MoreGeoNetworkService;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterManager;
 
 
@@ -104,7 +105,11 @@ public class MRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeType 
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
 		MRestoreNetworkBuilder<AgentType, EdgeType> restoreBuilder = new MRestoreNetworkBuilder<AgentType, EdgeType>(
 				this.edgeFac, this.name, pm);
-		return restoreBuilder.buildNetwork(agents);
+
+		MoreNetwork<AgentType, EdgeType> network = restoreBuilder.buildNetwork(agents);
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+
+		return network;
 	}
 
 	/**

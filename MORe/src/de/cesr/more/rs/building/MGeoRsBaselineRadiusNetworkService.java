@@ -45,6 +45,7 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -246,6 +247,8 @@ public class MGeoRsBaselineRadiusNetworkService<AgentType extends MoreMilieuAgen
 		// <- LOGGING
 		logEdges(logger, network, "AfterRewire: ");
 		// LOGGING ->
+
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
 
 		return network;
 	}

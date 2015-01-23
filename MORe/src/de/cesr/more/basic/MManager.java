@@ -34,6 +34,7 @@ import de.cesr.more.measures.network.MNetworkMeasureManager;
 import de.cesr.more.measures.node.MNodeMeasureManager;
 import de.cesr.more.measures.util.MoreSchedule;
 import de.cesr.more.param.MRandomPa;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterManager;
 import de.cesr.uranus.core.URandomService;
 import de.cesr.uranus.core.UranusRandomService;
@@ -248,5 +249,6 @@ public class MManager {
 		MNetworkManager.reset();
 		MNetworkMeasureManager.reset();
 		MNodeMeasureManager.reset();
+		MNetworkBuilderRegistry.reset();
 	}
 }

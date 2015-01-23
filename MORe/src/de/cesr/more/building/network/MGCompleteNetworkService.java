@@ -32,6 +32,7 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MGeoRsCompleteNetworkService;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 
 
@@ -116,6 +117,9 @@ public class MGCompleteNetworkService<AgentType, EdgeType extends MoreEdge<Agent
 				}
 			}
 		}
+		
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+		
 		return network;
 	}
 

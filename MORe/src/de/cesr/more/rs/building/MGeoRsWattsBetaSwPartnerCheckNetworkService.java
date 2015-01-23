@@ -52,6 +52,7 @@ import de.cesr.more.param.reader.MMilieuNetDataReader;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Graph;
@@ -188,7 +189,11 @@ public class MGeoRsWattsBetaSwPartnerCheckNetworkService<AgentType extends MoreM
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
 				params);
 
-		return (MoreRsNetwork<AgentType, EdgeType>) gen.buildNetwork(agents);
+		MoreRsNetwork<AgentType, EdgeType> realisedNetwork = (MoreRsNetwork<AgentType, EdgeType>) gen
+				.buildNetwork(agents);
+		MNetworkBuilderRegistry.registerNetworkBuiler(realisedNetwork, this);
+
+		return realisedNetwork;
 	}
 
 

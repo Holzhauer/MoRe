@@ -19,7 +19,7 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 04.03.2011
+ * Created by Sascha Holzhauer on 03.01.2011
  */
 package de.cesr.more.measures.node.supply;
 
@@ -27,15 +27,22 @@ package de.cesr.more.measures.node.supply;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
+import repast.simphony.space.gis.Geography;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.geo.building.network.MoreGeoNetworkBuilder;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
+import de.cesr.more.measures.network.supply.MNetworkStatisticsSupplier;
 import de.cesr.more.measures.node.MAbstractNodeMeasure;
 import de.cesr.more.measures.node.MNodeMeasureCategory;
 import de.cesr.more.measures.node.MoreNodeMeasureSupport;
 import de.cesr.more.measures.util.MAbstractAction;
 import de.cesr.more.measures.util.MoreAction;
+import de.cesr.more.util.Log4jLogger;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 
 
 
@@ -43,86 +50,75 @@ import de.cesr.more.measures.util.MoreAction;
  * MORe
  * 
  * @author Sascha Holzhauer
- * @date 04.03.2011
+ * @date 03.01.2011
  * 
  */
-public class MAvgNearestNeighbourDegree extends MAbstractMeasureSupplier {
+public class MNodeGeoStatisticsSupplier extends MAbstractMeasureSupplier {
 
-	static private MAvgNearestNeighbourDegree	instance	= null;
-	/**
-	 * MORe
-	 *
-	 * @author Sascha Holzhauer
-	 * @date 04.01.2011 
-	 *
-	 */
 	public enum Short {
-		/**
-		 * 
-		 */
-		MC_AVG_NN_DEGREE_UNDIRECTED("Mc_AvgNNDgUd");
-		
-		String name;
+		NODE_DISTANCE_NEIGHBOUR_AVG("ND-Dist-NeighbourAvg");
+
+		String	name;
+
 		private Short(String name) {
 			this.name = name;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 	}
-	
-	MMeasureDescription	description;
+
+	static MNodeGeoStatisticsSupplier	instance;
+
+	MMeasureDescription					description;
 
 	/**
-	 * 
+	 * Logger
 	 */
-	private MAvgNearestNeighbourDegree() {
+	static private Logger				logger	= Log4jLogger.getLogger(MNetworkStatisticsSupplier.class);
+
+	private MNodeGeoStatisticsSupplier() {
 		addMeasures();
 		addCategories();
 	}
 
-	public static MAvgNearestNeighbourDegree getInstance() {
+	public static MNodeGeoStatisticsSupplier getInstance() {
 		if (instance == null) {
-			instance = new MAvgNearestNeighbourDegree();
+			instance = new MNodeGeoStatisticsSupplier();
 		}
 		return instance;
 	}
 
-	/**
-	 * 
-	 */
 	private void addCategories() {
-		categories.add(MNodeMeasureCategory.NODE_MISC);
+		categories.add(MNodeMeasureCategory.NODE_GEO);
 	}
 
-	/**
-	 * 
-	 */
 	private void addMeasures() {
-		description = new MMeasureDescription(MNodeMeasureCategory.NODE_MISC, Short.MC_AVG_NN_DEGREE_UNDIRECTED.getName(),
-				"Average degree of neares neighbours (undirected, not normalized)");
+
+		description = new MMeasureDescription(MNodeMeasureCategory.NODE_GEO, "ND-Dist-NeighbourAvg",
+				"");
 
 		measures.put(description, new MAbstractNodeMeasure(description, Double.class) {
 			@Override
-			public <V extends MoreNodeMeasureSupport, E extends MoreEdge<? super V>> MoreAction getAction(final MoreNetwork<V, E> network,
+			public <V extends MoreNodeMeasureSupport, E extends MoreEdge<? super V>> MoreAction getAction(
+					final MoreNetwork<V, E> network,
 					Map<String, Object> parameters) {
 				return new MAbstractAction() {
-
 					@Override
 					public void execute() {
 						for (V node : network.getNodes()) {
-							int sum = 0;
-							for (V neighbour : network.getAdjacent(node)) {
-								sum += network.getDegree(neighbour);
+							double distance =0.0;
+							Geography<Object> geography = ((MoreGeoNetworkBuilder) MNetworkBuilderRegistry.getNetworkBuilder(network)).getGeography();
+							for (V predecessor : network.getPredecessors(node)){
+								distance += geography.getGeometry(node).distance(geography.getGeometry(predecessor));
 							}
 							node.setNetworkMeasureObject(network, new MMeasureDescription(
-									MNodeMeasureCategory.NODE_MISC,  Short.MC_AVG_NN_DEGREE_UNDIRECTED.getName(),
-									"Average degree of neares neighbours (undirected, not normalized)"),
-									(double) sum / (double) network.getDegree(node));
+									MNodeMeasureCategory.NODE_GEO, "ND-Dist-NeighbourAvg",
+									"Average geographical distance to neighbours"),
+									distance / network.getInDegree(node));
 						}
-
 					}
 				};
 			}

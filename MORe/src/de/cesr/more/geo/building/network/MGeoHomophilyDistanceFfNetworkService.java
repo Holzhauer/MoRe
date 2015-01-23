@@ -65,6 +65,7 @@ import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.rs.geo.util.MGeoHexagon;
 import de.cesr.more.rs.geo.util.MoreGeoHexagon;
 import de.cesr.more.rs.geo.util.MoreGeoHexagonInitialiser;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.more.util.MRuntimeDbWriter;
 import de.cesr.more.util.MRuntimeMemoryDbWriter;
 import de.cesr.more.util.MoreRunIdProvider;
@@ -468,7 +469,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				Collections.shuffle(orderedAgents, new Random(((Integer) pm.getParam(
 						MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 
-				logger.debug("Shuffle order: " + agents);
+				logger.debug("Shuffle order: " + orderedAgents);
 			}
 			agentsToGo.clear();
 			agentsToGo.addAll(orderedAgents);
@@ -478,6 +479,8 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 			this.runtimeWriter.addMeasurement("Build up links");
 			this.runtimeWriter.stopAndStore();
 		}
+
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
 
 		return network;
 	}
@@ -978,6 +981,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	@Override
 	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
 		checkInitialisation();
+
 		super.removeNode(network, node);
 		this.agentHexagons.get(node).removeAgent(node);
 		return this.agentHexagons.remove(node) != null;

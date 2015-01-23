@@ -101,6 +101,7 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 		// <- LOGGING
 		if (measure == null) {
 			logger.error("MoreMeasure for key " + measureDesc.getShort() + " could not be found!");
+			throw new IllegalStateException("MoreMeasure for key " + measureDesc.getShort() + " could not be found!");
 		}
 		// LOGGING ->
 		
@@ -250,6 +251,28 @@ public class MNodeMeasureManager extends MAbstractMeasureManager {
 	}
 
 	
+	/**
+	 * @param network
+	 * @param key
+	 * @return true if the given measure description is active
+	 */
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean hasMeasureCalculation(
+			MoreNetwork<T, E> network,
+			String key) {
+		return this.hasMeasureCalculation(network, new MMeasureDescription(key));
+	}
+
+	/**
+	 * @param network
+	 * @param key
+	 * @return true if the given measure description is active
+	 */
+	public <T extends MoreNodeMeasureSupport, E extends MoreEdge<? super T>> boolean hasMeasureCalculation(
+			MoreNetwork<T, E> network,
+			MMeasureDescription key) {
+		return this.measureActions.get(network).containsKey(key);
+	}
+
 	/**
 	 * Removes <code>BasicAction</code> that calculates the measure for the given network for the given measure key from
 	 * the <code>Schedule</code> to stop computation of that measure. Furthermore its sets the associated measures at

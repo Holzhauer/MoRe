@@ -36,15 +36,17 @@ import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MDefaultEdgeFactory;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
+import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
-import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
+import de.cesr.more.param.MNetBuildWbSwPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.building.MDefaultPartnerFinder;
 import de.cesr.more.rs.building.MGeoRsWattsBetaSwNetworkService.MSmallWorldBetaModelNetworkGeneratorMilieuParams;
 import de.cesr.more.rs.building.MMilieuPartnerFinder;
 import de.cesr.more.rs.building.MoreMilieuAgent;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Graph;
@@ -150,6 +152,9 @@ public class MWattsBetaSwMilieuNetworkService<AgentType extends MoreMilieuAgent,
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
 				params);
 
-		return gen.buildNetwork(agents);
+		MoreNetwork<AgentType, EdgeType> realisedNetwork = gen.buildNetwork(agents);
+		MNetworkBuilderRegistry.registerNetworkBuiler(realisedNetwork, this);
+
+		return realisedNetwork;
 	}
 }

@@ -67,6 +67,7 @@ import de.cesr.more.rs.geo.util.MoreGeoHexagon;
 import de.cesr.more.rs.geo.util.MoreGeoHexagonInitialiser;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.more.util.MRuntimeDbWriter;
 import de.cesr.more.util.MRuntimeMemoryDbWriter;
 import de.cesr.more.util.MoreRunIdProvider;
@@ -342,6 +343,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 						new DirectedJungNetwork<AgentType>(name) :
 						new UndirectedJungNetwork<AgentType>(name), context, this.edgeModifier.getEdgeFactory());
 
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+
 		Map<AgentType, Integer> degreeTargets = null;
 
 		this.partnerFinder = new MMilieuPartnerFinder<AgentType, EdgeType>(this.paraMap, this.pm);
@@ -486,6 +489,8 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			this.runtimeWriter.addMeasurement("Build up links");
 			this.runtimeWriter.stopAndStore();
 		}
+
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
 
 		return network;
 	}

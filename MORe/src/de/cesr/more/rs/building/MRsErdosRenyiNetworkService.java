@@ -43,6 +43,7 @@ import de.cesr.more.param.MRandomPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -137,7 +138,10 @@ public class MRsErdosRenyiNetworkService<AgentType extends MoreMilieuAgent, Edge
 			network.addNode(agent);
 		}
 		
-		return (MoreRsNetwork<AgentType, EdgeType>) generator.createNetwork(network);
+		MoreRsNetwork<AgentType, EdgeType> realisedNetwork = (MoreRsNetwork<AgentType, EdgeType>) generator.createNetwork(network);
+		MNetworkBuilderRegistry.registerNetworkBuiler(realisedNetwork, this);
+		
+		return realisedNetwork;
 	}
 
 	/**

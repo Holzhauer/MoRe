@@ -53,6 +53,8 @@ import edu.uci.ics.jung.algorithms.scoring.BarycenterScorer;
  */
 public class MCentralityNodeMSupplier extends MAbstractMeasureSupplier {
 
+	static private MCentralityNodeMSupplier	instance	= null;
+
 	/**
 	 * MORe Short descriptions for measures defined in this class
 	 * 
@@ -83,9 +85,16 @@ public class MCentralityNodeMSupplier extends MAbstractMeasureSupplier {
 	
 	MMeasureDescription	description;
 
-	public MCentralityNodeMSupplier() {
+	private MCentralityNodeMSupplier() {
 		addMeasures();
 		addCategories();
+	}
+
+	public static MCentralityNodeMSupplier getInstance() {
+		if (instance == null) {
+			instance = new MCentralityNodeMSupplier();
+		}
+		return instance;
 	}
 
 	private void addCategories() {

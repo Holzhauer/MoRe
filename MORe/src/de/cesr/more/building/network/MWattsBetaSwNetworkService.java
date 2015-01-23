@@ -43,7 +43,9 @@ import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
+import de.cesr.more.param.MNetBuildWbSwPa;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -140,7 +142,10 @@ public class MWattsBetaSwNetworkService<AgentType, EdgeType extends MoreEdge<Age
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
 				params);
 
-		return gen.buildNetwork(agents);
+		MoreNetwork<AgentType, EdgeType> realizedNetwork = gen.buildNetwork(agents);
+		MNetworkBuilderRegistry.registerNetworkBuiler(realizedNetwork, this);
+
+		return realizedNetwork;
 	}
 
 	/**

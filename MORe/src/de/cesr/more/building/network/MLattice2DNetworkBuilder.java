@@ -16,6 +16,7 @@ import de.cesr.more.building.util.MLattice2DGenerator;
 import de.cesr.more.manipulate.edge.MDefaultNetworkEdgeModifier;
 import de.cesr.more.param.MNetBuildLattice2DPa;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -110,6 +111,9 @@ public class MLattice2DNetworkBuilder<AgentType, EdgeType extends MoreEdge<Agent
 			network.addNode(agent);
 		}
 		network = latticeGenerator.createNetwork(network, edgeModifier);
+
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+
 		return  network;
 	}
 }

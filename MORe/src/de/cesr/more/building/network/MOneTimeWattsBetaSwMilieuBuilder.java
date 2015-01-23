@@ -49,6 +49,7 @@ import de.cesr.more.rs.building.MDefaultPartnerFinder;
 import de.cesr.more.rs.building.MGeoRsWattsBetaSwNetworkService.MSmallWorldBetaModelNetworkGeneratorMilieuParams;
 import de.cesr.more.rs.building.MMilieuPartnerFinder;
 import de.cesr.more.rs.building.MoreMilieuAgent;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Graph;
@@ -190,7 +191,10 @@ public class MOneTimeWattsBetaSwMilieuBuilder<AgentType extends MoreMilieuAgent,
 		MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType> gen = new MSmallWorldBetaModelNetworkGenerator<AgentType, EdgeType>(
 				params);
 
-		return gen.buildNetwork(agents);
+		MoreNetwork<AgentType, EdgeType> realisedNetwork = gen.buildNetwork(agents);
+		MNetworkBuilderRegistry.registerNetworkBuiler(realisedNetwork, this);
+		
+		return realisedNetwork;
 	}
 
 

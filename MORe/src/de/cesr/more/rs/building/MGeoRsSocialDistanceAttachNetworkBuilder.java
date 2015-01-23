@@ -50,6 +50,7 @@ import de.cesr.more.rs.geo.util.MGeographyWrapper;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.Log4jLogger;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -219,6 +220,8 @@ public class MGeoRsSocialDistanceAttachNetworkBuilder<AgentType extends MoreMili
 		for (AgentType ego : agents) {
 			addAndLinkNode(network, ego);
 		}
+
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
 
 		return network;
 	}

@@ -16,6 +16,7 @@ import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -130,6 +131,9 @@ public class MGeoRsCompleteNetworkService<AgentType extends MoreMilieuAgent, Edg
 				}
 			}
 		}
+		
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+		
 		return network;
 	}
 

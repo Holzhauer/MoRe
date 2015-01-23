@@ -42,6 +42,7 @@ import de.cesr.more.basic.network.MUndirectedNetwork;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.param.MNetworkBuildingPa;
+import de.cesr.more.util.MNetworkBuilderRegistry;
 import de.cesr.more.util.io.MGraphMLReader2NodeMap;
 import de.cesr.more.util.io.MoreIoUtilities;
 import de.cesr.parma.core.PmParameterDefinition;
@@ -147,6 +148,9 @@ public class MRestoreNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentTy
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		MNetworkBuilderRegistry.registerNetworkBuiler(network, this);
+
 		return network;
 	}
 

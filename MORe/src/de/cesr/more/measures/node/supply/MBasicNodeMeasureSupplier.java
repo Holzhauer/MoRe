@@ -43,8 +43,9 @@ public class MBasicNodeMeasureSupplier extends MAbstractMeasureSupplier {
 	 */
 	public MBasicNodeMeasureSupplier() {
 		
-		this.addMeasureSupplier(new MCentralityNodeMSupplier());
-		this.addMeasureSupplier(new MAvgNearestNeighbourDegree());
+		this.addMeasureSupplier(MCentralityNodeMSupplier.getInstance());
+		this.addMeasureSupplier(MAvgNearestNeighbourDegree.getInstance());
+		this.addMeasureSupplier(MNodeGeoStatisticsSupplier.getInstance());
 		
 		// TODO adapt classes
 //		this.addMeasureSupplier(new CentralityNormalizedNMSupplier());

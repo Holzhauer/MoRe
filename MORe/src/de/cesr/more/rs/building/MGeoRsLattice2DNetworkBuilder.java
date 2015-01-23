@@ -64,6 +64,8 @@ MRsLattice2DNetworkBuilder<AgentType, EdgeType> implements MoreGeoRsNetworkBuild
 
 	protected Context<AgentType>	context;
 	
+	protected Geography<Object>		geography;
+
 	/**
 	 * 
 	 */
@@ -92,6 +94,12 @@ MRsLattice2DNetworkBuilder<AgentType, EdgeType> implements MoreGeoRsNetworkBuild
 		((MoreGeoNetworkEdgeModifier<AgentType, EdgeType>) this.edgeModifier).setGeography(geography);
 	}
 
+	/**
+	 * @see de.cesr.more.geo.building.network.MoreGeoNetworkBuilder#getGeography()
+	 */
+	public Geography<Object> getGeography() {
+		return this.geography;
+	}
 	
 	/**
 	 * @see java.lang.Object#toString()

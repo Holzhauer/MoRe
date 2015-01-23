@@ -190,9 +190,9 @@ pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_DELIMITER, ',')
 	CSV files are located at <<<./test/res/>>>.
 	
 	
-* Configuring Network Measures
+* Configuring Measures
 
-	The concept of network measures works as follows:
+	The concept of network and node measures works as follows:
 	
 	[[1]] Defining what measures (<<<MoreMeasure>>>) are calculated when using <<<MNetworkMeasureManager>>> or
 		  <<<MNodeMeasureManager>>>.
@@ -200,12 +200,6 @@ pm.setParam(MNetworkBuildingPa.MILIEU_NETWORK_CSV_DELIMITER, ',')
 	[[1]] MoRe then calculated the measures and stores the data at the nodes (these need to implement <<<MoreNodeMeasureSupport>>>).
 	
 	[[1]] Calculated measures can be retrieved from the node objects.
-
-**Adding Measure Definitions
-
-	As default, the <<<MNetworkMeasureManager>>> imports measure definitions from <<<MBasicNetworkMeasureSupplier>>> (see JavaDoc for details).
-	Further measure definitions are added by passing an instance of <<<MoreMeasureSupplier>>> to <<<MNetworkMeasureManager#addMeasureSupplier(supplier)>>>.
-	See {{{Implementing Custom Measures}Implementing Custom Measures}} for further instructions.
 
 
 *Managing Node Measures
@@ -251,8 +245,8 @@ params.put(MNetworkMeasureManager.ParameterKeys.PRIORITY.name(), MScheduleParame
 	
 +---
 // add measures for overall network:
-MNetworkMeasureManager.getInstance().addMeasureCalculation(ModelManager.SOCNET_NAME,
-		MNetworkStatisticsSupplier.Short.N_STAT_AVGPATH.getName(), params);	
+MNodeMeasureManager.getInstance().addMeasureCalculation(ModelManager.SOCNET_NAME,
+		MBasicNodeMeasureSupplier.Short.N_STAT_AVGPATH.getName(), params);	
 +---
 
 ** Node Measure Support
@@ -291,17 +285,27 @@ protected MNodeMeasures measures = new MNodeMeasures();
 	The central class for managing network measures is {{{../apidocs/de/cesr/more/measures/network/MNetworkMeasureManager.html}<<<MNetworkMeasureManager}}.
 	To obtain an instance of the network manager call <<<MNetworkMeasureManager.getInstance()>>>.
 	However, make sure to set the schedule before: <<<MNetworkManager.setSchedule(MoreSchedule schedule)>>>!
+
 	
 **Trigger measure calculation for networks
 
+	The params map (see above) is then passed when triggering a measure calculation:
+	
 +---
 MNetworkManager netMan = MNetworkManager.getInstance();
-netMan.addMeasureCalculation(net, MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName());
+netMan.addMeasureCalculation(net, MCentralityNetMSupplier.Short.NET_CEN_DEGREE.getName(), params);
 +---
 
 **Setting Parameters for Network Measure Calculation
 
 	{{{Setting Parameters for Node Measure Calculation}see above}}
+
+
+**Adding Measure Definitions
+
+	As default, the <<<MNetworkMeasureManager>>> imports measure definitions from <<<MBasicNetworkMeasureSupplier>>> (see JavaDoc for details).
+	Further measure definitions are added by passing an instance of <<<MoreMeasureSupplier>>> to <<<MNetworkMeasureManager#addMeasureSupplier(supplier)>>>.
+	See {{{Implementing Custom Measures}Implementing Custom Measures}} for further instructions.
 
 
 *Defining subnetworks
