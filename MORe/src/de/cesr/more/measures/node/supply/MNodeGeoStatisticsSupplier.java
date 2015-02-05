@@ -32,6 +32,8 @@ import org.apache.log4j.Logger;
 import repast.simphony.space.gis.Geography;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
+import de.cesr.more.building.network.MRestoreNetworkService;
+import de.cesr.more.building.network.MoreNetworkBuilder;
 import de.cesr.more.geo.building.network.MoreGeoNetworkBuilder;
 import de.cesr.more.measures.MAbstractMeasureSupplier;
 import de.cesr.more.measures.MMeasureDescription;
@@ -110,7 +112,27 @@ public class MNodeGeoStatisticsSupplier extends MAbstractMeasureSupplier {
 					public void execute() {
 						for (V node : network.getNodes()) {
 							double distance =0.0;
-							Geography<Object> geography = ((MoreGeoNetworkBuilder) MNetworkBuilderRegistry.getNetworkBuilder(network)).getGeography();
+							if (MNetworkBuilderRegistry.getNetworkBuilder(network) == null) {
+								logger.error("The MNetworkBuilderRegistry does not contain an entry for network "
+										+ network + ". Please register the network builder!");
+								throw new IllegalStateException(
+										"The MNetworkBuilderRegistry does not contain an entry for network "
+												+ network + ". Please register the network builder!");
+							}
+							MoreNetworkBuilder<?, ?> builder = MNetworkBuilderRegistry.getNetworkBuilder(network);
+							if (builder instanceof MRestoreNetworkService) {
+								builder = ((MRestoreNetworkService<?, ?>) builder).getMaintainingNetworkService();
+							}
+
+							if (!(builder instanceof MoreGeoNetworkBuilder)) {
+								logger.error("The netowrk builder registered at MNetworkBuilderRegistry (" + builder
+										+ ") does not implement the interface MoreGeoNetworkBuilder!");
+								throw new IllegalStateException(
+										"The netowrk builder registered at MNetworkBuilderRegistry (" + builder
+												+ ") does not implement the interface MoreGeoNetworkBuilder!");
+							}
+
+							Geography<Object> geography = ((MoreGeoNetworkBuilder<?, ?>) builder).getGeography();
 							for (V predecessor : network.getPredecessors(node)){
 								distance += geography.getGeometry(node).distance(geography.getGeometry(predecessor));
 							}

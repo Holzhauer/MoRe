@@ -165,6 +165,11 @@ public enum MNetBuildHdffPa implements PmParameterDefinition {
 	HEXAGON_SHAPEFILE_2ND(String.class, "./data/shapefiles/hexagon2nd/hexagon.shp"),
 
 	/**
+	 * Number of attempts to find a ambassador, and to increase the degree.
+	 */
+	NUM_RECRUITING_ATTEMPTS(Integer.class, 100),
+
+	/**
 	 * Uses agent's locations instead of the agent's (2nd layer) hexagon to check distances.
 	 */
 	INCREASED_DISTANCE_ACCURACY(Boolean.class, Boolean.TRUE),

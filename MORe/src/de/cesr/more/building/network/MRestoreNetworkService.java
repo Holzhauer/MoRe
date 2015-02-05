@@ -57,6 +57,10 @@ public class MRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeType 
 
 	protected MoreNetworkService<AgentType, EdgeType>	maintainingNetworkService	= null;
 
+	public MoreNetworkService<AgentType, EdgeType> getMaintainingNetworkService() {
+		return maintainingNetworkService;
+	}
+
 	public MRestoreNetworkService(
 			MoreEdgeFactory<AgentType, EdgeType> edgeFac, String name) {
 		this(edgeFac, name, PmParameterManager.getInstance(null));

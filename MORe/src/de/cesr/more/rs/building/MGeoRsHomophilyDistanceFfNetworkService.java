@@ -422,13 +422,17 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				AgentType ambassador = null;
 				// Select a distance range probabilistically according to distance function
 
-				while (ambassador == null) {
+				int ambassadorAttempts = 0;
+				while (ambassador == null && ambassadorAttempts <
+						((Integer) pm.getParam(MNetBuildHdffPa.NUM_RECRUITING_ATTEMPTS)).intValue()) {
+					ambassadorAttempts++;
+
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
 					MoreGeoHexagon<AgentType> h = agentHexagons.get(agent);
 					if (h == null) {
-						logger.error("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")" + " is not assigned to a hexagon. ");
+						logger.error("Agent " + agent + "(" + this.geography.getGeometry(agent) + ")" + " is not assigned to a hexagon.");
 						
 						if (this.geography.getGeometry(agent) == null) {
 							logger.error("Check that agents are part of geography!");							
@@ -459,6 +463,13 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					// hexagons
 					ambassador = partnerFinder.findPartner(potPartners, network.getJungGraph(), agent, true);
 				}
+
+				if (ambassador == null) {
+					orderedAgents.remove(agent);
+					logger.warn(agent + "> Search for ambassador canceled. Number of missing partners: "
+							+ degreeTargets.get(agent));
+				}
+
 				linkPartner(agent, ambassador, network, degreeTargets);
 
 				// Follow links of ambassador with respect to forward probability, distance term, milieu preference
@@ -607,6 +618,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 		Collections.shuffle(indices, new Random(((Integer) pm.getParam(
 				MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 
+		double distanceProbDivisor = Math.max(
+				agentDistanceDist.density(paraMap.getDistParamXMin(agent.getMilieuGroup())),
+				agentDistanceDist.density(agentDistanceDist.getSupportLowerBound()));
+
 		while (degreeTargets.get(agent) > 0 && indices.size() > 0) {
 			int random = uniform.nextIntFromTo(0, indices.size() - 1);
 			int index = indices.get(random);
@@ -624,7 +639,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			if (agent != neighbour && (!network.isSuccessor(agent, neighbour))) {
 
 				Double distanceProb = getDistanceProb(agent, neighbour) /
-						agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
+						distanceProbDivisor
 						* (Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, agent.getMilieuGroup());
 
 				Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
@@ -997,6 +1012,7 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	@Override
 	public boolean removeNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
 		checkInitialisation();
+
 		super.removeNode(network, node);
 		this.agentHexagons.get(node).removeAgent(node);
 		return this.agentHexagons.remove(node) != null;
@@ -1032,7 +1048,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				AgentType ambassador = null;
 				// Select a distance range probabilistically according to distance function
 
-				while (ambassador == null) {
+				int ambassadorAttempts = 0;
+				while (ambassador == null && ambassadorAttempts <
+						((Integer) pm.getParam(MNetBuildHdffPa.NUM_RECRUITING_ATTEMPTS)).intValue()) {
+					ambassadorAttempts++;
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
@@ -1044,6 +1063,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 					// Select a random ambassador according to milieu preferences (inbreeding homophily) from these
 					// hexagons
 					ambassador = partnerFinder.findPartner(potPartners, network.getJungGraph(), node, true);
+				}
+
+				if (ambassador == null) {
+					logger.warn(node + "> Search for ambassador canceled. Number of missing partners: "
+							+ degreetarget);
+					break;
 				}
 
 				// Follow links of ambassador with respect to forward probability, distance term, milieu preference

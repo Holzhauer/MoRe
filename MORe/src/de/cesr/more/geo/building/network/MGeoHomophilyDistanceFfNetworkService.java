@@ -412,7 +412,11 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				AgentType ambassador = null;
 				// Select a distance range probabilistically according to distance function
 
-				while (ambassador == null) {
+				int ambassadorAttempts = 0;
+				while (ambassador == null && ambassadorAttempts <
+						((Integer) pm.getParam(MNetBuildHdffPa.NUM_RECRUITING_ATTEMPTS)).intValue()) {
+					ambassadorAttempts++;
+
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
@@ -449,6 +453,13 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 					// hexagons
 					ambassador = partnerFinder.findPartner(potPartners, network.getJungGraph(), agent, true);
 				}
+
+				if (ambassador == null) {
+					orderedAgents.remove(agent);
+					logger.warn(agent + "> Search for ambassador canceled. Number of missing partners: "
+							+ degreeTargets.get(agent));
+				}
+
 				linkPartner(agent, ambassador, network, degreeTargets);
 
 				// Follow links of ambassador with respect to forward probability, distance term, milieu preference
@@ -539,14 +550,13 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	}
 
 	/**
-	 *
+	 * 
 	 * Assumes that the distance distribution's density is highest at supported lower bound (p_local / x_min).
-	 *
+	 * 
 	 * @param agent
 	 *        agent/ambassador
-	 * @param partner
+	 * @param toExplore
 	 * @param network
-	 * @param orderedAgents
 	 * @param degreeTargets
 	 */
 	protected void explorePartner(AgentType agent, LinkedList<AgentType> toExplore,
@@ -596,6 +606,9 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		Collections.shuffle(indices, new Random(((Integer) pm.getParam(
 				MRandomPa.RANDOM_SEED_NETWORK_BUILDING)).intValue()));
 
+		double distanceProbDivisor = Math.max(
+				agentDistanceDist.density(paraMap.getDistParamXMin(agent.getMilieuGroup())),
+				agentDistanceDist.density(agentDistanceDist.getSupportLowerBound()));
 		while (degreeTargets.get(agent) > 0 && indices.size() > 0) {
 			int random = uniform.nextIntFromTo(0, indices.size() - 1);
 			int index = indices.get(random);
@@ -612,8 +625,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 
 			if (agent != neighbour && (!network.isSuccessor(agent, neighbour))) {
 
-				Double distanceProb = getDistanceProb(agent, neighbour) /
-						agentDistanceDist.density(agentDistanceDist.getSupportLowerBound())
+				Double distanceProb = getDistanceProb(agent, neighbour) / distanceProbDivisor
 						* (Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, agent.getMilieuGroup());
 
 				Double milieuProb = this.paraMap.getP_Milieu(agent.getMilieuGroup(),
@@ -666,7 +678,6 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	 * @param agent
 	 * @param partner
 	 * @param network
-	 * @param orderedAgents
 	 * @param degreeTargets
 	 */
 	protected void linkPartner(AgentType agent, AgentType partner, MoreNetwork<AgentType, EdgeType> network,
@@ -685,7 +696,7 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 	/**
 	 * @param ego
 	 * @param partner
-	 * @return
+	 * @return distance probability
 	 */
 	protected double getDistanceProb(AgentType ego, AgentType partner) {
 		return this.distanceDistributions.get(ego.getMilieuGroup()).
@@ -1031,7 +1042,10 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				AgentType ambassador = null;
 				// Select a distance range probabilistically according to distance function
 
-				while (ambassador == null) {
+				int ambassadorAttempts = 0;
+				while (ambassador == null && ambassadorAttempts <
+						((Integer) pm.getParam(MNetBuildHdffPa.NUM_RECRUITING_ATTEMPTS)).intValue()) {
+					ambassadorAttempts++;
 					// Determine according hexagons and agent within
 					Set<AgentType> potPartners = new LinkedHashSet<AgentType>();
 
@@ -1040,9 +1054,21 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 						potPartners.addAll(h.getAgents());
 					}
 
+					// <- LOGGING
+					if (logger.isDebugEnabled()) {
+						logger.debug("Number of potential partners: " + potPartners.size());
+					}
+					// LOGGING ->
+
 					// Select a random ambassador according to milieu preferences (inbreeding homophily) from these
 					// hexagons
 					ambassador = partnerFinder.findPartner(potPartners, network.getJungGraph(), node, true);
+				}
+
+				if (ambassador == null) {
+					logger.warn(node + "> Search for ambassador canceled. Number of missing partners: "
+							+ degreetarget);
+					break;
 				}
 
 				// Follow links of ambassador with respect to forward probability, distance term, milieu preference
