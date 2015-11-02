@@ -39,8 +39,8 @@ import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
 import de.cesr.lara.components.container.properties.impl.LFloatProperty;
+import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.environment.LaraEnvironment;
-import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.model.impl.LAbstractStandaloneSynchronisedModel;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.LaraRandom;
@@ -99,7 +99,27 @@ public class MRsEncapsulatedContextJungNetworkTest {
 			}
 
 			@Override
-			public <T extends LaraEvent> void onEvent(T event) {
+			public void createAgents() {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void finish() {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			protected void execute(LaraDecisionConfiguration arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void processStep() {
+				// TODO Auto-generated method stub
+
 			}
 		});
 		env = new MLaraNetworkEnvironment<TestAgent, MRepastEdge<TestAgent>>();

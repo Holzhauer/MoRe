@@ -14,7 +14,6 @@ import de.cesr.lara.components.LaraBehaviouralOption;
 import de.cesr.lara.components.LaraPreference;
 import de.cesr.lara.components.decision.LaraDecisionConfiguration;
 import de.cesr.lara.components.environment.LaraEnvironment;
-import de.cesr.lara.components.eventbus.events.LaraEvent;
 import de.cesr.lara.components.model.impl.LModel;
 import de.cesr.lara.components.util.impl.LPrefEntry;
 import de.cesr.more.lara.agent.MAbstractLaraNetworkAgent;
@@ -53,11 +52,14 @@ public class MTestUtilsLara {
 			return (A) this;
 		}
 
-		/**
-		 * @see de.cesr.lara.components.eventbus.LaraEventSubscriber#onEvent(de.cesr.lara.components.eventbus.events.LaraEvent)
+
+				/**
+		 * @see de.cesr.lara.components.agents.LaraAgent#laraPerceive(de.cesr.lara.components.decision.LaraDecisionConfiguration)
 		 */
 		@Override
-		public <T extends LaraEvent> void onEvent(T event) {
+		public void laraPerceive(LaraDecisionConfiguration arg0) {
+			// TODO Auto-generated method stub
+
 		}
 	}
 
@@ -95,7 +97,7 @@ public class MTestUtilsLara {
 		 * @param prefEntry
 		 */
 		public MTestBo(String key, A agent, LPrefEntry... prefEntry) {
-			super(key, agent, prefEntry);
+			super(key, agent);
 		}
 
 		@Override

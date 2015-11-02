@@ -84,12 +84,25 @@ public class MRestoreNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentTy
 	 */
 	static private Logger	logger	= Logger.getLogger(MRestoreNetworkBuilder.class);
 
+	static public class ToStringAgentLabelFactory<A> implements AgentLabelFactory<A> {
+
+		/**
+		 * @see de.cesr.more.building.network.AgentLabelFactory#getLabel(java.lang.Object)
+		 */
+		@Override
+		public String getLabel(A agent) {
+			return agent.toString();
+		}
+	}
+
 	protected String		name;
 	
 	protected MoreEdgeFactory<AgentType, EdgeType>	edgeFac;
 
 	protected PmParameterManager					pm;
 	
+	protected AgentLabelFactory<AgentType>			agentLabelFactory;
+
 	/**
 	 * @param areasGeography
 	 */
@@ -104,6 +117,14 @@ public class MRestoreNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentTy
 		this.edgeFac = eFac;
 		this.name = networkName;
 		this.pm = pm;
+		this.agentLabelFactory = new ToStringAgentLabelFactory<AgentType>();
+	}
+
+	/**
+	 * @param agentLabelFactory
+	 */
+	public void setAgentLabelFactory(AgentLabelFactory<AgentType> agentLabelFactory) {
+		this.agentLabelFactory = agentLabelFactory;
 	}
 
 	@Override
@@ -119,7 +140,7 @@ public class MRestoreNetworkBuilder<AgentType, EdgeType extends MoreEdge<AgentTy
 		BidiMap<AgentType, String> agentIdMap = new DualHashBidiMap<AgentType, String>();
 
 		for (AgentType agent : agents) {
-			agentIdMap.put(agent, agent.toString());
+			agentIdMap.put(agent, this.agentLabelFactory.getLabel(agent));
 			network.addNode(agent);
 		}
 

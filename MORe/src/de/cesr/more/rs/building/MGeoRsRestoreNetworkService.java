@@ -36,11 +36,15 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
+import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.UndirectedJungNetwork;
+import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
 import de.cesr.more.building.network.AgentLabelFactory;
-import de.cesr.more.building.network.MRestoreNetworkBuilder;
+import de.cesr.more.geo.building.edge.MDefaultGeoEdgeFactory;
+import de.cesr.more.geo.building.network.MoreGeoNetworkService;
+import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
@@ -74,12 +78,16 @@ import edu.uci.ics.jung.graph.Graph;
  * <li>...</li>
  * </ul>
  * 
+ * 
+ * @param <AgentType>
+ * @param <EdgeType>
+ * 
  * @author Sascha Holzhauer
  * @date 29.11.2011
  * 
  */
-public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge<AgentType>>
-		extends MAbstractGeoRsNetworkBuilder<AgentType, EdgeType> {
+public class MGeoRsRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
+		extends MGeoRsNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
@@ -88,15 +96,91 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 
 	protected String		name;
 	
-	protected AgentLabelFactory<AgentType>	agentLabelFactory	= null;
-	
+	protected MoreGeoNetworkService<AgentType, EdgeType>	maintainingNetworkService	= null;
+
+	protected AgentLabelFactory<AgentType>					agentLabelFactory			= null;
+
 	/**
-	 * @param eFac
+	 * @param edgeFac
+	 */
+	@SuppressWarnings("unchecked")
+	public MGeoRsRestoreNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac);
+	}
+
+	/**
+	 * @param edgeFac
 	 * @param networkName
 	 */
-	public MGeoRsRestoreNetworkBuilder(MoreEdgeFactory<AgentType, EdgeType> eFac, String networkName) {
-		this.edgeFac = eFac;
+	@SuppressWarnings("unchecked")
+	public MGeoRsRestoreNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, String networkName) {
+		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac,
+				PmParameterManager.getInstance(null), networkName);
+	}
+
+	/**
+	 * @param geography
+	 * @param edgeFac
+	 */
+	public MGeoRsRestoreNetworkService(Geography<Object> geography, MoreEdgeFactory<AgentType, EdgeType> edgeFac) {
+		this(geography, edgeFac, PmParameterManager.getInstance(null));
+	}
+
+		/**
+	 * @param edgeFac
+	 * @param pm
+	 */
+	@SuppressWarnings("unchecked")
+	public MGeoRsRestoreNetworkService(MoreEdgeFactory<AgentType, EdgeType> edgeFac, PmParameterManager pm) {
+		this((Geography<Object>) PmParameterManager.getParameter(MBasicPa.ROOT_GEOGRAPHY), edgeFac, pm);
+	}
+
+	/**
+	 * @param geography
+	 * @param edgeFac
+	 * @param pm
+	 */
+	public MGeoRsRestoreNetworkService(Geography<Object> geography, MoreEdgeFactory<AgentType, EdgeType> edgeFac,
+			PmParameterManager pm) {
+		this(geography, edgeFac, pm, "RestoredNetwork");
+	}
+
+	/**
+	 * @param geography
+	 * @param eFac
+	 * @param networkName
+	 * @param pm
+	 */
+	@SuppressWarnings("unchecked")
+	public MGeoRsRestoreNetworkService(Geography<Object> geography, MoreEdgeFactory<AgentType, EdgeType> eFac,
+			PmParameterManager pm, String networkName) {
+		super(geography, eFac, pm);
 		this.name = networkName;
+
+		this.agentLabelFactory = new AgentLabelFactory<AgentType>(){
+			@Override
+			public String getLabel(AgentType agent) {
+				return Integer.parseInt(agent.getAgentId()) + "";
+			}};
+			
+		if (pm.getParam(MNetworkBuildingPa.MAINTAINING_NETWORK_SERVICE) != null) {
+			Class<?> serviceClass = (Class<?>) pm.getParam(MNetworkBuildingPa.MAINTAINING_NETWORK_SERVICE);
+			if (MoreGeoNetworkService.class.isAssignableFrom(serviceClass)) {
+				try {
+					this.maintainingNetworkService = (MoreGeoNetworkService<AgentType, EdgeType>) (serviceClass)
+							.getConstructor(
+									MoreEdgeFactory.class, String.class, PmParameterManager.class)
+							.newInstance(new MDefaultGeoEdgeFactory<AgentType>(), this.name, this.pm);
+
+					this.maintainingNetworkService.setGeography(this.geography);
+					this.maintainingNetworkService.setGeoRequestClass(this.geoRequestClass);
+
+				} catch (Exception exception) {
+					exception.printStackTrace();
+				}
+			}
+			// TODO error handling
+		}
 	}
 
 	@Override
@@ -110,11 +194,6 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 		if (this.geography == null) {
 			logger.error("Geogrpahy not set!");
 			throw new IllegalStateException("Geogrpahy not set!");
-		}
-		
-		if(this.agentLabelFactory == null) {
-			logger.warn("Agent label factory not set! Using default (ToStringAgentLabelFactory).");
-			this.agentLabelFactory = new MRestoreNetworkBuilder.ToStringAgentLabelFactory<>();
 		}
 
 		checkAgentCollection(agents);
@@ -186,6 +265,15 @@ public class MGeoRsRestoreNetworkBuilder<AgentType, EdgeType extends MRepastEdge
 	 */
 	@Override
 	public String toString() {
-		return "MGeoRsRestoreNetworkBuilder";
+		return "MGeoRsRestoreNetworkService";
+	}
+
+	/**
+	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
+		return this.maintainingNetworkService.addAndLinkNode(network, node);
 	}
 }

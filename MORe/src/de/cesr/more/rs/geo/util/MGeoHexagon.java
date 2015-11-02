@@ -24,7 +24,6 @@
 package de.cesr.more.rs.geo.util;
 
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,10 +39,8 @@ import repast.simphony.space.gis.Geography;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import de.cesr.more.param.MNetBuildHdffPa;
 import de.cesr.more.rs.building.MoreMilieuAgent;
 import de.cesr.more.util.distributions.MRealDistribution;
-import de.cesr.more.util.io.MShapefileLoader;
 import de.cesr.parma.core.PmParameterManager;
 
 
@@ -69,38 +66,39 @@ public class MGeoHexagon<AgentType> implements MoreGeoHexagon<AgentType> {
 		@SuppressWarnings("unchecked")
 		// type erasure for Class objects
 		public void init(PmParameterManager pm, Geography<Object> geography) {
-			File hexagonShapeFile = new File((String) pm.getParam(MNetBuildHdffPa.HEXAGON_SHAPEFILE));
-
-			// check if shapefile exists:
-			if (!hexagonShapeFile.exists()) {
-				logger.error("The specified shape file (" + hexagonShapeFile + ") does not exist!");
-				throw new IllegalArgumentException("The specified shape file (" + hexagonShapeFile
-						+ ") does not exist!");
-			}
-
-			// <- LOGGING
-			logger.info("Init hexagons from " + hexagonShapeFile);
-			// LOGGING ->
-
-			MShapefileLoader<MGeoHexagon<AgentType>> areasLoader = null;
-
-			double distanceFactorForDistribution = ((Double) pm.getParam(
-					MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
-			
-			try {
-				areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
-						(Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon.class,
-						hexagonShapeFile.toURI().toURL(),
-						geography);
-				while (areasLoader.hasNext()) {
-					MGeoHexagon<AgentType> hexagon = new MGeoHexagon<AgentType>();
-					areasLoader.next(hexagon);
-					hexagon.distanceFactorForDistribution = distanceFactorForDistribution;
-				}
-			} catch (java.net.MalformedURLException e) {
-				logger.error("AreasCreator: malformed URL exception when reading areas shapefile.");
-				e.printStackTrace();
-			}
+			// File hexagonShapeFile = new File((String) pm.getParam(MNetBuildHdffPa.HEXAGON_SHAPEFILE));
+			// hexagonShapeFile.setReadOnly();
+			//
+			// // check if shapefile exists:
+			// if (!hexagonShapeFile.exists()) {
+			// logger.error("The specified shape file (" + hexagonShapeFile + ") does not exist!");
+			// throw new IllegalArgumentException("The specified shape file (" + hexagonShapeFile
+			// + ") does not exist!");
+			// }
+			//
+			// // <- LOGGING
+			// logger.info("Init hexagons from " + hexagonShapeFile);
+			// // LOGGING ->
+			//
+			// MShapefileLoader<MGeoHexagon<AgentType>> areasLoader = null;
+			//
+			// double distanceFactorForDistribution = ((Double) pm.getParam(
+			// MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
+			//
+			// try {
+			// areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
+			// (Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon.class,
+			// hexagonShapeFile.toURI().toURL(),
+			// geography);
+			// while (areasLoader.hasNext()) {
+			// MGeoHexagon<AgentType> hexagon = new MGeoHexagon<AgentType>();
+			// areasLoader.next(hexagon);
+			// hexagon.distanceFactorForDistribution = distanceFactorForDistribution;
+			// }
+			// } catch (java.net.MalformedURLException e) {
+			// logger.error("AreasCreator: malformed URL exception when reading areas shapefile.");
+			// e.printStackTrace();
+			// }
 		}
 
 		/**

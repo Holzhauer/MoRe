@@ -28,17 +28,17 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.feature.type.GeometryTypeImpl;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.ReferencingFactoryFinder;
@@ -51,12 +51,12 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import repast.simphony.context.Context;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.ShapefileLoader;
 import simphony.util.messages.MessageCenter;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 
 /**
@@ -99,11 +99,12 @@ public class MShapefileLoader<T> {
 	 * @param clazz
 	 *        the agent class
 	 * @param shapefile
-	 *        the shapefile that serves as the datasource for the agent properties
+	 *        the shapefile that serves as the datasource for the agent properties. Should set to read-only right after
+	 *        initialisation!
 	 * @param geography
 	 *        the geography to hold spatial locations of the agents
 	 */
-	public MShapefileLoader(Class<T> clazz, URL shapefile, Geography<?> geography) {
+	public MShapefileLoader(Class<T> clazz, File shapefile, Geography<?> geography) {
 		this(clazz, shapefile, geography, null);
 	}
 
@@ -115,13 +116,14 @@ public class MShapefileLoader<T> {
 	 * @param clazz
 	 *        the agent class
 	 * @param shapefile
-	 *        the shapefile that serves as the datasource for the agent properties
+	 *        the shapefile that serves as the datasource for the agent properties. Should set to read-only right after
+	 *        initialisation!
 	 * @param geography
 	 *        the geography to hold spatial locations of the agents
 	 * @param context
 	 *        the context to add the agents to
 	 */
-	public MShapefileLoader(Class<T> clazz, URL shapefile, Geography geography, Context context) {
+	public MShapefileLoader(Class<T> clazz, File shapefile, Geography geography, Context context) {
 		this.geography = geography;
 		this.agentClass = clazz;
 		this.context = context;
@@ -135,7 +137,10 @@ public class MShapefileLoader<T> {
 				}
 			}
 
-			ShapefileDataStore store = new ShapefileDataStore(shapefile);
+			shapefile.setReadOnly();
+			FileDataStore store = FileDataStoreFinder.getDataStore(shapefile);
+	        
+			// ShapefileDataStore store = new ShapefileDataStore(shapefile);
 			SimpleFeatureType schema = store.getSchema(store.getTypeNames()[0]);
 
 			// First attribute at index 0 is always the Geometry
@@ -310,7 +315,11 @@ public class MShapefileLoader<T> {
 	 * @return true if there are more features left to process, otherwise false.
 	 */
 	public boolean hasNext() {
-		return iter.hasNext();
+		boolean hasnext = iter.hasNext();
+		if (!hasnext) {
+			iter.close();
+		}
+		return hasnext;
 	}
 
 	private T fillAgent(SimpleFeature feature, T agent) throws IllegalAccessException, InvocationTargetException {

@@ -94,6 +94,8 @@ public enum MNetworkBuildingPa implements PmParameterDefinition {
 
 	RESTORE_NETWORK_SOURCE_FILE(String.class, "network"),
 
+	RESTORE_VERTEX_ID_ATTRIBUTE(String.class, "id"),
+
 	/*****************************************************
 	 * General network Settings
 	 *****************************************************/

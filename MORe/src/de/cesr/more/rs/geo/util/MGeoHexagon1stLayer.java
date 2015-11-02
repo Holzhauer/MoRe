@@ -23,6 +23,7 @@
  */
 package de.cesr.more.rs.geo.util;
 
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,6 +71,7 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 		// type erasure for Class objects
 		public void init(PmParameterManager pm, Geography<Object> geography) {
 			File hexagonShapeFile = new File((String) pm.getParam(MNetBuildHdffPa.HEXAGON_SHAPEFILE));
+			hexagonShapeFile.setReadOnly();
 
 			// check if shapefile exists:
 			if (!hexagonShapeFile.exists()) {
@@ -84,17 +86,12 @@ public class MGeoHexagon1stLayer<AgentType> extends MGeoHexagon<AgentType> {
 
 			MShapefileLoader<MGeoHexagon<AgentType>> areasLoader = null;
 
-			try {
-				areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
-						(Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon1stLayer.class,
-						hexagonShapeFile.toURI().toURL(),
-						geography);
-				while (areasLoader.hasNext()) {
-					areasLoader.next(new MGeoHexagon1stLayer<AgentType>());
-				}
-			} catch (java.net.MalformedURLException e) {
-				logger.error("AreasCreator: malformed URL exception when reading areas shapefile.");
-				e.printStackTrace();
+			areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
+					(Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon1stLayer.class,
+					hexagonShapeFile,
+					geography);
+			while (areasLoader.hasNext()) {
+				areasLoader.next(new MGeoHexagon1stLayer<AgentType>());
 			}
 
 			this.secondHexInitialiser = new MGeoHexagon2ndLayer.MGeoHexagonInitialiser<AgentType>();

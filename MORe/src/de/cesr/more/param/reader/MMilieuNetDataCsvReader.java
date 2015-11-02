@@ -156,7 +156,7 @@ public class MMilieuNetDataCsvReader extends PmAbstractParameterReader {
 				logger.info("Parameter "
 						+ Enum.valueOf((Class<Enum>) Class
 								.forName(param_class), param_name)
-						+ " read from" + " database. Value: "
+						+ " read from" + " CSV file. Value: "
 						+ value);
 			} catch (ClassNotFoundException exception) {
 				exception.printStackTrace();

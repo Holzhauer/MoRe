@@ -67,6 +67,7 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 		// type erasure for Class objects
 		public void init(PmParameterManager pm, Geography<Object> geography) {
 			File hexagonShapeFile = new File((String) pm.getParam(MNetBuildHdffPa.HEXAGON_SHAPEFILE_2ND));
+			hexagonShapeFile.setReadOnly();
 
 			// check if shapefile exists:
 			if (!hexagonShapeFile.exists()) {
@@ -83,21 +84,16 @@ public class MGeoHexagon2ndLayer<AgentType> extends MGeoHexagon<AgentType> {
 
 			double distanceFactorForDistribution = ((Double) pm.getParam(
 					MNetBuildHdffPa.DISTANCE_FACTOR_FOR_DISTRIBUTION)).doubleValue();
-			
-			try {
-				areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
-						(Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon2ndLayer.class,
-						hexagonShapeFile.toURI().toURL(),
-						geography);
-				while (areasLoader.hasNext()) {
-					MGeoHexagon2ndLayer<AgentType> hexagon = new MGeoHexagon2ndLayer<AgentType>(
-							((Boolean)pm.getParam(MNetBuildHdffPa.INCREASED_DISTANCE_ACCURACY)).booleanValue());
-					areasLoader.next(hexagon);
-					hexagon.distanceFactorForDistribution = distanceFactorForDistribution;
-				}
-			} catch (java.net.MalformedURLException e) {
-				logger.error("AreasCreator: malformed URL exception when reading areas shapefile.");
-				e.printStackTrace();
+
+			areasLoader = new MShapefileLoader<MGeoHexagon<AgentType>>(
+					(Class<MGeoHexagon<AgentType>>) (Class<?>) MGeoHexagon2ndLayer.class,
+					hexagonShapeFile,
+					geography);
+			while (areasLoader.hasNext()) {
+				MGeoHexagon2ndLayer<AgentType> hexagon = new MGeoHexagon2ndLayer<AgentType>(
+						((Boolean) pm.getParam(MNetBuildHdffPa.INCREASED_DISTANCE_ACCURACY)).booleanValue());
+				areasLoader.next(hexagon);
+				hexagon.distanceFactorForDistribution = distanceFactorForDistribution;
 			}
 		}
 

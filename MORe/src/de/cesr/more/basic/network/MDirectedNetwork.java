@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import org.apache.log4j.Logger;
+
 import cern.jet.random.Uniform;
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.edge.MoreEdge;
@@ -49,6 +51,11 @@ import edu.uci.ics.jung.graph.Graph;
  *
  */
 public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGraph<V, E> implements MoreNetwork<V, E> {
+
+	/**
+	 * Logger
+	 */
+	static private Logger								logger				= Logger.getLogger(MDirectedNetwork.class);
 
 	/**
 	 * 
@@ -243,6 +250,22 @@ public class MDirectedNetwork<V,E extends MoreEdge<V>> extends DirectedSparseGra
 				getPredecessorCount(ego))): null;
 	}
 	
+	@Override
+	public Collection<V> getSuccessors(V ego) {
+		checkVertex(ego);
+		return super.getSuccessors(ego);
+	}
+
+	/**
+	 * @param ego
+	 */
+	protected void checkVertex(V ego) {
+		if (!this.containsVertex(ego)) {
+			logger.error("Network " + this.getName() + " does not contain vertex " + ego + "!");
+			throw new IllegalStateException("Network " + this.getName() + " does not contain vertex " + ego + "!");
+		}
+	}
+
 	/**
 	 * @see de.cesr.more.basic.network.MoreNetwork#getWeight(java.lang.Object, java.lang.Object)
 	 */

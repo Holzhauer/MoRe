@@ -24,12 +24,15 @@
 package de.cesr.more.rs.building;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.log4j.Logger;
 
 import repast.simphony.space.graph.DirectedJungNetwork;
@@ -43,8 +46,10 @@ import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator;
 import de.cesr.more.building.util.MSmallWorldBetaModelNetworkGenerator.MSmallWorldBetaModelNetworkGeneratorParams;
 import de.cesr.more.building.util.MoreBetaProvider;
 import de.cesr.more.building.util.MoreKValueProvider;
+import de.cesr.more.param.MBasicPa;
 import de.cesr.more.param.MMilieuNetworkParameterMap;
 import de.cesr.more.param.MNetBuildBhPa;
+import de.cesr.more.param.MNetBuildHdffPa;
 import de.cesr.more.param.MNetBuildWbSwPa;
 import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.param.MRandomPa;
@@ -53,6 +58,9 @@ import de.cesr.more.rs.edge.MRepastEdge;
 import de.cesr.more.rs.network.MRsContextJungNetwork;
 import de.cesr.more.rs.network.MoreRsNetwork;
 import de.cesr.more.util.MNetworkBuilderRegistry;
+import de.cesr.more.util.distributions.MGeneralDistributionParameter;
+import de.cesr.more.util.distributions.MIntegerDistribution;
+import de.cesr.more.util.distributions.MRandomEngineGenerator;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Graph;
@@ -94,42 +102,40 @@ import edu.uci.ics.jung.graph.Graph;
  * @date 16.03.2012
  * 
  */
-public class MGeoRsWattsBetaSwPartnerCheckNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
-		extends MGeoRsWattsBetaSwNetworkService<AgentType, EdgeType> {
+public class MGeoRsWattsBetaSwPartnerCheckKDistNetworkService<AgentType extends MoreMilieuAgent, EdgeType extends MRepastEdge<AgentType>>
+		extends MGeoRsWattsBetaSwPartnerCheckNetworkService<AgentType, EdgeType> {
 
 	/**
 	 * Logger
 	 */
 	static private Logger	logger	= Logger.getLogger(MGeoRsWattsBetaSwPartnerCheckNetworkService.class);
 
-	protected Uniform		rand;
-
-	protected MMilieuNetworkParameterMap	paraMap;
-
+	protected Map<Integer, MIntegerDistribution>		degreeDistributions;
+	
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsWattsBetaSwPartnerCheckNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac) {
+	public MGeoRsWattsBetaSwPartnerCheckKDistNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac) {
 		super(eFac);
 	}
 
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsWattsBetaSwPartnerCheckNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
+	public MGeoRsWattsBetaSwPartnerCheckKDistNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name) {
 		super(eFac, name);
 	}
 	
 	/**
 	 * @param eFac
 	 */
-	public MGeoRsWattsBetaSwPartnerCheckNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name,
+	public MGeoRsWattsBetaSwPartnerCheckKDistNetworkService(MoreEdgeFactory<AgentType, EdgeType> eFac, String name,
 			PmParameterManager pm) {
 		super(eFac, name, pm);
 	}
 
 	@Override
-	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(
+	public MoreRsNetwork<AgentType, EdgeType> buildNetwork(final 
 			Collection<AgentType> agents) {
 
 		if (context == null) {
@@ -163,7 +169,17 @@ public class MGeoRsWattsBetaSwPartnerCheckNetworkService<AgentType extends MoreM
 		params.setNetwork(network);
 		params.setEdgeModifier(edgeModifier);
 		params.setRandomDist(randomDist);
-
+		
+		MGeoRsWattsBetaSwPartnerCheckKDistNetworkService.this.initDegreeDistributions();
+		params.setkProvider(new MoreKValueProvider<AgentType>() {	
+			@Override
+			public int getKValue(AgentType node) {
+				return Math.min(new Integer(Math.round(MGeoRsWattsBetaSwPartnerCheckKDistNetworkService.this.degreeDistributions.get(
+						new Integer(node.getMilieuGroup()))
+						.sample())), agents.size() - 1);
+			}
+		});
+		
 		AbstractDistribution abstractDis = MManager
 				.getURandomService()
 				.getDistribution(
@@ -197,158 +213,94 @@ public class MGeoRsWattsBetaSwPartnerCheckNetworkService<AgentType extends MoreM
 	}
 
 
-
 	/**
-	 * @param networkParams
-	 * @param network
-	 * @param focus
-	 * @param requestClass
-	 * @param oldInfluencer
+	 *
 	 */
-	@SuppressWarnings("unchecked")
-	protected AgentType findDistantTarget(MMilieuNetworkParameterMap networkParams,
-			MoreNetwork<AgentType, EdgeType> network,
-			AgentType focus) {
-		boolean rewired;
+	private void initDegreeDistributions() {
+		this.degreeDistributions = new HashMap<Integer, MIntegerDistribution>();
+		for (int i = (Integer)pm.getParam(MBasicPa.MILIEU_START_ID); 
+				i < paraMap.size() + (Integer)pm.getParam(MBasicPa.MILIEU_START_ID); i++) {
 
-		rewired = false;
-		Object random = null;
+			MIntegerDistribution dist = null;
 
-		int desiredMilieu = 0;
-		if ((Boolean) PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU)) {
-			// choose milieu to connect with
-			desiredMilieu = getProbabilisticMilieu(networkParams, focus);
-		}
+			try {
+				dist = (MIntegerDistribution) Class.forName(paraMap.getKDistributionClass(i)).
+						getConstructor(RandomGenerator.class).newInstance(
+								new MRandomEngineGenerator(MManager.getURandomService().getGenerator(
+										(String) pm.getParam(MRandomPa.RND_STREAM_NETWORK_BUILDING))));
 
-		// fetch random partner:
-		ArrayList<AgentType> notCheckedPartners = new ArrayList<AgentType>();
-		for (AgentType potPartner : network.getNodes()) {
-			notCheckedPartners.add(potPartner);
-		}
-		do {
-			random = notCheckedPartners.get(rand.nextIntFromTo(0, notCheckedPartners.size() - 1));
-			notCheckedPartners.remove(random);
+				dist.setParameter(MGeneralDistributionParameter.PARAM_A, ((Double) paraMap.
+						getMilieuParam(MNetBuildHdffPa.K_PARAM_A, i)).doubleValue());
+				dist.setParameter(MGeneralDistributionParameter.PARAM_B, ((Double) paraMap.
+						getMilieuParam(MNetBuildHdffPa.K_PARAM_B, i)).doubleValue());
+				dist.init();
 
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(focus + "> Random object from context: "
-							+ random);
-			}
-			// LOGGING ->
-
-			if (checkPartner(network, networkParams, focus, (AgentType) random, desiredMilieu)) {
-				rewired = true;
+			} catch (NoSuchMethodException exception) {
+				exception.printStackTrace();
 
 				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(focus + "> Link with " + random);
-				}
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
 				// LOGGING ->
-			}
-		} while (!rewired && notCheckedPartners.size() > 0);
 
-		if (notCheckedPartners.size() == 0 && !rewired) {
-			// <- LOGGING
-			logger.warn("All partners were checked and no appropriae partner could be found for " + focus
-					+ "! Returning null.");
-			// LOGGING ->
-			return null;
-		}
+			} catch (IllegalArgumentException exception) {
+				exception.printStackTrace();
 
-		
-		return (AgentType) random;
-	}
-
-	protected int getProbabilisticMilieu(MMilieuNetworkParameterMap networkParams, AgentType focus) {
-		Map<Integer, Double> roulette_wheel = new LinkedHashMap<Integer, Double>();
-
-		for (int i = 1; i <= networkParams.size(); i++) {
-			roulette_wheel.put(new Integer(i), networkParams.getP_Milieu(focus.getMilieuGroup(), i));
-		}
-
-		double randFloat = rand.nextDouble();
-		if (randFloat < 0.0 || randFloat > 1.0) {
-			throw new IllegalStateException(rand
-					+ "> Make sure min = 0.0 and max = 1.0");
-		}
-
-		float pointer = 0.0f;
-		for (Entry<Integer, Double> entry : roulette_wheel.entrySet()) {
-			pointer += entry.getValue().doubleValue();
-			if (pointer >= randFloat) {
-				return entry.getKey().intValue();
-			}
-		}
-		throw new IllegalStateException("This code should never be reached!");
-	}
-
-
-	/**
-	 * Returns false if source is already a successor of target. Otherwise, the milieu is checked based on paraMap.
-	 * 
-	 * @param paraMap
-	 * @param partnerMilieu
-	 * @return true if the check was positive
-	 */
-	protected boolean checkPartner(MoreNetwork<AgentType, EdgeType> network,
-			MMilieuNetworkParameterMap paraMap, AgentType ego,
-			AgentType potPartner, int desiredMilieu) {
-		if (network.isSuccessor(ego, potPartner)) {
-			// <- LOGGING
-			if (logger.isDebugEnabled()) {
-				logger.debug(ego + "> " + potPartner + " is already predecessor of " + ego +
-						" (" + ego + (network.isSuccessor(potPartner, ego) ? " is" : " is not") +
-						" a predecessor of " + potPartner + ")");
-			}
-			// LOGGING ->
-
-			return false;
-		}
-		// find agent that belongs to the milieu
-		if ((Boolean) PmParameterManager.getParameter(MNetBuildBhPa.DISTANT_FORCE_MILIEU) && desiredMilieu != 0) {
-			if (potPartner.getMilieuGroup() == desiredMilieu) {
 				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(ego + "> Link with distant partner");
-				}
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
 				// LOGGING ->
 
-				return true;
-			} else {
+			} catch (SecurityException exception) {
+				exception.printStackTrace();
+
 				// <- LOGGING
-				if (logger.isDebugEnabled()) {
-					logger.debug(ego + "> Wrong milieu (" + potPartner.getMilieuGroup() + ")");
-				}
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
 				// LOGGING ->
-				return false;
-			}
-		} else {
-			// determine if potenialpartner's milieu is probable to link with:
-			double rand_float = rand.nextDoubleFromTo(0.0, 1.0);
-			boolean pass = paraMap.getP_Milieu(ego.getMilieuGroup(),
-					potPartner.getMilieuGroup()) > rand_float;
 
-			if (logger.isDebugEnabled()) {
-				logger.debug((pass ? ego + "> " + potPartner + "'s mileu ("
-						+ potPartner.getMilieuGroup() + ") accepted" : ego + "> "
-						+ potPartner + "'s mileu (" + potPartner.getMilieuGroup()
-						+ ") rejected")
-						+ " (probability: "
-						+ paraMap.getP_Milieu(ego.getMilieuGroup(),
-								potPartner.getMilieuGroup())
-						+ " / random: "
-						+ rand_float);
+			} catch (InstantiationException exception) {
+				exception.printStackTrace();
+
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+
+			} catch (IllegalAccessException exception) {
+				exception.printStackTrace();
+
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+
+			} catch (InvocationTargetException exception) {
+				exception.printStackTrace();
+
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+
+			} catch (ClassNotFoundException exception) {
+				exception.printStackTrace();
+
+				// <- LOGGING
+				logger.warn("The distribution " + paraMap.getKDistributionClass(i) + " for milieu " + i +
+						" could not be initialised!");
+				// LOGGING ->
+
 			}
-			return pass;
+			this.degreeDistributions.put(new Integer(i), dist);
 		}
 	}
-
 	
 	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "MGeoRsWattsBetaSw PartnerChecking NetworkService";
+		return "MGeoRsWattsBetaSw PartnerChecking KDistribed NetworkService";
 	}
 }

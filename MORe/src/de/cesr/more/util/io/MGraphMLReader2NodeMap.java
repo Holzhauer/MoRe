@@ -6,6 +6,9 @@
  */
 package de.cesr.more.util.io;
 
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,7 +21,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotSupportedException;
 
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.param.MNetworkBuildingPa;
 import de.cesr.more.util.Log4jLogger;
+import de.cesr.parma.core.PmParameterManager;
 import edu.uci.ics.jung.graph.Hypergraph;
 import edu.uci.ics.jung.io.GraphMLReader;
 
@@ -50,10 +55,13 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 	 */
 	protected MoreEdgeFactory<V, E> edgeFactory;
 	
+	protected String				vertexIdAttribute;
+
 	/**
 	 * @param vertex_factory
 	 * @param edge_factory
-	 * @param nodeMap BidiMap that contains node ids (key) and node object (value)
+	 * @param nodeMap
+	 *        BidiMap that contains node ids (key) and node object (value)
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
@@ -63,13 +71,17 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 		super(vertex_factory, null);
 		this.nodeMap = nodeMap;
 		this.edgeFactory = edge_factory;
+		this.vertexIdAttribute = (String) PmParameterManager
+				.getParameter(MNetworkBuildingPa.RESTORE_VERTEX_ID_ATTRIBUTE);
     }
 	
 	/**
-	 * Passes a pseudo edge factory that throws an {@link IllegalStateException} every time the factory is called (indicating that
-	 * the nodeMap does not contain entries for every node).
+	 * Passes a pseudo edge factory that throws an {@link IllegalStateException} every time the factory is called
+	 * (indicating that the nodeMap does not contain entries for every node).
+	 * 
 	 * @param edge_factory
-	 * @param nodeMap BidiMap that contains node ids (key) and node object (value)
+	 * @param nodeMap
+	 *        BidiMap that contains node ids (key) and node object (value)
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
@@ -197,10 +209,14 @@ public class MGraphMLReader2NodeMap<G extends Hypergraph<V, E>, V, E> extends Gr
 	protected void createVertex(Attributes atts) throws SAXNotSupportedException
     {
         Map<String, String> vertex_atts = getAttributeMap(atts);
-        String id = vertex_atts.remove("id");
+        String id = vertex_atts.remove(this.vertexIdAttribute);
         if (id == null) {
+			List<String> attributes = new ArrayList<String>();
+			for (int i = 0; i < atts.getLength(); i++) {
+				attributes.add(atts.getValue(i));
+			}
 			throw new SAXNotSupportedException("node attribute list missing " +
-            		"'id': " + atts.toString());
+					"'" + this.vertexIdAttribute + "': " + attributes);
 		}
         V v = vertex_ids.getKey(id);
         

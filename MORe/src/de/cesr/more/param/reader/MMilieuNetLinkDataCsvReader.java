@@ -91,7 +91,7 @@ public class MMilieuNetLinkDataCsvReader extends PmAbstractParameterReader {
 					map.setP_Milieu(milieuEgo, columnId + initialMilieuId, Double.parseDouble(reader.get(columnId)));
 					sum += Double.parseDouble(reader.get(columnId));
 					logger.debug("Read link probbaility for Milieu " + (columnId + initialMilieuId) + " to Milieu "
-									+ milieuEgo + " from database. Value: " + reader.get(columnId));
+							+ milieuEgo + " from CSV file. Value: " + reader.get(columnId));
 				}
 
 				if (Math.abs(sum - 1.0) > 0.001) {

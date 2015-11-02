@@ -938,6 +938,12 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 			logger.warn("Use default uniform distribution");
 		}
 
+		if (((Integer) pm.getParam(MNetBuildHdffPa.AGENT_SHUFFLE_INTERVAL)).intValue() == 0) {
+			logger.warn("Parameter MNetBuildHdffPa.AGENT_SHUFFLE_INTERVAL may not be 0! "
+					+ "Setting to Integer.MAX_VALUE.");
+			pm.setParam(MNetBuildHdffPa.AGENT_SHUFFLE_INTERVAL, Integer.MAX_VALUE);
+		}
+		
 		try {
 			this.hexagonInitialiser = (MoreGeoHexagonInitialiser<AgentType>) Class.forName((String) pm.getParam(
 					MNetBuildHdffPa.HEXAGON_INITIALISER_CLASS)).newInstance();

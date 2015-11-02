@@ -122,6 +122,8 @@ MNetworkManager.setNetwork(network, socialNetworkName);
     * Call <<<MManager.init()>>> to initialise default random streams (according to parameter settings for random seeds,
     see also {{{Random Numbers in More}}})).
     
+    []
+    
     <<NOTE:>> Make sure to set up parameters before <<<MManager.init()>>> is called because otherwise defined
     parameters may not be considered during the initialisation of random number streams!
     

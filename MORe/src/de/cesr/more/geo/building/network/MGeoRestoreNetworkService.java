@@ -29,6 +29,7 @@ import java.util.Collection;
 import repast.simphony.space.gis.Geography;
 import de.cesr.more.basic.network.MoreNetwork;
 import de.cesr.more.building.edge.MoreEdgeFactory;
+import de.cesr.more.building.network.AgentLabelFactory;
 import de.cesr.more.building.network.MRestoreNetworkBuilder;
 import de.cesr.more.geo.MoreGeoEdge;
 import de.cesr.more.geo.building.edge.MDefaultGeoEdgeFactory;
@@ -48,6 +49,8 @@ public class MGeoRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 		extends MGeoNetworkService<AgentType, EdgeType> {
 
 	protected MoreGeoNetworkService<AgentType, EdgeType>	maintainingNetworkService	= null;
+
+	protected AgentLabelFactory<AgentType>					agentLabelFactory			= null;
 
 	/**
 	 * Takes the geography from {@link MBasicPa#ROOT_GEOGRAPHY}.
@@ -116,12 +119,22 @@ public class MGeoRestoreNetworkService<AgentType extends MoreMilieuAgent, EdgeTy
 	}
 
 	/**
+	 * @param agentLabelFactory
+	 */
+	public void setAgentLabelFactory(AgentLabelFactory<AgentType> agentLabelFactory) {
+		this.agentLabelFactory = agentLabelFactory;
+	}
+
+	/**
 	 * @see de.cesr.more.building.network.MoreNetworkBuilder#buildNetwork(java.util.Collection)
 	 */
 	@Override
 	public MoreNetwork<AgentType, EdgeType> buildNetwork(Collection<AgentType> agents) {
 		MRestoreNetworkBuilder<AgentType, EdgeType> restoreBuilder = new MRestoreNetworkBuilder<AgentType, EdgeType>(
 				this.edgeFac, this.name, pm);
+		if (this.agentLabelFactory != null) {
+			restoreBuilder.setAgentLabelFactory(this.agentLabelFactory);
+		}
 		return restoreBuilder.buildNetwork(agents);
 	}
 

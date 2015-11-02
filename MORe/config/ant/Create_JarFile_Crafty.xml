@@ -4,7 +4,7 @@
 
 
 	<property name="dir_target" value="${basedir}/../../../CRAFTY_Social/lib" />
-	<property name="svn.info.rev" value="NOT DEFINED" />
+	<property name="svn.revision" value="NOT DEFINED" />
 
 	<property file="../../project.properties"/>
 
@@ -18,13 +18,16 @@
          ================================= -->
     <target name="svn_infos" description="description">
     	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="" />
-    	<svn svnkit="true"
-	  		  javahl="false"
-	          username="holzhauer"
-	          password="holzhauer">
-    		<info target="${basedir}/../../src/de/cesr/more/util/io"/>
-    	</svn>
-    	<echo>"Last Revision: ${svn.info.rev}"</echo>
+
+    	<svnSetting
+    		    svnkit="true"
+    		    javahl="false"
+    		    id="svn.settings"/>
+    		
+    		<svn refid="svn.settings">
+    			<status path="${basedir}/../../src/de/cesr/more/util/io" revisionProperty="svn.revision" />
+    		</svn>
+    	<echo>"Last Revision: ${svn.revision}"</echo>
     </target>
 
 <target name="MoRe-jar-creation" description="creates a jar file from MoRe">
@@ -41,7 +44,7 @@
 
        <manifest>
             <attribute name="Built-By" value="Sascha Holzhauer"/>
-            <attribute name="Implementation-Version"  value="${release} (revision ${svn.info.rev})"/>
+            <attribute name="Implementation-Version"  value="${release} (revision ${svn.revision})"/>
             <attribute name="Built-Date" value="${TODAY}"/>
         </manifest>
     </jar>
