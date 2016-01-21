@@ -92,5 +92,4 @@ public class MEgoNetworkManagerComp<A, E extends MoreEdge<? super A>> implements
 
 		processors.get(event).process(agent, network);
 	}
-	
 }

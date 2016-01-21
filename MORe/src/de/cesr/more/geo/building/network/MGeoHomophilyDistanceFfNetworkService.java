@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.agent.MAbstractAnalyseNetworkAgent;
+import de.cesr.more.basic.agent.MoreEgoNetworkManagingAgent;
 import de.cesr.more.basic.agent.MoreNetworkAgent;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MDirectedNetwork;
@@ -1016,6 +1017,10 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 		checkInitialisation();
 
 		int degreetarget = Math.round(this.degreeDistributions.get(new Integer(node.getMilieuGroup())).sample());
+
+		if (node instanceof MoreEgoNetworkManagingAgent) {
+			((MoreEgoNetworkManagingAgent<AgentType, EdgeType>) node).setDegreeTarget(degreetarget);
+		}
 		network.addNode(node);
 
 		Geometry nodeGeom = this.geography.getGeometry(node);

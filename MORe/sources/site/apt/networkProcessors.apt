@@ -75,5 +75,5 @@ getEgoNetworkManager().process(MLinkManagingEvent.getInstance(), this, getMainNe
   
  * Analysis
  
-  In case an agent implements <<<MoreLinkManipulationAnalysableAgent>>>, some processors (e.g. <<<MBlacklistThresholdLinkProcessor>>>
+  In case an agent implements <<<MoreLinkManipulationAnalysableAgent>>>, some processors (e.g. <<<MBlacklistThresholdLinkProcessor>>>)
   provide information about link manipulations.

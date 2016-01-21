@@ -164,7 +164,4 @@ public class MScheduleParameters {
 	public static MScheduleParameters getUnboundedRandomMScheduleParameters(double interval) {
 		return new MScheduleParameters(0, interval, MScheduleParameters.END_TICK, MScheduleParameters.RANDOM_PRIORITY);
 	}
-	
-	
-
 }

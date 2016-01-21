@@ -76,6 +76,10 @@ public class MThresholdLinkProcessor<A extends MoreLinkManipulatableAgent<A>, E 
 	 */
 	@Override
 	public void process(A agent, MoreNetwork<A, E> net) {
+		// <- LOGGING
+		logger.info("Process network: remove edges with negative weight...");
+		// LOGGING ->
+		
 		int counter = 0;
 		for (A neighbour : net.getPredecessors(agent)) {
 			E edge = net.getEdge(neighbour, agent);

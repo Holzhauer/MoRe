@@ -19,28 +19,18 @@
  *
  * Center for Environmental Systems Research, Kassel
  * 
- * Created by Sascha Holzhauer on 29.03.2012
+ * Created by Sascha Holzhauer on 10 Jan 2016
  */
-package de.cesr.more.manipulate.agent;
-
-
-import de.cesr.more.basic.edge.MoreEdge;
-import de.cesr.more.basic.network.MoreNetwork;
-
+package de.cesr.more.basic.edge;
 
 /**
  * MORe
- * 
- * Manages the ego network of the agent
  *
  * @author Sascha Holzhauer
- * @date 29.03.2012 
+ * @date 10 Jan 2016 
  *
  */
-public interface MoreEgoNetworkManagerComp<A, E extends MoreEdge<? super A>> {
+public interface MoreAgingEdge {
 
-	public MoreEgoNetworkProcessor<A, E> getEgoNetworkProcessor(MoreEgoNetworkEvent event);
-
-	public void process(MoreEgoNetworkEvent event, A agent, MoreNetwork<A, E> network);
-
+	public int getAge();
 }

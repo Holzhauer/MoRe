@@ -61,7 +61,7 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 
 	protected MoreEdgeFactory<AgentType, EdgeType>			edgeFac	= null;
 
-	protected String										name;
+	protected String										name	= "NN";
 
 	protected PmParameterManager							pm;
 
@@ -140,7 +140,7 @@ public abstract class MNetworkService<AgentType, EdgeType extends MoreEdge<? sup
 			return true;
 		} else {
 			// <- LOGGING
-			logger.warn("The given node (" + node + ") is not part of the network (" + this.name + ")");
+			logger.warn("The given node (" + node + ") is not part of the network (" + network.getName() + ")");
 			// LOGGING ->
 			return false;
 		}

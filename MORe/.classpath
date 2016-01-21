@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="libs/log4j-1.2.17.jar"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
@@ -17,7 +18,6 @@
 	<classpathentry kind="lib" path="libs/jung-api-2.0.1.jar" sourcepath="C:/Users/holzhauer/JavaLibraries/jung/jung-api-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-graph-impl-2.0.1.jar" sourcepath="C:/Data/General/JavaLibraries/jung/jung-graph-impl-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jung-io-2.0.1.jar" sourcepath="C:/Data/General/JavaLibraries/jung/jung-io-2.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="libs/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="libs/ParMa.jar"/>
 	<classpathentry kind="lib" path="libs/saf.core.runtime.jar"/>
 	<classpathentry kind="lib" path="libs/stax-api-1.0.1.jar"/>

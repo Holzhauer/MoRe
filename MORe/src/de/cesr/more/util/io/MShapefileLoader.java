@@ -89,6 +89,7 @@ public class MShapefileLoader<T> {
 	private Context						context;
 	private Map<String, Method>			attributeMethodMap	= new HashMap<String, Method>();
 	private Class						agentClass;
+	private FileDataStore				store				= null;
 	private SimpleFeatureIterator		iter;
 
 	/**
@@ -138,7 +139,7 @@ public class MShapefileLoader<T> {
 			}
 
 			shapefile.setReadOnly();
-			FileDataStore store = FileDataStoreFinder.getDataStore(shapefile);
+			store = FileDataStoreFinder.getDataStore(shapefile);
 	        
 			// ShapefileDataStore store = new ShapefileDataStore(shapefile);
 			SimpleFeatureType schema = store.getSchema(store.getTypeNames()[0]);
@@ -318,6 +319,7 @@ public class MShapefileLoader<T> {
 		boolean hasnext = iter.hasNext();
 		if (!hasnext) {
 			iter.close();
+			store.dispose();
 		}
 		return hasnext;
 	}

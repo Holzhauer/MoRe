@@ -42,5 +42,8 @@ public interface MoreEgoNetworkManagingAgent<A, E extends MoreEdge<? super A>> {
 	public MoreEgoNetworkManagerComp<A, E> getEgoNetworkManager();
 
 	public void setEgoNetworkManager(MoreEgoNetworkManagerComp<A, E> egoNetworkManager);
-
+	
+	public int getDegreeTarget();
+	
+	public void setDegreeTarget(int degreetarget);
 }

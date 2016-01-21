@@ -50,6 +50,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import de.cesr.more.basic.MManager;
 import de.cesr.more.basic.agent.MAbstractAnalyseNetworkAgent;
+import de.cesr.more.basic.agent.MoreEgoNetworkManagingAgent;
 import de.cesr.more.basic.agent.MoreNetworkAgent;
 import de.cesr.more.basic.edge.MoreEdge;
 import de.cesr.more.basic.network.MoreNetwork;
@@ -1030,12 +1031,17 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 	 * @see de.cesr.more.manipulate.network.MoreNetworkModifier#addAndLinkNode(de.cesr.more.basic.network.MoreNetwork,
 	 *      java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addAndLinkNode(MoreNetwork<AgentType, EdgeType> network, AgentType node) {
 		checkInitialisation();
 
 		int degreetarget = Math.round(this.degreeDistributions.get(new Integer(node.getMilieuGroup()))
 				.sample());
+		
+		if (node instanceof MoreEgoNetworkManagingAgent) {
+			((MoreEgoNetworkManagingAgent<AgentType, EdgeType>) node).setDegreeTarget(degreetarget);
+		}
 		network.addNode(node);
 
 		MGeoHexagon<AgentType> hexagon = getSurroundingHexagon(node);
