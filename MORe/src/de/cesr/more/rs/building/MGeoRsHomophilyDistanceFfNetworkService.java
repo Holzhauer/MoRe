@@ -554,9 +554,13 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				throw new IllegalStateException("There is no parameterisation for milieu " +
 						agent.getMilieuGroup() + "!");
 			}
-			degreeTargets.put(agent,
-					Math.min(new Integer(Math.round(this.degreeDistributions.get(new Integer(agent.getMilieuGroup()))
-							.sample())), agents.size() - 1));
+			int degreeTarget = Math.min(new Integer(Math.round(this.degreeDistributions.get(new Integer(agent.getMilieuGroup()))
+					.sample())), agents.size() - 1);
+			degreeTargets.put(agent, degreeTarget);
+			
+			if (agent instanceof MoreEgoNetworkManagingAgent) {
+				((MoreEgoNetworkManagingAgent<AgentType, EdgeType>) agent).setDegreeTarget(degreeTarget);
+			}
 		}
 		return degreeTargets;
 	}
@@ -904,8 +908,10 @@ public class MGeoRsHomophilyDistanceFfNetworkService<AgentType extends MoreMilie
 				for (Integer milieu : this.paraMap.keySet()) {
 					if (Math.abs(((Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) +
 							(Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu)) - 1.0) > TOLERANCE_VALUE_DIM_WEIGHTS) {
-						logger.error("DimWeightGeo and DimWeightMilieu do not sum up to 1.0 for milieu " +
-								milieu);
+						logger.error("DimWeightGeo and DimWeightMilieu do not sum up to 1.0 (but " +
+								(Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_GEO, milieu) +
+								(Double) this.paraMap.getMilieuParam(MNetBuildHdffPa.DIM_WEIGHTS_MILIEU, milieu) +
+								") for milieu " + milieu);
 					}
 				}
 			}

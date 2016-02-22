@@ -98,6 +98,7 @@ public class MWeibullDistanceDistributionTest {
 			for (int i = 0; i < 1000; i++) {
 				density = this.weibull.density(i);
 				assertTrue(density <= 1);
+				assertTrue(density > 0.0);
 				if (OUTPUT) {
 					fileWriter.append(i + ", " + density + "\n");
 				}

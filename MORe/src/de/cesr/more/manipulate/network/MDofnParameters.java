@@ -5,11 +5,14 @@ import java.util.Map;
 
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
+import org.apache.commons.math3.distribution.ZipfDistribution;
 
 public class MDofnParameters {
 	
 	protected static Map<Integer, AbstractRealDistribution> waitingTimeDists = new HashMap<Integer, AbstractRealDistribution>();
 	
+	protected static ZipfDistribution						decayDist;
+
 	static {
 		// HAPPenInGS-S
 		waitingTimeDists.put(1, new LogNormalDistribution(2.54, 1.32));
@@ -21,6 +24,8 @@ public class MDofnParameters {
 		waitingTimeDists.put(11, new LogNormalDistribution(2.53, 1.18));
 		waitingTimeDists.put(12, new LogNormalDistribution(2.61, 1.4));
 		waitingTimeDists.put(13, new LogNormalDistribution(2.22, 1.74));
+
+		decayDist = new ZipfDistribution(null, 80, 1.27);
 	}
 	
 	public static final double PROP_TRANSITIVE_CONFIDENCE = 0.039;
@@ -42,7 +47,7 @@ public class MDofnParameters {
 	 * @return probability
 	 */
 	public static double getProbSharedAcquaintances(int sharedAcquaintances) {
-		return  -170 + 13*Math.pow(sharedAcquaintances,2) + 234*sharedAcquaintances;
+		return 1.0 / (1.0 + 32.44 * Math.exp(-0.41 * sharedAcquaintances));
 	}
 	
 	/**
@@ -52,7 +57,7 @@ public class MDofnParameters {
 	 * @return probability
 	 */
 	public static double getProbDecay(int duration) {
-		return Math.pow(duration+1, -1.27);
+		return decayDist.probability(duration);
 	}
 	
 	/**
@@ -60,6 +65,6 @@ public class MDofnParameters {
 	 * @return probability
 	 */
 	public static double getProbRandom() {
-		return 0.000001;
+		return 0.1;
 	}
 }

@@ -69,7 +69,9 @@ public class MWeibullDistanceDistribution extends AbstractRealDistribution imple
 	/** The scale parameter. */
 	protected double			scale;
 
-	protected double			xmin, xmax;
+	protected double			xmin				= 0;
+
+	protected double			xmax				= Double.POSITIVE_INFINITY;
 
 	protected double			pLocal;
 

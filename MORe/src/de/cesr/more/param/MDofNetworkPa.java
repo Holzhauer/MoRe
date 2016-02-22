@@ -23,7 +23,6 @@
  */
 package de.cesr.more.param;
 
-import de.cesr.more.manipulate.agent.MoreEgoNetworkProcessor;
 import de.cesr.parma.core.PmParameterDefinition;
 import de.cesr.parma.core.PmParameterManager;
 
@@ -35,6 +34,16 @@ import de.cesr.parma.core.PmParameterManager;
  *
  */
 public enum MDofNetworkPa implements PmParameterDefinition {
+
+	/**
+	 * First ticks with edge processing.
+	 */
+	DYN_EDGE_PROCESSING_START(Integer.class, 1),
+	
+	/**
+	 * Number of ticks that make up a year.
+	 */
+	DYN_TICKS_PER_YEAR(Integer.class, 1),
 
 	/**
 	 * Threshold for differences between the opinions (e.g.) of two network partners. Smaller values cause the according

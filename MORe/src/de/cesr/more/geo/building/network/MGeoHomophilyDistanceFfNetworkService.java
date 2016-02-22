@@ -543,9 +543,13 @@ public class MGeoHomophilyDistanceFfNetworkService<AgentType extends MoreMilieuA
 				throw new IllegalStateException("There is no parameterisation for milieu " +
 						agent.getMilieuGroup() + "!");
 			}
-			degreeTargets.put(agent,
-					Math.min(new Integer(Math.round(this.degreeDistributions.get(new Integer(agent.getMilieuGroup()))
-							.sample())), agents.size() - 1));
+			int degreeTarget = Math.min(new Integer(Math.round(this.degreeDistributions.get(new Integer(agent.getMilieuGroup()))
+					.sample())), agents.size() - 1);
+			degreeTargets.put(agent, degreeTarget);
+			
+			if (agent instanceof MoreEgoNetworkManagingAgent) {
+				((MoreEgoNetworkManagingAgent<AgentType, EdgeType>) agent).setDegreeTarget(degreeTarget);
+			}
 		}
 		return degreeTargets;
 	}
